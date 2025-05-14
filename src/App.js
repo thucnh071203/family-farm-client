@@ -1,12 +1,10 @@
-import logo from "./logo.svg";
 import "./App.css";
-import FriendPageSidebar from "./layouts/FriendPageSidebar";
-import { FilterService } from "./layouts/FilterService";
+import { Register } from "./components/Register/Register";
 
 function App() {
   return (
     <div className="App">
-      <FilterService />
+      <Register />
     </div>
   );
 }

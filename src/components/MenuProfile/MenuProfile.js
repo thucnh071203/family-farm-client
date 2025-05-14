@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import "../styles/menuProfile.css";
+import "../MenuProfile/menuProfile.css";
+import { Link } from "react-router-dom";
 
 export const MenuProfile = () => {
-  const [isOpen, setIsOpen] = useState(false); // Trạng thái mở/đóng popup
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Hàm xử lý việc mở/đóng popup
   const togglePopupMenuProfile = () => {
-    setIsOpen(!isOpen); // Đảo trạng thái popup
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -22,21 +22,21 @@ export const MenuProfile = () => {
           </div>
 
           <div className="menu-grid">
-            <a href="#profile" className="menu-item">
+            <Link to="/1" className="menu-item">
               <i className="fas fa-user"></i>Your Profile
-            </a>
-            <a href="#payment" className="menu-item">
+            </Link>
+            <Link to="/2" className="menu-item">
               <i className="fab fa-amazon-pay"></i>Payment
-            </a>
-            <a href="#setting" className="menu-item">
+            </Link>
+            <Link to="/1" className="menu-item">
               <i className="fas fa-cog"></i>Setting
-            </a>
-            <a href="#professional" className="menu-item">
+            </Link>
+            <Link to="/1" className="menu-item">
               <i className="fas fa-plus"></i>Profesional
-            </a>
-            <a href="#service" className="menu-item">
+            </Link>
+            <Link to="/1" className="menu-item">
               <i className="fas fa-concierge-bell"></i>Your Service
-            </a>
+            </Link>
           </div>
 
           <button className="logout-btn">
