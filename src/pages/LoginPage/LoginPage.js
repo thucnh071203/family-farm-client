@@ -16,8 +16,10 @@ const LoginPage = () => {
           alt="Background"
         />
       </div>
-      <div className="div">
-        <div className="frame">
+      <div className="div px-4 sm:px-6 lg:px-8 mx-auto flex flex-col md:flex-row items-center gap-4">
+        {/* Gọi component form */}
+        <LoginForm />
+        <div className="frame w-full md:w-1/2 mb-10 md:mb-0 mt-20 md:mt-0">
           <p className="we-always-welcome">
             We Always Welcome Experienced People To Work With Farmers.
           </p>
@@ -25,9 +27,6 @@ const LoginPage = () => {
             Join as an Expert!
           </Link>
         </div>
-
-        {/* Gọi component form */}
-        <LoginForm />
       </div>
     </div>
   );
