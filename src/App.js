@@ -1,18 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./App.css";
-import FriendPageSidebar from "./layouts/FriendPageSidebar";
 import LoginPage from "./pages/LoginPage/LoginPage";
-import { FilterService } from "./layouts/FilterService";
 import HomePage from './pages/HomePage/HomePage';
+
+import { Toaster } from "sonner";
 
 function App() {
   return (
     <div className="App">
-      {/* <FilterService /> */}
-      {/* <LoginPage/> */}
+      {/* vị trí của toast  */}
+      <Toaster position="top-right"/>
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </Router>
     </div>

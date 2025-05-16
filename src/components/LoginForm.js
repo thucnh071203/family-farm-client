@@ -5,17 +5,57 @@ import mdiClock from '.././assets/images/mdi_clock.png';
 import iconEye from '.././assets/images/mdi_eye (1).png';
 import googleIcon from '.././assets/images/devicon_google.png';
 import fbIcon from '.././assets/images/devicon-plain_facebook.png';
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+import { useState } from "react";
+import axios from 'axios';
+import { toast } from "sonner";
+
+
 
 const LoginForm = () => {
+  //Dùng để lấy và set giá trị cho 2 input là username và password
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  //Xử lý logic đăng nhập
+  const handleLogin = async () => {
+    axios.post("http://localhost:5050/api/authen/login", {
+      Identifier: username,
+      Password: password
+    })
+      .then(response => {
+        const data = response.data;
+        
+        if (response.status === 200) {
+          localStorage.setItem("accessToken", data.accessToken);
+          localStorage.setItem("refreshToken", data.refreshToken);
+          localStorage.setItem("username", data.username);
+          localStorage.setItem("tokenExpiryIn", data.tokenExpiryIn);
+
+          toast.success("Đăng nhập thành công!");
+          navigate("/");
+        } else {
+          toast.error("Đăng nhập thất bại!");
+        }
+
+      })
+      .catch(error => {
+        toast.error("Đăng nhập thất bại!");
+      })
+  }
+
   return (
     <div className="overlap">
       <div className="frame-2">
         <div className="div-wrapper">
-          <div className="text-wrapper-2">Login</div>
+          <button type="button" className="text-wrapper-2" onClick={handleLogin}>Login</button>
         </div>
         <div className="frame-3">
           <div className="text-wrapper-3">Don’t have an account?</div>
-          <a href="#" className="text-wrapper-4">Register now</a>
+          <Link to="/register" className="text-wrapper-4">Register now</Link>
         </div>
       </div>
 
@@ -37,11 +77,17 @@ const LoginForm = () => {
         <div className="overlap-group-wrapper">
           <div className="overlap-group">
             <img className="mdi-user" src={mdiUser} alt="User Icon" />
+
+            {/* INPUT USERNAME  */}
             <input
               className="input-text"
               type="text"
               placeholder="Enter your username, email or phone"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
+
+
           </div>
         </div>
         <div className="text-wrapper-9">Your username is required.</div>
@@ -56,11 +102,17 @@ const LoginForm = () => {
         <div className="overlap-group-wrapper">
           <div className="overlap-group">
             <img className="mdi-clock" src={mdiClock} alt="Clock Icon" />
+
+            {/* INPUT CHO PASSWORD  */}
             <input
               className="input-text"
               type="password"
               placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
+
+
             <img className="mdi-eye" src={iconEye} alt="Eye Icon" />
           </div>
         </div>
@@ -71,7 +123,7 @@ const LoginForm = () => {
           <input type="checkbox" />
           <span className="text-wrapper-10">Remember me!</span>
         </label>
-        <a className="text-wrapper-11" href="#">Forgot password?</a>
+        <Link to="/forgot-password" className="text-wrapper-11" href="#">Forgot password?</Link>
       </div>
 
       <div className="frame-8">
