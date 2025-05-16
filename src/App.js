@@ -1,7 +1,12 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
+
 import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from './pages/HomePage/HomePage';
+import FriendRight from "./components/Friend/FriendRight";
+import FriendPage from "./pages/FriendPage/FriendPage";
+import FriendSidebar from "./components/Friend/FriendSidebar";
+
 
 import { Toaster } from "sonner";
 

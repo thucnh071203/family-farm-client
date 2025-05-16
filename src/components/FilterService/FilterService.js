@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export const FilterService = () => {
   return (
@@ -31,18 +32,18 @@ export const FilterService = () => {
             {/* Publish Date */}
             <div>
               <h4 className="text-gray-500 mb-2">Publish date</h4>
-              <a href="#" className="text-sky-400 block mb-1 ml-1">
+              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 Today
-              </a>
-              <a href="#" className="text-sky-400 block mb-1 ml-1">
+              </Link>
+              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 This week
-              </a>
-              <a href="#" className="text-sky-400 block mb-1 ml-1">
+              </Link>
+              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 This month
-              </a>
-              <a href="#" className="text-sky-400 block mb-1 ml-1">
+              </Link>
+              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 This year
-              </a>
+              </Link>
             </div>
 
             {/* Star & Price */}
@@ -57,18 +58,18 @@ export const FilterService = () => {
                 </select>
               </div>
               <h4 className="text-gray-500 mb-2">Service price</h4>
-              <a href="#" className="text-sky-400 block mb-1 ml-1">
+              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 Lower 200.000
-              </a>
-              <a href="#" className="text-sky-400 block mb-1 ml-1">
+              </Link>
+              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 200.000 to 500.000
-              </a>
-              <a href="#" className="text-sky-400 block mb-1 ml-1">
+              </Link>
+              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 500.000 to 1.000.000
-              </a>
-              <a href="#" className="text-sky-400 block mb-1 ml-1">
+              </Link>
+              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 Greater 1.000.000
-              </a>
+              </Link>
             </div>
           </div>
 
