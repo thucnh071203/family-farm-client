@@ -4,6 +4,7 @@ import "../../styles/globals.css";
 import "../../styles/styleguilde.css";
 import "./loginstyle.css";
 import backgroundImg from '../../assets/images/469337637_593611579790872_3160416761111677688_n.jpg';
+import { Link } from "react-router-dom";
 
 
 const LoginPage = () => {
@@ -20,9 +21,9 @@ const LoginPage = () => {
           <p className="we-always-welcome">
             We Always Welcome Experienced People To Work With Farmers.
           </p>
-          <a href="#" className="text-wrapper">
+          <Link to="/register" className="text-wrapper">
             Join as an Expert!
-          </a>
+          </Link>
         </div>
 
         {/* Gọi component form */}
