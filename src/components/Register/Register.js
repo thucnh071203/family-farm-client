@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 export const Register = () => {
   const [formData, setFormData] = useState({
@@ -23,12 +24,18 @@ export const Register = () => {
     if (!formData.fullName.trim())
       newErrors.fullName = "Full name is required.";
     if (!formData.email.trim()) newErrors.email = "Email is required.";
+    if (!/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Invalid email format.";
+
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
     if (!formData.identifier.trim())
       newErrors.identifier = "Identifier number is required.";
     if (!formData.username.trim()) newErrors.username = "Username is required.";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
     setErrors(newErrors);
+    if (formData.password.length < 6)
+  newErrors.password = "Password must be at least 6 characters.";
+
 
     if (Object.keys(newErrors).length === 0) {
       alert("Form submitted!");
@@ -107,7 +114,7 @@ export const Register = () => {
                 <input
                   type="email"
                   name="email"
-                  value={formData.fullName}
+                  value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter your email"
                   className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
@@ -352,10 +359,7 @@ export const Register = () => {
               Upload
             </button>
             <p className="text-sm">
-              Your file:{" "}
-              <a href="#" className="text-blue-400">
-                My Resume.pdf
-              </a>
+              Your file: <Link className="text-blue-400">My Resume.pdf</Link>
             </p>
           </div>
 
