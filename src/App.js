@@ -2,11 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import LoginPage from "./pages/LoginPage/LoginPage";
-import HomePage from './pages/HomePage/HomePage';
+import HomePage from "./pages/HomePage/HomePage";
 import FriendRight from "./components/Friend/FriendRight";
 import FriendPage from "./pages/FriendPage/FriendPage";
 import FriendSidebar from "./components/Friend/FriendSidebar";
-
 
 import { Toaster } from "sonner";
 
@@ -14,11 +13,12 @@ function App() {
   return (
     <div className="App">
       {/* vị trí của toast  */}
-      <Toaster position="top-right"/>
+      <Toaster position="top-right" />
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/friend" element={<FriendPage />} />
         </Routes>
       </Router>
     </div>

@@ -22,7 +22,7 @@ const LoginForm = () => {
 
   //Xử lý logic đăng nhập
   const handleLogin = async () => {
-    axios.post("http://localhost:5050/api/authen/login", {
+    axios.post("https://localhost:7280/api/authen/login", {
       Identifier: username,
       Password: password
     })

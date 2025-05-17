@@ -1,16 +1,17 @@
-import React from "react";
 import FriendSidebar from "../../components/Friend/FriendSidebar";
 import FriendRight from "../../components/Friend/FriendRight";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/Header/Header";
-import HomePage from "../HomePage/HomePage";
 
 const FriendPage = () => {
+  const [section, setSection] = useState("list-follower");
+
   return (
     <div>
-    
+    <Header/>
       <div className="flex">
-        <FriendSidebar />
-        <FriendRight />
+        <FriendSidebar setSection={setSection} />
+        <FriendRight section={section} />
       </div>
     </div>
   );
