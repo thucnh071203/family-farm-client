@@ -1,10 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import FriendPageSidebar from "./layouts/FriendPageSidebar";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import { FilterService } from "./layouts/FilterService";
-import HomePage from './pages/HomePage/HomePage';
-
+import HomePage from "./pages/HomePage/HomePage";
+import { Register } from "./components/Register/Register";
 
 function App() {
   return (
@@ -14,6 +11,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/Register" element={<Register />} />
         </Routes>
       </Router>
     </div>
