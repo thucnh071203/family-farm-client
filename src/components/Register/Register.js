@@ -1,50 +1,93 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { toast, Toaster } from "sonner";
+
+import { useNavigate } from "react-router-dom";
 
 export const Register = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
-    identifier: "",
+    identify: "",
     username: "",
     password: "",
+    passwordConfirm: "",
+    city: "",
+    country: "",
   });
+
+  const navigate = useNavigate();
 
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" }); // clear error khi gõ
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
+
+    // Kiểm tra form
     if (!formData.fullName.trim())
       newErrors.fullName = "Full name is required.";
     if (!formData.email.trim()) newErrors.email = "Email is required.";
-    if (!/\S+@\S+\.\S+/.test(formData.email))
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Invalid email format.";
-
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
-    if (!formData.identifier.trim())
-      newErrors.identifier = "Identifier number is required.";
+    if (!formData.city.trim()) newErrors.city = "city is required.";
+    if (!formData.country.trim()) newErrors.country = "country is required.";
+    if (!formData.identify.trim())
+      newErrors.identify = "Identifier number is required.";
     if (!formData.username.trim()) newErrors.username = "Username is required.";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
+    else if (formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters.";
+    if (formData.passwordConfirm !== formData.password)
+      newErrors.passwordConfirm = "Password and Confirm Password must be same.";
+
     setErrors(newErrors);
-    if (formData.password.length < 6)
-  newErrors.password = "Password must be at least 6 characters.";
+    if (Object.keys(newErrors).length > 0) return;
 
+    //loại passwordConfirm
+    const { passwordConfirm, ...dataToSend } = formData;
 
-    if (Object.keys(newErrors).length === 0) {
-      alert("Form submitted!");
+    try {
+      const response = await axios.post(
+        "https://localhost:7280/api/authen/register-farmer",
+        dataToSend
+      );
+
+      if (response.status === 201 || response.status === 200) {
+        toast.success("Đăng ký thành công!");
+        navigate("/login");
+      }
+    } catch (error) {
+      // Ưu tiên lỗi message từ backend
+      const backendMessage = error.response?.data?.messageError;
+      const backendErrors = error.response?.data?.errors;
+
+      if (backendMessage) {
+        toast.error(`Lỗi: ${backendMessage}`);
+      } else if (backendErrors) {
+        // Nếu backend trả về nhiều lỗi dạng object
+        const errorMessages = Object.values(backendErrors).flat().join(", ");
+        toast.error(`Lỗi: ${errorMessages}`);
+      } else {
+        toast.error("Đăng ký thất bại. Vui lòng kiểm tra lại.");
+      }
     }
   };
 
   return (
     <div className="bg-gray-100">
-      <div className="min-h-screen flex flex-col md:flex-row">
+      <Toaster position="top-right" richColors />
+      <div className="w-full min-h-screen flex flex-col md:flex-row overflow-y-auto h-full">
+        {/* <aside className=" lg:w-1/4 bg-white shadow p-4 overflow-y-auto h-full"> */}
+
         <div className="bg-white shadow-lg rounded-lg p-8 w-full md:w-2/3 lg:w-1/2">
           <div className="mb-6 flex">
             <img
@@ -66,13 +109,6 @@ export const Register = () => {
                 Full name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
-                {/* <input
-                  id="fullName"
-                  name="fullName"
-                  type="text"
-                  placeholder="Enter your full name"
-                  className="w-full border rounded px-4 py-2 pl-10 text-sm"
-                /> */}
                 <input
                   type="text"
                   name="fullName"
@@ -189,17 +225,17 @@ export const Register = () => {
               <div className="relative">
                 <input
                   type="text"
-                  name="identifier"
-                  value={formData.identifier}
+                  name="identify"
+                  value={formData.identify}
                   onChange={handleChange}
-                  placeholder="Enter your identifier number"
+                  placeholder="Enter your identify number"
                   className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
-                    errors.identifier ? "border-red-500" : ""
+                    errors.identify ? "border-red-500" : ""
                   }`}
                 />
-                {errors.identifier && (
+                {errors.identify && (
                   <p className="text-xs text-red-500 mt-1">
-                    {errors.identifier}
+                    {errors.identify}
                   </p>
                 )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
@@ -221,8 +257,83 @@ export const Register = () => {
               </div>
             </div>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-left block text-sm font-medium">
+                City <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder="Enter your city"
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.city ? "border-red-500" : ""
+                  }`}
+                />
+                {errors.city && (
+                  <p className="text-xs text-red-500 mt-1">{errors.city}</p>
+                )}
 
-          <h2 className="text-left text-green-600 font-semibold mt-8 mb-4">
+                <span className="absolute left-3 top-2.5 text-blue-400">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-left block text-sm font-medium">
+                Country <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  placeholder="Enter your country"
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.country ? "border-red-500" : ""
+                  }`}
+                />
+                {errors.country && (
+                  <p className="text-xs text-red-500 mt-1">{errors.country}</p>
+                )}
+                <span className="absolute left-3 top-2.5 text-blue-400">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
+                    />
+                  </svg>
+                </span>
+              </div>
+            </div>
+          </div>
+          <h2 className="text-left text-green-600 font-semibold mt-4 mb-4">
             2 - Write some security information.
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -312,16 +423,18 @@ export const Register = () => {
               <div className="relative">
                 <input
                   type="password"
-                  name="password"
-                  value={formData.password}
+                  name="passwordConfirm"
+                  value={formData.passwordConfirm}
                   onChange={handleChange}
-                  placeholder="Enter your password"
+                  placeholder="Re-enter your password"
                   className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
-                    errors.password ? "border-red-500" : ""
+                    errors.passwordConfirm ? "border-red-500" : ""
                   }`}
                 />
-                {errors.password && (
-                  <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+                {errors.passwordConfirm && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.passwordConfirm}
+                  </p>
                 )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <svg
@@ -348,7 +461,7 @@ export const Register = () => {
             </div>
           </div>
 
-          <h2 className="text-left text-green-600 font-semibold mt-8 mb-4">
+          <h2 className="text-left text-green-600 font-semibold mt-4 mb-4">
             3 - Upload some file for Expert.
           </h2>
           <label className="text-left block text-sm">
@@ -359,11 +472,14 @@ export const Register = () => {
               Upload
             </button>
             <p className="text-sm">
-              Your file: <Link className="text-blue-400">My Resume.pdf</Link>
+              Your file:{" "}
+              <Link to="/CreateProgessStep" className="text-blue-400">
+                My Resume.pdf
+              </Link>
             </p>
           </div>
 
-          <div className="flex justify-between mt-8">
+          <div className="flex justify-between">
             <button className="text-red-500 flex items-center gap-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -421,3 +537,4 @@ export const Register = () => {
     </div>
   );
 };
+export default Register;
