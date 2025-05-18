@@ -128,3 +128,4 @@ export const ServiceManagement = () => {
     </div>
   );
 };
+export default ServiceManagement;
