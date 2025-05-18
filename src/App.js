@@ -4,6 +4,7 @@ import "./App.css";
 import Register from "./components/Register/Register";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
+import ServicePage from "./pages/ServicePage/ServicePage";
 import FriendRight from "./components/Friend/FriendRight";
 import FriendPage from "./pages/FriendPage/FriendPage";
 import FriendSidebar from "./components/Friend/FriendSidebar";
@@ -25,6 +26,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/friend" element={<FriendPage />} />
           <Route path="/CreateProgessStep" element={<CreateProgessStep />} />
+          <Route path="/Service" element={<ServicePage />} />
         </Routes>
       </Router>
     </div>
