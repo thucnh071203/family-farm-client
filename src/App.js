@@ -9,6 +9,9 @@ import FriendPage from "./pages/FriendPage/FriendPage";
 import FriendSidebar from "./components/Friend/FriendSidebar";
 import ServiceManagement from "./components/ServiceManagement/ServiceManagement";
 import CreateProgessStep from "./components/ProgressStep/CreateProgessStep";
+import { Statistic1 } from "./components/Statistic/Statistic1";
+import  MapChart  from "./components/Statistic/MapChart";
+import { UserGrowthChart } from "./components/Statistic/UserGrowthChart";
 
 import { Toaster } from "sonner";
 
@@ -25,6 +28,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/friend" element={<FriendPage />} />
           <Route path="/CreateProgessStep" element={<CreateProgessStep />} />
+          <Route path="/Statistic1" element={<Statistic1 />} />
+          <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
+          <Route path="/MapChart" element={<MapChart />} />
         </Routes>
       </Router>
     </div>

@@ -7,6 +7,12 @@ const HomePage = () => {
     <div className="HomePage">
       <Header />
       <Link to="/Register">Register</Link>
+      <br></br>
+      <Link to="/Statistic1">Statistic</Link>
+      <br></br>
+      <Link to="/UserGrowthChart">User Growth</Link>
+      <br></br>
+      <Link to="/MapChart">MapChart</Link>
     </div>
   );
 };
