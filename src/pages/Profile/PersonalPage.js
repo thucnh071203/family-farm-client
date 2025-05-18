@@ -45,7 +45,7 @@ const PersonalPage = () => {
     return (
         <div className="min-h-screen flex flex-col">
             <Header />
-            <div className="flex-grow overflow-y-auto">
+            <div className="flex-grow">
                 <div className="container mx-auto max-w-6xl">
                     <div className="relative">
                         <ProfileCover />
