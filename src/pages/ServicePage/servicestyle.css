@@ -1,3 +1,7 @@
+html, body {
+  overflow: auto;
+}
+
 .service {
   background-color: #ffffff;
   display: flex;
