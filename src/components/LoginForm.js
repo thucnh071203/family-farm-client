@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import { useState } from "react";
-import axios from "axios";
+import axios from "../Axios/axiosConfig";
 import { toast } from "sonner";
 
 const LoginForm = () => {
@@ -21,7 +21,7 @@ const LoginForm = () => {
   //Xử lý logic đăng nhập
   const handleLogin = async () => {
     axios
-      .post("https://localhost:7280/api/authen/login", {
+      .post('/api/authen/login', {
         Identifier: username,
         Password: password,
       })

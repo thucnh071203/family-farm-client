@@ -7,10 +7,19 @@ import defaultAvatar from '../../assets/images/default-avatar.png';
 const Header = () => {
     const [isSidebarActive, setIsSidebarActive] = useState(false);
     const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [usernameStorage, setUsernameStorage] = useState("");
 
     const toggleSidebar = () => {
         setIsSidebarActive((prev) => !prev);
     };
+
+    //Lấy username lưu trong local storage
+    useEffect(() => {
+        const username = localStorage.getItem("username");
+        if (username) {
+            setUsernameStorage(username);
+        }
+    }, []);
 
     useEffect(() => {
         const handleResize = () => {
@@ -48,12 +57,21 @@ const Header = () => {
                     <i className="fa-solid fa-comment"></i>
                     <div className="chat-number">10</div>
                 </div>
-                <div className="avatar-box">
-                    <div className="avatar-circle">
-                        <img src={defaultAvatar} alt="avatar" />
+
+                {/* xử lý hiện thị khi login thành công  */}
+                {usernameStorage ? (
+                    <div className="avatar-box">
+                        <div className="avatar-circle">
+                            <img src={defaultAvatar} alt="avatar" />
+                        </div>
+                        <p className="name-account">Phuong Nam</p>
                     </div>
-                    <p className="name-account">Phuong Nam</p>
-                </div>
+
+                ) : (
+                    <div class="login-box">
+                        <Link to="/login">Login</Link>
+                    </div>
+                )}
             </div>
 
             <div className="menu-responsive" onClick={toggleSidebar}>
@@ -81,30 +99,38 @@ const Header = () => {
                     <p>Service</p>
                 </Link>
 
-                <div
-                    className="sidebar-item sidebar-item-profile"
-                    onClick={() => setDropdownVisible((prev) => !prev)}
-                >
-                    <div className="sidebar-item-profile-avatar">
-                        <div>
+                {usernameStorage ? (
+                    <div
+                        className="sidebar-item sidebar-item-profile"
+                        onClick={() => setDropdownVisible((prev) => !prev)}
+                    >
+                        <div className="sidebar-item-profile-avatar">
                             <div>
-                                <img src={defaultAvatar} alt="avatar" />
+                                <div>
+                                    <img src={defaultAvatar} alt="avatar" />
+                                </div>
+                                <p>Personal</p>
                             </div>
-                            <p>Personal</p>
+                            <i className="fa-solid fa-caret-down dropdown-icon"></i>
                         </div>
-                        <i className="fa-solid fa-caret-down dropdown-icon"></i>
-                    </div>
 
-                    {dropdownVisible && (
-                        <div className="dropdown-personal">
-                            <ul>
-                                <li>Profile</li>
-                                <li>Notifications</li>
-                                <li>Chats</li>
-                            </ul>
-                        </div>
-                    )}
-                </div>
+                        {dropdownVisible && (
+                            <div className="dropdown-personal">
+                                <ul>
+                                    <li>Profile</li>
+                                    <li>Notifications</li>
+                                    <li>Chats</li>
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <Link to="/login" class="sidebar-item">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <p>Login</p>
+                    </Link>
+                )}
+
             </div>
         </header>
     );
