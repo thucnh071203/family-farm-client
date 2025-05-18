@@ -38,7 +38,7 @@ const FriendSidebar = ({ setSection }) => {
           onClick={() => setSection("list-follower")}
           className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"
         >
-           <div className="mx-4 flex items-center">
+          <div className="mx-4 flex items-center">
             <i class="fa-solid fa-user-plus"></i>
           </div>
           <div className="font-bold flex items-center">Friend suggestions</div>
