@@ -10,6 +10,7 @@ import FriendPage from "./pages/FriendPage/FriendPage";
 import FriendSidebar from "./components/Friend/FriendSidebar";
 import ServiceManagement from "./components/ServiceManagement/ServiceManagement";
 import CreateProgessStep from "./components/ProgressStep/CreateProgessStep";
+import PersonalPage from "./pages/Profile/PersonalPage";
 
 import { Toaster } from "sonner";
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/Register" element={<Register />} />
           <Route path="/ServiceManagement" element={<ServiceManagement />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/PersonalPage" element={<PersonalPage />} />
           <Route path="/friend" element={<FriendPage />} />
           <Route path="/CreateProgessStep" element={<CreateProgessStep />} />
           <Route path="/Service" element={<ServicePage />} />

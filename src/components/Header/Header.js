@@ -38,7 +38,7 @@ const Header = () => {
                 <Link to="/" href="#">
                     <img src={logo} alt="logo" />
                 </Link>
-                <h3 className="name-page">Family Farm</h3>
+                <h3 className="name-page font-bold">Family Farm</h3>
             </div>
 
             <div className="search-box">
