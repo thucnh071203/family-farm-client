@@ -6,7 +6,7 @@ const FriendSidebar = ({ setSection }) => {
       <div className="ml-8 pt-6 flex items-start">
         <p className="text-lg font-bold ">FRIEND PAGE</p>
       </div>
-      <div className="mx-8 mt-14 w-[225px] h-[155px] flex flex-col gap-4">
+      <div className="mx-8 mt-11 w-[225px] h-[155px] flex flex-col gap-4">
         <button
           onClick={() => setSection("list-follower")}
           className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"
