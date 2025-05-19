@@ -11,8 +11,13 @@ import FriendSidebar from "./components/Friend/FriendSidebar";
 import ServiceManagement from "./components/ServiceManagement/ServiceManagement";
 import CreateProgessStep from "./components/ProgressStep/CreateProgessStep";
 import PersonalPage from "./pages/Profile/PersonalPage";
+import PostInGroupCard from "./components/Group/PostInGroupCard";
 
 import { Toaster } from "sonner";
+import PostCard from "./components/Post/PostCard";
+import OptionsPost from "./components/Post/OptionsPost";
+import PostInGroupRight from "./components/Group/PostInGroupRight";
+import PostGroupPage from "./pages/GroupPage/PostGroupPage";
 
 function App() {
   return (
@@ -29,6 +34,7 @@ function App() {
           <Route path="/friend" element={<FriendPage />} />
           <Route path="/CreateProgessStep" element={<CreateProgessStep />} />
           <Route path="/Service" element={<ServicePage />} />
+          <Route path="/Group" element={<PostGroupPage />} />
         </Routes>
       </Router>
     </div>

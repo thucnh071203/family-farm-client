@@ -2,7 +2,7 @@ import React from "react";
 
 const GroupSidebar = () => {
   return (
-    <div className="w-[289px] h-screen bg-[#E5E4E9] font-roboto rounded-r-[10px]  hidden md:block">
+    <div className="w-[289px] bg-[#E5E4E9] font-roboto rounded-r-[10px]  hidden md:block">
       <div className="ml-8 pt-6 flex items-start">
         <p className="text-lg font-bold ">GROUP PAGE</p>
       </div>
@@ -26,12 +26,10 @@ const GroupSidebar = () => {
           <div className="font-bold flex items-center">Suggested Groups </div>
         </button>
         <button className="hover:bg-[#3DB3FB] flex justify-center items-center w-full h-10 rounded-[10px]  hover:text-white gap-2">
-         
-            <div>
-              <i class="fa-solid fa-plus"></i>
-            </div>
-            <div className="font-bold">Create new Group</div>
-          
+          <div>
+            <i class="fa-solid fa-plus"></i>
+          </div>
+          <div className="font-bold">Create new Group</div>
         </button>
       </div>
     </div>

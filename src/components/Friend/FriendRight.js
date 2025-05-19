@@ -70,7 +70,7 @@ const FriendRight = ({ section }) => {
         </p>
         <div className="flex gap-6 items-center mt-6 mb-10 mx-10 md:mx-20">
           <div className="flex justify-center items-center">
-            <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1]border-solid border">
+            <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1]border-solid outline outline-[0.5px] outline-gray-200">
               <i className="fa-solid fa-magnifying-glass flex h-full justify-center items-center shrink-0 px-2 text-[#999999]"></i>
               <input
                 type="text"
