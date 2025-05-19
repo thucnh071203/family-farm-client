@@ -63,7 +63,7 @@ const FriendRight = ({ section }) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full lg:mt-[120px] mt-[63px]">
       <div>
         <p className="font-bold text-lg flex items-start mt-8 mx-10 md:mx-20">
           {sectionTitles[section] || "Default title"}

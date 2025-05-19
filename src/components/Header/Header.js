@@ -3,8 +3,6 @@ import './header.css'; // giữ nguyên CSS cũ
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import defaultAvatar from '../../assets/images/default-avatar.png';
-import NotificationList from '../Notification/NotificationList';
-import ChatList from '../Chat/ChatList';
 
 const Header = () => {
     const [isSidebarActive, setIsSidebarActive] = useState(false);
@@ -35,7 +33,7 @@ const Header = () => {
     }, []);
 
     return (
-        <header>
+        <header className='fixed z-50'>
             <div className="logo">
                 <Link to="/" href="#">
                     <img src={logo} alt="logo" />
@@ -51,8 +49,14 @@ const Header = () => {
             </div>
 
             <div className="action">
-                <NotificationList />
-                <ChatList />
+                <div className="notifi-box">
+                    <i className="fa-solid fa-bell"></i>
+                    <div className="notifi-number">4</div>
+                </div>
+                <div className="chat-box">
+                    <i className="fa-solid fa-comment"></i>
+                    <div className="chat-number">10</div>
+                </div>
 
                 {/* xử lý hiện thị khi login thành công  */}
                 {usernameStorage ? (

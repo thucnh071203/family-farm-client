@@ -15,7 +15,7 @@ const CoverBackground = ({ coverImage: initialCoverImage }) => {
   };
 
   return (
-    <div className="relative h-72 bg-gray-200 group">
+    <div className="relative h-72 bg-gray-200 group lg:mt-[120px] mt-[63px]">
       <img src={
         coverImage ||
         "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg"

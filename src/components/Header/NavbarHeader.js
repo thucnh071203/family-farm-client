@@ -8,7 +8,7 @@ import serviceIcon from "../../assets/images/nam_eos-icons_service.svg";
 
 const NavbarHeader = () => {
     return (
-        <nav className="navbar-header bg-white">
+        <nav className="navbar-header bg-white mt-14 fixed z-50">
             <div className="navbar-header-wrapper">
                 <Link to="/" className="navbar-header-item item-active">
                     <i className="fa-solid fa-house"></i>

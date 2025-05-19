@@ -1,5 +1,7 @@
 import React from "react";
 import FriendActionButton from "./FriendActionButton";
+import UserFriends from "../../pages/Profile/UserFriends";
+import { Link } from "react-router-dom";
 
 const FriendList = ({ friends }) => {
   const defaultFriends = [
@@ -20,9 +22,9 @@ const FriendList = ({ friends }) => {
     <div className="bg-white p-5 rounded-lg shadow-md">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold mb-3">Friends ({friendList.length})</h2>
-        <a className="text-blue-800" href="#">
+        <Link className="text-blue-800" to="/UserFriends">
           See all
-        </a>
+        </Link>
       </div>
       <div className="flex flex-col gap-3">
         {friendList.map((friend) => {

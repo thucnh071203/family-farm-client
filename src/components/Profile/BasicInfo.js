@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const BasicInfo = ({ info }) => {
     const defaultInfo = {
@@ -29,16 +30,18 @@ const BasicInfo = ({ info }) => {
                     <p className="font-bold pt-1 pb-1">Study at</p> {userInfo.study}
                 </div>
                 <i className="fa-solid fa-graduation-cap w-6 text-yellow-600"></i>
-            </div> 
+            </div>
             <div className="flex justify-between items-center pb-3">
                 <div>
                     <p className="font-bold pt-1 pb-1">Worked at</p> {userInfo.work}
                 </div>
                 <i className="fa-solid fa-briefcase w-6 text-sky-500"></i>
             </div>
-            <button className="w-full font-bold mt-3 p-2 bg-gray-200 rounded-md">
-                Edit Information
-            </button>
+            <Link to="/UpdateProfile">
+                <button className="w-full font-bold mt-3 p-2 bg-gray-200 rounded-md">
+                    Edit Information
+                </button>
+            </Link>
         </div>
     );
 };
