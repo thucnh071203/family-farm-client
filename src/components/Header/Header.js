@@ -33,7 +33,7 @@ const Header = () => {
     }, []);
 
     return (
-        <header>
+        <header className='fixed z-50'>
             <div className="logo">
                 <Link to="/" href="#">
                     <img src={logo} alt="logo" />

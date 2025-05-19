@@ -3,7 +3,7 @@ import MoreIcon from "../../assets/images/more_horiz.svg";
 import OptionsPost from "../Post/OptionsPost";
 const PostInGroupCard = ({ post }) => {
   const defaultPost = {
-    username: "Phuong Nam",
+    fullName: "Phuong Nam",
     avatar:
       "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
     timestamp: "July 29, 2018, 07:49 AM",
@@ -97,9 +97,8 @@ const PostInGroupCard = ({ post }) => {
                   return (
                     <div
                       key={index}
-                      className={`relative rounded-md overflow-hidden ${
-                        postData.images.length === 1 ? "col-span-2" : ""
-                      }`}
+                      className={`relative rounded-md overflow-hidden ${postData.images.length === 1 ? "col-span-2" : ""
+                        }`}
                     >
                       <img
                         src={img}
@@ -135,13 +134,13 @@ const PostInGroupCard = ({ post }) => {
             </p>
           </div>
           <div className="flex gap-3">
-            <button className="p-1 bg-gray-200 rounded-sm">
+            <button className="p-2 bg-gray-200 rounded-sm">
               <i className="fa-solid fa-thumbs-up"></i> Like
             </button>
-            <button className="p-1 bg-gray-200 rounded-sm">
+            <button className="p-2 bg-gray-200 rounded-sm">
               <i className="fas fa-comment"></i> Comment
             </button>
-            <button className="p-1 bg-gray-200 rounded-sm">
+            <button className="p-2 bg-gray-200 rounded-sm">
               <i className="fa-solid fa-share"></i> Share
             </button>
           </div>

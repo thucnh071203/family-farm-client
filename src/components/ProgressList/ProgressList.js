@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ProgressNav from "../ProgressNav/ProgressNav";
 import "./progressListstyle.css";
-import '@fortawesome/fontawesome-free/css/all.min.css';
+// import '@fortawesome/fontawesome-free/css/all.min.css';
 import avaiProcess from "../../assets/images/fluent_person-available-20-filled.png";
 import unpaidOrder from "../../assets/images/material-symbols_warning.png";
 import waitingOrder from "../../assets/images/medical-icon_waiting-area.png";

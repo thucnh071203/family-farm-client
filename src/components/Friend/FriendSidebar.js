@@ -2,7 +2,7 @@ import React from "react";
 
 const FriendSidebar = ({ setSection }) => {
   return (
-    <div className="w-[289px] h-screen bg-[#E5E4E9] font-roboto rounded-r-[10px]  hidden md:block">
+    <div className="w-[289px] h-screen bg-[#E5E4E9] font-roboto rounded-r-[10px]  hidden md:block lg:mt-[120px] mt-[63px]">
       <div className="ml-8 pt-6 flex items-start">
         <p className="text-lg font-bold ">FRIEND PAGE</p>
       </div>

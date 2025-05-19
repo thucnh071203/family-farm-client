@@ -1,4 +1,3 @@
-import React from "react";
 import Header from "../../components/Header/Header";
 import CoverBackground from "../../components/Profile/CoverBackground";
 import ProfileAvatar from "../../components/Profile/ProfileAvatar";
