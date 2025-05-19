@@ -3,7 +3,6 @@ import React, { useState, useRef } from "react";
 const CoverBackground = ({ coverImage: initialCoverImage }) => {
   const [coverImage, setCoverImage] = useState(initialCoverImage);
   const [showCoverPopup, setShowCoverPopup] = useState(false);
-  const [coverZoom, setCoverZoom] = useState(1);
   const coverInputRef = useRef(null);
 
   const handleCoverImageChange = (e) => {
@@ -13,11 +12,6 @@ const CoverBackground = ({ coverImage: initialCoverImage }) => {
       setCoverImage(imageUrl);
       setShowCoverPopup(false);
     }
-  };
-
-  const handleZoomChange = (value) => {
-    const newZoom = Math.max(1, Math.min(3, Number(value)));
-    setCoverZoom(newZoom);
   };
 
   return (
@@ -50,18 +44,7 @@ const CoverBackground = ({ coverImage: initialCoverImage }) => {
               <img src={coverImage || "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg"
               }
                 alt="Background"
-                className="max-w-full max-h-full object-contain"
-                style={{ transform: `scale(${coverZoom})` }} />
-            </div>
-            <div className="mt-4 w-48">
-              <label className="block mb-2">Zoom:</label>
-              <input type="range"
-                min="1"
-                max="3"
-                step="0.1"
-                value={coverZoom}
-                onChange={(e) => handleZoomChange("cover", e.target.value)}
-                className="w-full" />
+                className="max-w-full max-h-full object-contain"/>
             </div>
             <button onClick={() => coverInputRef.current.click()} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md" >
               Change Background

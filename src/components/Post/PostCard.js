@@ -3,7 +3,7 @@ import MoreIcon from "../../assets/images/more_horiz.svg";
 import OptionsPost from "./OptionsPost";
 const PostCard = ({ post }) => {
   const defaultPost = {
-    username: "Phuong Nam",
+    fullName: "Phuong Nam",
     avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
     createAt: "July 29 2024, 07:49 AM",
     content:
@@ -28,7 +28,7 @@ const PostCard = ({ post }) => {
             className="w-10 h-10 rounded-full"
           />
           <div>
-            <h3 className="font-bold">{postData.username}</h3>
+            <h3 className="font-bold">{postData.fullName}</h3>
             <p className="text-sm text-gray-500">{postData.createAt}</p>
           </div>
         </div>
@@ -50,7 +50,7 @@ const PostCard = ({ post }) => {
           ))}
         </p>
         <p className="mb-3 flex">
-          <p className="font-bold"> Category:</p>
+          <p className="font-bold">Category: </p> 
           {category.map((cat, index) => (
             <span key={index} className="mr-2">
               {cat}

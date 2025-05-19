@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Cropper from "react-easy-crop";
 
 const ProfileAvatar = ({ profileImage: initialProfileImage, fullName }) => {
@@ -9,7 +9,6 @@ const ProfileAvatar = ({ profileImage: initialProfileImage, fullName }) => {
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [showProfilePopup, setShowProfilePopup] = useState(false);
-    const [profileZoom, setProfileZoom] = useState(1);
     const profileInputRef = useRef(null);
 
     const handleProfileImageChange = (e) => {
@@ -75,11 +74,6 @@ const ProfileAvatar = ({ profileImage: initialProfileImage, fullName }) => {
     const handleCropCancel = () => {
         setShowCropper(false);
         setImageToCrop(null);
-    };
-
-    const handleZoomChange = (value) => {
-        const newZoom = Math.max(1, Math.min(3, Number(value)));
-        setProfileZoom(newZoom);
     };
 
     return (
@@ -161,20 +155,7 @@ const ProfileAvatar = ({ profileImage: initialProfileImage, fullName }) => {
                                 "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png"
                             }
                                 alt="Avatar"
-                                className="w-full h-full object-contain rounded-md"
-                                style={{ transform: `scale(${profileZoom})` }} />
-                        </div>
-                        <div className="mt-4 w-48">
-                            <label className="block mb-2">Zoom:</label>
-                            <input
-                                type="range"
-                                min="1"
-                                max="3"
-                                step="0.1"
-                                value={profileZoom}
-                                onChange={(e) => handleZoomChange(e.target.value)}
-                                className="w-full"
-                            />
+                                className="w-full h-full object-contain rounded-md" />
                         </div>
                         <button onClick={() => profileInputRef.current.click()}
                             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md">

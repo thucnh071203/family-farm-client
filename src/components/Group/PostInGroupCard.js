@@ -3,7 +3,7 @@ import MoreIcon from "../../assets/images/more_horiz.svg";
 import OptionsPost from "../Post/OptionsPost";
 const PostInGroupCard = ({ post }) => {
   const defaultPost = {
-    username: "Phuong Nam",
+    fullName: "Phuong Nam",
     avatar:
       "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
     timestamp: "July 29, 2018, 07:49 AM",
