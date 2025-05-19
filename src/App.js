@@ -5,6 +5,7 @@ import Register from "./components/Register/Register";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ServicePage from "./pages/ServicePage/ServicePage";
+import ProgressListPage from "./pages/ProgressPage/ProgressListPage";
 import FriendPage from "./pages/FriendPage/FriendPage";
 import ServiceManagement from "./components/ServiceManagement/ServiceManagement";
 import CreateProgessStep from "./components/ProgressStep/CreateProgessStep";
@@ -25,14 +26,15 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/ServiceManagement" element={<ServiceManagement />} />
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/Login" element={<LoginPage />} />
           <Route path="/PersonalPage" element={<PersonalPage />} />
-          <Route path="/friend" element={<FriendPage />} />
+          <Route path="/Friend" element={<FriendPage />} />
           <Route path="/CreateProgessStep" element={<CreateProgessStep />} />
           <Route path="/Service" element={<ServicePage />} />
           <Route path="/Group" element={<PostGroupPage />} />
           <Route path="/UpdateProfile" element={<UpdateProfile />} />
           <Route path="/UserFriends" element={<UserFriends />} />
+          <Route path="/ProgressList" element={<ProgressListPage />} />
         </Routes>
       </Router>
     </div>
