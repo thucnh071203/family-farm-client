@@ -11,12 +11,13 @@ import FriendPage from "./pages/FriendPage/FriendPage";
 import ServiceManagement from "./components/ServiceManagement/ServiceManagement";
 import CreateProgessStep from "./components/ProgressStep/CreateProgessStep";
 import { Statistic1 } from "./components/Statistic/Statistic1";
-import  MapChart  from "./components/Statistic/MapChart";
+import MapChart from "./components/Statistic/MapChart";
 import { UserGrowthChart } from "./components/Statistic/UserGrowthChart";
 import PersonalPage from "./pages/Profile/PersonalPage";
 import UpdateProfile from "./pages/Profile/UpdateProfile";
 import UserFriends from "./pages/Profile/UserFriends";
 import PostGroupPage from "./pages/GroupPage/PostGroupPage";
+import GroupPage from "./pages/GroupPage/GroupPage";
 
 import { Toaster } from "sonner";
 
@@ -43,6 +44,7 @@ function App() {
           <Route path="/UserFriends" element={<UserFriends />} />
           <Route path="/ProgressList" element={<ProgressListPage />} />
           <Route path="/WaitingOrderList" element={<WaitingListPage />} />
+          <Route path="/GroupPage" element={<GroupPage />} />
         </Routes>
       </Router>
     </div>
