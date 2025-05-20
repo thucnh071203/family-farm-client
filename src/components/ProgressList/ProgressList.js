@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ProgressNav from "../ProgressNav/ProgressNav";
+import Header from "../Header/Header";
 import "./progressListstyle.css";
 // import '@fortawesome/fontawesome-free/css/all.min.css';
 import avaiProcess from "../../assets/images/fluent_person-available-20-filled.png";
@@ -17,7 +18,7 @@ import deatilIcon from "../../assets/images/material-symbols_read-more.png";
 
 export default function ProgressList() {
     return (
-        <div class="progress-managament">
+        <div class="progress-managament pt-16">
             <div class="div px-2">
                 <ProgressNav />
                 <div class="progress-container w-full mt-6 lg:mt-14 flex flex-col lg:flex-row lg:justify-center gap-6">
