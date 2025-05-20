@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ServicePage from "./pages/ServicePage/ServicePage";
 import ProgressListPage from "./pages/ProgressPage/ProgressListPage";
+import WaitingListPage from "./pages/WaitingPage/WaitingListPage";
 import FriendPage from "./pages/FriendPage/FriendPage";
 import ServiceManagement from "./components/ServiceManagement/ServiceManagement";
 import CreateProgessStep from "./components/ProgressStep/CreateProgessStep";
@@ -35,6 +36,7 @@ function App() {
           <Route path="/UpdateProfile" element={<UpdateProfile />} />
           <Route path="/UserFriends" element={<UserFriends />} />
           <Route path="/ProgressList" element={<ProgressListPage />} />
+          <Route path="/WaitingOrderList" element={<WaitingListPage />} />
         </Routes>
       </Router>
     </div>
