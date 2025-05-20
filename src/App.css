@@ -1,6 +1,16 @@
+html, body {
+  font-family: 'Arial', sans-serif !important;
+}
+
+#root {
+  height: 100%;
+  overflow: auto;
+}
+
 .App {
   text-align: center;
 }
+
 
 .App-logo {
   height: 40vmin;
