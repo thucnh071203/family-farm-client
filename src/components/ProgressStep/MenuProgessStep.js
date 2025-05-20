@@ -2,7 +2,14 @@ import React from "react";
 
 const MenuProgessStep = () => {
   return (
-    <aside className="w-full lg:w-1/4 bg-white shadow p-4 overflow-y-auto h-full">
+    <aside
+      className="w-full lg:w-1/4 bg-white shadow p-4 overflow-y-auto h-full"
+      style={{
+        minHeight: "280px",
+        maxHeight: "280px",
+        overflowY: "auto",
+      }}
+    >
       <h2 className="text-xl font-semibold mb-4">Menu</h2>
       <ul className="space-y-2">
         <li>

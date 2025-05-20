@@ -83,7 +83,14 @@ export const Register = () => {
   };
 
   return (
-    <div className="bg-gray-100">
+    <div
+      className="bg-gray-100"
+      style={{
+        minHeight: "600px",
+        maxHeight: "800px",
+        overflowY: "auto",
+      }}
+    >
       <Toaster position="top-right" richColors />
       <div className="w-full min-h-screen flex flex-col md:flex-row overflow-y-auto h-full">
         {/* <aside className=" lg:w-1/4 bg-white shadow p-4 overflow-y-auto h-full"> */}
@@ -234,9 +241,7 @@ export const Register = () => {
                   }`}
                 />
                 {errors.identify && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {errors.identify}
-                  </p>
+                  <p className="text-xs text-red-500 mt-1">{errors.identify}</p>
                 )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <svg
