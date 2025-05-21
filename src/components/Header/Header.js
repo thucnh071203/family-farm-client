@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './header.css'; // giữ nguyên CSS cũ
 import { Link } from 'react-router-dom';
+import NotificationList from '../Notification/NotificationList';
 import logo from '../../assets/images/logo.png';
 import defaultAvatar from '../../assets/images/default-avatar.png';
 
@@ -8,6 +9,7 @@ const Header = () => {
     const [isSidebarActive, setIsSidebarActive] = useState(false);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [usernameStorage, setUsernameStorage] = useState("");
+    const [showNotifi, setShowNotifi] = useState(false);
 
     const toggleSidebar = () => {
         setIsSidebarActive((prev) => !prev);
@@ -32,8 +34,15 @@ const Header = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
+    // Đóng popup notification
+    useEffect(() => {
+        const handleClose = () => setShowNotifi(false);
+        window.addEventListener("closeNotification", handleClose);
+        return () => window.removeEventListener("closeNotification", handleClose);
+    }, []);
+
     return (
-        <header className='fixed z-50'>
+        <header className='fixed z-[1000]'>
             <div className="logo">
                 <Link to="/" href="#">
                     <img src={logo} alt="logo" />
@@ -49,9 +58,15 @@ const Header = () => {
             </div>
 
             <div className="action">
-                <div className="notifi-box">
+                <div className="notifi-box" onClick={() => setShowNotifi(!showNotifi)}>
                     <i className="fa-solid fa-bell"></i>
                     <div className="notifi-number">4</div>
+                    {/* 💬 Hiển thị popup ở đây */}
+                    {showNotifi && (
+                        <div className="absolute top-10 right-0">
+                        <NotificationList />
+                        </div>
+                    )}
                 </div>
                 <div className="chat-box">
                     <i className="fa-solid fa-comment"></i>
