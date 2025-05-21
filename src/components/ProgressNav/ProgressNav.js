@@ -8,7 +8,7 @@ import progressIcon from "../../assets/images/fluent_step-16-filled_svg.svg";
 
 export default function ProgressNav() {
     return (
-        <div class="overflow-x-auto md:overflow-x-visible">
+        <div class="overflow-x-auto md:overflow-x-visible mt-7">
             <div class="frame w-full lg:max-w-[1197px] flex flex-row md:justify-center lg:justify-start mx-auto">
                 <div class="frame-overview">
                     <img class="img" src={overviewIcon} />

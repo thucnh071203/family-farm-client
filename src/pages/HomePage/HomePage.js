@@ -7,6 +7,7 @@ import PostCreate from "../../components/Post/PostCreate";
 import PostCard from "../../components/Post/PostCard";
 import SuggestedFriends from "../../components/Home/SuggestedFriends";
 import SuggestedGroups from "../../components/Home/SuggestedGroups";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const posts = [
@@ -46,6 +47,14 @@ const HomePage = () => {
 
   return (
     <div className="HomePage bg-gray-100">
+      {/* What the hell gì ở đây dậy */}
+      {/* <Link to="/Register">Register</Link>
+      <br></br>
+      <Link to="/Statistic1">Statistic</Link>
+      <br></br>
+      <Link to="/UserGrowthChart">User Growth</Link>
+      <br></br>
+      <Link to="/MapChart">MapChart</Link> */}
       <Header />
       <NavbarHeader />
       <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[63px]">
@@ -55,7 +64,6 @@ const HomePage = () => {
             <WeatherWidget />
             <PopularService />
           </aside>
-
           {/* Posts Section */}
           <section className="flex flex-col gap-5 lg:order-2 order-3">
             <PostCreate />
@@ -66,7 +74,7 @@ const HomePage = () => {
 
           {/* Right */}
           <section className="flex flex-col gap-5 lg:order-3 order-2">
-            {/* What the hell gì ở đây */}
+            {/* Cái hình gì đây để đại nghe m */}
             <WeatherWidget />
 
             {/* List Suggested */}
