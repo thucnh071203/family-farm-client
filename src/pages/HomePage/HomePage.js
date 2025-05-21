@@ -14,7 +14,7 @@ const HomePage = () => {
       <Link to="/UserGrowthChart">User Growth</Link>
       <br></br>
       <Link to="/MapChart">MapChart</Link>
-      <Header/>
+      {/* <Header/> */}
       <NavbarHeader/>
       {/* <Link to="/Register">Register</Link> */}
 
