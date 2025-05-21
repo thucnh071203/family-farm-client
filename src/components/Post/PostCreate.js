@@ -1,8 +1,8 @@
 import React from "react";
 
-const PostInput = ({ profileImage }) => {
+const PostCreate = ({ profileImage }) => {
   return (
-    <div className="bg-white p-3 rounded-lg shadow-md">
+    <div className="bg-white p-3 rounded-lg shadow-md border text-left">
       <button className="font-bold rounded-md pb-4">
         <i className="fa-solid fa-pencil"></i> Publish
       </button>
@@ -25,4 +25,4 @@ const PostInput = ({ profileImage }) => {
   );
 };
 
-export default PostInput;
+export default PostCreate;

@@ -30,7 +30,7 @@ const UserFriends = () => {
                 <Header />
                 <NavbarHeader />
                 <div className="flex-grow">
-                    <div className="container mx-auto max-w-6xl">
+                    <div className="container mx-auto max-w-7xl">
                         <div className="relative">
                             <CoverBackground />
                             <div className="absolute right-4 bottom-4">

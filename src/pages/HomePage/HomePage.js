@@ -1,19 +1,80 @@
 import React from "react";
 import Header from "../../components/Header/Header";
-import { Link } from "react-router-dom";
 import NavbarHeader from "../../components/Header/NavbarHeader";
+import WeatherWidget from "../../components/Home/WeatherWidget";
+import PopularService from "../../components/Services/PopularService";
+import PostCreate from "../../components/Post/PostCreate";
+import PostCard from "../../components/Post/PostCard";
+import SuggestedFriends from "../../components/Home/SuggestedFriends";
+import SuggestedGroups from "../../components/Home/SuggestedGroups";
 
 const HomePage = () => {
+  const posts = [
+    {
+      content: "Post with 2 images",
+      createAt: "2 minutes ago",
+      hashtags: "",
+      images: [
+        "https://gameroom.ee/83571/minecraft.jpg",
+        "https://gameroom.ee/83571/minecraft.jpg",
+      ],
+    },
+    {
+      content: "Post with multiple images",
+      images: [
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
+      ],
+    },
+    {
+      content: "Post with one image",
+      images: ["https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg"],
+    },
+    {
+      content: "Post with 3 images",
+      images: [
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
+        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
+      ],
+    },
+  ];
+
   return (
-    <div className="HomePage">
-      <Header/>
-      <NavbarHeader/>
-      {/* <Link to="/Register">Register</Link> */}
+    <div className="HomePage bg-gray-100">
+      <Header />
+      <NavbarHeader />
+      <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[63px]">
+        <div className="gap-5 grid lg:grid-cols-[1fr_2fr_1fr] grid-cols-1">
+          {/* Left */}
+          <aside className="flex flex-col gap-5 order-1">
+            <WeatherWidget />
+            <PopularService />
+          </aside>
 
-      <main className="homepage-main">
-        {/* <MainContent /> */}
+          {/* Posts Section */}
+          <section className="flex flex-col gap-5 lg:order-2 order-3">
+            <PostCreate />
+            {posts.map((post, index) => (
+              <PostCard key={index} post={post} />
+            ))}
+          </section>
+
+          {/* Right */}
+          <section className="flex flex-col gap-5 lg:order-3 order-2">
+            {/* What the hell gì ở đây */}
+            <WeatherWidget />
+
+            {/* List Suggested */}
+            <SuggestedFriends />
+            <SuggestedGroups />
+          </section>
+        </div>
       </main>
-
     </div>
   );
 };

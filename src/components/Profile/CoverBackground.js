@@ -15,7 +15,7 @@ const CoverBackground = ({ coverImage: initialCoverImage }) => {
   };
 
   return (
-    <div className="relative h-72 bg-gray-200 group lg:mt-[120px] mt-[63px]">
+    <div className="relative h-[330px] bg-gray-200 group lg:mt-[120px] mt-[63px]">
       <img src={
         coverImage ||
         "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg"
@@ -44,7 +44,7 @@ const CoverBackground = ({ coverImage: initialCoverImage }) => {
               <img src={coverImage || "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg"
               }
                 alt="Background"
-                className="max-w-full max-h-full object-contain"/>
+                className="max-w-full max-h-full object-contain" />
             </div>
             <button onClick={() => coverInputRef.current.click()} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md" >
               Change Background

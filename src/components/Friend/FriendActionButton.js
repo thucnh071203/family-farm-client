@@ -37,7 +37,7 @@ const FriendActionButton = ({ status }) => {
   const config = buttonConfig[status] || buttonConfig.null;
 
   return (
-    <button className={`p-2 ${config.bgColor} ${config.hoverColor} text-white font-bold rounded-md w-32 transition`}>
+    <button className={`p-1 ${config.bgColor} ${config.hoverColor} text-white text-sm font-bold rounded-md w-28 transition`}>
       <i className={`fa-solid ${config.icon} mr-2`}></i>
       {config.text}
     </button>
