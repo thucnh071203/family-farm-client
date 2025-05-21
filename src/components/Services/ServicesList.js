@@ -16,7 +16,7 @@ export default function ServicesList() {
   return (
     <div class="service">
         <div class="div">
-            <div class="main-container w-full flex flex-row justify-center mt-[27px] gap-5 mx-auto">
+            <div class="main-container w-full flex flex-row justify-center lg:mt-[9rem] mt-[5rem] gap-5 mx-auto">
                 <div class="container-service flex flex-col mx-3 md:mx-0 w-full md:w-[710px] max-w-[710px]">
                     <div class="service-header mt-2">
                         <div class="service-header-title flex flex-row justify-between px-4">

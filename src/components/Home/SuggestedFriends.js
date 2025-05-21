@@ -5,9 +5,9 @@ import FriendItem from "../Friend/FriendItem";
 const SuggestedFriends = ({ friends }) => {
   const defaultFriends = [
     { name: "Dang Khoa", city: "Can Tho", status: null },
-    { name: "Huu Thuc", city: "Can Tho", status: "pending" },
-    { name: "Mai Xuan", city: "An Giang", status: "friend" },
-    { name: "Minh Uyen", city: "Kien Giang", status: "following" },
+    { name: "Huu Thuc", city: "Can Tho", status: null },
+    { name: "Mai Xuan", city: "An Giang", status: null },
+    { name: "Minh Uyen", city: "Kien Giang", status: null },
   ];
   const friendList = friends || defaultFriends;
 
