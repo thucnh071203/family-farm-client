@@ -75,13 +75,14 @@ const Header = () => {
 
                 {/* xử lý hiện thị khi login thành công  */}
                 {usernameStorage ? (
-                    <div className="avatar-box">
-                        <div className="avatar-circle">
-                            <img src={defaultAvatar} alt="avatar" />
+                    <Link to="/PersonalPage">
+                        <div className="avatar-box">
+                            <div className="avatar-circle">
+                                <img src={defaultAvatar} alt="avatar" />
+                            </div>
+                            <p className="name-account">Phuong Nam</p>
                         </div>
-                        <p className="name-account">Phuong Nam</p>
-                    </div>
-
+                    </Link>
                 ) : (
                     <div class="login-box">
                         <Link to="/login">Login</Link>

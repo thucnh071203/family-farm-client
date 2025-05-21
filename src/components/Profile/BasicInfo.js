@@ -11,7 +11,7 @@ const BasicInfo = ({ info }) => {
     const userInfo = { ...defaultInfo, ...info };
 
     return (
-        <div className="bg-white p-5 rounded-lg shadow-md">
+        <div className="bg-white p-5 rounded-lg shadow-md text-left">
             <h2 className="text-lg font-bold mb-3">Basic Information</h2>
             <div className="flex justify-between items-center pb-3">
                 <div>

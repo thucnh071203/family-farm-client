@@ -19,7 +19,7 @@ const PostCard = ({ post }) => {
   const hashTag = ["blog", "nienmoulming", "polytecode"];
   const category = ["Pants", "Diseases"];
   return (
-    <div className="bg-white p-5 rounded-lg shadow-md mb-5">
+    <div className="bg-white p-5 rounded-lg shadow-md border border-solid border-gray-200 text-left">
       <div className="flex justify-between">
         <div className="flex items-center gap-3 mb-3">
           <img
@@ -50,7 +50,7 @@ const PostCard = ({ post }) => {
           ))}
         </p>
         <p className="mb-3 flex">
-          <p className="font-bold">Category: </p> 
+          <p className="font-bold">Category: </p>
           {category.map((cat, index) => (
             <span key={index} className="mr-2">
               {cat}
@@ -103,29 +103,27 @@ const PostCard = ({ post }) => {
         </>
       )}
 
-      <div className="flex items-center justify-between">
-        <div className="flex gap-3">
+      <div className="flex lg:flex-row lg:gap-8 gap-3 flex-col items-center justify-between">
+        <div className="flex lg:w-1/4 lg:justify-between justify-around w-full">
           <p>
-            <i className="fa-solid fa-thumbs-up text-blue-500"></i>{" "}
-            {postData.likes}
+            <i className="fa-solid fa-thumbs-up text-blue-500"></i> {postData.likes}
           </p>
           <p>
             <i className="fas fa-comment text-blue-500"></i> {postData.comments}
           </p>
           <p>
-            <i className="fa-solid fa-share text-blue-500"></i>{" "}
-            {postData.shares}
+            <i className="fa-solid fa-share text-blue-500"></i> {postData.shares}
           </p>
         </div>
-        <div className="flex gap-2">
-          <button className="p-2 bg-gray-200 rounded-sm">
-            <i className="fa-solid fa-thumbs-up"></i> Like
+        <div className="flex lg:w-3/4 gap-1 justify-between w-full">
+          <button className="flex-1 p-2 bg-gray-200 hover:bg-gray-300 rounded-sm text-center">
+            <i className="fa-solid fa-thumbs-up mr-1"></i> Like
           </button>
-          <button className="p-2 bg-gray-200 rounded-sm">
-            <i className="fas fa-comment"></i> Comment
+          <button className="flex-1 p-2 bg-gray-200  hover:bg-gray-300 rounded-sm text-center">
+            <i className="fas fa-comment mr-1"></i> Comment
           </button>
-          <button className="p-2 bg-gray-200 rounded-sm">
-            <i className="fa-solid fa-share"></i> Share
+          <button className="flex-1 p-2 bg-gray-200  hover:bg-gray-300 rounded-sm text-center">
+            <i className="fa-solid fa-share mr-1"></i> Share
           </button>
         </div>
       </div>
