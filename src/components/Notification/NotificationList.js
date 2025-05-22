@@ -27,7 +27,7 @@ export default function NotificationList() {
                             <div class="noti-content">
                                 <img class="noti-avatar" src={userAvatar} />
                                 <div class="noti-info">
-                                    <p class="p-noti"><span class="username-span">Alis Wells </span> <span class="noti-action">has
+                                    <p class="p-noti text-start"><span class="username-span">Alis Wells </span> <span class="noti-action">has
                                         posted.</span></p>
                                     <div class="action-time">3 minutes ago</div>
                                 </div>
