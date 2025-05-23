@@ -18,7 +18,7 @@ const SuggestedGroups = () => {
 
     return (
         <div className="bg-white p-5 rounded-lg border shadow-md">
-            <h2 className="text-lg font-bold mb-3">Suggested Groups</h2>
+            <h2 className="text-lg font-bold mb-3 text-left">Suggested Groups</h2>
             <div className="flex flex-col gap-3">
                 {groups.map((group, index) => (
                     <div key={index} className="relative rounded-lg border border-solid border-gray-200">

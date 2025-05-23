@@ -65,7 +65,7 @@ const HomePage = () => {
             <PopularService />
           </aside>
           {/* Posts Section */}
-          <section className="flex flex-col gap-5 lg:order-2 order-3">
+          <section className="flex flex-col gap-5 lg:order-2 order-3 h-full w-full">
             <PostCreate />
             {posts.map((post, index) => (
               <PostCard key={index} post={post} />
@@ -73,10 +73,7 @@ const HomePage = () => {
           </section>
 
           {/* Right */}
-          <section className="flex flex-col gap-5 lg:order-3 order-2">
-            {/* Cái hình gì đây để đại nghe m */}
-            <WeatherWidget />
-
+          <section className="flex flex-col gap-5 lg:order-3 order-2 ">
             {/* List Suggested */}
             <SuggestedFriends />
             <SuggestedGroups />

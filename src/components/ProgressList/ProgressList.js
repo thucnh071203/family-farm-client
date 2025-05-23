@@ -18,8 +18,8 @@ import deatilIcon from "../../assets/images/material-symbols_read-more.png";
 
 export default function ProgressList() {
     return (
-        <div class="progress-managament pt-16">
-            <div class="div px-2">
+        <div class="progress-management pt-16">
+            <div class="div px-2 max-w-7xl mx-auto">
                 <ProgressNav />
                 <div class="progress-container w-full mt-6 lg:mt-14 flex flex-col lg:flex-row lg:justify-center gap-6">
                     <div class="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">

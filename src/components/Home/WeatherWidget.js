@@ -56,31 +56,24 @@ const WeatherWidget = () => {
 
   return (
     <div className="flex items-center rounded-lg shadow-md">
-      <div
-        className="w-full rounded-lg p-6 bg-no-repeat bg-center bg-cover"
-        style={{ backgroundImage: `url(${coldImage})` }}
-      >
-        <input
-          type="text"
+      <div className="w-full rounded-lg p-6 bg-no-repeat bg-center bg-cover"
+        style={{ backgroundImage: `url(${coldImage})` }}>
+        <input type="text"
           className="search w-full p-3 border-none outline-none bg-white/30 rounded-[0_15px_0_15px] shadow-md transition-all duration-300 focus:bg-white/90 focus:rounded-[15px_0_15px_0]"
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && changeWeatherUI()}
-        />
-        <div
-          className={`content text-center text-white mt-5 transition-all duration-400 ${isVisible ? "" : "invisible opacity-0"
-            }`}
-        >
-          <h1 className="capital text-shadow">
+          onKeyPress={(e) => e.key === "Enter" && changeWeatherUI()} />
+        <div className={`content text-center text-white mt-5 transition-all duration-400 ${isVisible ? "" : "invisible opacity-0"
+          }`}>
+          <h1 className="capital text-shadow text-2xl font-bold"
+            style={{ textShadow: "2px 2px rgba(0, 0, 0, 0.7)" }}>
             <span className="city">{weatherData.city}</span>
             <span>,</span>
             <span className="country">{weatherData.country}</span>
           </h1>
           <div className="time mt-1 mb-5 text-sm">{weatherData.time}</div>
-          <div
-            className="temparature text-6xl font-semibold text-shadow-lg bg-white/40 shadow-lg rounded-xl mx-8 p-5"
-            style={{ fontWeight: 600, textShadow: "4px 4px rgba(0, 0, 0, 0.7)" }}
-          >
+          <div className="temparature text-6xl font-semibold text-shadow-lg bg-white/40 shadow-lg rounded-xl mx-8 p-5"
+            style={{ fontWeight: 600, textShadow: "4px 4px rgba(0, 0, 0, 0.7)", boxShadow: "4px 4px rgba(0, 0, 0, 0.7)" }}>
             <span className="value text-shadow-lg">{weatherData.temperature}</span>
             <sup>o</sup>C
           </div>

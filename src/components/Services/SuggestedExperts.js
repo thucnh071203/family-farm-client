@@ -1,13 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import FriendItem from "./FriendItem";
+import FriendItem from "../Friend/FriendItem";
 
-const FriendList = ({ friends }) => {
+const SuggestedExperts = ({ friends }) => {
   const defaultFriends = [
-    { name: "Dang Khoa", city: "Can Tho", status: null , roleId: "expert"},
-    { name: "Huu Thuc", city: "Can Tho", status: "pending" },
-    { name: "Mai Xuan", city: "An Giang", status: "friend" },
-    { name: "Minh Uyen", city: "Kien Giang", status: "following" },
+    { name: "Dang Khoa", city: "Can Tho", status: null, roleId : "expert"},
+    { name: "Huu Thuc", city: "Can Tho", status: null, roleId : "expert" },
+    { name: "Mai Xuan", city: "An Giang", status: null, roleId : "expert" },
+    { name: "Minh Uyen", city: "Kien Giang", status: null, roleId : "expert" },
   ];
   const friendList = friends || defaultFriends;
 
@@ -20,10 +20,7 @@ const FriendList = ({ friends }) => {
   return (
     <div className="bg-white p-5 rounded-lg shadow-md">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-bold mb-3">Friends ({friendList.length})</h2>
-        <Link className="text-blue-800" to="/UserFriends">
-          See all
-        </Link>
+        <h2 className="text-lg font-bold mb-3">Suggested Experts</h2>
       </div>
       <div className="flex flex-col gap-3">
         {friendList.map((friend) => (
@@ -37,4 +34,4 @@ const FriendList = ({ friends }) => {
   );
 };
 
-export default FriendList;
+export default SuggestedExperts;

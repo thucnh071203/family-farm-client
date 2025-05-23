@@ -15,7 +15,7 @@ const FriendItem = ({ friend }) => {
           <span className="text-[10px] text-gray-600">{friend.city}</span>
         </div>
       </div>
-      <FriendActionButton status={friend.status} />
+      <FriendActionButton status={friend.status} roleId={friend.roleId}/>
     </div>
   );
 };

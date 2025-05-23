@@ -1,6 +1,6 @@
 import React from "react";
 
-const FriendActionButton = ({ status }) => {
+const FriendActionButton = ({ status, roleId }) => {
   const buttonConfig = {
     null: {
       text: "Add friend",
@@ -32,9 +32,16 @@ const FriendActionButton = ({ status }) => {
       bgColor: "bg-red-600",
       hoverColor: "hover:bg-red-700",
     },
+    expert: {
+      text: "Follow",
+      icon: "fa-user-plus",
+      bgColor: "bg-blue-600",
+      hoverColor: "hover:bg-blue-700",
+    },
   };
 
-  const config = buttonConfig[status] || buttonConfig.null;
+  // Select config based on status and roleId
+  const config = status === null && roleId === "expert" ? buttonConfig.expert : buttonConfig[status] || buttonConfig.null;
 
   return (
     <button className={`p-1 ${config.bgColor} ${config.hoverColor} text-white text-sm font-bold rounded-md w-28 transition`}>

@@ -63,7 +63,7 @@ const PostCard = ({ post }) => {
         <>
           {/* Trường hợp có đúng 3 ảnh */}
           {postData.images.length === 3 ? (
-            <div className="grid grid-cols-2 gap-2 mb-3 h-full">
+            <div className="grid grid-cols-2 gap-2 mb-3">
               <div className="flex flex-col gap-2">
                 <img src={postData.images[0]}
                   alt={postData.content}
