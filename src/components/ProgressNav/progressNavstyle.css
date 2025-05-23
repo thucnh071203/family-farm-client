@@ -1,8 +1,8 @@
-.progress-managament .frame {
+.progress-management .frame {
   gap: 59px;
 }
 
-.progress-managament .frame-overview {
+.progress-management .frame-overview {
   display: inline-flex;
   align-items: flex-end;
   justify-content: center;
@@ -12,7 +12,7 @@
   cursor: pointer;
 }
 
-.progress-managament .frame-service {
+.progress-management .frame-service {
   display: inline-flex;
   align-items: flex-end;
   justify-content: center;
@@ -22,7 +22,7 @@
   cursor: pointer;
 }
 
-.progress-managament .frame-2 {
+.progress-management .frame-2 {
   display: inline-flex;
   align-items: flex-end;
   justify-content: center;
@@ -31,14 +31,14 @@
   flex: 0 0 auto;
 }
 
-.progress-managament .img {
+.progress-management .img {
   position: relative;
   width: 24px;
   height: 24px;
   transition: filter 0.3s ease;
 }
 
-.progress-managament .text-wrapper-4 {
+.progress-management .text-wrapper-4 {
   position: relative;
   width: fit-content;
   font-family: "Roboto-Bold", Helvetica;
@@ -50,15 +50,15 @@
   transition: color 0.3s ease;
 }
 
-.progress-managament .frame-overview:hover .img {
+.progress-management .frame-overview:hover .img {
   filter: brightness(0) saturate(100%) invert(64%) sepia(79%) saturate(531%) hue-rotate(173deg) brightness(97%) contrast(93%);
 }
 
-.progress-managament .frame-overview:hover .text-wrapper-4 {
+.progress-management .frame-overview:hover .text-wrapper-4 {
   color: #3db3fb;
 }
 
-.progress-managament .text-wrapper-5 {
+.progress-management .text-wrapper-5 {
   position: relative;
   width: fit-content;
   font-family: "Roboto-Bold", Helvetica;
@@ -70,15 +70,15 @@
   transition: color 0.3s ease;
 }
 
-.progress-managament .frame-service:hover .img {
+.progress-management .frame-service:hover .img {
   filter: brightness(0) saturate(100%) invert(64%) sepia(79%) saturate(531%) hue-rotate(173deg) brightness(97%) contrast(93%);
 }
 
-.progress-managament .frame-service:hover .text-wrapper-5 {
+.progress-management .frame-service:hover .text-wrapper-5 {
   color: #3db3fb;
 }
 
-.progress-managament .text-wrapper-6 {
+.progress-management .text-wrapper-6 {
   position: relative;
   width: fit-content;
   font-family: "Roboto-Bold", Helvetica;

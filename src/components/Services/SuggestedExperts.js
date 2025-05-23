@@ -2,12 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import FriendItem from "../Friend/FriendItem";
 
-const SuggestedFriends = ({ friends }) => {
+const SuggestedExperts = ({ friends }) => {
   const defaultFriends = [
-    { name: "Dang Khoa", city: "Can Tho", status: null },
-    { name: "Huu Thuc", city: "Can Tho", status: null },
-    { name: "Mai Xuan", city: "An Giang", status: null },
-    { name: "Minh Uyen", city: "Kien Giang", status: null },
+    { name: "Dang Khoa", city: "Can Tho", status: null, roleId : "expert"},
+    { name: "Huu Thuc", city: "Can Tho", status: null, roleId : "expert" },
+    { name: "Mai Xuan", city: "An Giang", status: null, roleId : "expert" },
+    { name: "Minh Uyen", city: "Kien Giang", status: null, roleId : "expert" },
   ];
   const friendList = friends || defaultFriends;
 
@@ -20,7 +20,7 @@ const SuggestedFriends = ({ friends }) => {
   return (
     <div className="bg-white p-5 rounded-lg shadow-md">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-bold mb-3">Suggested Friends</h2>
+        <h2 className="text-lg font-bold mb-3">Suggested Experts</h2>
       </div>
       <div className="flex flex-col gap-3">
         {friendList.map((friend) => (
@@ -34,4 +34,4 @@ const SuggestedFriends = ({ friends }) => {
   );
 };
 
-export default SuggestedFriends;
+export default SuggestedExperts;

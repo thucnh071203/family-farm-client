@@ -4,7 +4,7 @@ import FriendItem from "./FriendItem";
 
 const FriendList = ({ friends }) => {
   const defaultFriends = [
-    { name: "Dang Khoa", city: "Can Tho", status: null },
+    { name: "Dang Khoa", city: "Can Tho", status: null , roleId: "expert"},
     { name: "Huu Thuc", city: "Can Tho", status: "pending" },
     { name: "Mai Xuan", city: "An Giang", status: "friend" },
     { name: "Minh Uyen", city: "Kien Giang", status: "following" },

@@ -14,7 +14,7 @@ import deatilIcon from "../../assets/images/material-symbols_read-more.png";
 
 export default function WaitingList() {
     return (
-        <div class="progress-managament pt-16">
+        <div class="progress-management pt-16">
             <div class="div px-2">
                 <ProgressNav />
                 <div class="progress-container w-full mt-6 lg:mt-14 flex flex-col lg:flex-row lg:justify-center gap-6">

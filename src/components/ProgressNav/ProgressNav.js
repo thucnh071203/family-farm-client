@@ -9,18 +9,24 @@ import progressIcon from "../../assets/images/fluent_step-16-filled_svg.svg";
 export default function ProgressNav() {
     return (
         <div class="overflow-x-auto md:overflow-x-visible mt-7">
-            <div class="frame w-full lg:max-w-[1197px] flex flex-row md:justify-center lg:justify-start mx-auto">
+            <div class="frame w-full lg:max-w-7xl flex flex-row md:justify-center lg:justify-start mx-auto">
                 <div class="frame-overview">
                     <img class="img" src={overviewIcon} />
                     <div class="text-wrapper-4 text-xl lg:text-base">Overview</div>
                 </div>
                 <div class="frame-service">
                     <img class="img" src={serviceIcon} />
-                    <div class="text-wrapper-5 text-xl lg:text-base">Service Management</div>
+                    <div class="text-wrapper-5 text-xl lg:text-base">
+                        <Link to="/ServiceManagement">
+                            Service Management
+                        </Link>
+                    </div>
                 </div>
                 <div class="frame-2">
                     <img class="img" src={progressIcon} />
-                    <div class="text-wrapper-6 text-xl lg:text-base">Progress Management</div>
+                    <div class="text-wrapper-6 text-xl lg:text-base">
+                        <Link to="/ProgressList">Progress Management</Link>
+                    </div>
                 </div>
             </div>
         </div>
