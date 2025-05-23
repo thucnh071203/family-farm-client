@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ServicePage from "./pages/ServicePage/ServicePage";
 import ProgressListPage from "./pages/ProgressPage/ProgressListPage";
+import SavedPostPage from "./pages/SavedPostPage/SavedPostPage";
 import WaitingListPage from "./pages/WaitingPage/WaitingListPage";
 import FriendPage from "./pages/FriendPage/FriendPage";
 import ServiceManagement from "./components/ServiceManagement/ServiceManagement";
@@ -43,6 +44,7 @@ function App() {
           <Route path="/UserFriends" element={<UserFriends />} />
           <Route path="/ProgressList" element={<ProgressListPage />} />
           <Route path="/WaitingOrderList" element={<WaitingListPage />} />
+          <Route path="/SavedPostPage" element={<SavedPostPage />} />
         </Routes>
       </Router>
     </div>

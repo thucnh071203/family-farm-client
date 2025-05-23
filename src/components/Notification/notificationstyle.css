@@ -144,6 +144,7 @@
   font-size: 13px;
   letter-spacing: 0;
   line-height: normal;
+  text-align: start;
 }
 
 .popup-notifi .username-span {
@@ -170,6 +171,7 @@
   font-size: 13px;
   letter-spacing: 0;
   line-height: normal;
+  text-align: start;
 }
 
 .popup-notifi .letter-container{
