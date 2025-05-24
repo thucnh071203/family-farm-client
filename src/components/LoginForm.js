@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useState } from "react";
 import axios from "../Axios/axiosConfig";
-import { toast } from "sonner";
+import { toast, Bounce } from "react-toastify";
 
 const LoginForm = () => {
   //Dùng để lấy và set giá trị cho 2 input là username và password
@@ -21,7 +21,7 @@ const LoginForm = () => {
   //Xử lý logic đăng nhập
   const handleLogin = async () => {
     axios
-      .post('/api/authen/login', {
+      .post('https://localhost:7280/api/authen/login', {
         Identifier: username,
         Password: password,
       })
@@ -34,21 +34,52 @@ const LoginForm = () => {
           localStorage.setItem("username", data.username);
           localStorage.setItem("tokenExpiryIn", data.tokenExpiryIn);
 
-          toast.success("Đăng nhập thành công!");
+          toast.success("Đăng nhập thành công!", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+          });
+
           navigate("/");
         } else {
-          toast.error("Đăng nhập thất bại!");
+          toast.error("Đăng nhập thất bại! Vui lòng kiểm tra tên đăng nhập hoặc mật khẩu", {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+          });
         }
       })
       .catch((error) => {
-        toast.error("Đăng nhập thất bại!");
+        toast.error("Đăng nhập thất bại! Vui lòng kiểm tra thông tin.", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
       });
   };
 
   return (
-    <div className="overlap w-full md:w-1/2 mt-6 md:mt-0 md:ml-[5%]">
+    <div className="overlap w-full md:w-1/2 mt-6 md:mt-0 md:ml-[5%] bg-gray-200 bg-opacity-25">
       <div className="form-container w-full max-w-[466px] flex flex-col gap-7 mx-auto">
-        <div className="logo flex justify-center items-center gap-x-4 mx-auto">
+        <div className="flex items-center justify-center mx-auto logo gap-x-4">
           <img className="image" src={logo} alt="Logo" />
           <div className="family-farm">Family Farm</div>
         </div>
@@ -63,8 +94,8 @@ const LoginForm = () => {
             <div className="text-wrapper-6">Enter your Username</div>
             <div className="text-wrapper-7">*</div>
           </div>
-          <div className="overlap-group-wrapper mt-4 w-full">
-            <div className="overlap-group w-full flex">
+          <div className="w-full mt-4 overlap-group-wrapper">
+            <div className="flex w-full overlap-group">
               <img className="mdi-user" src={mdiUser} alt="User Icon" />
 
               {/* INPUT USERNAME  */}
@@ -85,8 +116,8 @@ const LoginForm = () => {
             <div className="text-wrapper-6">Enter your Password</div>
             <div className="text-wrapper-7">*</div>
           </div>
-          <div className="overlap-group-wrapper mt-4 w-full">
-            <div className="overlap-group w-full flex">
+          <div className="w-full mt-4 overlap-group-wrapper">
+            <div className="flex w-full overlap-group">
               <img className="mdi-clock" src={mdiClock} alt="Clock Icon" />
 
               {/* INPUT CHO PASSWORD  */}
@@ -114,7 +145,7 @@ const LoginForm = () => {
           </Link>
         </div>
 
-        <div className="frame-2 w-full">
+        <div className="w-full frame-2">
           <div className="div-wrapper">
             <button
               type="button"
@@ -134,7 +165,7 @@ const LoginForm = () => {
 
         <div className="frame-8">
           <div className="text-wrapper-12">Login With</div>
-          <div className="frame-9 flex flex-col justify-center items-center lg:flex-row">
+          <div className="flex flex-col items-center justify-center frame-9 lg:flex-row">
             <div className="frame-10 w-full lg:w-[223px]">
               <img className="img" src={googleIcon} alt="Google Icon" />
               <div className="text-wrapper-13">Continue with Google</div>
