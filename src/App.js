@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
 import Register from "./components/Register/Register";
@@ -12,7 +14,7 @@ import FriendPage from "./pages/FriendPage/FriendPage";
 import ServiceManagement from "./components/ServiceManagement/ServiceManagement";
 import CreateProgessStep from "./components/ProgressStep/CreateProgessStep";
 import { Statistic1 } from "./components/Statistic/Statistic1";
-import  MapChart  from "./components/Statistic/MapChart";
+import MapChart from "./components/Statistic/MapChart";
 import { UserGrowthChart } from "./components/Statistic/UserGrowthChart";
 import PersonalPage from "./pages/Profile/PersonalPage";
 import UpdateProfile from "./pages/Profile/UpdateProfile";
@@ -21,13 +23,19 @@ import PostGroupPage from "./pages/GroupPage/PostGroupPage";
 import CreateServicePage from "./pages/ServicePage/CreateServicePage";
 import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 
-import { Toaster } from "sonner";
-
 function App() {
   return (
     <div className="App">
-      {/* vị trí của toast  */}
-      <Toaster position="top-right" />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        closeOnClick={true}
+        pauseOnHover={true}
+        draggable={true}
+        theme="colored"
+        richColors
+      />
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
