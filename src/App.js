@@ -19,6 +19,7 @@ import UpdateProfile from "./pages/Profile/UpdateProfile";
 import UserFriends from "./pages/Profile/UserFriends";
 import PostGroupPage from "./pages/GroupPage/PostGroupPage";
 import CreateServicePage from "./pages/ServicePage/CreateServicePage";
+import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 
 import { Toaster } from "sonner";
 
@@ -47,6 +48,7 @@ function App() {
           <Route path="/WaitingOrderList" element={<WaitingListPage />} />
           <Route path="/SavedPostPage" element={<SavedPostPage />} />
           <Route path="/CreateService" element={<CreateServicePage />} />
+          <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
         </Routes>
       </Router>
     </div>

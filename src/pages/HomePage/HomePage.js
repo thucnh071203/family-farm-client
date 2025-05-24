@@ -57,7 +57,7 @@ const HomePage = () => {
       <Link to="/MapChart">MapChart</Link> */}
       <Header />
       <NavbarHeader />
-      <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[63px]">
+      <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[65px]">
         <div className="gap-5 grid lg:grid-cols-[1fr_2fr_1fr] grid-cols-1">
           {/* Left */}
           <aside className="flex flex-col gap-5 order-1">
