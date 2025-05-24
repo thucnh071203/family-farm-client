@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import ProgressNav from "../ProgressNav/ProgressNav";
 import Header from "../Header/Header";
 
@@ -18,7 +19,7 @@ export const ServiceManagement = () => {
         <div className="flex justify-between items-center mt-6">
           <h2 className="text-xl font-semibold">Your Services</h2>
           <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            + New Service
+            <Link to="/CreateService">+ New Service</Link>
           </button>
         </div>
         <div className="flex items-center space-x-6 mt-4 lg:gap-40">
