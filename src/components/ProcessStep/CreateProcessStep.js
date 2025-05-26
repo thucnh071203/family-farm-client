@@ -1,11 +1,11 @@
 import React from "react";
-import MenuProgessStep from "./MenuProgessStep";
+import MenuProcessStep from "./MenuProcessStep";
 
-const CreateProgessStep = () => {
+const CreateProcessStep = () => {
   return (
-    <div className="bg-white text-gray-800">
-      <div className="max-w-7xl mx-auto p-4">
-        <div className="flex space-x-8 pb-4 overflow-x-auto">
+    <div className="text-gray-800 bg-white">
+      <div className="p-4 mx-auto max-w-7xl">
+        <div className="flex pb-4 space-x-8">
           <div className="flex items-center space-x-2 cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +23,7 @@ const CreateProgessStep = () => {
 
             <span>Overview</span>
           </div>
-          <div className="flex items-center space-x-2 text-blue-500 font-semibold cursor-pointer">
+          <div className="flex items-center space-x-2 font-semibold text-blue-500 cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -59,20 +59,20 @@ const CreateProgessStep = () => {
           </div>
         </div>
 
-        {/* <div className="bg-gray-50 font-sans"> */}
-        <div className="h-screen flex flex-col">
+        {/* <div className="font-sans bg-gray-50"> */}
+        <div className="flex flex-col h-screen">
           <div
-            className="flex flex-col lg:flex-row overflow-y-auto flex-1"
+            className="flex flex-col flex-1 overflow-y-auto lg:flex-row"
             style={{
               minHeight: "600px",
               maxHeight: "600px",
               overflowY: "auto",
             }}
           >
-            <MenuProgessStep />
+            <MenuProcessStep />
 
             <div className="flex-1 p-6">
-              <h1 className="text-2xl font-bold mb-4">Create New Process</h1>
+              <h1 className="mb-4 text-2xl font-bold">Create New Process</h1>
 
               <div className="mb-6">
                 <div className="flex items-center gap-4 mb-2">
@@ -86,12 +86,12 @@ const CreateProgessStep = () => {
 
                     <span>Phuong Nam</span>
                   </div>
-                  <span className="ml-auto text-blue-600 hover:underline cursor-pointer">
+                  <span className="ml-auto text-blue-600 cursor-pointer hover:underline">
                     Support Coursera online of FPT
                   </span>
                 </div>
 
-                <div className="bg-white p-4 rounded shadow">
+                <div className="p-4 bg-white rounded shadow">
                   <textarea
                     placeholder="Enter a short description for this process"
                     className="w-full p-2 border rounded"
@@ -102,17 +102,17 @@ const CreateProgessStep = () => {
               <div className="space-y-6">
                 <div className="space-y-6">
                   <div className="flex items-center mb-2">
-                    <div className="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-full">
+                    <div className="flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full">
                       1
                     </div>
                   </div>
-                  <div className="bg-white p-4 rounded shadow">
+                  <div className="p-4 bg-white rounded shadow">
                     <textarea
                       placeholder="Enter detailed description for this step"
-                      className="w-full mb-2 p-2 border rounded"
+                      className="w-full p-2 mb-2 border rounded"
                     ></textarea>
                     <div className="flex flex-wrap gap-4">
-                      <div className="w-24 h-24 flex items-center justify-center border-2 border-dashed rounded cursor-pointer text-gray-400">
+                      <div className="flex items-center justify-center w-24 h-24 text-gray-400 border-2 border-dashed rounded cursor-pointer">
                         Drop file here to upload
                       </div>
                     </div>
@@ -121,38 +121,38 @@ const CreateProgessStep = () => {
 
                 <div className="space-y-6">
                   <div className="flex items-center mb-2">
-                    <div className="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-full">
+                    <div className="flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full">
                       2
                     </div>
                   </div>
-                  <div className="bg-white p-4 rounded shadow">
+                  <div className="p-4 bg-white rounded shadow">
                     <textarea
                       placeholder="Enter detailed description for this step"
-                      className="w-full mb-2 p-2 border rounded"
+                      className="w-full p-2 mb-2 border rounded"
                     ></textarea>
                     <div className="flex flex-wrap gap-4">
-                      <div className="w-24 h-24 flex items-center justify-center border-2 border-dashed rounded cursor-pointer text-gray-400">
+                      <div className="flex items-center justify-center w-24 h-24 text-gray-400 border-2 border-dashed rounded cursor-pointer">
                         Drop file here to upload
                       </div>
                     </div>
                   </div>
                   <div className="space-y-6">
                     <div className="flex items-center mb-2">
-                      <div className="w-8 h-8 flex items-center justify-center bg-blue-500 text-white rounded-full">
+                      <div className="flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full">
                         2
                       </div>
                     </div>
-                    <div className="bg-white p-4 rounded shadow">
+                    <div className="p-4 bg-white rounded shadow">
                       <textarea
                         placeholder="Enter detailed description for this step"
-                        className="w-full mb-2 p-2 border rounded"
+                        className="w-full p-2 mb-2 border rounded"
                       ></textarea>
                       <div className="flex flex-wrap gap-4">
-                        <div className="w-24 h-24 flex items-center justify-center border-2 border-dashed rounded cursor-pointer text-gray-400">
+                        <div className="flex items-center justify-center w-24 h-24 text-gray-400 border-2 border-dashed rounded cursor-pointer">
                           Drop file here to upload
                         </div>
                       </div>
-                      <button className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200">
+                      <button className="px-4 py-2 mt-4 text-red-700 bg-red-100 rounded hover:bg-red-200">
                         Delete
                       </button>
                     </div>
@@ -166,4 +166,4 @@ const CreateProgessStep = () => {
     </div>
   );
 };
-export default CreateProgessStep;
+export default CreateProcessStep;

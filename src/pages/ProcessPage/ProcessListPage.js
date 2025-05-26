@@ -2,11 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import NavbarHeader from "../../components/Header/NavbarHeader";
-import ProgressList from "../../components/ProgressList/ProgressList";
+import ProcessList from "../../components/ProcessList/ProcessList";
 import "../../styles/globals.css";
 import "../../styles/styleguilde.css";
 
-const ProgressListPage = () => {
+const ProcessListPage = () => {
   return (
     <div className="ProgressListPage">
       <Header/>
@@ -14,10 +14,10 @@ const ProgressListPage = () => {
 
       {/* <main className="homepage-main">
       </main> */}
-      <ProgressList/>
+      <ProcessList/>
 
     </div>
   );
 };
 
-export default ProgressListPage;
+export default ProcessListPage;

@@ -129,17 +129,17 @@ export const Register = () => {
   };
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {/* <ToastContainer position="top-right" richColors /> */}
-      <div className="flex items-center gap-3 py-10 mx-auto max-w-7xl">
+      <div className="flex items-center gap-3 py-6 mx-auto max-w-7xl ">
         <Link to="/">
           <img src={logo} alt="logo" />
         </Link>
         <h3 className="text-xl font-bold name-page">Family Farm</h3>
       </div>
-      <div className="flex flex-col w-full h-full gap-10 mx-auto md:flex-row max-w-7xl ">
+      <div className="flex flex-col w-full h-full gap-10 mx-auto md:flex-row max-w-7xl">
         {/* <aside className="h-full p-4 overflow-y-auto bg-white shadow lg:w-1/4"> */}
-        <div className="z-10 w-full p-8 text-left bg-white rounded-lg shadow-lg lg:w-2/3">
+        <div className="z-10 w-full p-8 text-left bg-white border border-gray-400 border-solid rounded-lg shadow-lg lg:w-2/3">
 
           <div className="flex items-center mb-6">
             <img
@@ -408,7 +408,8 @@ export const Register = () => {
             </button>
           </div>
         </div>
-        <div className="flex-col hidden w-1/3 pt-8 pr-5 lg:flex">
+        <div className="relative flex-col hidden w-1/3 pt-8 lg:flex">
+          <div className="absolute -right-[850px] -top-[600px] border-t-green-500 border-l-transparent rotate-45 bg-emerald-500 h-[1000px] w-[1000px]"></div>
           <div className="right-0 z-10 flex justify-around w-full mb-4 text-center top-20">
             <p className="text-xl font-semibold text-blue-500">
               Your Expertise
@@ -420,7 +421,6 @@ export const Register = () => {
             alt="Farm"
             className="z-10"
           />
-          <div className="absolute -right-[750px] -top-[700px] rotate-45 bg-emerald-500 h-[1200px] w-[1000px]"></div>
         </div>
       </div>
     </div>

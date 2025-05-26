@@ -1,19 +1,19 @@
 import React from "react";
 
-const MenuProgessStep = () => {
+const MenuProcessStep = () => {
   return (
     <aside
-      className="w-full lg:w-1/4 bg-white shadow p-4 overflow-y-auto h-full"
+      className="w-full h-full p-4 overflow-y-auto bg-white shadow lg:w-1/4"
       style={{
         minHeight: "280px",
         maxHeight: "280px",
         overflowY: "auto",
       }}
     >
-      <h2 className="text-xl font-semibold mb-4">Menu</h2>
+      <h2 className="mb-4 text-xl font-semibold">Menu</h2>
       <ul className="space-y-2">
         <li>
-          <button className="w-full flex items-center gap-2 px-4 py-2 bg-red-100 text-black-700 rounded hover:bg-green-200">
+          <button className="flex items-center w-full gap-2 px-4 py-2 bg-red-100 rounded text-black-700 hover:bg-green-200">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -33,7 +33,7 @@ const MenuProgessStep = () => {
         </li>
 
         <li>
-          <button className="w-full flex items-center gap-2 px-4 py-2 bg-blue-100 text-black-700 rounded hover:bg-green-200">
+          <button className="flex items-center w-full gap-2 px-4 py-2 bg-blue-100 rounded text-black-700 hover:bg-green-200">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -53,7 +53,7 @@ const MenuProgessStep = () => {
         </li>
 
         <li>
-          <button className="w-full flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded hover:bg-green-200">
+          <button className="flex items-center w-full gap-2 px-4 py-2 text-green-700 bg-green-100 rounded hover:bg-green-200">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -74,11 +74,11 @@ const MenuProgessStep = () => {
       </ul>
       <div className="mt-6 text-sm text-gray-600">
         <strong className="text-red-600">ATTENTION:</strong> You have{" "}
-        <span className="text-orange-500 font-semibold">3 processes</span>{" "}
+        <span className="font-semibold text-orange-500">3 processes</span>{" "}
         needing confirmation of completion
       </div>
     </aside>
   );
 };
 
-export default MenuProgessStep;
+export default MenuProcessStep;

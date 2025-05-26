@@ -69,12 +69,12 @@ const PostCreatePopup = ({ onClose }) => {
     );
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-auto">
-            <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-2xl">
-                <div className="flex justify-between items-center border-b pb-2 mb-4">
-                    <div className="text-center w-full">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50">
+            <div className="w-full max-w-2xl p-4 bg-white rounded-lg shadow-lg">
+                <div className="flex items-center justify-between pb-2 mb-4 border-b">
+                    <div className="w-full text-center">
                         <h2 className="text-lg font-semibold">
-                            <i className="fa-solid fa-plus text-blue-500"></i> Create New Post
+                            <i className="text-blue-500 fa-solid fa-plus"></i> Create New Post
                         </h2>
                         <hr />
                     </div>
@@ -92,11 +92,11 @@ const PostCreatePopup = ({ onClose }) => {
                             className="flex-grow p-2" />
                     </div>
                     {(content.match(/#\w+/g) || []).length > 0 && (
-                        <div className="mb-2 text-gray-500 text-sm flex flex-wrap gap-1 items-center">
+                        <div className="flex flex-wrap items-center gap-1 mb-2 text-sm text-gray-500">
                             Hashtag#:{" "}
                             {(content.match(/#\w+/g) || []).map((tag, index) => (
                                 <span key={index}
-                                    className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full mr-1 cursor-help max-w-full truncate block whitespace-nowrap overflow-hidden"
+                                    className="block max-w-full px-2 py-1 mr-1 overflow-hidden text-gray-700 truncate bg-gray-200 rounded-full cursor-help whitespace-nowrap"
                                     title={tag} >
                                     {tag}
                                 </span>
@@ -104,10 +104,10 @@ const PostCreatePopup = ({ onClose }) => {
                         </div>
                     )}
                     {categories.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-2 items-center text-gray-500 text-sm">
+                        <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-500">
                             Categories:
                             {categories.map((category, index) => (
-                                <span key={index} className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full flex items-center">
+                                <span key={index} className="flex items-center px-2 py-1 text-gray-700 bg-gray-200 rounded-full">
                                     {category}
                                     <button
                                         type="button"
@@ -121,11 +121,11 @@ const PostCreatePopup = ({ onClose }) => {
                         </div>
                     )}
                     {taggedFriends.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-2 items-center text-gray-500 text-sm">
+                        <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-500">
                             Tags:
                             {taggedFriends.map((friend, index) => (
                                 <span key={index}
-                                    className="bg-gray-400 text-white pl-2 rounded flex items-center text-sm">
+                                    className="flex items-center pl-2 text-sm text-white bg-gray-400 rounded">
                                     {friend}
                                     <button type="button"
                                         onClick={() => removeFriend(friend)}
@@ -136,23 +136,23 @@ const PostCreatePopup = ({ onClose }) => {
                             ))}
                         </div>
                     )}
-                    <div className="mb-4 relative text-sm">
-                        <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <div className="relative mb-4 text-sm">
+                        <i className="absolute text-gray-400 transform -translate-y-1/2 fa-solid fa-magnifying-glass left-3 top-1/2"></i>
                         <input ref={withWhomInputRef}
                             type="text"
                             value={withWhom}
                             onChange={(e) => setWithWhom(e.target.value)}
                             placeholder="Who are you with?"
-                            className="w-full pl-10 pr-8 py-2 border border-gray-300 rounded-lg" />
+                            className="w-full py-2 pl-10 pr-8 border border-gray-300 rounded-lg" />
                         {withWhom && (
                             <button type="button"
                                 onClick={() => setWithWhom("")}
-                                className="absolute right-2 top-2 text-gray-500 hover:text-gray-700">
+                                className="absolute text-gray-500 right-2 top-2 hover:text-gray-700">
                                 <i className="fa-solid fa-times"></i>
                             </button>
                         )}
                         {withWhom && filteredFriends.length > 0 && (
-                            <div className="absolute bg-white border rounded-lg mt-1 w-full z-10">
+                            <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg">
                                 {filteredFriends.map((friend) => (
                                     <div key={friend}
                                         onClick={() => {
@@ -161,7 +161,7 @@ const PostCreatePopup = ({ onClose }) => {
                                             }
                                             setWithWhom("");
                                         }}
-                                        className="cursor-pointer hover:bg-gray-100 p-2">
+                                        className="p-2 cursor-pointer hover:bg-gray-100">
                                         {friend}
                                     </div>
                                 ))}
@@ -170,38 +170,38 @@ const PostCreatePopup = ({ onClose }) => {
                     </div>
                     <hr />
                     <div className="my-4">
-                        <div className="grid lg:grid-cols-4 grid-cols-2 gap-4">
-                            <div className="relative inline-flex items-center bg-gray-100 text-blue-500 px-3 py-2 gap-2 rounded-lg border border-solid">
+                        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+                            <div className="relative inline-flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg">
                                 <img src={public_status_icon} alt="Photo/Video" />
                                 <select value={status}
                                     onChange={(e) => setStatus(e.target.value)}
-                                    className="appearance-none bg-transparent outline-none pr-6" >
+                                    className="pr-6 bg-transparent outline-none appearance-none" >
                                     <option value="Public">Public</option>
                                     <option value="Private">Private</option>
                                     <option value="Draft">Draft</option>
                                 </select>
-                                <div className="absolute right-2 pointer-events-none">
-                                    <i className="fa-solid fa-caret-down text-blue-500"></i>
+                                <div className="absolute pointer-events-none right-2">
+                                    <i className="text-blue-500 fa-solid fa-caret-down"></i>
                                 </div>
                             </div>
                             <div onClick={handlePhotoVideo}
-                                className="bg-gray-100 text-blue-500 px-3 py-2 rounded-lg flex items-center gap-2 border border-solid">
+                                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg">
                                 <img src={camera_icon} alt="Photo/Video" /> Photo/Video
                             </div>
                             <div onClick={handleTagFriends}
-                                className="bg-gray-100 text-blue-500 px-3 py-2 rounded-lg flex items-center gap-2 border border-solid">
+                                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg">
                                 <img src={tag_icon} alt="Photo/Video" />Tag friends
                             </div>
                             <div onClick={() => setCategoryDropdown(!categoryDropdown)}
-                                className="bg-gray-100 text-blue-500 px-3 py-2 rounded-lg flex items-center gap-2 border border-solid">
+                                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg">
                                 <img src={post_category_icon} alt="Photo/Video" /> Categories{" "}
                                 <i className="fa-solid fa-caret-down"></i>
                                 {categoryDropdown && (
-                                    <div className="absolute bg-white border rounded-lg mt-40 z-10 text-left">
+                                    <div className="absolute z-10 mt-40 text-left bg-white border rounded-lg">
                                         {listCategories.map((cat) => (
                                             <div key={cat}
                                                 onClick={() => addCategory(cat)}
-                                                className="cursor-pointer text-black hover:bg-gray-100 p-2 rounded">
+                                                className="p-2 text-black rounded cursor-pointer hover:bg-gray-100">
                                                 {cat}
                                             </div>
                                         ))}
@@ -210,20 +210,20 @@ const PostCreatePopup = ({ onClose }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="grid lg:grid-cols-6 grid-cols-3 gap-3 mb-2">
+                    <div className="grid grid-cols-3 gap-3 mb-2 lg:grid-cols-6">
                         {images.slice(0, 6).map((image, index) => (
                             <div key={index} className="relative">
                                 <img src={image}
                                     alt="Post"
                                     className={`w-full h-24 rounded-lg object-cover ${index === 5 && images.length > 6 ? "brightness-50" : ""}`} />
                                 {index === 5 && images.length > 6 && (
-                                    <div className="absolute inset-0 flex items-center justify-center text-white text-sm font-semibold">
+                                    <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-white">
                                         +{images.length - 6} more
                                     </div>
                                 )}
                                 <button type="button"
                                     onClick={() => removeImage(index)}
-                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center" >
+                                    className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-gray-500 hover:text-gray-70" >
                                     <i className="fa-solid fa-times"></i>
                                 </button>
                             </div>
@@ -235,7 +235,7 @@ const PostCreatePopup = ({ onClose }) => {
                             className="hidden" />
                     </div>
                     <button type="submit"
-                        className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600" >
+                        className="w-full py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" >
                         PUBLISH
                     </button>
                 </form>

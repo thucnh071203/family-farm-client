@@ -20,7 +20,7 @@ const ServiceDetailCard = () => {
                     <div className='flex flex-col md:flex-row md:justify-between'>
                         <h2 className="text-2xl font-bold">LEARN BASIC JAVA SCRIPTS</h2>
                         <div className=''>
-                            <span className="text-2xl font-bold text-blue-600">250.000 VND </span>
+                            <span className="text-2xl font-bold text-[#3DB3FB]">250.000 VND </span>
                             <span className="text-sm text-gray-400 line-through"> 300.000 VND</span>
                         </div>
                     </div>
@@ -39,25 +39,25 @@ const ServiceDetailCard = () => {
                     </div>
 
                     <div>
-                        <p className="font-bold"> Description:
+                        <div className="font-bold"> Description:
                             <p className='py-3 font-normal'>
                                 Đây là mô tả khóa học. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Đây là mô tả khóa học. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Đây là mô tả khóa học. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Đây là mô tả khóa học. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                             </p>
-                        </p>
+                        </div>
                     </div>
 
                     <div className='pt-6'>
                         <p className='font-bold'>Categories: </p>
                         <div className='flex flex-wrap gap-3 pt-3'>
-                            <span className="px-4 py-2 text-sm bg-gray-100 rounded">Web</span>
-                            <span className="px-4 py-2 text-sm bg-gray-100 rounded">Backend Developer</span>
-                            <span className="px-4 py-2 text-sm bg-gray-100 rounded">Applications</span>
+                            <span className="px-4 py-2 text-sm bg-[#3DB3FB]/25 rounded font-bold">Web</span>
+                            <span className="px-4 py-2 text-sm bg-[#3DB3FB]/25 rounded font-bold">Backend Developer</span>
+                            <span className="px-4 py-2 text-sm bg-[#3DB3FB]/25 rounded font-bold">Applications</span>
                         </div>
                     </div>
                 </div>
                 <div className="order-1 w-full space-y-3 text-center md:order-2">
                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNl6ByXPYWepPI7KOWpK9sW6RGfz8eH-DCJeGi3R1vhhO9_kzslj3e2rCxEbh52glj6GM&usqp=CAU" className="w-full mx-auto rounded-lg h-[200px] object-cover" alt="React Logo" />
-                    <button className="p-3 px-8 text-white bg-blue-500 rounded-full">Click to Booking</button>
+                    <button className="p-3 px-8 text-white bg-[#3DB3FB] rounded-full">Click to Booking</button>
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { toast } from 'sonner';
+import { toast, Bounce } from 'react-toastify';
 
 const UpdateProfileForm = () => {
     const [formData, setFormData] = useState({
@@ -88,28 +88,27 @@ const UpdateProfileForm = () => {
         e.preventDefault();
         if (validateForm()) {
             toast.success('Profile updated successfully!', {
-                position: 'top-right',
-                duration: 3000,
-                style: {
-                    background: '#22c55e', // màu xanh lá (green-500)
-                    color: 'white',
-                    borderRadius: '8px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                    fontSize: '14px',
-                },
-                className: 'custom-toast',
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+                transition: Bounce,
             });
             console.log('Form submitted:', formData);
         }
     };
 
     return (
-        <div className="w-full mx-auto p-8 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+        <div className="w-full p-8 mx-auto bg-white rounded-lg shadow-md">
+            <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">
                 Update Profile
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid lg:grid-cols-3 gap-4 grid-cols-1">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <div className="flex flex-col p-2">
                         <label className="text-sm font-medium text-gray-700" htmlFor="name"> Full Name * </label>
                         <input type="text"
@@ -132,11 +131,11 @@ const UpdateProfileForm = () => {
                             name="birthday"
                             value={formData.birthday}
                             onChange={handleChange}
-                            className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            className="p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
                     <div className="flex flex-col p-2">
                         <label className="text-sm font-medium text-gray-700">Gender</label>
-                        <div className="mt-1 flex space-x-4">
+                        <div className="flex mt-1 space-x-4">
                             <label className="flex items-center">
                                 <input type="radio"
                                     name="gender"
@@ -167,7 +166,7 @@ const UpdateProfileForm = () => {
                         </div>
                     </div>
                 </div>
-                <div className="grid lg:grid-cols-3 gap-4 grid-cols-1">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <div className="flex flex-col p-2">
                         <label className="text-sm font-medium text-gray-700" htmlFor="email">
                             Email *
@@ -199,7 +198,7 @@ const UpdateProfileForm = () => {
                         )}
                     </div>
                 </div>
-                <div className="grid lg:grid-cols-3 gap-4 grid-cols-1">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <div className="flex flex-col p-2">
                         <label className="text-sm font-medium text-gray-700" htmlFor="address"> Address *</label>
                         <input type="text"
@@ -245,7 +244,7 @@ const UpdateProfileForm = () => {
                         )}
                     </div>
                 </div>
-                <div className="grid lg:grid-cols-3 gap-4 grid-cols-1">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <div className="flex flex-col p-2">
                         <label className="text-sm font-medium text-gray-700" htmlFor="school"> School </label>
                         <input type="text"
@@ -254,7 +253,7 @@ const UpdateProfileForm = () => {
                             value={formData.school}
                             onChange={handleChange}
                             placeholder="Your school"
-                            className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            className="p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
                     <div className="flex flex-col p-2">
                         <label className="text-sm font-medium text-gray-700" htmlFor="workplace">
@@ -266,12 +265,12 @@ const UpdateProfileForm = () => {
                             value={formData.workplace}
                             onChange={handleChange}
                             placeholder="Your workplace"
-                            className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            className="p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
                     </div>
                 </div>
-                <div className="grid lg:grid-cols-3 gap-4 grid-cols-1">
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
                     <div className="flex flex-col p-2">
-                        <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 w-full" >
+                        <button type="submit" className="w-full px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600" >
                             Save
                         </button>
                     </div>

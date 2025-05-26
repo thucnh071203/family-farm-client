@@ -5,7 +5,7 @@ const FriendActionButton = ({ status, roleId }) => {
     null: {
       text: "Add friend",
       icon: "fa-user-plus",
-      bgColor: "bg-blue-600",
+      bgColor: "bg-[#3DB3FB]",
       hoverColor: "hover:bg-blue-700",
     },
     "": {
@@ -35,7 +35,7 @@ const FriendActionButton = ({ status, roleId }) => {
     expert: {
       text: "Follow",
       icon: "fa-user-plus",
-      bgColor: "bg-blue-600",
+      bgColor: "bg-[#3DB3FB]",
       hoverColor: "hover:bg-blue-700",
     },
   };

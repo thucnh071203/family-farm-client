@@ -29,7 +29,7 @@ const PostCard = ({ post }) => {
             className="w-10 h-10 rounded-full"
           />
           <div>
-            <h3 className="font-bold">{postData.fullName}</h3>
+            <h3 className="font-bold text-[#088DD0]">{postData.fullName}</h3>
             <p className="text-sm text-gray-500">{postData.createAt}</p>
           </div>
         </div>
@@ -38,7 +38,6 @@ const PostCard = ({ post }) => {
           <div>
             <OptionsPost />
           </div>
-
         </div>
       </div>
       <div className="flex flex-col items-start mt-3 text-sm">
@@ -50,7 +49,7 @@ const PostCard = ({ post }) => {
             </span>
           ))}
         </p>
-        <p className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-2">
           {category.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 font-bold">
               Categories:
@@ -61,7 +60,7 @@ const PostCard = ({ post }) => {
               ))}
             </div>
           )}
-        </p>
+        </div>
         {/* <p className="flex items-center gap-2 mb-2">
           {taggedFriends.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 mb-2 font-bold">
