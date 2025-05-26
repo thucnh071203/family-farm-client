@@ -15,202 +15,202 @@ import SuggestedExperts from "./SuggestedExperts";
 
 export default function ServicesList() {
   return (
-    <div class="service">
-        <div class="div">
-            <div class="main-container w-full flex flex-row justify-center lg:mt-[9rem] mt-[5rem] gap-5 mx-auto">
-                <div class="container-service flex flex-col mx-3 md:mx-0 w-full md:w-5xl max-w-5xl">
-                    <div class="service-header mt-2">
-                        <div class="service-header-title flex flex-row justify-between px-4">
-                            <div class="text-wrapper">Services</div>
-                            <div class="icon-filter">
+    <div className="service">
+        <div className="div">
+            <div className="main-container w-full flex flex-row justify-center lg:mt-[9rem] mt-[5rem] gap-5 mx-auto">
+                <div className="flex flex-col w-full max-w-5xl mx-3 container-service md:mx-0 md:w-5xl">
+                    <div className="mt-2 service-header">
+                        <div className="flex flex-row justify-between px-4 service-header-title">
+                            <div className="text-wrapper">Services</div>
+                            <div className="icon-filter">
                                 <img src={filterIcon} alt="image"/>
                             </div>
                         </div>
-                        <img class="line mx-auto mt-2" src={lineService} />
+                        <img className="mx-auto mt-2 line" src={lineService} />
                     </div>
 
-                    <div class="service-container">
-                        <div class="service-box w-[42%] md:w-[44.55%]">
-                            <img class="service-background" src={serviceBg} alt="image here"/>
-                            <div class="service-title w-[93%]">
+                    <div className="service-container">
+                        <div className="service-box w-[42%] md:w-[44.55%]">
+                            <img className="service-background" src={serviceBg} alt="image here"/>
+                            <div className="service-title w-[93%]">
                                 Treatment of yellow leaves in rice plants and improvement ce dădddaaaaaaaaaaaaaaa...
                             </div>
-                            <div class="body-service">
-                                <div class="author-content">
-                                    <div class="avatar-content">
+                            <div className="body-service">
+                                <div className="author-content">
+                                    <div className="avatar-content">
                                         <img src={userAvatar} alt=""/>
                                     </div>
-                                    <div class="author-info">
-                                        <div class="author-name">Dang Khoa</div>
-                                        <div class="author-role">Expert</div>
+                                    <div className="author-info">
+                                        <div className="author-name">Dang Khoa</div>
+                                        <div className="author-role">Expert</div>
                                     </div>
                                 </div>
-                                <div class="price-content">
-                                    <div class="icon-cart">
+                                <div className="price-content">
+                                    <div className="icon-cart">
                                         <img src={cart} alt=""/>
                                     </div>
-                                    <span class="price-num">1.000.000</span>
-                                    <span class="price-deno">VND</span>
+                                    <span className="price-num">1.000.000</span>
+                                    <span className="price-deno">VND</span>
                                 </div>
                             </div>
-                            <div class="footer-service">
-                                <div class="rate-cotent">
-                                    <div class="star-rates flex flex-row">
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={yellowStar}alt=""/>
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={grayStar} alt=""/>
-                                        <img class="star-icon" src={grayStar} alt=""/>
+                            <div className="footer-service">
+                                <div className="rate-cotent">
+                                    <div className="flex flex-row star-rates">
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={yellowStar}alt=""/>
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={grayStar} alt=""/>
+                                        <img className="star-icon" src={grayStar} alt=""/>
                                     </div>
-                                    <div class="rate-num">(50)</div>
+                                    <div className="rate-num">(50)</div>
                                 </div>
-                                <div class="status-expert-container">
-                                    <div class="status-icon"></div>
-                                    <div class="status-content">Active</div>
+                                <div className="status-expert-container">
+                                    <div className="status-icon"></div>
+                                    <div className="status-content">Active</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="service-box w-[42%] md:w-[44.55%]">
-                            <img class="service-background" src={serviceBg} alt="image here"/>
-                            <div class="service-title w-[93%]">
+                        <div className="service-box w-[42%] md:w-[44.55%]">
+                            <img className="service-background" src={serviceBg} alt="image here"/>
+                            <div className="service-title w-[93%]">
                                 Treatment of yellow leaves in rice plants and improvement of performance...
                             </div>
-                            <div class="body-service">
-                                <div class="author-content">
-                                    <div class="avatar-content">
+                            <div className="body-service">
+                                <div className="author-content">
+                                    <div className="avatar-content">
                                         <img src={userAvatar} alt=""/>
                                     </div>
-                                    <div class="author-info">
-                                        <div class="author-name">Dang Khoa</div>
-                                        <div class="author-role">Expert</div>
+                                    <div className="author-info">
+                                        <div className="author-name">Dang Khoa</div>
+                                        <div className="author-role">Expert</div>
                                     </div>
                                 </div>
-                                <div class="price-content">
-                                    <div class="icon-cart">
+                                <div className="price-content">
+                                    <div className="icon-cart">
                                         <img src={cart} alt=""/>
                                     </div>
-                                    <span class="price-num">1.000.000</span>
-                                    <span class="price-deno">VND</span>
+                                    <span className="price-num">1.000.000</span>
+                                    <span className="price-deno">VND</span>
                                 </div>
                             </div>
-                            <div class="footer-service">
-                                <div class="rate-cotent">
-                                    <div class="star-rates flex flex-row">
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={grayStar} alt=""/>
-                                        <img class="star-icon" src={grayStar} alt=""/>
+                            <div className="footer-service">
+                                <div className="rate-cotent">
+                                    <div className="flex flex-row star-rates">
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={grayStar} alt=""/>
+                                        <img className="star-icon" src={grayStar} alt=""/>
                                     </div>
-                                    <div class="rate-num">(50)</div>
+                                    <div className="rate-num">(50)</div>
                                 </div>
-                                <div class="status-expert-container">
-                                    <div class="status-icon"></div>
-                                    <div class="status-content">Active</div>
+                                <div className="status-expert-container">
+                                    <div className="status-icon"></div>
+                                    <div className="status-content">Active</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="service-box w-[42%] md:w-[44.55%]">
-                            <img class="service-background" src={serviceBg} alt="image here"/>
-                            <div class="service-title w-[93%]">
+                        <div className="service-box w-[42%] md:w-[44.55%]">
+                            <img className="service-background" src={serviceBg} alt="image here"/>
+                            <div className="service-title w-[93%]">
                                 Treatment of yellow leaves in rice plants and improvement of performance...
                             </div>
-                            <div class="body-service">
-                                <div class="author-content">
-                                    <div class="avatar-content">
+                            <div className="body-service">
+                                <div className="author-content">
+                                    <div className="avatar-content">
                                         <img src={userAvatar} alt=""/>
                                     </div>
-                                    <div class="author-info">
-                                        <div class="author-name">Dang Khoa</div>
-                                        <div class="author-role">Expert</div>
+                                    <div className="author-info">
+                                        <div className="author-name">Dang Khoa</div>
+                                        <div className="author-role">Expert</div>
                                     </div>
                                 </div>
-                                <div class="price-content">
-                                    <div class="icon-cart">
+                                <div className="price-content">
+                                    <div className="icon-cart">
                                         <img src={cart} alt=""/>
                                     </div>
-                                    <span class="price-num">1.000.000</span>
-                                    <span class="price-deno">VND</span>
+                                    <span className="price-num">1.000.000</span>
+                                    <span className="price-deno">VND</span>
                                 </div>
                             </div>
-                            <div class="footer-service">
-                                <div class="rate-cotent">
-                                    <div class="star-rates flex flex-row">
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={grayStar} alt=""/>
-                                        <img class="star-icon" src={grayStar} alt=""/>
+                            <div className="footer-service">
+                                <div className="rate-cotent">
+                                    <div className="flex flex-row star-rates">
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={grayStar} alt=""/>
+                                        <img className="star-icon" src={grayStar} alt=""/>
                                     </div>
-                                    <div class="rate-num">(50)</div>
+                                    <div className="rate-num">(50)</div>
                                 </div>
-                                <div class="status-expert-container">
-                                    <div class="status-icon"></div>
-                                    <div class="status-content">Active</div>
+                                <div className="status-expert-container">
+                                    <div className="status-icon"></div>
+                                    <div className="status-content">Active</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="service-box w-[42%] md:w-[44.55%]">
-                            <img class="service-background" src={serviceBg} alt="image here"/>
-                            <div class="service-title w-[93%]">
+                        <div className="service-box w-[42%] md:w-[44.55%]">
+                            <img className="service-background" src={serviceBg} alt="image here"/>
+                            <div className="service-title w-[93%]">
                                 Treatment of yellow leaves in rice plants and improvement of performance...
                             </div>
-                            <div class="body-service">
-                                <div class="author-content">
-                                    <div class="avatar-content">
+                            <div className="body-service">
+                                <div className="author-content">
+                                    <div className="avatar-content">
                                         <img src={userAvatar} alt=""/>
                                     </div>
-                                    <div class="author-info">
-                                        <div class="author-name">Dang Khoa</div>
-                                        <div class="author-role">Expert</div>
+                                    <div className="author-info">
+                                        <div className="author-name">Dang Khoa</div>
+                                        <div className="author-role">Expert</div>
                                     </div>
                                 </div>
-                                <div class="price-content">
-                                    <div class="icon-cart">
+                                <div className="price-content">
+                                    <div className="icon-cart">
                                         <img src={cart} alt=""/>
                                     </div>
-                                    <span class="price-num">1.000.000</span>
-                                    <span class="price-deno">VND</span>
+                                    <span className="price-num">1.000.000</span>
+                                    <span className="price-deno">VND</span>
                                 </div>
                             </div>
-                            <div class="footer-service">
-                                <div class="rate-cotent">
-                                    <div class="star-rates flex flex-row">
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={yellowStar} alt=""/>
-                                        <img class="star-icon" src={grayStar} alt=""/>
-                                        <img class="star-icon" src={grayStar} alt=""/>
+                            <div className="footer-service">
+                                <div className="rate-cotent">
+                                    <div className="flex flex-row star-rates">
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={yellowStar} alt=""/>
+                                        <img className="star-icon" src={grayStar} alt=""/>
+                                        <img className="star-icon" src={grayStar} alt=""/>
                                     </div>
-                                    <div class="rate-num">(50)</div>
+                                    <div className="rate-num">(50)</div>
                                 </div>
-                                <div class="status-expert-container">
-                                    <div class="status-icon"></div>
-                                    <div class="status-content">Active</div>
+                                <div className="status-expert-container">
+                                    <div className="status-icon"></div>
+                                    <div className="status-content">Active</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="pageniation flex flex-row gap-2 mx-auto mt-9">
-                        <div class="mask-wrapper flex justify-center items-center"><img class="mask" src={previous} /></div>
-                        <div class="overlap-4 flex justify-center items-center">
-                            <div class="text-wrapper-2">1</div>
+                    <div className="flex flex-row gap-2 mx-auto pageniation mt-9">
+                        <div className="flex items-center justify-center mask-wrapper"><img className="mask" src={previous} /></div>
+                        <div className="flex items-center justify-center overlap-4">
+                            <div className="text-wrapper-2">1</div>
                         </div>
-                        <div class="overlap-3 flex justify-center items-center">
-                            <div class="text-wrapper-2">2</div>
+                        <div className="flex items-center justify-center overlap-3">
+                            <div className="text-wrapper-2">2</div>
                         </div>
-                        <div class="div-wrapper flex justify-center items-center">
-                            <div class="text-wrapper-2">3</div>
+                        <div className="flex items-center justify-center div-wrapper">
+                            <div className="text-wrapper-2">3</div>
                         </div>
-                        <div class="text-wrapper-3 flex justify-center items-center">....</div>
-                        <div class="overlap-2 flex justify-center items-center">
-                            <div class="text-wrapper-2">8</div>
+                        <div className="flex items-center justify-center text-wrapper-3">....</div>
+                        <div className="flex items-center justify-center overlap-2">
+                            <div className="text-wrapper-2">8</div>
                         </div>
-                        <div class="mask-group-wrapper flex justify-center items-center"><img class="mask" src={continous} /></div>
+                        <div className="flex items-center justify-center mask-group-wrapper"><img className="mask" src={continous} /></div>
                     </div>
                 </div>
-                <div class="suggest-expert hidden md:block md:w-[306px] max-w-[306px]">
+                <div className="suggest-expert hidden md:block md:w-[306px] max-w-[306px]">
                     <SuggestedExperts/>
                 </div>
 

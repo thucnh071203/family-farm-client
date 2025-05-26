@@ -19,7 +19,7 @@ const PostInGroupCard = ({ post }) => {
   return (
     <div className="bg-white p-5 rounded-lg shadow-md mb-5 outline outline-[0.05px] outline-gray-200">
       <div className="p-4">
-        <div className="h-10 flex justify-between">
+        <div className="flex justify-between h-10">
           <div className="flex gap-2">
             <div className="rounded-[50px]">
               <img
@@ -30,7 +30,7 @@ const PostInGroupCard = ({ post }) => {
                 alt="avatar"
               />
             </div>
-            <div className="flex flex-col items-start justify-center font-medium text-sm">
+            <div className="flex flex-col items-start justify-center text-sm font-medium">
               <div className="flex gap-1 ">
                 <p className="text-[#088DD0]">Phuong Nam</p>
                 <p className="text-[#000000] opacity-50">posted in</p>
@@ -54,7 +54,7 @@ const PostInGroupCard = ({ post }) => {
               </span>
             ))}
           </p>
-          <p className="mb-3 flex">
+          <div className="flex mb-3">
             <p className="font-bold"> Category:</p>
             {category.map((cat, index) => (
               <span key={index} className="mr-2">
@@ -62,30 +62,30 @@ const PostInGroupCard = ({ post }) => {
                 {index < category.length - 1 ? "," : ""}
               </span>
             ))}
-          </p>
+          </div>
         </div>
 
         {postData.images && postData.images.length > 0 && (
           <>
             {/* Trường hợp có đúng 3 ảnh */}
             {postData.images.length === 3 ? (
-              <div className="grid grid-cols-2 gap-2 mb-3 h-full">
+              <div className="grid h-full grid-cols-2 gap-2 mb-3">
                 <div className="flex flex-col gap-2">
                   <img
                     src={postData.images[0]}
                     alt={postData.content}
-                    className="h-1/2 w-full object-cover rounded-md"
+                    className="object-cover w-full rounded-md h-1/2"
                   />
                   <img
                     src={postData.images[1]}
                     alt={postData.content}
-                    className="h-1/2 w-full object-cover rounded-md"
+                    className="object-cover w-full rounded-md h-1/2"
                   />
                 </div>
                 <img
                   src={postData.images[2]}
                   alt={postData.content}
-                  className="h-full w-full object-cover rounded-md"
+                  className="object-cover w-full h-full rounded-md"
                 />
               </div>
             ) : (
@@ -103,10 +103,10 @@ const PostInGroupCard = ({ post }) => {
                       <img
                         src={img}
                         alt={postData.content}
-                        className="w-full h-full object-cover"
+                        className="object-cover w-full h-full"
                       />
                       {isLastVisible && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white text-xl font-semibold">
+                        <div className="absolute inset-0 flex items-center justify-center text-xl font-semibold text-white bg-black bg-opacity-50">
                           +{postData.images.length - 4} more
                         </div>
                       )}
@@ -121,15 +121,15 @@ const PostInGroupCard = ({ post }) => {
         <div className="flex items-center justify-between">
           <div className="flex gap-3">
             <p>
-              <i className="fa-solid fa-thumbs-up text-blue-500"></i>{" "}
+              <i className="text-blue-500 fa-solid fa-thumbs-up"></i>{" "}
               {postData.likes}
             </p>
             <p>
-              <i className="fas fa-comment text-blue-500"></i>{" "}
+              <i className="text-blue-500 fas fa-comment"></i>{" "}
               {postData.comments}
             </p>
             <p>
-              <i className="fa-solid fa-share text-blue-500"></i>{" "}
+              <i className="text-blue-500 fa-solid fa-share"></i>{" "}
               {postData.shares}
             </p>
           </div>

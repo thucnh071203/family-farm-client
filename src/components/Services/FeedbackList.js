@@ -28,8 +28,8 @@ const FeedbackList = () => {
     return (
         <div className="p-6 mt-5 bg-white rounded shadow-md">
             <h3 className="mb-4 text-lg font-semibold">FEEDBACK: {feedbacks.length}</h3>
-            {feedbacks.map((fb) => (
-                <div className="flex gap-3 mt-5">
+            {feedbacks.map((fb, index) => (
+                <div className="flex gap-3 mt-5" key={index}>
                     <div className="flex items-start">
                         <img src="https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png" className="h-auto rounded-full w-14" alt="User" />
                     </div>

@@ -44,17 +44,17 @@ export default function SavedPostBody() {
   ];
     
     return (
-        <div class="list-saved-post-page w-full lg:pt-[100px] pt-[63px]">
-            <div class="list-save-post-page-container w-full">
-                <div class="body-post-save-container flex flex-row gap-5">
+        <div className="list-saved-post-page w-full lg:pt-[100px] pt-[63px]">
+            <div className="w-full list-save-post-page-container">
+                <div className="flex flex-row gap-5 body-post-save-container">
                     <SavedPostNav/>
-                    <div class="save-post-main pt-[49px] mx-auto max-w-pl- grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5">
-                        <div class="item-post-save max-w-3xl lg:pl-5 flex flex-col h-full gap-5 mx-auto lg:order-1 order-2">
+                    <div className="save-post-main pt-[49px] mx-auto max-w-pl- grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-5">
+                        <div className="flex flex-col order-2 h-full max-w-3xl gap-5 mx-auto item-post-save lg:pl-5 lg:order-1">
                             {posts.map((post, index) => (
                                 <PostCard key={index} post={post} />
                             ))}
                         </div>
-                        <div className="other-container flex flex-col gap-5 lg:order-2 order-1">
+                        <div className="flex flex-col order-1 gap-5 other-container lg:order-2">
 
                             {/* List Suggested */}
                             <SuggestedFriends />

@@ -47,7 +47,7 @@ const Header = () => {
                 <Link to="/" href="#">
                     <img src={logo} alt="logo" />
                 </Link>
-                <h3 className="name-page font-bold">Family Farm</h3>
+                <h3 className="font-bold name-page">Family Farm</h3>
             </div>
 
             <div className="search-box">
@@ -63,7 +63,7 @@ const Header = () => {
                     <div className="notifi-number">4</div>
                     {/* 💬 Hiển thị popup ở đây */}
                     {showNotifi && (
-                        <div className="absolute top-10 right-0">
+                        <div className="absolute right-0 top-10">
                         <NotificationList />
                         </div>
                     )}
@@ -84,7 +84,7 @@ const Header = () => {
                         </div>
                     </Link>
                 ) : (
-                    <div class="login-box">
+                    <div className="login-box">
                         <Link to="/login">Login</Link>
                     </div>
                 )}
@@ -133,16 +133,16 @@ const Header = () => {
                         {dropdownVisible && (
                             <div className="dropdown-personal">
                                 <ul>
-                                    <li>Profile</li>
-                                    <li>Notifications</li>
-                                    <li>Chats</li>
+                                    <li className='list-none'>Profile</li>
+                                    <li className='list-none'>Notifications</li>
+                                    <li className='list-none'>Chats</li>
                                 </ul>
                             </div>
                         )}
                     </div>
                 ) : (
-                    <Link to="/login" class="sidebar-item">
-                        <i class="fa-solid fa-right-to-bracket"></i>
+                    <Link to="/login" className="sidebar-item">
+                        <i className="fa-solid fa-right-to-bracket"></i>
                         <p>Login</p>
                     </Link>
                 )}
