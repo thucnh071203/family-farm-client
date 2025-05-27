@@ -35,7 +35,7 @@ const NavbarHeader = () => {
                     <span>Groups</span>
                 </Link>
 
-                <Link to="#" className="navbar-header-item">
+                <Link to="/Service" className="navbar-header-item">
                     <img
                         src={serviceIcon}
                         alt="Services"
