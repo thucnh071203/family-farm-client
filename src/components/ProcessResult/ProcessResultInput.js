@@ -55,9 +55,9 @@ const ProcessResultInput = () => {
                             placeholder="Write your result..."
                         />
                         {/* để test nó sẽ hiển thị ra cái gì (bộc nó trong className="rich-text-editor")*/}
-                        <div className="p-4 mt-2 bg-white rounded shadow">
+                        {/* <div className="p-4 mt-2 bg-white rounded shadow">
                             <div dangerouslySetInnerHTML={{ __html: content }} />
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="grid grid-cols-3 gap-4">
