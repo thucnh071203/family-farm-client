@@ -51,7 +51,7 @@ const ProcessResultInput = () => {
                         <ReactQuill
                             value={content}
                             onChange={setContent}
-                            className="h-32 mb-10 bg-white"
+                            className="h-16 mb-10 bg-white flex-left ReactQuill"
                             placeholder="Write your result..."
                         />
                         {/* để test nó sẽ hiển thị ra cái gì (bộc nó trong className="rich-text-editor")*/}

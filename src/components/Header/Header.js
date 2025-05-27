@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './header.css';
 import { Link } from 'react-router-dom';
 import NotificationList from '../Notification/NotificationList';
-import ChatList from '../Chat/ChatList';
+import ChatListPopup from '../Chat/ChatListPopup';
 import logo from '../../assets/images/logo.png';
 import defaultAvatar from '../../assets/images/default-avatar.png';
 
@@ -62,7 +62,7 @@ const Header = () => {
                     onToggle={() => handlePopupToggle('notification')}
                     isVisible={activePopup === 'notification'}
                 />
-                <ChatList
+                <ChatListPopup
                     onToggle={() => handlePopupToggle('chat')}
                     isVisible={activePopup === 'chat'}
                 />

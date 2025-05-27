@@ -1,5 +1,5 @@
 .popup-notifi {
-  max-height: 95vh; /* giới hạn chiều cao tối đa */
+  max-height: 90vh; /* giới hạn chiều cao tối đa */
   overflow-y: auto; /* cho phép cuộn nếu nội dung vượt quá */
   width: 85vh;
 }
@@ -166,7 +166,7 @@
   align-self: stretch;
    font-weight: 600;
   color: #a2a5b9;
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 0;
   line-height: normal;
   text-align: start;
