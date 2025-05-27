@@ -33,6 +33,9 @@ body {
   margin-left: 20px;
 }
 
+.ReactQuill .ql-toolbar .ql-snow{
+  padding: 0px !important;
+}
 
 #root {
   height: 100%;

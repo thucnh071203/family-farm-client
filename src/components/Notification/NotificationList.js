@@ -5,6 +5,7 @@ import cancelIcon from "../../assets/images/cancel_vector.png";
 import headLine from "../../assets/images/head_line.png";
 import readIcon from "../../assets/images/letter_vector.png";
 import lineShape from "../../assets/images/border_line.png";
+import formatTime from "../../utils/formatTime";
 
 const notificationData = {
     Success: true,
@@ -56,7 +57,7 @@ const notificationData = {
         {
             NotifiId: "noti_004",
             Content: "New event in your group: Farm Workshop. asdas asdas dasd asdasd asdasdas d",
-            CreatedAt: "2025-05-23T14:00:00Z",
+            CreatedAt: "2025-05-18T14:00:00Z",
             CategoryNotifiId: "cat_group",
             CategoryName: "Group",
             SenderId: null,
@@ -70,41 +71,13 @@ const notificationData = {
     ]
 };
 
-export default function NotificationList({ onToggle, isVisible }) {
-    const [isNotificationVisible, setIsNotificationVisible] = useState(false);
-
+const NotificationList = ({ onToggle, isVisible }) => {
     // Close notification popup
     useEffect(() => {
-        const handleClose = () => setIsNotificationVisible(false);
+        const handleClose = () => onToggle();
         window.addEventListener("closeNotification", handleClose);
         return () => window.removeEventListener("closeNotification", handleClose);
     }, [onToggle]);
-
-    // Format time to display "X minutes ago" or similar
-    const formatTime = (createdAt) => {
-        const now = new Date();
-        const created = new Date(createdAt);
-        const diffMs = now - created;
-        const diffMins = Math.floor(diffMs / 60000); // Convert to minutes
-        if (diffMins < 1) return "Just now";
-        if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`;
-        const diffHours = Math.floor(diffMins / 60);
-        if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-        const diffDays = Math.floor(diffHours / 24);
-        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-    };
-
-    // const handleToggle = () => {
-    //     if (!isNotificationVisible) {
-    //         setIsNotificationVisible(true); // Mở popup nếu đang đóng
-    //         onToggle(); // Cập nhật activePopup
-    //     } else if (isActive) {
-    //         setIsNotificationVisible(false); // Đóng popup nếu đang mở và active
-    //     } else {
-    //         onToggle(); // Nổi popup lên nếu đang mở nhưng không active
-    //     }
-    // };
-
 
     return (
         <div className="relative">
@@ -120,13 +93,13 @@ export default function NotificationList({ onToggle, isVisible }) {
             </div>
 
             {isVisible && (
-                <div className="popup-notifi fixed right-5 top-16 max-w-[400px] w-[90%] sm:w-[400px] z-[50]">
-                    <div className="w-full p-4 popup-container bg-slate-200">
+                <div className="popup-notifi fixed right-5 top-16 max-w-sm z-[50] border border-gray-300 border-solid shadow-lg rounded-xl">
+                    <div className="w-full h-full p-4 pt-4 bg-white">
                         <div className="flex items-center justify-between w-full px-4 mx-auto popup-header sm:px-0">
                             <div className="popup-title">Notifications</div>
                             <div
                                 className="cancel-notifi"
-                                onClick={() => setIsNotificationVisible(false)}
+                                onClick={() => { onToggle() }}
                                 role="button"
                                 aria-label="Close notifications"
                             >
@@ -138,7 +111,7 @@ export default function NotificationList({ onToggle, isVisible }) {
                             <div className="all-noti">All</div>
                             <div className="not-read-noti">Not read yet</div>
                         </div> */}
-                        <div className="flex px-4 mt-3 ml-4 sm:px-0">
+                        <div className="flex px-4 mt-3 sm:px-0">
                             <div className="flex flex-row gap-2">
                                 <div className="font-semibold text-gray-500 bg-gray-100 text-sm leading-normal whitespace-nowrap px-3.5 py-1.5 rounded-md cursor-pointer hover:bg-cyan-300 transition-colors duration-200">
                                     All
@@ -164,11 +137,11 @@ export default function NotificationList({ onToggle, isVisible }) {
                                                 alt={`${noti.SenderName || 'System'} avatar`}
                                             />
                                             <div className="noti-info">
-                                                <p className="p-noti text-start">
-                                                    {noti.SenderName && <span className="username-span">{noti.SenderName} </span>}
-                                                    <span className=" noti-action line-clamp-2">{noti.Content}</span>
+                                                <p className="p-noti text-start line-clamp-2">
+                                                    {noti.SenderName && <span className="font-semibold username-span">{noti.SenderName} </span>}
+                                                    {noti.Content}
                                                 </p>
-                                                <div className="action-time">{formatTime(noti.CreatedAt)}</div>
+                                                <span className="action-time">{formatTime(noti.CreatedAt)}</span>
                                             </div>
                                         </div>
                                         <img
@@ -187,3 +160,5 @@ export default function NotificationList({ onToggle, isVisible }) {
         </div>
     );
 }
+
+export default NotificationList;
