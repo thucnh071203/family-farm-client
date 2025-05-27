@@ -12,14 +12,14 @@ const ProcessResultPage = () => {
     <div>
       <Header />
       <NavbarHeader />
-      <div className="flex flex-col gap-5 p-6 mx-auto lg:flex-row max-w-7xl pt-[130px] text-left">
+      <div className="flex flex-col gap-5 p-6 mx-auto md:flex-row max-w-7xl pt-[130px] text-left">
         {/* Left Section: Process Steps */}
-        <div className="lg:w-1/3">
+        <div className="md:w-1/3">
           <ProcessSteps />
         </div>
 
         {/* Right Section */}
-        <div className="flex flex-col gap-5 lg:w-2/3">
+        <div className="flex flex-col gap-5 md:w-2/3">
           <ProcessIntroduction />
           <ProcessResultInput />
           <ProcessResultHistory />

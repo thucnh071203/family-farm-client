@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './header.css'; // giữ nguyên CSS cũ
+import './header.css';
 import { Link } from 'react-router-dom';
 import NotificationList from '../Notification/NotificationList';
+import ChatList from '../Chat/ChatList';
 import logo from '../../assets/images/logo.png';
 import defaultAvatar from '../../assets/images/default-avatar.png';
 
@@ -9,13 +10,18 @@ const Header = () => {
     const [isSidebarActive, setIsSidebarActive] = useState(false);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [usernameStorage, setUsernameStorage] = useState("");
-    const [showNotifi, setShowNotifi] = useState(false);
+    const [activePopup, setActivePopup] = useState(null); // Theo dõi popup nhấn gần nhất
 
     const toggleSidebar = () => {
         setIsSidebarActive((prev) => !prev);
     };
 
-    //Lấy username lưu trong local storage
+     // Xử lý khi một popup được nhấn
+    const handlePopupToggle = (popupName) => {
+        setActivePopup((prev) => (prev === popupName ? null : popupName)); // Đóng nếu đã mở, mở nếu khác
+    };
+
+    // Fetch username from local storage
     useEffect(() => {
         const username = localStorage.getItem("username");
         if (username) {
@@ -23,6 +29,7 @@ const Header = () => {
         }
     }, []);
 
+    // Handle responsive sidebar
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 768) {
@@ -32,13 +39,6 @@ const Header = () => {
 
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    // Đóng popup notification
-    useEffect(() => {
-        const handleClose = () => setShowNotifi(false);
-        window.addEventListener("closeNotification", handleClose);
-        return () => window.removeEventListener("closeNotification", handleClose);
     }, []);
 
     return (
@@ -58,22 +58,14 @@ const Header = () => {
             </div>
 
             <div className="action">
-                <div className="notifi-box" onClick={() => setShowNotifi(!showNotifi)}>
-                    <i className="fa-solid fa-bell"></i>
-                    <div className="notifi-number">4</div>
-                    {/* 💬 Hiển thị popup ở đây */}
-                    {showNotifi && (
-                        <div className="absolute right-0 top-10">
-                        <NotificationList />
-                        </div>
-                    )}
-                </div>
-                <div className="chat-box">
-                    <i className="fa-solid fa-comment"></i>
-                    <div className="chat-number">10</div>
-                </div>
-
-                {/* xử lý hiện thị khi login thành công  */}
+                <NotificationList
+                    onToggle={() => handlePopupToggle('notification')}
+                    isVisible={activePopup === 'notification'}
+                />
+                <ChatList
+                    onToggle={() => handlePopupToggle('chat')}
+                    isVisible={activePopup === 'chat'}
+                />
                 {usernameStorage ? (
                     <Link to="/PersonalPage">
                         <div className="avatar-box">
@@ -146,7 +138,6 @@ const Header = () => {
                         <p>Login</p>
                     </Link>
                 )}
-
             </div>
         </header>
     );
