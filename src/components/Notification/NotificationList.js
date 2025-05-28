@@ -93,7 +93,7 @@ const NotificationList = ({ onToggle, isVisible }) => {
             </div>
 
             {isVisible && (
-                <div className="popup-notifi fixed right-5 top-16 max-w-sm z-[50] border border-gray-300 border-solid shadow-lg rounded-xl">
+                <div className="popup-notifi fixed md:right-5 right-0 top-16 max-w-sm z-[50] border border-gray-300 border-solid shadow-lg rounded-xl">
                     <div className="w-full h-full p-4 pt-4 bg-white">
                         <div className="flex items-center justify-between w-full px-4 mx-auto popup-header sm:px-0">
                             <div className="popup-title">Notifications</div>

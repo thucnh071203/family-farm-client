@@ -7,62 +7,40 @@ import googleIcon from ".././assets/images/devicon_google.png";
 import fbIcon from ".././assets/images/devicon-plain_facebook.png";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
+import instance from "../Axios/axiosConfig";
 import { useState } from "react";
-import axios from "../Axios/axiosConfig";
 import { toast, Bounce } from "react-toastify";
 
 const LoginForm = () => {
-  //Dùng để lấy và set giá trị cho 2 input là username và password
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  //Xử lý logic đăng nhập
   const handleLogin = async () => {
-    axios
-      .post('https://localhost:7280/api/authen/login', {
+    try {
+      // Gọi API đăng nhập
+      const loginResponse = await instance.post('/api/authen/login', {
         Identifier: username,
         Password: password,
-      })
-      .then((response) => {
-        const data = response.data;
+      });
 
-        if (response.status === 200) {
-          localStorage.setItem("accessToken", data.accessToken);
-          localStorage.setItem("refreshToken", data.refreshToken);
-          localStorage.setItem("username", data.username);
-          localStorage.setItem("tokenExpiryIn", data.tokenExpiryIn);
+      const loginData = loginResponse.data;
+      if (loginResponse.status === 200) {
+        // Lưu thông tin đăng nhập vào sessionStorage
+        sessionStorage.setItem("accessToken", loginData.accessToken);
+        sessionStorage.setItem("refreshToken", loginData.refreshToken);
+        sessionStorage.setItem("username", loginData.username);
+        sessionStorage.setItem("tokenExpiryIn", loginData.tokenExpiryIn);
 
-          toast.success("Đăng nhập thành công!", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Bounce,
-          });
+        // Gọi API để lấy thông tin profile
+        const profileResponse = await instance.get('/api/account/own-profile');
+        const profileData = profileResponse.data;
+        
+        // Lưu fullName và avatarUrl vào sessionStorage
+        sessionStorage.setItem("fullName", profileData.data.fullName || loginData.username);
+        sessionStorage.setItem("avatarUrl", profileData.data.avatar || "");
 
-          navigate("/");
-        } else {
-          toast.error("Đăng nhập thất bại! Vui lòng kiểm tra tên đăng nhập hoặc mật khẩu", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Bounce,
-          });
-        }
-      })
-      .catch((error) => {
-        toast.error("Đăng nhập thất bại! Vui lòng kiểm tra thông tin.", {
+        toast.success("LOGIN SUCCESSFULLY!", {
           position: "top-right",
           autoClose: 3000,
           hideProgressBar: false,
@@ -73,7 +51,34 @@ const LoginForm = () => {
           theme: "colored",
           transition: Bounce,
         });
+
+        navigate("/");
+      } else {
+        toast.error("Login failed! Please check your username or password!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+      }
+    } catch (error) {
+      toast.error("Đăng nhập thất bại! Vui lòng kiểm tra thông tin.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
       });
+    }
   };
 
   return (
@@ -97,8 +102,6 @@ const LoginForm = () => {
           <div className="w-full mt-4 overlap-group-wrapper">
             <div className="flex w-full overlap-group">
               <img className="mdi-user" src={mdiUser} alt="User Icon" />
-
-              {/* INPUT USERNAME  */}
               <input
                 className="input-text"
                 type="text"
@@ -119,8 +122,6 @@ const LoginForm = () => {
           <div className="w-full mt-4 overlap-group-wrapper">
             <div className="flex w-full overlap-group">
               <img className="mdi-clock" src={mdiClock} alt="Clock Icon" />
-
-              {/* INPUT CHO PASSWORD  */}
               <input
                 className="input-text"
                 type="password"
@@ -128,7 +129,6 @@ const LoginForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-
               <img className="mdi-eye" src={iconEye} alt="Eye Icon" />
             </div>
           </div>

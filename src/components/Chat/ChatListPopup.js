@@ -25,7 +25,7 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
             </div>
 
             {isVisible && (
-                <div className="fixed right-5 top-16 max-w-sm z-[50] border border-gray-300 border-solid shadow-lg rounded-xl max-h-[90vh] overflow-y-auto">
+                <div className="fixed md:right-5 right-0 top-16 max-w-sm z-[50] border border-gray-300 border-solid shadow-lg rounded-xl max-h-[90vh] overflow-y-auto">
                     <div className="w-full h-full p-4 pt-4 bg-white rounded-xl">
                         <div className="w-full flex justify-between items-center mx-auto px-4 sm:px-0 h-[35px]">
                             <div className="font-bold text-black text-[18px] leading-normal whitespace-nowrap">
