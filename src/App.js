@@ -8,6 +8,8 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ServicePage from "./pages/ServicePage/ServicePage";
 import ProcessListPage from "./pages/ProcessPage/ProcessListPage";
+import ProcessListFarmerPage from "./pages/ProcessPage/ProgressListFarmerPage";
+import CreateStepPage from "./pages/ProcessPage/CreateStepPage";
 import SavedPostPage from "./pages/SavedPostPage/SavedPostPage";
 import WaitingListPage from "./pages/WaitingPage/WaitingListPage";
 import FriendPage from "./pages/FriendPage/FriendPage";
@@ -23,6 +25,7 @@ import PostGroupPage from "./pages/GroupPage/PostGroupPage";
 import CreateServicePage from "./pages/ServicePage/CreateServicePage";
 import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
+
 
 function App() {
   return (
@@ -59,6 +62,8 @@ function App() {
           <Route path="/SavedPostPage" element={<SavedPostPage />} />
           <Route path="/CreateService" element={<CreateServicePage />} />
           <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
+          <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
+          <Route path="/CreateStepPage" element={<CreateStepPage />} />
         </Routes>
       </Router>
     </div>
