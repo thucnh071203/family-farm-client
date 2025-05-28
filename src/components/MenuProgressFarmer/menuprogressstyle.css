@@ -1,0 +1,42 @@
+.progress-managment .menu-progress-container {
+  height: 164px;
+}
+
+.progress-managment .menu-title {
+  font-family: "Roboto-Medium", Helvetica;
+  font-weight: 500;
+  color: var(--variable-collection-black-2);
+  font-size: 16px;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.progress-managment .menu-booking-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px;
+  border-radius: 2px;
+}
+
+.progress-managment .text-menu-booking {
+  position: relative;
+  width: fit-content;
+  font-family: "Roboto-Medium", Helvetica;
+  font-weight: 500;
+  color: var(--variable-collection-black-2);
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.progress-managment .menu-your-progress-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px;
+  background-color: #3db3fb40;
+  border-radius: 2px;
+}
