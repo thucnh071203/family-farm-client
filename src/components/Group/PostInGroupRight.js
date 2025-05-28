@@ -38,7 +38,7 @@ const PostInGroupRight = () => {
     },
   ];
   return (
-    <div className="w-full flex flex-col items-center pt-12">
+    <div className="w-full flex flex-col items-center pt-12 lg:mt-[120px] mt-[63px]">
       <div className="w-[60%] flex flex-col gap-4">
         {posts.map((post, index) => (
           <PostInGroupCard key={index} post={post} />

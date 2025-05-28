@@ -3,7 +3,7 @@ import MoreIcon from "../../assets/images/more_horiz.svg";
 import OptionsPost from "./OptionsPost";
 const PostCard = ({ post }) => {
   const defaultPost = {
-    username: "Phuong Nam",
+    fullName: "Phuong Nam",
     avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
     createAt: "July 29 2024, 07:49 AM",
     content:
@@ -18,8 +18,9 @@ const PostCard = ({ post }) => {
   const postData = { ...defaultPost, ...post };
   const hashTag = ["blog", "nienmoulming", "polytecode"];
   const category = ["Pants", "Diseases"];
+  const taggedFriends = ["Huu Thuc", "Mai Xuan"];
   return (
-    <div className="bg-white p-5 rounded-lg shadow-md mb-5">
+    <div className="p-5 text-left bg-white border border-gray-200 border-solid rounded-lg shadow-md">
       <div className="flex justify-between">
         <div className="flex items-center gap-3 mb-3">
           <img
@@ -28,7 +29,7 @@ const PostCard = ({ post }) => {
             className="w-10 h-10 rounded-full"
           />
           <div>
-            <h3 className="font-bold">{postData.username}</h3>
+            <h3 className="font-bold text-[#088DD0]">{postData.fullName}</h3>
             <p className="text-sm text-gray-500">{postData.createAt}</p>
           </div>
         </div>
@@ -37,44 +38,58 @@ const PostCard = ({ post }) => {
           <div>
             <OptionsPost />
           </div>
-
         </div>
       </div>
       <div className="flex flex-col items-start mt-3 text-sm">
-        <p className="mb-3 text-[#7D7E9E] font-light">{postData.content}</p>
-        <p className="mb-3 font-bold">
+        <p className="mb-2 text-[#7D7E9E] font-light">{postData.content}</p>
+        <p className="mb-2 font-bold">
           {hashTag.map((tag, index) => (
             <span key={index} className="mr-2">
               #{tag}
             </span>
           ))}
         </p>
-        <p className="mb-3 flex">
-          <p className="font-bold"> Category:</p>
-          {category.map((cat, index) => (
-            <span key={index} className="mr-2">
-              {cat}
-              {index < category.length - 1 ? "," : ""}
-            </span>
-          ))}
-        </p>
+        <div className="flex items-center gap-2 mb-2">
+          {category.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 font-bold">
+              Categories:
+              {category.map((cat, index) => (
+                <span key={index} className="flex items-center px-2 py-1 font-normal text-gray-700 bg-gray-200 rounded-full">
+                  {cat}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        {/* <p className="flex items-center gap-2 mb-2">
+          {taggedFriends.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mb-2 font-bold">
+              Tags:
+              {taggedFriends.map((tag, index) => (
+                <span key={index} className="flex items-center px-2 py-1 text-sm text-white bg-gray-400 rounded">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </p> */}
       </div>
       {postData.images && postData.images.length > 0 && (
         <>
           {/* Trường hợp có đúng 3 ảnh */}
           {postData.images.length === 3 ? (
-            <div className="grid grid-cols-2 gap-2 mb-3 h-full">
+            <div className="grid grid-cols-2 gap-2 mb-3">
               <div className="flex flex-col gap-2">
                 <img src={postData.images[0]}
                   alt={postData.content}
-                  className="h-1/2 w-full object-cover rounded-md" />
+                  className="object-cover w-full rounded-md h-1/2" />
                 <img src={postData.images[1]}
                   alt={postData.content}
-                  className="h-1/2 w-full object-cover rounded-md" />
+                  className="object-cover w-full rounded-md h-1/2" />
               </div>
               <img src={postData.images[2]}
                 alt={postData.content}
-                className="h-full w-full object-cover rounded-md" />
+                className="object-cover w-full h-full rounded-md" />
             </div>
           ) : (
             // Các trường hợp khác: 1-2 ảnh, 4+ ảnh
@@ -89,9 +104,9 @@ const PostCard = ({ post }) => {
                     <img src={img}
 
                       alt={postData.content}
-                      className="w-full h-full object-cover" />
+                      className="object-cover w-full h-full" />
                     {isLastVisible && (
-                      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white text-xl font-semibold">
+                      <div className="absolute inset-0 flex items-center justify-center text-xl font-semibold text-white bg-black bg-opacity-50">
                         +{postData.images.length - 4} more
                       </div>
                     )}
@@ -103,29 +118,27 @@ const PostCard = ({ post }) => {
         </>
       )}
 
-      <div className="flex items-center justify-between">
-        <div className="flex gap-3">
+      <div className="flex flex-col items-center justify-between gap-3 lg:flex-row lg:gap-8">
+        <div className="flex justify-around w-full lg:w-1/4 lg:justify-between">
           <p>
-            <i className="fa-solid fa-thumbs-up text-blue-500"></i>{" "}
-            {postData.likes}
+            <i className="text-blue-500 fa-solid fa-thumbs-up"></i> {postData.likes}
           </p>
           <p>
-            <i className="fas fa-comment text-blue-500"></i> {postData.comments}
+            <i className="text-blue-500 fas fa-comment"></i> {postData.comments}
           </p>
           <p>
-            <i className="fa-solid fa-share text-blue-500"></i>{" "}
-            {postData.shares}
+            <i className="text-blue-500 fa-solid fa-share"></i> {postData.shares}
           </p>
         </div>
-        <div className="flex gap-2">
-          <button className="p-2 bg-gray-200 rounded-sm">
-            <i className="fa-solid fa-thumbs-up"></i> Like
+        <div className="flex justify-between w-full gap-1 lg:w-3/4">
+          <button className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300">
+            <i className="mr-1 fa-solid fa-thumbs-up"></i> Like
           </button>
-          <button className="p-2 bg-gray-200 rounded-sm">
-            <i className="fas fa-comment"></i> Comment
+          <button className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300">
+            <i className="mr-1 fas fa-comment"></i> Comment
           </button>
-          <button className="p-2 bg-gray-200 rounded-sm">
-            <i className="fa-solid fa-share"></i> Share
+          <button className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300">
+            <i className="mr-1 fa-solid fa-share"></i> Share
           </button>
         </div>
       </div>

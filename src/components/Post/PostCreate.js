@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
+import PostCreatePopup from "./PostCreatePopup";
 
-const PostInput = ({ profileImage }) => {
+const PostCreate = ({ profileImage }) => {
+  const [showPopup, setShowPopup] = useState(false);
+
   return (
-    <div className="bg-white p-3 rounded-lg shadow-md">
-      <button className="font-bold rounded-md pb-4">
+    <div className="bg-white p-3 rounded-lg shadow-md border text-left"
+      onClick={() => setShowPopup(true)}>
+      <button
+        className="font-bold rounded-md pb-4"
+      >
         <i className="fa-solid fa-pencil"></i> Publish
       </button>
       <div className="flex items-center gap-3">
@@ -21,8 +27,9 @@ const PostInput = ({ profileImage }) => {
           className="flex-grow p-2 border border-gray-300 rounded-full"
         />
       </div>
+      {showPopup && <PostCreatePopup onClose={() => setShowPopup(false)} />}
     </div>
   );
 };
 
-export default PostInput;
+export default PostCreate;

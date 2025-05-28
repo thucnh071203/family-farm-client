@@ -1,0 +1,90 @@
+.progress-management .frame {
+  gap: 59px;
+}
+
+.progress-management .frame-overview {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.progress-management .frame-service {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.progress-management .frame-2 {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.progress-management .img {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  transition: filter 0.3s ease;
+}
+
+.progress-management .text-wrapper-4 {
+  position: relative;
+  width: fit-content;
+  font-family: "Roboto-Bold", Helvetica;
+  font-weight: 700;
+  color: var(--variable-collection-black-2);
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.progress-management .frame-overview:hover .img {
+  filter: brightness(0) saturate(100%) invert(64%) sepia(79%) saturate(531%) hue-rotate(173deg) brightness(97%) contrast(93%);
+}
+
+.progress-management .frame-overview:hover .text-wrapper-4 {
+  color: #3db3fb;
+}
+
+.progress-management .text-wrapper-5 {
+  position: relative;
+  width: fit-content;
+  font-family: "Roboto-Bold", Helvetica;
+  font-weight: 700;
+  color: var(--variable-collection-black-2);
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.progress-management .frame-service:hover .img {
+  filter: brightness(0) saturate(100%) invert(64%) sepia(79%) saturate(531%) hue-rotate(173deg) brightness(97%) contrast(93%);
+}
+
+.progress-management .frame-service:hover .text-wrapper-5 {
+  color: #3db3fb;
+}
+
+.progress-management .text-wrapper-6 {
+  position: relative;
+  width: fit-content;
+  font-family: "Roboto-Bold", Helvetica;
+  font-weight: 700;
+  color: #3db3fb;
+  letter-spacing: 0;
+  line-height: normal;
+  white-space: nowrap;
+}

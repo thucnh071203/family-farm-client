@@ -61,10 +61,9 @@ function App() {
           <Route path="/SavedPostPage" element={<SavedPostPage />} />
           <Route path="/CreateService" element={<CreateServicePage />} />
           <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
-          <Route
-            path="/ProgressListFarmer"
-            element={<ProcessListFarmerPage />}
-          />
+
+          <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
+
           <Route path="/CreateStepPage" element={<CreateStepPage />} />
         </Routes>
       </Router>

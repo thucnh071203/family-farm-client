@@ -2,6 +2,7 @@ import React from "react";
 
 const FriendSidebar = ({ setSection, roleId }) => {
   return (
+
     <div className="w-[289px] h-screen bg-[#E5E4E9] font-roboto rounded-r-[10px] hidden md:block">
       <div className="ml-8 pt-6 flex items-start">
         <p className="text-lg font-bold ">FRIEND PAGE</p>
@@ -53,24 +54,29 @@ const FriendSidebar = ({ setSection, roleId }) => {
         )}
 
         {/* Cả 2 role đều có */}
+
         <button
           onClick={() => setSection("list-friend")}
           className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"
         >
+
           <div className="mx-4 flex items-center">
+
             <i className="fa-solid fa-user-plus"></i>
           </div>
-          <div className="font-bold flex items-center">Your friends</div>
+          <div className="flex items-center font-bold">Your friends</div>
         </button>
 
         <button
           onClick={() => setSection("list-follower")}
           className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"
         >
+
           <div className="mx-4 flex items-center">
+
             <i className="fa-solid fa-user-plus"></i>
           </div>
-          <div className="font-bold flex items-center">Friend suggestions</div>
+          <div className="flex items-center font-bold">Friend suggestions</div>
         </button>
       </div>
     </div>
