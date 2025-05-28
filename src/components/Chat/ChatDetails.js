@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import cancelIcon from "../../assets/images/cancel_vector.png";
 import headLine from "../../assets/images/head_line.png";
 import ReactQuill from "react-quill";
@@ -99,20 +99,7 @@ const chatDetailsData = {
             ChatId: "chat_002",
             SenderId: "user_789",
             ReceiverId: "user_101",
-        },
-        {
-            ChatDetailId: "detail_005",
-            Message: "Thanks for the friend request!",
-            FileUrl: null,
-            FileType: null,
-            FileName: null,
-            SendAt: "2025-05-24T09:10:00Z",
-            IsRecalled: false,
-            IsSeen: true,
-            ChatId: "chat_003",
-            SenderId: "user_456",
-            ReceiverId: "user_101",
-        },
+        }
     ],
 };
 
@@ -128,12 +115,25 @@ const ChatDetails = ({ isVisible, onClose, chatId, senderName, senderAvatar, cur
     const quillRef = useRef(null);
     const imageInputRef = useRef(null);
     const fileInputRef = useRef(null);
+    const messagesEndRef = useRef(null); // Thêm ref cho điểm neo cuối danh sách tin nhắn
 
-    if (!isVisible) return null;
+    // Hàm cuộn xuống tin nhắn cuối cùng
+    const scrollToBottom = () => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
 
     const filteredDetails = chatDetailsData.ChatDetails
         .filter((detail) => detail.ChatId === chatId)
         .sort((a, b) => new Date(a.SendAt) - new Date(b.SendAt));
+        
+    // Sử dụng useEffect để cuộn khi component được render hoặc chatId thay đổi
+    useEffect(() => {
+        scrollToBottom();
+    }, [chatId, filteredDetails]); // Phụ thuộc vào chatId và filteredDetails để cuộn lại khi có tin nhắn mới
+
+    if (!isVisible) return null;
 
     const messageGroups = [];
     let currentGroup = null;
@@ -195,6 +195,7 @@ const ChatDetails = ({ isVisible, onClose, chatId, senderName, senderAvatar, cur
             console.log("Message sent:", { content, file: selectedFile });
             setContent("");
             removeSelectedFile();
+            scrollToBottom(); // Cuộn xuống dưới sau khi gửi tin nhắn
         }
     };
 
@@ -312,6 +313,7 @@ const ChatDetails = ({ isVisible, onClose, chatId, senderName, senderAvatar, cur
                 ) : (
                     <div className="text-[#344258] text-[13px] text-center py-4">No messages found</div>
                 )}
+                <div ref={messagesEndRef} /> {/* Điểm neo để cuộn xuống */}
             </div>
             <hr />
             <div className="w-full sm:px-0 rich-text-editor">

@@ -5,31 +5,65 @@ import NotificationList from '../Notification/NotificationList';
 import ChatListPopup from '../Chat/ChatListPopup';
 import logo from '../../assets/images/logo.png';
 import defaultAvatar from '../../assets/images/default-avatar.png';
+import MenuHeader from './MenuHeader';
 
 const Header = () => {
     const [isSidebarActive, setIsSidebarActive] = useState(false);
-    const [dropdownVisible, setDropdownVisible] = useState(false);
-    const [usernameStorage, setUsernameStorage] = useState("");
-    const [activePopup, setActivePopup] = useState(null); // Theo dõi popup nhấn gần nhất
+    const [username, setUsername] = useState("");
+    const [fullName, setFullName] = useState("");
+    const [avatarUrl, setAvatarUrl] = useState("");
+    const [activePopup, setActivePopup] = useState(null);
 
     const toggleSidebar = () => {
         setIsSidebarActive((prev) => !prev);
     };
 
-     // Xử lý khi một popup được nhấn
     const handlePopupToggle = (popupName) => {
-        setActivePopup((prev) => (prev === popupName ? null : popupName)); // Đóng nếu đã mở, mở nếu khác
+        console.log('Toggling popup:', popupName, 'Current activePopup:', activePopup);
+        setActivePopup((prev) => (prev === popupName ? null : popupName));
     };
 
-    // Fetch username from local storage
     useEffect(() => {
-        const username = localStorage.getItem("username");
-        if (username) {
-            setUsernameStorage(username);
+        const handleClickOutside = (event) => {
+            const popupContainers = [
+                '.menu-container',
+                '.chat-box',
+                '.chat-list',
+                '.notifi-box',
+                '.popup-notifi',
+                '.chat-details-container',
+                '.sidebar-menu',
+            ];
+            const isClickInsidePopup = popupContainers.some((selector) => {
+                const isInside = event.target.closest(selector);
+                console.log(`Checking selector: ${selector}, isInside: ${!!isInside}`);
+                return isInside;
+            });
+
+            if (!isClickInsidePopup) {
+                console.log('Closing all popups');
+                setActivePopup(null);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
+    useEffect(() => {
+        const storedUsername = sessionStorage.getItem("username");
+        const storedFullName = sessionStorage.getItem("fullName");
+        const storedAvatarUrl = sessionStorage.getItem("avatarUrl");
+
+        if (storedUsername) {
+            setUsername(storedUsername);
+            setFullName(storedFullName || storedUsername);
+            setAvatarUrl(storedAvatarUrl || defaultAvatar);
         }
     }, []);
 
-    // Handle responsive sidebar
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth >= 768) {
@@ -58,23 +92,35 @@ const Header = () => {
             </div>
 
             <div className="action">
-                <NotificationList
-                    onToggle={() => handlePopupToggle('notification')}
-                    isVisible={activePopup === 'notification'}
-                />
-                <ChatListPopup
-                    onToggle={() => handlePopupToggle('chat')}
-                    isVisible={activePopup === 'chat'}
-                />
-                {usernameStorage ? (
-                    <Link to="/PersonalPage">
-                        <div className="avatar-box">
+                <>
+                    <NotificationList
+                        onToggle={() => handlePopupToggle('notification')}
+                        isVisible={activePopup === 'notification'}
+                    />
+                    <ChatListPopup
+                        onToggle={() => handlePopupToggle('chat')}
+                        isVisible={activePopup === 'chat'}
+                    />
+                </>
+                {username ? (
+                    <div className="relative menu-container">
+                        <div
+                            className="avatar-box"
+                            onClick={() => handlePopupToggle('menu')}
+                            role="button"
+                            aria-label="Toggle menu"
+                            aria-expanded={activePopup === 'menu'}
+                        >
                             <div className="avatar-circle">
-                                <img src={defaultAvatar} alt="avatar" />
+                                <img src={avatarUrl} alt="avatar" />
                             </div>
-                            <p className="name-account">Phuong Nam</p>
+                            <p className="name-account">{fullName}</p>
                         </div>
-                    </Link>
+                        <MenuHeader
+                            onToggle={() => handlePopupToggle('menu')}
+                            isVisible={activePopup === 'menu'}
+                        />
+                    </div>
                 ) : (
                     <div className="login-box">
                         <Link to="/login">Login</Link>
@@ -91,53 +137,51 @@ const Header = () => {
                     <i className="fa-solid fa-house"></i>
                     <p>Home</p>
                 </Link>
-
                 <Link to="/" className="sidebar-item">
                     <i className="fa-solid fa-user"></i>
                     <p>Friend</p>
                 </Link>
-
                 <Link to="/" className="sidebar-item">
                     <i className="fa-solid fa-user-group"></i>
                     <p>Group</p>
                 </Link>
-
                 <Link to="/" className="sidebar-item">
                     <i className="fa-brands fa-servicestack"></i>
                     <p>Service</p>
                 </Link>
-
-                {usernameStorage ? (
-                    <div
-                        className="sidebar-item sidebar-item-profile"
-                        onClick={() => setDropdownVisible((prev) => !prev)}
-                    >
+                {username ? (
+                    <div className="sidebar-item sidebar-item-profile"
+                        onClick={() => handlePopupToggle('menu')}>
                         <div className="sidebar-item-profile-avatar">
                             <div>
                                 <div>
-                                    <img src={defaultAvatar} alt="avatar" />
+                                    <img src={avatarUrl} alt="avatar" />
                                 </div>
-                                <p>Personal</p>
+                                <p>{fullName}</p>
                             </div>
-                            <i className="fa-solid fa-caret-down dropdown-icon"></i>
                         </div>
-
-                        {dropdownVisible && (
-                            <div className="dropdown-personal">
-                                <ul>
-                                    <li className='list-none'>Profile</li>
-                                    <li className='list-none'>Notifications</li>
-                                    <li className='list-none'>Chats</li>
-                                </ul>
-                            </div>
-                        )}
+                        <MenuHeader
+                            onToggle={() => handlePopupToggle('menu')}
+                            isVisible={activePopup === 'menu'}
+                        />
                     </div>
                 ) : (
-                    <Link to="/login" className="sidebar-item">
+                    <Link to="/Login" className="sidebar-item">
                         <i className="fa-solid fa-right-to-bracket"></i>
                         <p>Login</p>
                     </Link>
                 )}
+
+                <div className='flex gap-6'>
+                    <NotificationList
+                        onToggle={() => handlePopupToggle('notification')}
+                        isVisible={activePopup === 'notification'}
+                    />
+                    <ChatListPopup
+                        onToggle={() => handlePopupToggle('chat')}
+                        isVisible={activePopup === 'chat'}
+                    />
+                </div>
             </div>
         </header>
     );

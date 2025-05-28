@@ -37,7 +37,7 @@ const chatData = {
             Acc2Id: "user_456",
             CreateAt: "2025-05-18T09:00:00Z",
             LastMessage: "Thanks for the friend request! Thanks for the friend request!",
-            LastMessageAt: "2025-05-18T09:10:00Z",
+            LastMessageAt: "2025-05-17T09:10:00Z",
             UnreadCount: 0,
             SenderName: "Sarah Lee",
             SenderAvatar: "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png",
@@ -68,7 +68,7 @@ const ChatList = () => {
 
     return (
         <>
-            <div className="flex flex-col items-center justify-center w-full gap-3 px-4 mx-auto mt-3 sm:px-0">
+            <div className="flex flex-col items-center justify-center w-full gap-3 px-4 mx-auto mt-3 sm:px-0 chat-list">
                 <div className="w-full">
                     <div className="relative">
                         <i className="absolute text-gray-500 transform -translate-y-1/2 fa-solid fa-magnifying-glass left-3 top-1/2"></i>
@@ -83,7 +83,6 @@ const ChatList = () => {
                     </div>
                 </div>
                 {filteredChats.length > 0 ? (
-
                     filteredChats.map((chat) => (
                         <div key={chat.ChatId} className="flex flex-col items-start w-full gap-3">
                             <div
@@ -102,7 +101,7 @@ const ChatList = () => {
                                         <p className="font-semibold cursor-pointer hover:text-[#3DB3FB] transition-colors duration-200">
                                             {chat.SenderName}
                                         </p>
-                                        <span className="text-[12px] break-words line-clamp-2">{chat.LastMessage}</span>
+                                        <span className="text-[12px] break-words line-clamp-2 mt-1">{chat.LastMessage}</span>
                                     </div>
                                 </div>
                                 <div className="font-semibold text-[#A2A5B9] text-right text-xs min-w-[48px] h-full flex flex-col items-end gap-2">
@@ -124,7 +123,7 @@ const ChatList = () => {
                 )}
             </div>
             {selectedChat && (
-                <div className="fixed bottom-3 right-20 z-[50] border border-gray-300 border-solid shadow-lg h-[500px] max-w-md">
+                <div className="chat-details-container fixed bottom-3 right-20 z-[50] border border-gray-300 border-solid shadow-lg h-[500px] max-w-md">
                     <ChatDetails
                         isVisible={!!selectedChat}
                         onClose={handleCloseDetails}

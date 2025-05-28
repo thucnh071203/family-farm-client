@@ -36,7 +36,10 @@ body {
 .ReactQuill .ql-toolbar .ql-snow{
   padding: 0px !important;
 }
-
+  
+.Toastify__toast-container{
+  text-align: left;
+}
 #root {
   height: 100%;
   overflow: auto;
