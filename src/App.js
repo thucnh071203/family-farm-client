@@ -18,6 +18,7 @@ import PostCard from "./components/Post/PostCard";
 import OptionsPost from "./components/Post/OptionsPost";
 import PostInGroupRight from "./components/Group/PostInGroupRight";
 import PostGroupPage from "./pages/GroupPage/PostGroupPage";
+import YourGroupCard from "./components/Group/YourGroupCard";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/Group" element={<PostGroupPage />} />
         </Routes>
       </Router>
+      <YourGroupCard />
     </div>
   );
 }
