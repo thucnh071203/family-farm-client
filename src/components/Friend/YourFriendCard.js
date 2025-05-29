@@ -36,9 +36,8 @@ const YourFriendCard = ({ friend }) => {
 
   const config = buttonConfig[friend.friendStatus] || buttonConfig.null;
 
-  
   return (
-    <div className="bg-white rounded-[10px] border shadow-[0_4px_6px_rgba(0,0,0,0.45)]">
+    <div className="w-[224px] h-[207px] bg-white rounded-[10px] border shadow-[0_4px_6px_rgba(0,0,0,0.45)]">
       <div className="mt-3 h-6">
         {friend.mutualFriend !== 0 && (
           <div className="mt-3 w-[75px] h-6 bg-blue-500 flex items-center justify-center rounded-e-xl">
@@ -49,7 +48,7 @@ const YourFriendCard = ({ friend }) => {
         )}
       </div>
 
-      <div className="items-center flex flex-col gap-1 p-4">
+      <div className="items-center flex flex-col gap-1">
         <div className="rounded-[50px]">
           <img
             className="rounded-full w-[60px] h-[60px] object-fill"

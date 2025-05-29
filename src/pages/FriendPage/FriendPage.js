@@ -37,7 +37,7 @@ const FriendPage = () => {
     <div>
       <Header />
       <NavbarHeader />
-      <div className="flex">
+      <div className="flex ">
         <FriendSidebar setSection={setSection} roleId={roleId} />
         <FriendRight section={section} />
       </div>

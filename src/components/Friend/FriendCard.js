@@ -1,6 +1,7 @@
 import React from "react";
 
 const FriendCard = ({ friend }) => {
+  
   return (
     <div className="w-[224px] h-[207px] bg-white rounded-[10px] border shadow-[0_4px_6px_rgba(0,0,0,0.45)]">
       <div className="mt-3 h-6">
