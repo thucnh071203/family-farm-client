@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import user_black_icon from "../../assets/icons/user_black_icon.svg";
 import plus_icon from "../../assets/icons/plus_icon.svg";
 import service_black_icon from "../../assets/icons/service_black_icon.svg";
@@ -8,10 +8,12 @@ import cancelIcon from "../../assets/images/cancel_vector.png";
 import headLine from "../../assets/images/head_line.png";
 
 const MenuHeader = ({ onToggle, isVisible }) => {
+    const navigate = useNavigate();
     // Xử lý logout
     const handleLogout = () => {
         sessionStorage.clear();
-        window.location.href = '/Login';
+        localStorage.clear();
+        navigate('/Login');
         onToggle();
     };
 

@@ -87,17 +87,7 @@ const UpdateProfileForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            toast.success('Profile updated successfully!', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-                transition: Bounce,
-            });
+            toast.success('PROFILE UPDATED SUCCESSFULLY!');
             console.log('Form submitted:', formData);
         }
     };

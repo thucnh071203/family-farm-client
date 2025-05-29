@@ -14,11 +14,12 @@ import { toast, Bounce } from "react-toastify";
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
+  const [errors, setErrors] = useState({ username: "", password: "" });
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      // Gọi API đăng nhập
       const loginResponse = await instance.post('/api/authen/login', {
         Identifier: username,
         Password: password,
@@ -26,58 +27,33 @@ const LoginForm = () => {
 
       const loginData = loginResponse.data;
       if (loginResponse.status === 200) {
-        // Lưu thông tin đăng nhập vào sessionStorage
-        sessionStorage.setItem("accessToken", loginData.accessToken);
-        sessionStorage.setItem("refreshToken", loginData.refreshToken);
-        sessionStorage.setItem("username", loginData.username);
-        sessionStorage.setItem("tokenExpiryIn", loginData.tokenExpiryIn);
+        const storage = rememberMe ? localStorage : sessionStorage;
 
-        // Gọi API để lấy thông tin profile
+        // Lưu accessToken, refreshToken, username
+        storage.setItem("accessToken", loginData.accessToken);
+        storage.setItem("refreshToken", loginData.refreshToken);
+        storage.setItem("username", loginData.username);
+
+        // Tính thời điểm hết hạn (current time + tokenExpiryIn giây)
+        const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
+        storage.setItem("tokenExpiry", expiryTime);
+
         const profileResponse = await instance.get('/api/account/own-profile');
         const profileData = profileResponse.data;
-        
-        // Lưu fullName và avatarUrl vào sessionStorage
-        sessionStorage.setItem("fullName", profileData.data.fullName || loginData.username);
-        sessionStorage.setItem("avatarUrl", profileData.data.avatar || "");
+        storage.setItem("fullName", profileData.data.fullName || loginData.username);
+        storage.setItem("avatarUrl", profileData.data.avatar || "");
 
-        toast.success("LOGIN SUCCESSFULLY!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
-
+        toast.success("LOGIN SUCCESSFULLY!");
         navigate("/");
       } else {
-        toast.error("Login failed! Please check your username or password!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toast.error("Login failed! Please check your username or password!");
       }
     } catch (error) {
-      toast.error("Đăng nhập thất bại! Vui lòng kiểm tra thông tin.", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-      });
+      if (error.response && error.response.status === 401) {
+        toast.error("Login failed! Please check your username or password!");
+      } else {
+        toast.error("Server not responding");
+      }
     }
   };
 
@@ -111,7 +87,9 @@ const LoginForm = () => {
               />
             </div>
           </div>
-          <div className="text-wrapper-9">Your username is required.</div>
+          {errors.username && (
+            <span className="text-sm italic text-red-600">{errors.username}</span>
+          )}
         </div>
 
         <div className="group-2">
@@ -132,12 +110,19 @@ const LoginForm = () => {
               <img className="mdi-eye" src={iconEye} alt="Eye Icon" />
             </div>
           </div>
-          <div className="text-wrapper-9">Your password is required.</div>
+          {errors.password && (
+            <span className="text-sm italic text-red-600">{errors.password}</span>
+          )}
         </div>
 
         <div className="login-options">
           <label className="remember-me">
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              value="check"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
             <span className="text-wrapper-10">Remember me!</span>
           </label>
           <Link to="/forgot-password" className="text-wrapper-11" href="#">
@@ -146,12 +131,9 @@ const LoginForm = () => {
         </div>
 
         <div className="w-full frame-2">
-          <div className="div-wrapper">
-            <button
-              type="button"
-              className="text-wrapper-2"
-              onClick={handleLogin}
-            >
+          <div className="div-wrapper" onClick={handleLogin}>
+            <button type="button"
+              className="text-wrapper-2">
               Login
             </button>
           </div>
