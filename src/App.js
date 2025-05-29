@@ -25,6 +25,8 @@ import PostGroupPage from "./pages/GroupPage/PostGroupPage";
 import CreateServicePage from "./pages/ServicePage/CreateServicePage";
 import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
+import YourGroupCard from "./components/Group/YourGroupCard";
+import YourgroupRight from "./components/Group/YourgroupRight";
 
 function App() {
   return (
@@ -62,7 +64,10 @@ function App() {
           <Route path="/CreateService" element={<CreateServicePage />} />
           <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
 
-          <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
+          <Route
+            path="/ProgressListFarmer"
+            element={<ProcessListFarmerPage />}
+          />
 
           <Route path="/CreateStepPage" element={<CreateStepPage />} />
         </Routes>

@@ -1,6 +1,6 @@
 import React from "react";
 import PostInGroupCard from "./PostInGroupCard";
-import PostCard from "../Post/PostCard";
+
 
 const PostInGroupRight = () => {
   const posts = [
