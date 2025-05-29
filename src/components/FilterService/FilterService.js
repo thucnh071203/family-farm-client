@@ -1,16 +1,32 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export const FilterService = () => {
+export default function ServicesList({ onClose }) {
+  // useEffect(() => {
+  //   const handleClose = () => onToggle();
+  //   window.addEventListener("closeFilter", handleClose);
+  //   return () => window.removeEventListener("closeFilter", handleClose);
+  // }, [onToggle]);
+
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    // <div className="relative">
+    //   <div className="icon-filter"
+    //         onClick={onToggle}
+    //         role="button"
+    //         aria-label="Toggle filter"
+    //         aria-expanded={isVisible}>
+    //     <img src={filterIcon} alt="image" />
+    //   </div>
+    // </div>
+
+    <div className="flex justify-center items-center h-auto">
       <div className="bg-white w-[450px] p-8 rounded-lg shadow-lg relative">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg text-gray-800 flex items-center gap-2">
             <i className="fas fa-sliders-h text-sky-400"></i> Filter Service
           </h2>
-          <div className="text-2xl text-gray-800 cursor-pointer">&times;</div>
+          <div className="text-2xl text-gray-800 cursor-pointer" onClick={onClose}>&times;</div>
         </div>
 
         {/* Body */}

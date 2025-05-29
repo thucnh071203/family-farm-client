@@ -49,6 +49,8 @@ const FriendRight = ({ section }) => {
   }, [section]);
 
   const sectionTitles = {
+    "requests-sent": "Sent Request list",
+    "requests-receive": "Request list",
     "list-follower": "Follower list",
     "list-following": "Following list",
     "list-friend": "Your friends",
@@ -56,12 +58,15 @@ const FriendRight = ({ section }) => {
   };
 
   const countListTitles = {
+    "requests-sent": "REQUESTS",
+    "requests-receive": "SENT REQUESTS",
     "list-follower": "FOLLOWER",
     "list-following": "FOLLOWING",
     "list-friend": "FRIENDS",
     // ... các section khác
   };
 
+  
   return (
     <div className="w-full lg:mt-[120px] mt-[63px]">
       <div>
@@ -92,10 +97,11 @@ const FriendRight = ({ section }) => {
             <p>Loading...</p>
           ) : (
             friendsData.map((friend) => {
-              if (section === "list-friend") {
-                return <YourFriendCard key={friend.accId} friend={friend} />;
-              } else {
+              if (section === "requests-receive") {
                 return <FriendCard key={friend.accId} friend={friend} />;
+                
+              } else {
+                return <YourFriendCard key={friend.accId} friend={friend} />;
               }
             })
           )}

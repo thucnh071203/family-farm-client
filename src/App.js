@@ -28,6 +28,8 @@ import PostGroupPage from "./pages/GroupPage/PostGroupPage";
 import CreateServicePage from "./pages/ServicePage/CreateServicePage";
 import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
+import FilterService from "./components/FilterService/FilterService";
+
 import ChatPage from "./pages/Chat/ChatPage";
 
 const AppContent = () => {
@@ -80,6 +82,7 @@ const AppContent = () => {
       <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
       <Route path="/CreateStepPage" element={<CreateStepPage />} />
       <Route path="/Chats" element={<ChatPage />} />
+      <Route path="/FilterService" element={<FilterService />} />
     </Routes>
   );
 };
