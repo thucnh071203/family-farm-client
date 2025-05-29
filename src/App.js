@@ -25,6 +25,7 @@ import PostGroupPage from "./pages/GroupPage/PostGroupPage";
 import CreateServicePage from "./pages/ServicePage/CreateServicePage";
 import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
+import FilterService from "./components/FilterService/FilterService";
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
           <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
 
           <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
+          <Route path="/FilterService" element={<FilterService />} />
 
           <Route path="/CreateStepPage" element={<CreateStepPage />} />
         </Routes>
