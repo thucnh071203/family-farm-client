@@ -25,7 +25,7 @@ const NavbarHeader = () => {
                     <span>Friends</span>
                 </Link>
 
-                <Link to="#" className="navbar-header-item">
+                <Link to="/Group" className="navbar-header-item">
                     <img
                         src={groupIcon}
                         alt="Groups"
