@@ -19,7 +19,6 @@ const Header = () => {
     };
 
     const handlePopupToggle = (popupName) => {
-        console.log('Toggling popup:', popupName, 'Current activePopup:', activePopup);
         setActivePopup((prev) => (prev === popupName ? null : popupName));
     };
 
@@ -28,20 +27,16 @@ const Header = () => {
             const popupContainers = [
                 '.menu-container',
                 '.chat-box',
-                '.chat-list',
                 '.notifi-box',
-                '.popup-notifi',
                 '.chat-details-container',
                 '.sidebar-menu',
             ];
             const isClickInsidePopup = popupContainers.some((selector) => {
                 const isInside = event.target.closest(selector);
-                console.log(`Checking selector: ${selector}, isInside: ${!!isInside}`);
                 return isInside;
             });
 
             if (!isClickInsidePopup) {
-                console.log('Closing all popups');
                 setActivePopup(null);
             }
         };
@@ -53,9 +48,9 @@ const Header = () => {
     }, []);
 
     useEffect(() => {
-        const storedUsername = sessionStorage.getItem("username");
-        const storedFullName = sessionStorage.getItem("fullName");
-        const storedAvatarUrl = sessionStorage.getItem("avatarUrl");
+        const storedUsername = localStorage.getItem("username") || sessionStorage.getItem("username");
+        const storedFullName = localStorage.getItem("fullName") || sessionStorage.getItem("fullName");
+        const storedAvatarUrl = localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
 
         if (storedUsername) {
             setUsername(storedUsername);
@@ -123,7 +118,7 @@ const Header = () => {
                     </div>
                 ) : (
                     <div className="login-box">
-                        <Link to="/login">Login</Link>
+                        <Link to="/Login">Login</Link>
                     </div>
                 )}
             </div>
@@ -145,7 +140,7 @@ const Header = () => {
                     <i className="fa-solid fa-user-group"></i>
                     <p>Group</p>
                 </Link>
-                <Link to="/" className="sidebar-item">
+                <Link to="/Service" className="sidebar-item">
                     <i className="fa-brands fa-servicestack"></i>
                     <p>Service</p>
                 </Link>

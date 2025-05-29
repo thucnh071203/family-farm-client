@@ -72,17 +72,7 @@ export const Register = () => {
       );
 
       if (response.status === 201 || response.status === 200) {
-        toast.success("Đăng ký thành công!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toast.success("Đăng ký thành công!");
 
         navigate("/Login");
       }
@@ -91,39 +81,12 @@ export const Register = () => {
       const backendErrors = error.response?.data?.errors;
 
       if (backendMessage) {
-        toast.error(`Lỗi: ${backendMessage}`, {
-          position: "top-right",
-          autoClose: 4000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toast.error(`Lỗi: ${backendMessage}`);
       } else if (backendErrors) {
         const errorMessages = Object.values(backendErrors).flat().join(", ");
-        toast.error(`Lỗi: ${errorMessages}`, {
-          position: "top-right",
-          autoClose: 4000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toast.error(`Lỗi: ${errorMessages}`);
       } else {
-        toast.error("Đăng ký thất bại. Vui lòng kiểm tra lại.", {
-          position: "top-right",
-          autoClose: 4000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toast.error("Đăng ký thất bại. Vui lòng kiểm tra lại.");
       }
     }
   };

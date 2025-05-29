@@ -44,6 +44,11 @@ body {
   height: 100%;
   overflow: auto;
 }
+.chat-container {
+  overflow-y: auto;
+  max-height: 100%;
+  position: relative;
+}
 
 .App {
   text-align: center;
