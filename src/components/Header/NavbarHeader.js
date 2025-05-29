@@ -20,10 +20,17 @@ const NavbarHeader = () => {
           <span>Friends</span>
         </Link>
 
-        <Link to="/Group" className="navbar-header-item">
-          <img src={groupIcon} alt="Groups" width="24px" height="24px" />
-          <span>Groups</span>
-        </Link>
+
+                <Link to="/Group" className="navbar-header-item">
+                    <img
+                        src={groupIcon}
+                        alt="Groups"
+                        width="24px"
+                        height="24px"
+                    />
+                    <span>Groups</span>
+                </Link>
+
 
         <Link to="/Service" className="navbar-header-item">
           <img src={serviceIcon} alt="Services" width="24px" height="24px" />

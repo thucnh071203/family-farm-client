@@ -1,5 +1,5 @@
 .popup-notifi {
-  max-height: 90vh; /* giới hạn chiều cao tối đa */
+  height: 90vh; /* giới hạn chiều cao tối đa */
   overflow-y: auto; /* cho phép cuộn nếu nội dung vượt quá */
   width: 85vh;
 }

@@ -40,17 +40,7 @@ export const UserGrowthChart = () => {
       const data = result.data;
 
       if (!data || Object.keys(data).length === 0) {
-        toast.info('Không có dữ liệu để hiển thị', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
+        toast.info('Không có dữ liệu để hiển thị');
 
         return;
       }
@@ -89,17 +79,7 @@ export const UserGrowthChart = () => {
       });
     } catch (error) {
       console.error("Lỗi khi load dữ liệu:", error);
-      toast.error('Lỗi khi tải dữ liệu. Kiểm tra console để biết thêm chi tiết.', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-      });
+      toast.error('Lỗi khi tải dữ liệu. Kiểm tra console để biết thêm chi tiết.');
     }
   };
 

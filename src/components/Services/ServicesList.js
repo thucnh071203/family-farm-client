@@ -13,9 +13,50 @@ import previous from "../../assets/images/previous.png";
 import continous from "../../assets/images/continous.png";
 import addFriend from "../../assets/images/weui_add-friends-filled.png";
 import SuggestedExperts from "./SuggestedExperts";
+import FilterService from "../FilterService/FilterService";
 
 export default function ServicesList() {
     const [services, setServices] = useState([]);
+    const [showFilterPopup, setShowFilterPopup] = useState(false);
+
+    const handleToggleFilter = () => {
+        setShowFilterPopup(!showFilterPopup);
+    };
+    // const [activePopup, setActivePopup] = useState(null);
+
+    // const handlePopupToggle = (popupName) => {
+    //     console.log('Toggling popup:', popupName, 'Current activePopup:', activePopup);
+    //     setActivePopup((prev) => (prev === popupName ? null : popupName));
+    // };
+
+    // useEffect(() => {
+    //         const handleClickOutside = (event) => {
+    //             const popupContainers = [
+    //                 '.menu-container',
+    //                 '.chat-box',
+    //                 '.chat-list',
+    //                 '.notifi-box',
+    //                 '.popup-notifi',
+    //                 '.chat-details-container',
+    //                 '.sidebar-menu',
+    //             ];
+    //             const isClickInsidePopup = popupContainers.some((selector) => {
+    //                 const isInside = event.target.closest(selector);
+    //                 console.log(`Checking selector: ${selector}, isInside: ${!!isInside}`);
+    //                 return isInside;
+    //             });
+    
+    //             if (!isClickInsidePopup) {
+    //                 console.log('Closing all popups');
+    //                 setActivePopup(null);
+    //             }
+    //         };
+    
+    //         document.addEventListener('click', handleClickOutside);
+    //         return () => {
+    //             document.removeEventListener('click', handleClickOutside);
+    //         };
+    //     }, []);
 
     // Lấy dữ liệu bằng cách gọi API
     useEffect(() => {
@@ -44,8 +85,23 @@ export default function ServicesList() {
                     <div className="mt-2 service-header">
                         <div className="flex flex-row justify-between px-4 service-header-title">
                             <div className="text-wrapper">Services</div>
-                            <div className="icon-filter">
+                            {/* <div className="icon-filter">
                                 <img src={filterIcon} alt="image"/>
+                            </div> */}
+                            <div>
+                            {/* Icon Filter */}
+                            <div className="icon-filter cursor-pointer" onClick={handleToggleFilter}>
+                                <img src={filterIcon} alt="Filter" />
+                            </div>
+
+                            {/* Popup FilterService */}
+                            {showFilterPopup && (
+                                <div className="fixed left-[35%] top-[200px] h-fit w-fit inset-0 flex justify-center items-center z-50">
+                                <div className="relative">
+                                    <FilterService onClose={() => setShowFilterPopup(false)} />
+                                </div>
+                                </div>
+                            )}
                             </div>
                         </div>
                         <img className="mx-auto mt-2 line" src={lineService} />
