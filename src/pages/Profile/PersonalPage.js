@@ -47,7 +47,7 @@ const PersonalPage = () => {
     ];
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="flex flex-col min-h-screen">
             <Header />
             <NavbarHeader />
             <div className="flex-grow">
@@ -56,16 +56,16 @@ const PersonalPage = () => {
                         <CoverBackground />
                         <div className="absolute right-4 bottom-4">
                             <FriendActionButton />
-                        </div>
+                        </div>  
                         <ProfileAvatar />
                     </div>
-                    <div className="flex flex-col lg:flex-row gap-5 pt-20">
-                        <aside className="w-full lg:w-1/3 flex flex-col gap-5">
+                    <div className="flex flex-col gap-5 pt-20 lg:flex-row">
+                        <aside className="flex flex-col w-full gap-5 lg:w-1/3">
                             <BasicInfo />
                             <FriendList />
                             <PhotoGallery />
                         </aside>
-                        <section className="w-full h-full lg:w-2/3 flex flex-col gap-5">
+                        <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
                             <PostCreate />
                             <PostFilters />
                             {posts.map((post, index) => (
@@ -95,7 +95,7 @@ const PersonalPage = () => {
                                         laboriosam dolore suscipit quibusdam fugit. #blog
                                         #nienmoulming #polytecode</p>
                                     <img src="https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg"
-                                        alt="Post" className="w-full h-full object-cover rounded-md mb-3" />
+                                        alt="Post" className="object-cover w-full h-full mb-3 rounded-md" />
                                     <div class="flex items-center justify-between">
                                         <div class="flex gap-3">
                                             <p><i class="fa-solid fa-thumbs-up text-blue-500"></i> 100 </p>
