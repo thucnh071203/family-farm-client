@@ -23,7 +23,7 @@ const ChatPage = () => {
     <div>
       <Header />
       <NavbarHeader />
-      <div className="grid grid-cols-12 md:gap-4 md:pt-[120px] pt-[60px] mx-auto px-5 max-w-[1400px] overflow-hidden">
+      <div className="grid grid-cols-12 md:pt-[120px] pt-[60px] mx-auto md:px-10 overflow-hidden">
         <div className="col-span-12 md:col-span-4 lg:col-span-3 p-3 bg-white rounded-lg shadow-lg max-h-[calc(100vh-120px)] overflow-y-auto">
           <ChatList onChatSelect={handleChatSelect} />
         </div>
