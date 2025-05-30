@@ -217,12 +217,20 @@ html, body {
   cursor: pointer;
 }
 
+.service .mask-wrapper:hover {
+  background-color: rgb(194, 183, 183);
+}
+
 .service .mask-group-wrapper {
   width: 45px;
   height: 45px;
   background-color: #deebf3;
   border-radius: 22.5px;
   cursor: pointer;
+}
+
+.service .mask-group-wrapper:hover {
+  background-color: rgb(194, 183, 183);
 }
 
 .service .mask {
@@ -264,12 +272,20 @@ html, body {
   cursor: pointer;
 }
 
+.service .overlap-3:hover {
+  background-color: rgb(194, 183, 183);
+}
+
 .service .overlap-4 {
   width: 45px;
   height: 45px;
   background-color: #deebf3;
   border-radius: 22.5px;
   cursor: pointer;
+}
+
+.service .overlap-4:hover {
+  background-color: rgb(194, 183, 183);
 }
 
 .service .text-wrapper-3 {
