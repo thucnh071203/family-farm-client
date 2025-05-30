@@ -141,15 +141,15 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
     return (
         <div className="flex flex-col h-full">
             {/* Avatar and Name */}
-            <div className="flex items-center gap-3 p-3 border-b border-gray-200">
+            <div className="flex flex-col items-center gap-3 p-3 border-b border-gray-200">
                 <img
-                    className="w-12 h-12 rounded-full object-cover"
+                    className="w-32 h-32 rounded-full object-cover"
                     src={selectedChat.senderAvatar || default_avatar}
                     alt={`${selectedChat.senderName} avatar`}
                 />
                 <div className="flex flex-col">
                     <h3 className="text-lg font-semibold text-gray-800">{selectedChat.senderName}</h3>
-                    <span className="text-sm text-gray-500">Đang hoạt động</span>
+                    {/* <span className="text-sm text-gray-500">Đang hoạt động</span> */}
                 </div>
             </div>
 
@@ -159,7 +159,7 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                     className={`flex-1 py-2 text-sm font-medium text-center ${activeTab === "info" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"}`}
                     onClick={() => setActiveTab("info")}
                 >
-                    Thông tin
+                    About
                 </button>
                 <button
                     className={`flex-1 py-2 text-sm font-medium text-center ${activeTab === "files" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"}`}
@@ -171,7 +171,7 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                     className={`flex-1 py-2 text-sm font-medium text-center ${activeTab === "media" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500"}`}
                     onClick={() => setActiveTab("media")}
                 >
-                    Ảnh/Video
+                    Image/Video
                 </button>
             </div>
 
@@ -186,38 +186,61 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                 ) : (
                     <>
                         {activeTab === "info" && (
-                            <div className="flex flex-col gap-4">
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-medium text-gray-600">Email</span>
-                                    <span className="text-sm text-gray-800">
-                                        {userProfile?.email || "Không có thông tin"}
-                                    </span>
+                            <div className="flex flex-col gap-4 text-left">
+                                <div className="flex border border-solid border-gray-300 items-center p-3 gap-3 rounded">
+                                    <div className="w-10">
+                                        <i class="fa-solid fa-envelope p-2 fa-lg text-[#3DB3FB]"></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-gray-600">Email</p>
+                                        <span className="text-sm text-gray-800">
+                                            {userProfile?.email || "No information"}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-medium text-gray-600">Gender</span>
-                                    <span className="text-sm text-gray-800">
-                                        {userProfile?.gender || "Không có thông tin"}
-                                    </span>
+                                <div className="flex border border-solid border-gray-300 items-center p-3 gap-3 rounded">
+                                    <div className="w-10">
+                                        <i className="fa-solid fa-venus-mars  w-10 p-2 fa-lg text-[#E74C3C]"></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-gray-600">Gender</p>
+                                        <span className="text-sm text-gray-800">
+                                            {userProfile?.gender || "No information"}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-medium text-gray-600">Live in</span>
-                                    <span className="text-sm text-gray-800">
-                                        {userProfile?.city + ", " + userProfile?.country || "Không có thông tin"}
-                                    </span>
+                                <div className="flex border border-solid border-gray-300 items-center p-3 gap-3 rounded">
+                                    <div className="w-10">
+                                        <i className="fa-solid fa-location-dot  w-10 p-2 fa-lg text-[#2BB673]"></i>
+                                    </div><div>
+                                        <p className="text-sm font-bold text-gray-600">Live in</p>
+                                        <span className="text-sm text-gray-800">
+                                            {userProfile?.city + ", " + userProfile?.country || "No information"}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-medium text-gray-600">Study At</span>
-                                    <span className="text-sm text-gray-800">
-                                        {userProfile?.studyAt || "Không có thông tin"}
-                                    </span>
+                                <div className="flex border border-solid border-gray-300 items-center p-3 gap-3 rounded">
+                                    <div className="w-10">
+                                        <i className="fa-solid fa-graduation-cap  w-10 p-2 fa-lg text-[#F7941E]"></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-gray-600">Study At</p>
+                                        <span className="text-sm text-gray-800">
+                                            {userProfile?.studyAt || "No information"}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <span className="text-sm font-medium text-gray-600">Work At</span>
-                                    <span className="text-sm text-gray-800">
-                                        {userProfile?.workAt || "Không có thông tin"}
-                                    </span>
+                                <div className="flex border border-solid border-gray-300 items-center p-3 gap-3 rounded">
+                                    <div className="w-10">
+                                        <i className="fa-solid fa-briefcase  w-10 p-2 fa-lg text-[#26ACE2]"></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-gray-600">Work At</p>
+                                        <span className="text-sm text-gray-800">
+                                            {userProfile?.workAt || "No information"}
+                                        </span>
+                                    </div>
                                 </div>
-
                             </div>
                         )}
 

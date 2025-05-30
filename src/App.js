@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
-import { SignalRProvider } from "./context/SignalRContext"; // Import đúng context của bạn
-import instance from "./Axios/axiosConfig";
+import { SignalRProvider } from "./context/SignalRContext";
+import useAuth from "./hooks/useAuth";
+
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
@@ -33,29 +33,9 @@ import FilterService from "./components/FilterService/FilterService";
 import ChatPage from "./pages/Chat/ChatPage";
 
 const AppContent = () => {
-  const navigate = useNavigate();
+  const { isChecking } = useAuth();
 
-  useEffect(() => {
-    const checkLoginState = async () => {
-      const accessToken = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-      if (!accessToken) {
-        console.log("No access token found, redirecting to /Login");
-        navigate("/Login");
-        return;
-      }
-
-      try {
-        console.log("Checking token validity with /api/account/own-profile");
-        await instance.get("/api/account/own-profile");
-        console.log("Token valid, user remains logged in");
-      } catch (error) {
-        console.error("Check login state failed:", error.response?.data || error.message);
-        navigate("/Login");
-      }
-    };
-
-    checkLoginState();
-  }, [navigate]);
+  if (isChecking) return null;
 
   return (
     <Routes>

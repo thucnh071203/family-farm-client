@@ -9,7 +9,7 @@ const instance = axios.create({
 });
 
 // Utility to check if token is expired
-const isTokenExpired = () => {
+export const isTokenExpired = () => {
   const expiryIn = localStorage.getItem("tokenExpiryIn") || sessionStorage.getItem("tokenExpiryIn");
   const loginTime = localStorage.getItem("loginTime") || sessionStorage.getItem("loginTime");
 
@@ -19,13 +19,14 @@ const isTokenExpired = () => {
   }
 
   const expiryTime = parseInt(loginTime, 10) + parseInt(expiryIn, 10) * 1000;
-  const isExpired = Date.now() >= expiryTime;
+  const bufferTime = 30 * 1000; // Refresh 30 seconds before expiry
+  const isExpired = Date.now() >= expiryTime - bufferTime;
   console.log("Token expiry check:", { expiryTime, currentTime: Date.now(), isExpired });
   return isExpired;
 };
 
 // Utility to refresh token
-const refreshAccessToken = async () => {
+export const refreshAccessToken = async () => {
   const refreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
   if (!refreshToken) {
     console.error("No refresh token available");
