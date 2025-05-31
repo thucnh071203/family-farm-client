@@ -8,107 +8,102 @@ const instance = axios.create({
   },
 });
 
-// Utility to check if token is expired
-export const isTokenExpired = () => {
-  const expiryIn = localStorage.getItem("tokenExpiryIn") || sessionStorage.getItem("tokenExpiryIn");
-  const loginTime = localStorage.getItem("loginTime") || sessionStorage.getItem("loginTime");
+// Biến để theo dõi trạng thái refresh token
+let isRefreshing = false;
+let failedQueue = [];
 
-  if (!expiryIn || !loginTime) {
-    console.log("Missing expiryIn or loginTime:", { expiryIn, loginTime });
-    return true;
-  }
-
-  const expiryTime = parseInt(loginTime, 10) + parseInt(expiryIn, 10) * 1000;
-  const bufferTime = 30 * 1000; // Refresh 30 seconds before expiry
-  const isExpired = Date.now() >= expiryTime - bufferTime;
-  console.log("Token expiry check:", { expiryTime, currentTime: Date.now(), isExpired });
-  return isExpired;
-};
-
-// Utility to refresh token
-export const refreshAccessToken = async () => {
-  const refreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
-  if (!refreshToken) {
-    console.error("No refresh token available");
-    throw new Error("No refresh token available");
-  }
-
-  try {
-    console.log("Attempting to refresh token with:", refreshToken);
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_BASE_URL}/api/authen/refresh-token`,
-      { token: refreshToken },
-      { headers: { "Content-Type": "application/json" } }
-    );
-
-    console.log("Refresh token response:", response.data);
-
-    const { accessToken, tokenExpiryIn, refreshToken: newRefreshToken, accId } = response.data;
-    const storage = localStorage.getItem("accessToken") ? localStorage : sessionStorage;
-
-    storage.setItem("accessToken", accessToken);
-    storage.setItem("refreshToken", newRefreshToken || refreshToken);
-    storage.setItem("tokenExpiryIn", tokenExpiryIn);
-    storage.setItem("accId", accId); // Store accId to match LoginForm
-    storage.setItem("loginTime", Date.now().toString());
-
-    return accessToken;
-  } catch (error) {
-    console.error("Token refresh failed:", error.response?.data || error.message);
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.href = "/Login";
-    throw new Error("Failed to refresh token");
-  }
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (token) {
+      prom.resolve(token);
+    } else {
+      prom.reject(error);
+    }
+  });
+  failedQueue = [];
 };
 
 // Request interceptor
 instance.interceptors.request.use(
-  async (config) => {
-    let token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-
-    if (token && isTokenExpired()) {
-      console.log("Token expired, refreshing...");
-      try {
-        token = await refreshAccessToken();
-      } catch (error) {
-        console.error("Request interceptor refresh error:", error.message);
-        return Promise.reject(error);
-      }
+  (config) => {
+    const accessToken = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-
     return config;
   },
-  (error) => {
-    console.error("Request interceptor error:", error);
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for handling 401 errors
+// Response interceptor
 instance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return instance(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
       originalRequest._retry = true;
-      console.log("Received 401, attempting to refresh token...");
+      isRefreshing = true;
+
       try {
-        const newToken = await refreshAccessToken();
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        const currentRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
+        if (!currentRefreshToken) {
+          window.location.href = "/Login";
+          return Promise.reject(error);
+        }
+
+        const response = await axios.post(
+          `${process.env.REACT_APP_API_BASE_URL}/api/authen/refresh-token`,
+          { token: currentRefreshToken },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const refreshData = response.data;
+        const storage = localStorage.getItem("refreshToken") ? localStorage : sessionStorage;
+
+        storage.setItem("accessToken", refreshData.accessToken);
+        storage.setItem("refreshToken", refreshData.refreshToken);
+        storage.setItem("username", refreshData.username);
+        storage.setItem("accId", refreshData.accId);
+        storage.setItem("tokenExpiry", Date.now() + refreshData.tokenExpiryIn * 1000);
+
+        console.log("✅ Token refreshed via interceptor");
+
+        processQueue(null, refreshData.accessToken);
+        originalRequest.headers.Authorization = `Bearer ${refreshData.accessToken}`;
         return instance(originalRequest);
       } catch (refreshError) {
-        console.error("Response interceptor refresh error:", refreshError.message);
+        console.error("❌ Failed to refresh token in interceptor", refreshError);
+        processQueue(refreshError);
+        // Chỉ xóa các token liên quan
+        const storage = localStorage.getItem("refreshToken") ? localStorage : sessionStorage;
+        storage.removeItem("accessToken");
+        storage.removeItem("refreshToken");
+        storage.removeItem("username");
+        storage.removeItem("accId");
+        storage.removeItem("tokenExpiry");
+        window.location.href = "/Login";
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
-    console.error("Response interceptor error:", error.response?.data || error.message);
     return Promise.reject(error);
   }
 );
