@@ -191,14 +191,14 @@ const ChatList = ({ onChatSelect = () => {} }) => {
                                 src={chat.receiver?.avatar || default_avatar}
                                 alt={`${chat.receiver?.fullName || "User"} avatar`}
                             />
-                            <div className="flex flex-col items-start justify-center flex-grow gap-1">
+                            <div className="flex flex-col items-start justify-center flex-grow gap-1 rich-text-editor">
                                 <div className="text-[#344258] text-left text-[14px]">
                                     <p className="font-semibold cursor-pointer hover:text-[#3DB3FB] transition-colors duration-200">
                                         {chat.receiver?.fullName || "Unknown User"}
                                     </p>
-                                    <div className="text-[12px] mt-1">
+                                    <div className="text-[12px] mt-1 truncate max-w-[200px] overflow-hidden whitespace-nowrap">
                                         {chat.lastMessageAccId === currentUserId ? (
-                                            <span>
+                                            <span className="flex line-clamp-2 break-all w-fit overflow-hidden">
                                                 You: <span dangerouslySetInnerHTML={{ __html: chat.lastMessage || "" }} />
                                             </span>
                                         ) : (

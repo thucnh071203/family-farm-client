@@ -75,7 +75,7 @@ const WeatherWidget = () => {
           <div className="p-5 mx-8 text-6xl font-semibold shadow-lg temparature text-shadow-lg bg-white/40 rounded-xl"
             style={{ fontWeight: 600, textShadow: "4px 4px rgba(0, 0, 0, 0.7)", boxShadow: "4px 4px rgba(0, 0, 0, 0.7)" }}>
             <span className="value text-shadow-lg">{weatherData.temperature}</span>
-            <sup>o</sup>C
+            <sup className="text-5xl">∘</sup>C
           </div>
           <div className="mt-5 mb-10 text-4xl font-bold short-desc text-shadow">
             {weatherData.description}

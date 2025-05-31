@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 
-const useImageHandler = (initialImage) => {
+const useImage = (initialImage) => {
   const [image, setImage] = useState(initialImage);
   const [showPopup, setShowPopup] = useState(false);
   const inputRef = useRef(null);
@@ -29,4 +29,4 @@ const useImageHandler = (initialImage) => {
   };
 };
 
-export default useImageHandler;
+export default useImage;
