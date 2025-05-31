@@ -7,11 +7,18 @@ const formatTime = (timestamp) => {
     const diffHour = Math.floor(diffMin / 60);
     const diffDay = Math.floor(diffHour / 24);
 
+    // Helper to format time as hh:mm AM/PM
+    const timeString = messageDate.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+    });
+
     // Under 1 day
     if (diffDay < 1) {
-        if (diffSec < 60) return `${diffSec} secs ago`;
-        if (diffMin < 60) return `${diffMin} min${diffMin > 1 ? "s" : ""} ago`;
-        return `${diffHour} hour${diffHour > 1 ? "s" : ""} ago`;
+        if (diffSec < 60) return `${diffSec} sec${diffSec !== 1 ? "s" : ""} ago`;
+        if (diffMin < 60) return `${diffMin} min${diffMin !== 1 ? "s" : ""} ago`;
+        return `${diffHour} hour${diffHour !== 1 ? "s" : ""} ago`;
     }
 
     // Yesterday
@@ -22,20 +29,21 @@ const formatTime = (timestamp) => {
         messageDate.getMonth() === yesterday.getMonth() &&
         messageDate.getFullYear() === yesterday.getFullYear()
     ) {
-        return "Yesterday";
+        return `${timeString}, Yesterday`;
     }
 
     // Under 1 week
     if (diffDay < 7) {
-        return `${diffDay} day${diffDay > 1 ? "s" : ""} ago`;
+        return `${timeString}, ${diffDay} day${diffDay !== 1 ? "s" : ""} ago`;
     }
 
     // Over 1 week
-    return messageDate.toLocaleDateString("en-US", {
+    const dateString = messageDate.toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
         year: "numeric",
     });
+    return `${timeString}, ${dateString}`;
 };
 
 export default formatTime;
