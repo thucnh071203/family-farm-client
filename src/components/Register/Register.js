@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import instance from "../../Axios/axiosConfig";
 import { toast, Bounce } from "react-toastify";
 import registerPoster from "../../assets/images/register_poster.png"
 import logo from '../../assets/images/logo.png';
@@ -66,8 +67,8 @@ export const Register = () => {
     const { passwordConfirm, ...dataToSend } = formData;
 
     try {
-      const response = await axios.post(
-        "https://localhost:7280/api/authen/register-farmer",
+      const response = await instance.post(
+        "/api/authen/register-farmer",
         dataToSend
       );
 
