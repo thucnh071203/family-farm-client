@@ -1,7 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function ServicesList({ onClose }) {
+export default function FilterService({ onClose, onApplyFilter }) {
+  // const [searchText, setSearchText] = useState("");
+  // const [rating, setRating] = useState("");
+  // const [priceRange, setPriceRange] = useState("");
+  // const [publishDate, setPublishDate] = useState("");
+  const [name, setName] = useState("");
+  const [star, setStar] = useState("");
+  const [priceRange, setPriceRange] = useState("");
+
+  const handleSubmit = () => {
+    let priceMin = null;
+    let priceMax = null;
+
+    switch (priceRange) {
+      case "low":
+        priceMax = 200000;
+        break;
+      case "mid":
+        priceMin = 200000;
+        priceMax = 500000;
+        break;
+      case "high":
+        priceMin = 500000;
+        priceMax = 1000000;
+        break;
+      case "veryHigh":
+        priceMin = 1000000;
+        break;
+      default:
+        break;
+    }
+
+    onApplyFilter({
+      name,
+      star,
+      priceMin,
+      priceMax,
+    });
+    onClose()
+  };
+
   // useEffect(() => {
   //   const handleClose = () => onToggle();
   //   window.addEventListener("closeFilter", handleClose);
@@ -39,6 +79,8 @@ export default function ServicesList({ onClose }) {
                 type="text"
                 placeholder="Text here..."
                 className="bg-transparent outline-none flex-1 text-sm"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
           </div>
@@ -61,16 +103,34 @@ export default function ServicesList({ onClose }) {
                 This year
               </Link>
             </div>
+            {/* <div>
+              <h4 className="text-gray-500 mb-2">Publish date</h4>
+              {["today", "week", "month", "year"].map((val) => (
+                <button
+                  key={val}
+                  onClick={() => setPublishDate(val)}
+                  className={`block mb-1 ml-1 ${
+                    publishDate === val ? "text-blue-600 font-bold" : "text-sky-400"
+                  }`}
+                >
+                  {val === "today" && "Today"}
+                  {val === "week" && "This week"}
+                  {val === "month" && "This month"}
+                  {val === "year" && "This year"}
+                </button>
+              ))}
+            </div> */}
 
             {/* Star & Price */}
-            <div>
+            {/* <div>
               <div className="flex items-center gap-2 mb-4">
                 <h4 className="text-gray-500 whitespace-nowrap">Star rating</h4>
                 <select className="text-sm border-none bg-transparent focus:outline-none">
                   <option>5</option>
-                  <option>4+</option>
-                  <option>3+</option>
-                  <option>2+</option>
+                  <option>4</option>
+                  <option>3</option>
+                  <option>2</option>
+                  <option>1</option>
                 </select>
               </div>
               <h4 className="text-gray-500 mb-2">Service price</h4>
@@ -86,6 +146,102 @@ export default function ServicesList({ onClose }) {
               <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 Greater 1.000.000
               </Link>
+            </div>
+          </div> */}
+          {/* <div>
+              <div className="flex items-center gap-2 mb-4">
+                <h4 className="text-gray-500 whitespace-nowrap">Star rating</h4>
+                <select
+                  className="text-sm border-none bg-transparent focus:outline-none"
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                >
+                  <option value="">Any</option>
+                  {[5, 4, 3, 2, 1].map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <h4 className="text-gray-500 mb-2">Service price</h4>
+              {["<200", "200-500", "500-1000", ">1000"].map((range) => (
+                <button
+                  key={range}
+                  onClick={() => setPriceRange(range)}
+                  className={`block mb-1 ml-1 ${
+                    priceRange === range ? "text-blue-600 font-bold" : "text-sky-400"
+                  }`}
+                >
+                  {range === "<200" && "Lower 200.000"}
+                  {range === "200-500" && "200.000 to 500.000"}
+                  {range === "500-1000" && "500.000 to 1.000.000"}
+                  {range === ">1000" && "Greater 1.000.000"}
+                </button>
+              ))}
+            </div> */}
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <h4 className="text-gray-500 whitespace-nowrap">Star rating</h4>
+                <select className="text-sm border-none bg-transparent focus:outline-none"
+                value={star}
+                  onChange={(e) => setStar(e.target.value)}
+                  >
+                  <option value="">Any</option>
+                  <option value="5">5</option>
+                  <option value="4">4</option>
+                  <option value="3">3</option>
+                  <option value="2">2</option>
+                  <option value="1">1</option>
+                </select>
+              </div>
+              <h4 className="text-gray-500 mb-2">Service price</h4>
+              <div className="flex flex-col gap-1 text-sky-500">
+                <label className="ml-1">
+                  <input
+                    type="radio"
+                    name="price"
+                    value="low"
+                    checked={priceRange === "low"}
+                    onChange={(e) => setPriceRange(e.target.value)}
+                    className="mr-2"
+                  />
+                  Lower 200.000
+                </label>
+                <label className="ml-1">
+                  <input
+                    type="radio"
+                    name="price"
+                    value="mid"
+                    checked={priceRange === "mid"}
+                    onChange={(e) => setPriceRange(e.target.value)}
+                    className="mr-2"
+                  />
+                  200.000 to 500.000
+                </label>
+                <label className="ml-1">
+                  <input
+                    type="radio"
+                    name="price"
+                    value="high"
+                    checked={priceRange === "high"}
+                    onChange={(e) => setPriceRange(e.target.value)}
+                    className="mr-2"
+                  />
+                  500.000 to 1.000.000
+                </label>
+                <label className="ml-1">
+                  <input
+                    type="radio"
+                    name="price"
+                    value="veryHigh"
+                    checked={priceRange === "veryHigh"}
+                    onChange={(e) => setPriceRange(e.target.value)}
+                    className="mr-2"
+                  />
+                  Greater 1.000.000
+                </label>
+              </div>
             </div>
           </div>
 
@@ -111,7 +267,9 @@ export default function ServicesList({ onClose }) {
           </div>
 
           {/* Search Button */}
-          <button className="bg-sky-400 text-white font-bold text-sm py-3 px-6 rounded-lg block ml-auto">
+          <button className="bg-sky-400 text-white font-bold text-sm py-3 px-6 rounded-lg block ml-auto"
+            onClick={handleSubmit}
+          >
             SEARCH
           </button>
         </div>

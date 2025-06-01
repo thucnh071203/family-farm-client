@@ -21,37 +21,148 @@ export default function ServicesList() {
     const [showFilterPopup, setShowFilterPopup] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
+    const [filteredServices, setFilteredServices] = useState([]);
+    const [filter, setFilter] = useState({
+        name: "",
+        star: "",
+        priceMin: null,
+        priceMax: null,
+    });
 
+    // Bấm hiện filter
     const handleToggleFilter = () => {
         setShowFilterPopup(!showFilterPopup);
     };
 
-    // Lấy dữ liệu bằng cách gọi API
-    useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                const res = await axios.get("https://localhost:7280/api/service/all"); // Cập nhật đúng đường dẫn nếu cần
-                if (res.data.success) {
-                    console.log("DATA RETURNED FROM API:", res.data.data);
-                    setServices(res.data.data);
-                } else {
-                    console.error("Lỗi khi gọi API:", res.data.message);
-                }
-            } catch (err) {
-                console.error("Lỗi mạng:", err);
-            }
+    const handleApplyFilter = (filterData) => {
+        console.log("Filter nhận được từ FilterService:", filterData);
+            setFilter(filterData);
+            setCurrentPage(1); // reset về trang đầu
+            setShowFilterPopup(!showFilterPopup);
         };
 
-        fetchServices();
+    // // Filter dịch vụ
+    // const handleFilter = (filters) => {
+    // console.log("Filters:", filters);
+    // // Gọi lại API hoặc lọc dữ liệu local tùy vào cách bạn thiết kế backend
+    // const queryParams = new URLSearchParams();
+
+    // if (filters.searchText) queryParams.append("name", filters.searchText);
+    // if (filters.rating) queryParams.append("rating", filters.rating);
+    // if (filters.priceRange) queryParams.append("priceRange", filters.priceRange);
+    // if (filters.publishDate) queryParams.append("publishDate", filters.publishDate);
+
+    // axios
+    //     .get(`https://localhost:7280/api/service/filter?${queryParams.toString()}`)
+    //     .then((res) => {
+    //     if (res.data.success) setServices(res.data.data);
+    //     })
+    //     .catch((err) => console.error("Error fetching filtered data", err));
+    // };
+
+    // Lấy dữ liệu bằng cách gọi API
+        // useEffect(() => {
+        // const fetchServices = async () => {
+        //     try {
+        //         const res = await axios.get("https://localhost:7280/api/service/all"); // Cập nhật đúng đường dẫn nếu cần
+        //         if (res.data.success) {
+        //             // console.log("DATA RETURNED FROM API:", res.data.data);
+        //             // setServices(res.data.data);
+        //             const mappedServices = res.data.data
+        //                 .filter(item => item.service) // loại bỏ nếu thiếu `service`
+        //                 .map(item => item.service);   // lấy object `service`
+
+        //             setServices(mappedServices);
+        //             console.log("✅ Services đã chuẩn hóa:", mappedServices);
+        //         } else {
+        //             console.error("Lỗi khi gọi API:", res.data.message);
+        //         }
+        //     } catch (err) {
+        //         console.error("Lỗi mạng:", err);
+        //     }
+        // };
+
+        // fetchServices();
+        // }, []);
+
+        useEffect(() => {
+            const fetchServices = async () => {
+                try {
+                    const res = await axios.get("https://localhost:7280/api/service/all");
+                    if (res.data.success) {
+                        const mappedServices = res.data.data
+                            .filter(item => item.service)
+                            .map(item => item.service);
+                        
+                        setServices(mappedServices);    
+                        console.log("✅ Services đã chuẩn hóa:", mappedServices);
+                    } else {
+                        console.error("❌ Lỗi khi gọi API:", res.data.message);
+                    }
+                } catch (err) {
+                    console.error("❌ Lỗi mạng:", err);
+                }
+            };
+
+            fetchServices();
         }, []);
 
+
         // Dữ liệu dịch vụ hiện tại trên trang
+        // const indexOfLastService = currentPage * itemsPerPage;
+        // const indexOfFirstService = indexOfLastService - itemsPerPage;
+        // const currentServices = services.slice(indexOfFirstService, indexOfLastService);
         const indexOfLastService = currentPage * itemsPerPage;
         const indexOfFirstService = indexOfLastService - itemsPerPage;
-        const currentServices = services.slice(indexOfFirstService, indexOfLastService);
+        const currentServices = filteredServices.slice(indexOfFirstService, indexOfLastService);
+        const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
+
 
         // Tổng số trang
-        const totalPages = Math.ceil(services.length / itemsPerPage);
+        //const totalPages = Math.ceil(services.length / itemsPerPage);
+
+        // Filter dữ liệu
+        // useEffect(() => {
+        //     console.log("loc coi");
+        //     const filtered = services.filter((service, index) => {
+        //         console.log(`✅ Dịch vụ ${index}:`, service.serviceName);
+        //         const matchName = filter.name
+        //             ? service.serviceName.toLowerCase().includes(filter.name.toLowerCase())
+        //             : true;
+
+        //         const matchStar = filter.star
+        //             ? Math.floor(service.averageRate || 0) === parseInt(filter.star)
+        //             : true;
+
+        //         const matchPrice =
+        //             (filter.priceMin === null || service.price >= filter.priceMin) &&
+        //             (filter.priceMax === null || service.price <= filter.priceMax);
+
+        //         return matchName && matchStar && matchPrice;
+        //     });
+
+        //     setFilteredServices(filtered);
+        // }, [services, filter]);
+            useEffect(() => {
+                const filtered = services.filter((service, index) => {
+                    const matchName = filter.name
+                        ? service.serviceName?.toLowerCase().includes(filter.name.toLowerCase())
+                        : true;
+
+                    const matchStar = filter.star
+                        ? Math.floor(service.averageRate || 0) === parseInt(filter.star)
+                        : true;
+
+                    const matchPrice =
+                        (filter.priceMin === null || service.price >= filter.priceMin) &&
+                        (filter.priceMax === null || service.price <= filter.priceMax);
+
+                    return matchName && matchStar && matchPrice;
+                });
+
+                setFilteredServices(filtered);
+            }, [services, filter]);
+
         return (
             <div className="service">
                 <div className="div">
@@ -70,7 +181,7 @@ export default function ServicesList() {
                                         {showFilterPopup && (
                                             <div className="fixed left-[35%] top-[200px] h-fit w-fit inset-0 flex justify-center items-center z-50">
                                                 <div className="relative">
-                                                    <FilterService onClose={() => setShowFilterPopup(false)} />
+                                                    <FilterService onClose={() => setShowFilterPopup(false)} onApplyFilter={handleApplyFilter}/>
                                                 </div>
                                             </div>
                                         )}
@@ -81,8 +192,8 @@ export default function ServicesList() {
 
                             <div className="service-container">
                                 {/* Hiển thị list service */}
-                                {currentServices.map((wrapper, index) => {
-                                    const service = wrapper.service;
+                                {currentServices.map((service, index) => {
+                                    // const service = wrapper.service;
                                     return (
                                         <div key={index} className="service-box w-[42%] md:w-[44.55%]">
                                             <img className="service-background" src={serviceBg} alt="service background" />
