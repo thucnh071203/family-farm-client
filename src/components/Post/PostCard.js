@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import OptionsPost from "./OptionsPost";
-import ReactionPopup from "./ReactionPopup";
+import ReactionPopup from "../Reaction/ReactionPopup";
+import CommentSection from "../Comment/CommentSection";
 import formatTime from "../../utils/formatTime";
 
-const PostCard = ({ post }) => {
+const PostCard = ({ post, onCommentCountChange }) => {
   const defaultPost = {
     fullName: "Phuong Nam",
     avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
@@ -22,7 +23,12 @@ const PostCard = ({ post }) => {
   const categories = postData.categories || ["Pants", "Diseases"];
   const tagFriends = postData.tagFriends || [];
 
-  // Hàm hiển thị tagFriends theo định dạng yêu cầu
+  const [showComments, setShowComments] = useState(false);
+  const [commentCount, setCommentCount] = useState(postData.comments);
+  const [likeCount, setLikeCount] = useState(postData.likes);
+  const [reactionType, setReactionType] = useState(null);
+  const [isLikeHovered, setIsLikeHovered] = useState(false); // Thêm trạng thái hover
+
   const renderTagFriends = () => {
     const fullNameElement = (
       <span className="text-[#088DD0]">{postData.fullName}</span>
@@ -34,7 +40,9 @@ const PostCard = ({ post }) => {
       return (
         <>
           {fullNameElement}
-          <span className="text-black"> <span className="text-gray-400 font-normal"> with </span>  {tagFriends[0]}</span>
+          <span className="text-black">
+            <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]}
+          </span>
         </>
       );
     }
@@ -43,7 +51,9 @@ const PostCard = ({ post }) => {
       return (
         <>
           {fullNameElement}
-          <span className="text-black"> <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends[1]}</span>
+          <span className="text-black">
+            <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends[1]}
+          </span>
         </>
       );
     }
@@ -51,13 +61,27 @@ const PostCard = ({ post }) => {
     return (
       <>
         {fullNameElement}
-        <span className="text-black"> <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends.length - 1} more</span>
+        <span className="text-black">
+          <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends.length - 1} more
+        </span>
       </>
     );
   };
 
   const handleReact = (reaction) => {
+    setLikeCount((prev) => (reactionType ? prev : prev + 1));
+    setReactionType(reaction);
     console.log(`User reacted with: ${reaction}`);
+    setIsLikeHovered(false); // Ẩn popup sau khi chọn phản ứng
+  };
+
+  const handleToggleComments = () => {
+    setShowComments(!showComments);
+  };
+
+  const handleCommentCountChange = (newCount) => {
+    setCommentCount(newCount);
+    onCommentCountChange(newCount);
   };
 
   return (
@@ -132,8 +156,7 @@ const PostCard = ({ post }) => {
                 return (
                   <div
                     key={index}
-                    className={`relative rounded-md overflow-hidden ${postData.images.length === 1 ? "col-span-2" : ""
-                      }`}
+                    className={`relative rounded-md overflow-hidden ${postData.images.length === 1 ? "col-span-2" : ""}`}
                   >
                     <img
                       src={img}
@@ -155,19 +178,30 @@ const PostCard = ({ post }) => {
       <div className="flex flex-col items-center justify-between gap-3 lg:flex-row lg:gap-8">
         <div className="flex justify-around w-full lg:w-1/4 lg:justify-between">
           <p>
-            <i className="text-blue-500 fa-solid fa-thumbs-up"></i>{" "}
-            {postData.likes}
+            <i className="text-blue-500 fa-solid fa-thumbs-up"></i> {likeCount}
           </p>
           <p>
-            <i className="text-blue-500 fas fa-comment"></i> {postData.comments}
+            <i className="text-blue-500 fas fa-comment"></i> {commentCount}
           </p>
           <p>
             <i className="text-blue-500 fa-solid fa-share"></i> {postData.shares}
           </p>
         </div>
         <div className="flex justify-between w-full gap-1 lg:w-3/4">
-          <ReactionPopup onReact={handleReact} />
-          <button className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300">
+          <div
+            className="relative flex-1"
+            onMouseEnter={() => setIsLikeHovered(true)}
+            onMouseLeave={() => setIsLikeHovered(false)}
+          >
+            <button className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300 w-full">
+              <i className="mr-1 fa-solid fa-thumbs-up"></i> Like
+            </button>
+            {isLikeHovered && <ReactionPopup onReact={handleReact} />}
+          </div>
+          <button
+            className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300"
+            onClick={handleToggleComments}
+          >
             <i className="mr-1 fas fa-comment"></i> Comment
           </button>
           <button className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300">
@@ -175,6 +209,13 @@ const PostCard = ({ post }) => {
           </button>
         </div>
       </div>
+      {showComments && (
+        <CommentSection
+          postId={postData.postId}
+          commentCount={commentCount}
+          onCommentCountChange={handleCommentCountChange}
+        />
+      )}
     </div>
   );
 };

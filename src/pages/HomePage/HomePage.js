@@ -10,9 +10,13 @@ import SuggestedFriends from "../../components/Home/SuggestedFriends";
 import SuggestedGroups from "../../components/Home/SuggestedGroups";
 
 const HomePage = () => {
+  const [posts, setPosts] = useState([]);
+  const [sharePosts, setSharePosts] = useState([]);
+
   // Dữ liệu mẫu cho posts (bài viết thường)
   const samplePosts = [
     {
+      postId: "post1",
       type: "post",
       fullName: "Phuong Nam",
       avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
@@ -30,6 +34,7 @@ const HomePage = () => {
       shares: 15,
     },
     {
+      postId: "post2",
       type: "post",
       fullName: "Huu Thuc",
       avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
@@ -50,9 +55,10 @@ const HomePage = () => {
     },
   ];
 
-  // Dữ liệu mẫu cho sharePosts (bài viết chia sẻ)
+  // Dữ liệu mẫu cho sharePosts
   const sampleSharePosts = [
     {
+      postId: "share1",
       fullName: "Mai Xuan",
       avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
       createAt: "2025-05-30T21:30:00Z",
@@ -63,6 +69,7 @@ const HomePage = () => {
       comments: 10,
       shares: 5,
       sharedPost: {
+        postId: "shared1",
         fullName: "Huu Thuc",
         avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
         createAt: "2025-05-30T10:00:00Z",
@@ -78,6 +85,7 @@ const HomePage = () => {
       },
     },
     {
+      postId: "share2",
       fullName: "Phuong Nam",
       avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
       createAt: "2025-05-29T08:00:00Z",
@@ -88,6 +96,7 @@ const HomePage = () => {
       comments: 15,
       shares: 8,
       sharedPost: {
+        postId: "shared2",
         fullName: "Mai Xuan",
         avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
         createAt: "2025-05-28T09:00:00Z",
@@ -102,36 +111,25 @@ const HomePage = () => {
     },
   ];
 
-  const [posts, setPosts] = useState([]);
-  const [sharePosts, setSharePosts] = useState([]);
-
   // Giả lập gọi API
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        // Giả lập API cho posts
-        // const response = await fetch("/api/posts");
-        // const data = await response.json();
-        setPosts(samplePosts);
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-      }
-    };
-
-    const fetchSharePosts = async () => {
-      try {
-        // Giả lập API cho sharePosts
-        // const response = await fetch("/api/share-posts");
-        // const data = await response.json();
-        setSharePosts(sampleSharePosts);
-      } catch (error) {
-        console.error("Failed to fetch share posts:", error);
-      }
-    };
-
-    fetchPosts();
-    fetchSharePosts();
+    setPosts(samplePosts);
+    setSharePosts(sampleSharePosts);
   }, []);
+
+  // Hàm cập nhật số lượng comment
+  const handleCommentCountChange = (postId, newCount) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.postId === postId ? { ...post, comments: newCount } : post
+      )
+    );
+    setSharePosts((prevSharePosts) =>
+      prevSharePosts.map((post) =>
+        post.postId === postId ? { ...post, comments: newCount } : post
+      )
+    );
+  };
 
   // Gộp và sắp xếp bài viết
   const allPosts = [...posts, ...sharePosts].sort(
@@ -154,9 +152,21 @@ const HomePage = () => {
             <PostCreate />
             {allPosts.map((post, index) =>
               post.type === "post" ? (
-                <PostCard key={index} post={post} />
+                <PostCard
+                  key={index}
+                  post={post}
+                  onCommentCountChange={(newCount) =>
+                    handleCommentCountChange(post.postId, newCount)
+                  }
+                />
               ) : (
-                <SharePostCard key={index} post={post} />
+                <SharePostCard
+                  key={index}
+                  post={post}
+                  onCommentCountChange={(newCount) =>
+                    handleCommentCountChange(post.postId, newCount)
+                  }
+                />
               )
             )}
           </section>

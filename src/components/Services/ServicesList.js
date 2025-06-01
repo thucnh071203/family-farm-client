@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import serviceBg from "../../assets/images/service_thumb.png";
@@ -15,6 +14,7 @@ import addFriend from "../../assets/images/weui_add-friends-filled.png";
 import SuggestedExperts from "./SuggestedExperts";
 import SuggestedGroups from "../Home/SuggestedGroups";
 import FilterService from "../FilterService/FilterService";
+import instance from "../../Axios/axiosConfig";
 
 export default function ServicesList() {
     const [services, setServices] = useState([]);
@@ -30,7 +30,7 @@ export default function ServicesList() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const res = await axios.get("https://localhost:7280/api/service/all"); // Cập nhật đúng đường dẫn nếu cần
+                const res = await instance.get("/api/service/all"); // Cập nhật đúng đường dẫn nếu cần
                 if (res.data.success) {
                     console.log("DATA RETURNED FROM API:", res.data.data);
                     setServices(res.data.data);

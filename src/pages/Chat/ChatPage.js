@@ -8,24 +8,32 @@ import ChatHistorySearch from "../../components/Chat/ChatHistorySearch";
 
 const ChatPage = () => {
   const [selectedChat, setSelectedChat] = useState(null);
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
   const currentUserId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
 
   const handleChatSelect = (chat) => {
     setSelectedChat({
       chatId: chat.chatId,
-      receiverId: chat.receiverId,
-      senderName: chat.senderName,
-      senderAvatar: chat.senderAvatar,
+      receiverId: chat.receiver.accId, // Đảm bảo sử dụng đúng receiver.accId
+      senderName: chat.receiver.fullName || chat.receiver.username || "Unknown User", // Sử dụng fullName hoặc username
+      senderAvatar: chat.receiver.avatar, // Sử dụng avatar từ receiver
     });
+  };
+
+  const handleUnreadCountChange = (count) => {
+    setUnreadChatCount(count); // Cập nhật unreadChatCount
   };
 
   return (
     <div>
-      <Header />
+      <Header /> {/* Truyền unreadChatCount vào Header nếu cần */}
       <NavbarHeader />
       <div className="grid grid-cols-12 md:pt-[120px] pt-[60px] mx-auto md:px-10 overflow-hidden">
         <div className="col-span-12 md:col-span-4 lg:col-span-3 p-3 bg-white rounded-lg shadow-lg max-h-[calc(100vh-120px)] overflow-y-auto">
-          <ChatList onChatSelect={handleChatSelect} />
+          <ChatList
+            onChatSelect={handleChatSelect}
+            onUnreadCountChange={handleUnreadCountChange} // Thêm prop để nhận unreadChatCount
+          />
         </div>
         <div className="col-span-12 md:col-span-8 lg:col-span-6 mt-4 md:mt-0 border border-gray-200 rounded-lg bg-white h-[calc(100vh-120px)] flex flex-col">
           {selectedChat ? (

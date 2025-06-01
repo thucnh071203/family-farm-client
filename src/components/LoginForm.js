@@ -5,6 +5,7 @@ import mdiClock from ".././assets/images/mdi_clock.png";
 import iconEye from ".././assets/images/mdi_eye (1).png";
 import googleIcon from ".././assets/images/devicon_google.png";
 import fbIcon from ".././assets/images/devicon-plain_facebook.png";
+import { getOwnProfile } from "../services/authService";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import instance from "../Axios/axiosConfig";
@@ -35,13 +36,15 @@ const LoginForm = () => {
         storage.setItem("accessToken", loginData.accessToken);
         storage.setItem("refreshToken", loginData.refreshToken);
         storage.setItem("username", loginData.username);
+        storage.setItem("accId", loginData.accId);
 
         // Tính thời điểm hết hạn (current time + tokenExpiryIn giây)
         const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
         storage.setItem("tokenExpiry", expiryTime);
 
-        const profileResponse = await instance.get('/api/account/own-profile');
-        const profileData = profileResponse.data;
+        // const profileResponse = await instance.get('/api/account/own-profile');
+        const profileData = await getOwnProfile();
+
         storage.setItem("fullName", profileData.data.fullName || loginData.username);
         storage.setItem("avatarUrl", profileData.data.avatar || "");
 
