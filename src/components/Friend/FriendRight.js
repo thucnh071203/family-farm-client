@@ -7,86 +7,77 @@ const FriendRight = ({ section }) => {
   const [count, setCountFriend] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const fetchFriends = async () => {
-  //     try {
-  //       setIsLoading(true);
-  //       const token = localStorage.getItem("accessToken");
+  const fetchFriends = async () => {
+    try {
+      setIsLoading(true);
+      const token = localStorage.getItem("accessToken");
 
-  //       const res = await fetch(
-  //         `https://localhost:7280/api/friend/${section}`,
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //             "Content-Type": "application/json",
-  //           },
-  //         }
-  //       );
-  //       console.log(
-  //         "Fetch URL:",
-  //         `https://localhost:7280/api/friend/${section}`
-  //       );
+      const res = await fetch(`https://localhost:7280/api/friend/${section}`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const json = await res.json();
 
-  //       const json = await res.json();
-
-  //       if (json.count !== 0) {
-  //         setFriendsData(json.data);
-  //         setCountFriend(json.count);
-  //       } else {
-  //         console.error("Failed:", json.message);
-  //         setFriendsData([]);
-  //         setCountFriend(json.count);
-  //       }
-  //     } catch (err) {
-  //       console.error("Error fetching friends:", err.message || err);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchFriends();
-  // }, [section]);
+      if (json.count !== 0) {
+        setFriendsData(json.data);
+        setCountFriend(json.count);
+      } else {
+        setFriendsData([]);
+        setCountFriend(json.count);
+      }
+    } catch (err) {
+      console.error("Error fetching friends:", err.message || err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Dữ liệu mẫu
-    const mockData = [
-      {
-        accId: 1,
-        name: "Alice",
-        avatar: "https://i.pravatar.cc/150?img=1",
-      },
-      {
-        accId: 2,
-        name: "Bob",
-        avatar: "https://i.pravatar.cc/150?img=2",
-      },
-      {
-        accId: 3,
-        name: "Charlie",
-        avatar: "https://i.pravatar.cc/150?img=3",
-      },
-      {
-        accId: 4,
-        name: "Charlie",
-        avatar: "https://i.pravatar.cc/150?img=3",
-      },
-      {
-        accId: 5,
-        name: "Charlie",
-        avatar: "https://i.pravatar.cc/150?img=3",
-      },
-      {
-        accId: 6,
-        name: "Charlie",
-        avatar: "https://i.pravatar.cc/150?img=3",
-      },
-    ];
+    fetchFriends(); // chỉ gọi khi component load hoặc section thay đổi
+  }, [section]);
 
-    setFriendsData(mockData);
-    setCountFriend(mockData.length);
-    setIsLoading(false);
-  }, []);
+  // useEffect(() => {
+  //   // Dữ liệu mẫu
+  //   const mockData = [
+  //     {
+  //       accId: 1,
+  //       name: "Alice",
+  //       avatar: "https://i.pravatar.cc/150?img=1",
+  //     },
+  //     {
+  //       accId: 2,
+  //       name: "Bob",
+  //       avatar: "https://i.pravatar.cc/150?img=2",
+  //     },
+  //     {
+  //       accId: 3,
+  //       name: "Charlie",
+  //       avatar: "https://i.pravatar.cc/150?img=3",
+  //     },
+  //     {
+  //       accId: 4,
+  //       name: "Charlie",
+  //       avatar: "https://i.pravatar.cc/150?img=3",
+  //     },
+  //     {
+  //       accId: 5,
+  //       name: "Charlie",
+  //       avatar: "https://i.pravatar.cc/150?img=3",
+  //     },
+  //     {
+  //       accId: 6,
+  //       name: "Charlie",
+  //       avatar: "https://i.pravatar.cc/150?img=3",
+  //     },
+  //   ];
+
+  //   setFriendsData(mockData);
+  //   setCountFriend(mockData.length);
+  //   setIsLoading(false);
+  // }, []);
 
   const sectionTitles = {
     "requests-sent": "Sent Request list",
@@ -112,43 +103,55 @@ const FriendRight = ({ section }) => {
         <p className="font-bold text-lg flex items-start mt-8 mx-10 md:mx-20">
           {sectionTitles[section] || "Default title"}
         </p>
-        <div className="flex gap-6 items-center mt-6 mb-10 mx-10 md:mx-20">
-          <div className="flex justify-center items-center">
-            <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1]border-solid outline outline-[0.5px] outline-gray-200">
-              <i className="fa-solid fa-magnifying-glass flex h-full justify-center items-center shrink-0 px-2 text-[#999999]"></i>
-              <input
-                type="text"
-                placeholder="Search"
-                className="flex-1 outline-none border-none h-full"
-              />
+        {friendsData && friendsData.length > 0 && (
+          <div>
+            <div className="flex gap-6 items-center mt-6 mb-10 mx-10 md:mx-20">
+              <div className="flex justify-center items-center">
+                <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1]border-solid outline outline-[0.5px] outline-gray-200">
+                  <i className="fa-solid fa-magnifying-glass flex h-full justify-center items-center shrink-0 px-2 text-[#999999]"></i>
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    className="flex-1 outline-none border-none h-full"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-1">
+                <p className="font-bold ">{count}</p>
+                <p className="text-[#999999] font-bold">
+                  {" "}
+                  {countListTitles[section] || "Default title"}
+                </p>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-1">
-            <p className="font-bold ">{count}</p>
-            <p className="text-[#999999] font-bold">
-              {" "}
-              {countListTitles[section] || "Default title"}
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-y-6 gap-x-6 place-items-center md:mx-20 md:w-[954px]">
-          {/* <div
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-y-6 gap-x-6 place-items-center md:mx-20 md:w-[954px]">
+              {/* <div
           className={`grid grid-cols-1 ${
             section === "requests-receive" ? "md:grid-cols-4" : "md:grid-cols-5"
           } gap-y-6 gap-x-6 place-items-center md:mx-20 md:w-[954px]`}
         > */}
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : (
-            friendsData.map((friend) => {
-              if (section === "requests-receive") {
-                return <FriendCard key={friend.accId} friend={friend} />;
-              } else {
-                return <YourFriendCard key={friend.accId} friend={friend} />;
-              }
-            })
-          )}
-        </div>
+              {isLoading ? (
+                <p>Loading...</p>
+              ) : (
+                friendsData.map((friend) => {
+                  if (section === "requests-receive") {
+                    return (
+                      <FriendCard
+                        key={friend.accId}
+                        friend={friend}
+                        onActionComplete={fetchFriends}
+                      />
+                    );
+                  } else {
+                    return (
+                      <YourFriendCard key={friend.accId} friend={friend} />
+                    );
+                  }
+                })
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
