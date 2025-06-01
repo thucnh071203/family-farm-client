@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import coldImage from "../../assets/images/cold.png";
+import { getOwnProfile } from "../../services/authService";
 
 const WeatherWidget = () => {
   const [weatherData, setWeatherData] = useState(null); // Bỏ giá trị mặc định cứng
   const [searchValue, setSearchValue] = useState("");
   const [isVisible, setIsVisible] = useState(true);
   const [error, setError] = useState(null); // Thêm trạng thái lỗi
-
   const API_KEY = "a61826b4d48fe76b9fe95e09cd8430d4";
   const DEFAULT_CITY = "Can Tho";
 
@@ -21,10 +21,12 @@ const WeatherWidget = () => {
     const apiURL = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}`;
     try {
       const response = await fetch(apiURL);
+      const profile = await getOwnProfile();
+      const cleanCity = profile.data.city.replace(/^(Tỉnh|Thành phố)\s*/i, "") || "Can Tho";
       const data = await response.json();
       if (data.cod === 200) {
         setWeatherData({
-          city: data.name,
+          city: cleanCity,
           country: data.sys.country,
           time: new Date().toLocaleString("vi"),
           temperature: (data.main.temp - 273.15).toFixed(),
