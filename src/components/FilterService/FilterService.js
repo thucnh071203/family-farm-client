@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 export default function FilterService({ onClose, onApplyFilter }) {
@@ -9,6 +10,38 @@ export default function FilterService({ onClose, onApplyFilter }) {
   const [name, setName] = useState("");
   const [star, setStar] = useState("");
   const [priceRange, setPriceRange] = useState("");
+  const [createdAt, setCreatedAt] = useState("");
+
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+
+  // API lấy danh sách quốc gia
+  useEffect(() => {
+    axios.get("https://countriesnow.space/api/v0.1/countries")
+      .then(res => {
+        if (res.data && res.data.data) {
+          setCountries(res.data.data.map(c => c.country));
+        }
+      })
+      .catch(err => console.error("❌ Lỗi lấy danh sách quốc gia:", err));
+  }, []);
+
+  // API lấy danh sách thành phố quốc gia đã chọn
+  useEffect(() => {
+    if (selectedCountry) {
+      axios.post("https://countriesnow.space/api/v0.1/countries/cities", {
+        country: selectedCountry
+      })
+        .then(res => {
+          if (res.data && res.data.data) {
+            setCities(res.data.data);
+          }
+        })
+        .catch(err => console.error("❌ Lỗi lấy thành phố:", err));
+    }
+  }, [selectedCountry]);
 
   const handleSubmit = () => {
     let priceMin = null;
@@ -38,6 +71,9 @@ export default function FilterService({ onClose, onApplyFilter }) {
       star,
       priceMin,
       priceMax,
+      createdAt,
+      country: selectedCountry,
+      city: selectedCity
     });
     onClose()
   };
@@ -66,7 +102,7 @@ export default function FilterService({ onClose, onApplyFilter }) {
           <h2 className="text-lg text-gray-800 flex items-center gap-2">
             <i className="fas fa-sliders-h text-sky-400"></i> Filter Service
           </h2>
-          <div className="text-2xl text-gray-800 cursor-pointer" onClick={onClose}>&times;</div>
+          <div className="close-filter-btn w-8 h-8 rounded-full text-2xl text-gray-800 cursor-pointer hover:bg-slate-400" onClick={onClose}>&times;</div>
         </div>
 
         {/* Body */}
@@ -88,7 +124,7 @@ export default function FilterService({ onClose, onApplyFilter }) {
           {/* Filters */}
           <div className="grid grid-cols-2 gap-5 mb-6 text-sm">
             {/* Publish Date */}
-            <div>
+            {/* <div>
               <h4 className="text-gray-500 mb-2">Publish date</h4>
               <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 Today
@@ -102,15 +138,15 @@ export default function FilterService({ onClose, onApplyFilter }) {
               <Link to="/1" className="text-sky-400 block mb-1 ml-1">
                 This year
               </Link>
-            </div>
-            {/* <div>
+            </div> */}
+            <div>
               <h4 className="text-gray-500 mb-2">Publish date</h4>
               {["today", "week", "month", "year"].map((val) => (
                 <button
                   key={val}
-                  onClick={() => setPublishDate(val)}
-                  className={`block mb-1 ml-1 ${
-                    publishDate === val ? "text-blue-600 font-bold" : "text-sky-400"
+                  onClick={() => setCreatedAt(val)}
+                  className={`text-left block mb-1 ml-1 ${
+                    createdAt === val ? "text-blue-600 font-bold" : "text-sky-400"
                   }`}
                 >
                   {val === "today" && "Today"}
@@ -119,67 +155,9 @@ export default function FilterService({ onClose, onApplyFilter }) {
                   {val === "year" && "This year"}
                 </button>
               ))}
-            </div> */}
+            </div>
 
             {/* Star & Price */}
-            {/* <div>
-              <div className="flex items-center gap-2 mb-4">
-                <h4 className="text-gray-500 whitespace-nowrap">Star rating</h4>
-                <select className="text-sm border-none bg-transparent focus:outline-none">
-                  <option>5</option>
-                  <option>4</option>
-                  <option>3</option>
-                  <option>2</option>
-                  <option>1</option>
-                </select>
-              </div>
-              <h4 className="text-gray-500 mb-2">Service price</h4>
-              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
-                Lower 200.000
-              </Link>
-              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
-                200.000 to 500.000
-              </Link>
-              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
-                500.000 to 1.000.000
-              </Link>
-              <Link to="/1" className="text-sky-400 block mb-1 ml-1">
-                Greater 1.000.000
-              </Link>
-            </div>
-          </div> */}
-          {/* <div>
-              <div className="flex items-center gap-2 mb-4">
-                <h4 className="text-gray-500 whitespace-nowrap">Star rating</h4>
-                <select
-                  className="text-sm border-none bg-transparent focus:outline-none"
-                  value={rating}
-                  onChange={(e) => setRating(e.target.value)}
-                >
-                  <option value="">Any</option>
-                  {[5, 4, 3, 2, 1].map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <h4 className="text-gray-500 mb-2">Service price</h4>
-              {["<200", "200-500", "500-1000", ">1000"].map((range) => (
-                <button
-                  key={range}
-                  onClick={() => setPriceRange(range)}
-                  className={`block mb-1 ml-1 ${
-                    priceRange === range ? "text-blue-600 font-bold" : "text-sky-400"
-                  }`}
-                >
-                  {range === "<200" && "Lower 200.000"}
-                  {range === "200-500" && "200.000 to 500.000"}
-                  {range === "500-1000" && "500.000 to 1.000.000"}
-                  {range === ">1000" && "Greater 1.000.000"}
-                </button>
-              ))}
-            </div> */}
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <h4 className="text-gray-500 whitespace-nowrap">Star rating</h4>
@@ -196,7 +174,7 @@ export default function FilterService({ onClose, onApplyFilter }) {
                 </select>
               </div>
               <h4 className="text-gray-500 mb-2">Service price</h4>
-              <div className="flex flex-col gap-1 text-sky-500">
+              <div className="flex flex-col items-start gap-1 text-sky-500">
                 <label className="ml-1">
                   <input
                     type="radio"
@@ -246,22 +224,35 @@ export default function FilterService({ onClose, onApplyFilter }) {
           </div>
 
           {/* Position Filters */}
-          <div className="mb-6">
+          <div className="mb-6 text-start">
             <h4 className="text-sm text-gray-500 mb-2">Position</h4>
             <div className="mb-4">
               <label className="text-sky-400 text-sm mr-2">Country:</label>
-              <select className="text-sm border-none bg-transparent focus:outline-none">
-                <option>Select</option>
+              <select className="text-sm border-none bg-transparent focus:outline-none w-[100px]"
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}>
+                {/* <option>Select</option>
                 <option>Vietnam</option>
-                <option>Thailand</option>
+                <option>Thailand</option> */}
+                <option value="">Select</option>
+                {countries.map((country, idx) => (
+                  <option key={idx} value={country}>{country}</option>
+                ))}
               </select>
             </div>
             <div>
               <label className="text-sky-400 text-sm mr-2">City:</label>
-              <select className="text-sm border-none bg-transparent focus:outline-none">
-                <option>Select</option>
+              <select className="text-sm border-none bg-transparent focus:outline-none w-[100px]"
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+              disabled={!selectedCountry}>
+                {/* <option>Select</option>
                 <option>Hà Nội</option>
-                <option>HCM</option>
+                <option>HCM</option> */}
+                <option value="">Select</option>
+                {cities.map((city, idx) => (
+                  <option key={idx} value={city}>{city}</option>
+                ))}
               </select>
             </div>
           </div>

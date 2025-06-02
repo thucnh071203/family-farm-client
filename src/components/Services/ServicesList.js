@@ -27,6 +27,7 @@ export default function ServicesList() {
         star: "",
         priceMin: null,
         priceMax: null,
+        createdAt: "",
     });
 
     // Bấm hiện filter
@@ -93,9 +94,32 @@ export default function ServicesList() {
                         const mappedServices = res.data.data
                             .filter(item => item.service)
                             .map(item => item.service);
+
+                    const enrichedServices = await Promise.all(
+                        mappedServices.map(async (service) => {
+                            try {
+                            const providerRes = await axios.get(`https://localhost:7280/api/account/profile-another/${service.providerId}`);
+                            const provider = providerRes.data?.data;
+
+                            return {
+                                ...service,
+                                country: provider?.country || '',
+                                city: provider?.city || '',
+                            };
+                            } catch (err) {
+                            console.error("❌ Không thể lấy thông tin provider:", service.providerId, err);
+                            return {
+                                ...service,
+                                country: '',
+                                city: '',
+                            };
+                            }
+                        })
+                    );
                         
-                        setServices(mappedServices);    
-                        console.log("✅ Services đã chuẩn hóa:", mappedServices);
+                        //setServices(mappedServices);    
+                        setServices(enrichedServices);
+                        console.log("✅ Services đã chuẩn hóa:", enrichedServices);
                     } else {
                         console.error("❌ Lỗi khi gọi API:", res.data.message);
                     }
@@ -144,6 +168,8 @@ export default function ServicesList() {
         //     setFilteredServices(filtered);
         // }, [services, filter]);
             useEffect(() => {
+                const now = new Date();
+
                 const filtered = services.filter((service, index) => {
                     const matchName = filter.name
                         ? service.serviceName?.toLowerCase().includes(filter.name.toLowerCase())
@@ -153,12 +179,87 @@ export default function ServicesList() {
                         ? Math.floor(service.averageRate || 0) === parseInt(filter.star)
                         : true;
 
+                    // console.log(`Giá thấp nhất:${filter.priceMin}`);
+                    // console.log(`Giá cao nhất:${filter.priceMax}`);
+                    // console.log(`Giá dịch vụ:${service.price}`)
+                    const price = Number(service.price); // ← Ép kiểu tại đây
                     const matchPrice =
-                        (filter.priceMin === null || service.price >= filter.priceMin) &&
-                        (filter.priceMax === null || service.price <= filter.priceMax);
+                        (filter.priceMin === null || price >= filter.priceMin) &&
+                        (filter.priceMax === null || price <= filter.priceMax);
 
-                    return matchName && matchStar && matchPrice;
+                    // 🟡 Log từng dịch vụ nếu match giá
+                    // if (matchPrice) {
+                    //     console.log("✅ Dịch vụ match giá:", {
+                    //         name: service.serviceName,
+                    //         price: price
+                    //     });
+                    // }
+
+                    // 🟡 Country & City
+                    const matchCountry = filter.country
+                    ? service.country?.toLowerCase() === filter.country.toLowerCase()
+                    : true;
+
+                    const matchCity = filter.city
+                    ? service.city?.toLowerCase() === filter.city.toLowerCase()
+                    : true;
+
+                    let matchDate = true;
+                    if (filter.createdAt && service.createAt) {
+                    const createdAt = new Date(service.createAt);
+
+                        switch (filter.createdAt) {
+                        case "today": {
+                            const createdDateString = createdAt.toISOString().split("T")[0];
+                            const nowDateString = now.toISOString().split("T")[0];
+                            matchDate = createdDateString === nowDateString;
+                            break;
+                        }
+                        case "week": {
+                            const startOfDayUTC = date => {
+                                return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+                            };
+                            // const startOfWeek = new Date(now);
+                            // startOfWeek.setDate(now.getDate() - now.getDay());
+                            // const endOfWeek = new Date(startOfWeek);
+                            // endOfWeek.setDate(startOfWeek.getDate() + 6);
+                            // matchDate = createdAt >= startOfWeek && createdAt <= endOfWeek;
+                            // if (filter.createdAt === "week") {
+                            // console.log("📆 CreatedAt:", createdAt.toISOString());
+                            // console.log("📆 StartOfWeek:", startOfWeek.toISOString());
+                            // console.log("📆 EndOfWeek:", endOfWeek.toISOString());
+                            // }
+                            const created = startOfDayUTC(createdAt);
+                            const start = startOfDayUTC(new Date(now));
+                            start.setUTCDate(start.getUTCDate() - start.getUTCDay()); // Chủ nhật
+                            const end = new Date(start);
+                            end.setUTCDate(start.getUTCDate() + 6); // Thứ bảy
+
+                            matchDate = created >= start && created <= end;
+
+                            // console.log("📆 CreatedAt:", created.toISOString());
+                            // console.log("📆 StartOfWeek:", start.toISOString());
+                            // console.log("📆 EndOfWeek:", end.toISOString());
+                            break;
+                        }
+                        case "month":
+                            matchDate =
+                            createdAt.getMonth() === now.getMonth() &&
+                            createdAt.getFullYear() === now.getFullYear();
+                            break;
+                        case "year":
+                            matchDate = createdAt.getFullYear() === now.getFullYear();
+                            break;
+                        default:
+                            matchDate = true;
+                        }
+                    }
+
+                    return matchName && matchStar && matchPrice && matchDate && matchCountry && matchCity;
                 });
+
+                console.log("🌍 Đã lọc theo vị trí:", filter.country, filter.city);
+                console.log("📌 Dịch vụ sau khi lọc:", filtered);
 
                 setFilteredServices(filtered);
             }, [services, filter]);
@@ -190,12 +291,15 @@ export default function ServicesList() {
                                 <img className="mx-auto mt-2 line" src={lineService} />
                             </div>
 
-                            <div className="service-container">
+                            {/* <div className="container-list">
+
+                            </div> */}
+                            <div className="service-container w-[91.8%] lg:w-[650px] mx-auto">
                                 {/* Hiển thị list service */}
                                 {currentServices.map((service, index) => {
                                     // const service = wrapper.service;
                                     return (
-                                        <div key={index} className="service-box w-[42%] md:w-[44.55%]">
+                                        <div key={index} className="service-box w-[42%] md:w-[44.55%] lg:w-[315px]">
                                             <img className="service-background" src={serviceBg} alt="service background" />
                                             <div className="service-title w-[93%] min-h-[32px]">{service.serviceName}</div>
                                             <div className="body-service px-3">
@@ -270,7 +374,7 @@ export default function ServicesList() {
                                 >
                                     <img className="mask" src={continous} />
                                 </div>
-                                </div>
+                            </div>
 
                         </div>
                         <div className="suggest-expert hidden md:block md:w-[306px] max-w-[306px] space-y-6">
