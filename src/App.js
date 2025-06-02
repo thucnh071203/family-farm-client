@@ -29,40 +29,55 @@ import CreateServicePage from "./pages/ServicePage/CreateServicePage";
 import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
 import FilterService from "./components/FilterService/FilterService";
-
 import ChatPage from "./pages/Chat/ChatPage";
 
 const AppContent = () => {
-  const { isChecking } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, isLoading } = useAuth(navigate, location);
 
-  if (isChecking) return null;
+  // đang kiểm tra token
+  if (isLoading) {
+    return <>
+      <LoginPage />
+      Loading...
+    </>;
+  }
+
+  const isPublicRoute = ["/Login", "/Register"].includes(location.pathname);
 
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/Register" element={<Register />} />
-      <Route path="/ServiceManagement" element={<ServiceManagement />} />
-      <Route path="/Login" element={<LoginPage />} />
-      <Route path="/PersonalPage" element={<PersonalPage />} />
-      <Route path="/Friend" element={<FriendPage />} />
-      <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
-      <Route path="/Statistic1" element={<Statistic1 />} />
-      <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
-      <Route path="/MapChart" element={<MapChart />} />
-      <Route path="/Service" element={<ServicePage />} />
-      <Route path="/Group" element={<PostGroupPage />} />
-      <Route path="/UpdateProfile" element={<UpdateProfile />} />
-      <Route path="/UserFriends" element={<UserFriends />} />
-      <Route path="/ProcessList" element={<ProcessListPage />} />
-      <Route path="/ProcessResult" element={<ProcessResultPage />} />
-      <Route path="/WaitingOrderList" element={<WaitingListPage />} />
-      <Route path="/SavedPostPage" element={<SavedPostPage />} />
-      <Route path="/CreateService" element={<CreateServicePage />} />
-      <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
-      <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
-      <Route path="/CreateStepPage" element={<CreateStepPage />} />
-      <Route path="/Chats" element={<ChatPage />} />
-      <Route path="/FilterService" element={<FilterService />} />
+      {isPublicRoute || isAuthenticated ? (
+        <>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/Register" element={<Register />} />
+          <Route path="/ServiceManagement" element={<ServiceManagement />} />
+          <Route path="/Login" element={<LoginPage />} />
+          <Route path="/PersonalPage" element={<PersonalPage />} />
+          <Route path="/Friend" element={<FriendPage />} />
+          <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
+          <Route path="/Statistic1" element={<Statistic1 />} />
+          <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
+          <Route path="/MapChart" element={<MapChart />} />
+          <Route path="/Service" element={<ServicePage />} />
+          <Route path="/Group" element={<PostGroupPage />} />
+          <Route path="/UpdateProfile" element={<UpdateProfile />} />
+          <Route path="/UserFriends" element={<UserFriends />} />
+          <Route path="/ProcessList" element={<ProcessListPage />} />
+          <Route path="/ProcessResult" element={<ProcessResultPage />} />
+          <Route path="/WaitingOrderList" element={<WaitingListPage />} />
+          <Route path="/SavedPostPage" element={<SavedPostPage />} />
+          <Route path="/CreateService" element={<CreateServicePage />} />
+          <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
+          <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
+          <Route path="/CreateStepPage" element={<CreateStepPage />} />
+          <Route path="/Chats" element={<ChatPage />} />
+          <Route path="/FilterService" element={<FilterService />} />
+        </>
+      ) : (
+        <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
+      )}
     </Routes>
   );
 };

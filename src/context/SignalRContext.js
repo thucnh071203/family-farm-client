@@ -11,7 +11,7 @@ export const SignalRProvider = ({ children }) => {
         if (!currentUserId) return;
 
         const newConnection = new HubConnectionBuilder()
-            .withUrl(`https://localhost:7280/chatHub?accId=${currentUserId}`, {
+            .withUrl(`${process.env.REACT_APP_API_BASE_URL}/chatHub?accId=${currentUserId}`, {
                 accessTokenFactory: () => localStorage.getItem("token"),
             })
             .configureLogging(LogLevel.Information)

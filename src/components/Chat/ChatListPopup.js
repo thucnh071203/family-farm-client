@@ -9,6 +9,7 @@ import { SignalRProvider } from "../../context/SignalRContext";
 
 const ChatListPopup = ({ onToggle, isVisible }) => {
     const [selectedChat, setSelectedChat] = useState(null);
+    const [unreadChatCount, setUnreadChatCount] = useState(0); // Thêm state để lưu unreadChatCount
 
     // Close chat popup
     useEffect(() => {
@@ -25,6 +26,11 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
         setSelectedChat(null);
     };
 
+    // Hàm nhận unreadChatCount từ ChatList
+    const handleUnreadCountChange = (count) => {
+        setUnreadChatCount(count);
+    };
+
     return (
         <SignalRProvider>
             <div className="relative">
@@ -36,7 +42,7 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
                     aria-expanded={isVisible}
                 >
                     <i className={`fa-solid fa-comment ${isVisible ? "text-[#3DB3FB]" : ""}`}></i>
-                    <div className="chat-number">2</div>
+                    <div className="chat-number">{unreadChatCount}</div>
                 </div>
 
                 {isVisible && (
@@ -74,7 +80,10 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
                                     </Link>
                                 </div>
                             </div>
-                            <ChatList onChatSelect={handleChatSelect} />
+                            <ChatList
+                                onChatSelect={handleChatSelect}
+                                onUnreadCountChange={handleUnreadCountChange} // Truyền callback
+                            />
                         </div>
                     </div>
                 )}

@@ -7,11 +7,12 @@ import default_avatar from "../../assets/images/default-avatar.png";
 import "react-toastify/dist/ReactToastify.css";
 import { useSignalR } from "../../context/SignalRContext";
 
-const ChatList = ({ onChatSelect = () => {} }) => {
+const ChatList = ({ onChatSelect = () => { }, onUnreadCountChange = () => { } }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [chats, setChats] = useState([]);
     const [loading, setLoading] = useState(false);
     const { connection, currentUserId } = useSignalR();
+    const [unreadChatCount, setUnreadChatCount] = useState(0); // Thêm state để lưu unreadChatCount
 
     useEffect(() => {
         console.log("Current user ID:", currentUserId);
@@ -30,15 +31,19 @@ const ChatList = ({ onChatSelect = () => {} }) => {
             try {
                 const response = await instance.get("/api/chat/get-by-user");
                 console.log("Fetched chats:", response.data);
+                console.log("Count chats:", response.data.unreadChatCount);
                 if (response.data.success) {
                     setChats(response.data.chats || []);
-                } else {
-                    toast.error(response.data.message || "Không tìm thấy cuộc trò chuyện.", {
-                        position: "top-right",
-                        autoClose: 3000,
-                        transition: Bounce,
-                    });
-                }
+                    setUnreadChatCount(response.data.unreadChatCount || 0); // Lưu unreadChatCount
+                    onUnreadCountChange(response.data.unreadChatCount || 0); // Truyền lên component cha
+                } 
+                // else {
+                //     toast.error("Không tìm thấy cuộc trò chuyện.", {
+                //         position: "top-right",
+                //         autoClose: 3000,
+                //         transition: Bounce,
+                //     });
+                // }
             } catch (error) {
                 toast.error("Tải danh sách trò chuyện thất bại!", {
                     position: "top-right",
@@ -51,17 +56,14 @@ const ChatList = ({ onChatSelect = () => {} }) => {
         };
 
         fetchChats();
-    }, [currentUserId]);
+    }, [currentUserId, onUnreadCountChange]);
 
     useEffect(() => {
         if (!connection) {
             console.warn("No SignalR connection available");
             return;
         }
-        console.log("Connection state:", connection.state);
-
         if (connection.state === "Connected") {
-            console.log("Registering SignalR event handlers");
             const receiveMessageHandler = (chatDetail, chatDTO) => {
                 console.log("ReceiveMessage:", { chatDetail, chatDTO });
                 if (!chatDTO || !chatDTO.chatId) {
@@ -83,6 +85,10 @@ const ChatList = ({ onChatSelect = () => {} }) => {
                     } else {
                         updatedChats = [chatDTO, ...prevChats];
                     }
+                    // Cập nhật unreadChatCount
+                    const newUnreadChatCount = updatedChats.reduce((total, chat) => total + (chat.unreadCount || 0), 0);
+                    setUnreadChatCount(newUnreadChatCount);
+                    onUnreadCountChange(newUnreadChatCount); // Truyền lên component cha
                     return updatedChats.sort((a, b) => {
                         if (a.unreadCount > 0 && b.unreadCount === 0) return -1;
                         if (a.unreadCount === 0 && b.unreadCount > 0) return 1;
@@ -90,6 +96,22 @@ const ChatList = ({ onChatSelect = () => {} }) => {
                     });
                 });
             };
+
+            connection.on("ReceiveMessage", receiveMessageHandler);
+            connection.on("MessageSeen", (chatId, chatDTO) => {
+                console.log("MessageSeen:", { chatId, chatDTO });
+                if (!chatId || !chatDTO || !chatDTO.chatId) {
+                    console.warn("Invalid MessageSeen data:", { chatId, chatDTO });
+                    return;
+                }
+                setChats((prevChats) => {
+                    const updatedChats = prevChats.map((chat) => (chat.chatId === chatId ? { ...chat, ...chatDTO } : chat));
+                    const newUnreadChatCount = updatedChats.reduce((total, chat) => total + (chat.unreadCount || 0), 0);
+                    setUnreadChatCount(newUnreadChatCount);
+                    onUnreadCountChange(newUnreadChatCount); // Truyền lên component cha
+                    return updatedChats;
+                });
+            });
 
             connection.on("ReceiveMessage", receiveMessageHandler);
             connection.on("MessageSeen", (chatId, chatDTO) => {
@@ -191,14 +213,14 @@ const ChatList = ({ onChatSelect = () => {} }) => {
                                 src={chat.receiver?.avatar || default_avatar}
                                 alt={`${chat.receiver?.fullName || "User"} avatar`}
                             />
-                            <div className="flex flex-col items-start justify-center flex-grow gap-1">
+                            <div className="flex flex-col items-start justify-center flex-grow gap-1 rich-text-editor">
                                 <div className="text-[#344258] text-left text-[14px]">
                                     <p className="font-semibold cursor-pointer hover:text-[#3DB3FB] transition-colors duration-200">
                                         {chat.receiver?.fullName || "Unknown User"}
                                     </p>
-                                    <div className="text-[12px] mt-1">
+                                    <div className="text-[12px] mt-1 truncate max-w-[200px] overflow-hidden whitespace-nowrap">
                                         {chat.lastMessageAccId === currentUserId ? (
-                                            <span>
+                                            <span className="flex line-clamp-2 break-all w-fit overflow-hidden">
                                                 You: <span dangerouslySetInnerHTML={{ __html: chat.lastMessage || "" }} />
                                             </span>
                                         ) : (
