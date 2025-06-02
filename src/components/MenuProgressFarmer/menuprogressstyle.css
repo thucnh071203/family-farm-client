@@ -4,7 +4,7 @@
 
 .progress-managment .menu-title {
   font-family: "Roboto-Medium", Helvetica;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--variable-collection-black-2);
   font-size: 16px;
   letter-spacing: 0;
@@ -24,7 +24,7 @@
   position: relative;
   width: fit-content;
   font-family: "Roboto-Medium", Helvetica;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--variable-collection-black-2);
   font-size: 12px;
   letter-spacing: 0;
