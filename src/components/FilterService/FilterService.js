@@ -12,36 +12,58 @@ export default function FilterService({ onClose, onApplyFilter }) {
   const [priceRange, setPriceRange] = useState("");
   const [createdAt, setCreatedAt] = useState("");
 
-  const [countries, setCountries] = useState([]);
+  // const [countries, setCountries] = useState([]);
+  // const [cities, setCities] = useState([]);
+  // const [selectedCountry, setSelectedCountry] = useState("");
+  // const [selectedCity, setSelectedCity] = useState("");
+
+  // // API lấy danh sách quốc gia
+  // useEffect(() => {
+  //   axios.get("https://countriesnow.space/api/v0.1/countries")
+  //     .then(res => {
+  //       if (res.data && res.data.data) {
+  //         setCountries(res.data.data.map(c => c.country));
+  //       }
+  //     })
+  //     .catch(err => console.error("❌ Lỗi lấy danh sách quốc gia:", err));
+  // }, []);
+
+  // // API lấy danh sách thành phố quốc gia đã chọn
+  // useEffect(() => {
+  //   if (selectedCountry) {
+  //     axios.post("https://countriesnow.space/api/v0.1/countries/cities", {
+  //       country: selectedCountry
+  //     })
+  //       .then(res => {
+  //         if (res.data && res.data.data) {
+  //           setCities(res.data.data);
+  //         }
+  //       })
+  //       .catch(err => console.error("❌ Lỗi lấy thành phố:", err));
+  //   }
+  // }, [selectedCountry]);
+
   const [cities, setCities] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
-  // API lấy danh sách quốc gia
+  // Mặc định country là "Vietnam"
+  const selectedCountry = "Vietnam";
+
+  // Gọi API esgoo để lấy danh sách tỉnh/thành phố
   useEffect(() => {
-    axios.get("https://countriesnow.space/api/v0.1/countries")
+    axios.get("https://esgoo.net/api-tinhthanh/1/0.htm")
       .then(res => {
-        if (res.data && res.data.data) {
-          setCountries(res.data.data.map(c => c.country));
+        const cityList = res.data?.data;
+        console.log("✅ Dữ liệu thành phố:", cityList);
+        if (Array.isArray(cityList)) {
+          const cityNames = cityList.map(item => item.name);
+          setCities(cityNames);
+        } else {
+          console.error("❌ Dữ liệu không phải mảng:", cityList);
         }
       })
-      .catch(err => console.error("❌ Lỗi lấy danh sách quốc gia:", err));
+      .catch(err => console.error("❌ Lỗi lấy thành phố:", err));
   }, []);
-
-  // API lấy danh sách thành phố quốc gia đã chọn
-  useEffect(() => {
-    if (selectedCountry) {
-      axios.post("https://countriesnow.space/api/v0.1/countries/cities", {
-        country: selectedCountry
-      })
-        .then(res => {
-          if (res.data && res.data.data) {
-            setCities(res.data.data);
-          }
-        })
-        .catch(err => console.error("❌ Lỗi lấy thành phố:", err));
-    }
-  }, [selectedCountry]);
 
   const handleSubmit = () => {
     let priceMin = null;
@@ -72,6 +94,8 @@ export default function FilterService({ onClose, onApplyFilter }) {
       priceMin,
       priceMax,
       createdAt,
+      // country: selectedCountry,
+      // city: selectedCity
       country: selectedCountry,
       city: selectedCity
     });
@@ -229,23 +253,15 @@ export default function FilterService({ onClose, onApplyFilter }) {
             <div className="mb-4">
               <label className="text-sky-400 text-sm mr-2">Country:</label>
               <select className="text-sm border-none bg-transparent focus:outline-none w-[100px]"
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}>
-                {/* <option>Select</option>
-                <option>Vietnam</option>
-                <option>Thailand</option> */}
-                <option value="">Select</option>
-                {countries.map((country, idx) => (
-                  <option key={idx} value={country}>{country}</option>
-                ))}
+              value={selectedCountry} disabled>
+                <option value="Vietnam">Vietnam</option>
               </select>
             </div>
             <div>
               <label className="text-sky-400 text-sm mr-2">City:</label>
-              <select className="text-sm border-none bg-transparent focus:outline-none w-[100px]"
+              <select className="text-sm border-none focus:outline-none w-[100px] bg-white text-black border"
               value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
-              disabled={!selectedCountry}>
+              onChange={(e) => setSelectedCity(e.target.value)}>
                 {/* <option>Select</option>
                 <option>Hà Nội</option>
                 <option>HCM</option> */}
@@ -254,6 +270,7 @@ export default function FilterService({ onClose, onApplyFilter }) {
                   <option key={idx} value={city}>{city}</option>
                 ))}
               </select>
+              {/* <pre>{JSON.stringify(cities, null, 2)}</pre> */}
             </div>
           </div>
 

@@ -89,9 +89,9 @@ export const Register = () => {
     formDataToSend.append("Email", formData.email);
     formDataToSend.append("Phone", formData.phone);
     formDataToSend.append(formData.isExpert ? "Identifier" : "Identify", formData.identify);
-    formDataToSend.append("City", provinces.find((p) => p.id === formData.province)?.full_name || "");
+    formDataToSend.append("City", provinces.find((p) => p.id === formData.province)?.name || "");
     formDataToSend.append("Country", formData.country);
-    formDataToSend.append("Address", wards.find((w) => w.id === formData.ward)?.full_name || "");
+    formDataToSend.append("Address", wards.find((w) => w.id === formData.ward)?.name || "");
 
     if (formData.isExpert) {
       formDataToSend.append("Certificate", formData.certificate);
