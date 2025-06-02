@@ -1,38 +1,41 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
-export default function PopularServices() {
+const PopularServices = () => {
   const services = [
     {
       title: "Solve problem about agriculture",
       price: "200.000 VND",
-      img: "/rice.jpg",
+      image:
+        "https://th.bing.com/th/id/OIP.EKontM__37mRqxwRkIqX8wHaEK?rs=1&pid=ImgDetMain",
     },
     {
       title: "NodeJS online for beginner",
       price: "500.000 VND",
-      img: "/nodejs.jpg",
+      image:
+        "https://th.bing.com/th/id/OIP.EKontM__37mRqxwRkIqX8wHaEK?rs=1&pid=ImgDetMain",
     },
   ];
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-4">
-      <h2 className="text-lg font-semibold mb-2">Popular Services</h2>
-      <div className="space-y-4">
-        {services.map((service, idx) => (
-          <div key={idx} className="border rounded overflow-hidden">
+    <div className="bg-white p-4 rounded shadow">
+      <h2 className="font-bold mb-4 text-left">Popular Services</h2>
+      {services.map((service, index) => (
+        <Link key={index}>
+          <div className="relative">
             <img
-              src="https://th.bing.com/th/id/OIP.XVG00Ykm3IQf9g7P8K34ZAHaEn?w=268&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7"
-              className="w-full h-24 object-cover"
+              src="https://th.bing.com/th/id/OIP.EKontM__37mRqxwRkIqX8wHaEK?rs=1&pid=ImgDetMain"
+              alt={service.title}
+              className="rounded-lg h-full w-full object-cover"
             />
-            <div className="p-2">
-              <span className="bg-orange-400 text-white text-xs px-2 py-1 rounded">
-                ddddd
-              </span>
-              <p className="mt-1 text-sm font-medium">ddddddddddddddd</p>
-            </div>
+            <span className="absolute top-2 left-2 bg-orange-500 text-white px-2 py-1 text-xs rounded">
+              {service.price}
+            </span>
           </div>
-        ))}
-      </div>
+          <p className="mt-2 font-medium mb-8">{service.title}</p>
+        </Link>
+      ))}
     </div>
   );
-}
+};
+
+export default PopularServices;

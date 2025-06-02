@@ -5,7 +5,7 @@ import JoinRequestsList from "../../components/Group/JoinRequestsList";
 import Cover from "../../components/Group/Cover";
 import MainGroupContent from "../../components/Group/MainGroupContent";
 
-export const GroupPage = () => {
+export const JoinRequestsListPage = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   const toggleSidebar = () => {
@@ -36,11 +36,11 @@ export const GroupPage = () => {
 
         <div className="col-span-12 md:col-span-9">
           <Cover />
-          <MainGroupContent />
+          <JoinRequestsList />
         </div>
       </div>
     </div>
   );
 };
 
-export default GroupPage;
+export default JoinRequestsListPage;

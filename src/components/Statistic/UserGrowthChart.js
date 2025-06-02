@@ -51,7 +51,7 @@ export const UserGrowthChart = () => {
         labels,
         datasets: [
           {
-            label: "Số lượng người dùng",
+            label: "Number of users",
             data: values,
             backgroundColor: "rgba(54, 162, 235, 0.7)",
           },
@@ -65,13 +65,13 @@ export const UserGrowthChart = () => {
             beginAtZero: true,
             title: {
               display: true,
-              text: "Số người dùng",
+              text: "Number of users",
             },
           },
           x: {
             title: {
               display: true,
-              text: "Ngày",
+              text: "Day",
             },
           },
         },
@@ -116,9 +116,9 @@ export const UserGrowthChart = () => {
         {chartData && <Bar data={chartData} options={chartOptions} />}
       </div>
 
-      <div className="flex flex-col md:flex-row items-center gap-4">
+      <div className="flex flex-col md:flex-row items-center ml-24 gap-4">
         <div className="space-y-1">
-          <label htmlFor="fromDate">Từ ngày</label>
+          <label htmlFor="fromDate">From : </label>
           <input
             type="date"
             id="fromDate"
@@ -127,7 +127,7 @@ export const UserGrowthChart = () => {
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="toDate">Đến ngày</label>
+          <label htmlFor="toDate">To : </label>
           <input
             type="date"
             id="toDate"
@@ -139,7 +139,7 @@ export const UserGrowthChart = () => {
           className="mt-6 md:mt-0 hover:bg-lime-600 bg-lime-500 px-4 py-2 rounded transition text-white"
           onClick={fetchData}
         >
-          Tải số liệu
+          Load
         </button>
       </div>
     </div>

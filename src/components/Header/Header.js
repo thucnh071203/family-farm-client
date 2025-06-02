@@ -68,7 +68,7 @@ const Header = () => {
                     </div>
 
                 ) : (
-                    <div class="login-box">
+                    <div className="login-box">
                         <Link to="/login">Login</Link>
                     </div>
                 )}
@@ -125,8 +125,8 @@ const Header = () => {
                         )}
                     </div>
                 ) : (
-                    <Link to="/login" class="sidebar-item">
-                        <i class="fa-solid fa-right-to-bracket"></i>
+                    <Link to="/login" className="sidebar-item">
+                        <i className="fa-solid fa-right-to-bracket"></i>
                         <p>Login</p>
                     </Link>
                 )}

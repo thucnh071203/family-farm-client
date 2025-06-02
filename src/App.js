@@ -18,6 +18,8 @@ import UpdateProfile from "./pages/Profile/UpdateProfile";
 import UserFriends from "./pages/Profile/UserFriends";
 import PostGroupPage from "./pages/GroupPage/PostGroupPage";
 import GroupPage from "./pages/GroupPage/GroupPage";
+import JoinRequestsListPage from "./pages/GroupPage/JoinRequestsListPage";
+import PermissionGroupPage from "./pages/GroupPage/PermissionGroupPage";
 
 import { Toaster } from "sonner";
 
@@ -45,6 +47,14 @@ function App() {
           <Route path="/ProgressList" element={<ProgressListPage />} />
           <Route path="/WaitingOrderList" element={<WaitingListPage />} />
           <Route path="/GroupPage" element={<GroupPage />} />
+          <Route
+            path="/JoinRequestsListPage"
+            element={<JoinRequestsListPage />}
+          />
+          <Route
+            path="/PermissionGroupPage"
+            element={<PermissionGroupPage />}
+          />
         </Routes>
       </Router>
     </div>

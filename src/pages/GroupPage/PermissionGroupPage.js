@@ -3,9 +3,9 @@ import GroupSidebar from "../../components/Group/GroupSidebarU";
 import PopularServices from "../../components/Group/PopularServices";
 import JoinRequestsList from "../../components/Group/JoinRequestsList";
 import Cover from "../../components/Group/Cover";
-import MainGroupContent from "../../components/Group/MainGroupContent";
+import PermissionGroup from "../../components/Group/PermissionGroup";
 
-export const GroupPage = () => {
+export const PermissionGroupPage = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   const toggleSidebar = () => {
@@ -36,11 +36,11 @@ export const GroupPage = () => {
 
         <div className="col-span-12 md:col-span-9">
           <Cover />
-          <MainGroupContent />
+          <PermissionGroup />
         </div>
       </div>
     </div>
   );
 };
 
-export default GroupPage;
+export default PermissionGroupPage;

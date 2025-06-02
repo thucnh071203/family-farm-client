@@ -12,9 +12,13 @@ const HomePage = () => {
       <br></br>
       <Link to="/UserGrowthChart">User Growth</Link>
       <br></br>
-      <Link to="/MapChart">MapChart</Link>
+      <Link to="/UserGrowthChart">MapChart</Link>
       <br></br>
-      <Link to="/GroupPage">GroupPage</Link>
+      <Link to="/GroupPage">GroupMemberPage</Link>
+      <br></br>
+      <Link to="/JoinRequestsListPage">JoinRequestsListPage</Link>
+      <br></br>
+      <Link to="/PermissionGroupPage">PermissionGroupPage</Link>
       <Header />
       <NavbarHeader />
       {/* <Link to="/Register">Register</Link> */}
