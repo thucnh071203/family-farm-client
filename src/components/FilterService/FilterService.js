@@ -56,7 +56,7 @@ export default function FilterService({ onClose, onApplyFilter }) {
         const cityList = res.data?.data;
         console.log("✅ Dữ liệu thành phố:", cityList);
         if (Array.isArray(cityList)) {
-          const cityNames = cityList.map(item => item.name);
+          const cityNames = cityList.map(item => item.name_en);
           setCities(cityNames);
         } else {
           console.error("❌ Dữ liệu không phải mảng:", cityList);

@@ -95,9 +95,9 @@ const UpdateProfileForm = () => {
       // Chuẩn bị dữ liệu để gửi (ánh xạ tên đầy đủ cho API hoặc hiển thị)
       const submittedData = {
         ...formData,
-        province: provinces.find((p) => p.id === formData.province)?.full_name || '',
-        district: districts.find((d) => d.id === formData.district)?.full_name || '',
-        ward: wards.find((w) => w.id === formData.ward)?.full_name || '',
+        province: provinces.find((p) => p.id === formData.province)?.name_en || '',
+        district: districts.find((d) => d.id === formData.district)?.name_en || '',
+        ward: wards.find((w) => w.id === formData.ward)?.name_en || '',
       };
       toast.success('PROFILE UPDATED SUCCESSFULLY!');
       console.log('Form submitted:', submittedData);
@@ -206,6 +206,20 @@ const UpdateProfileForm = () => {
             />
             {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone}</p>}
           </div>
+          <div className="flex flex-col p-2">
+            <label className="text-sm font-medium text-gray-700" htmlFor="country">
+              Country *
+            </label>
+            <input
+              type="text"
+              id="country"
+              name="country"
+              value={formData.country}
+              readOnly
+              className={`mt-1 p-2 border ${errors.country ? 'border-red-500' : 'border-gray-300'} rounded-md bg-gray-100 cursor-not-allowed`}
+            />
+            {errors.country && <p className="mt-1 text-sm text-red-500">{errors.country}</p>}
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <div className="flex flex-col p-2">
@@ -222,7 +236,7 @@ const UpdateProfileForm = () => {
               <option value="">Select province/city</option>
               {provinces.map((province) => (
                 <option key={province.id} value={province.id}>
-                  {province.full_name}
+                  {province.name_en}
                 </option>
               ))}
             </select>
@@ -243,7 +257,7 @@ const UpdateProfileForm = () => {
               <option value="">Select district</option>
               {districts.map((district) => (
                 <option key={district.id} value={district.id}>
-                  {district.full_name}
+                  {district.name_en}
                 </option>
               ))}
             </select>
@@ -264,27 +278,11 @@ const UpdateProfileForm = () => {
               <option value="">Select ward</option>
               {wards.map((ward) => (
                 <option key={ward.id} value={ward.id}>
-                  {ward.full_name}
+                  {ward.name_en}
                 </option>
               ))}
             </select>
             {errors.ward && <p className="mt-1 text-sm text-red-500">{errors.ward}</p>}
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          <div className="flex flex-col p-2">
-            <label className="text-sm font-medium text-gray-700" htmlFor="country">
-              Country *
-            </label>
-            <input
-              type="text"
-              id="country"
-              name="country"
-              value={formData.country}
-              readOnly
-              className={`mt-1 p-2 border ${errors.country ? 'border-red-500' : 'border-gray-300'} rounded-md bg-gray-100 cursor-not-allowed`}
-            />
-            {errors.country && <p className="mt-1 text-sm text-red-500">{errors.country}</p>}
           </div>
         </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -317,11 +315,20 @@ const UpdateProfileForm = () => {
             />
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
           <div className="flex flex-col p-2">
             <button
               type="submit"
-              className="w-full px-4 py-2 text-white bg-green-500 rounded-md hover:bg-green-600"
+              className="w-full px-4 py-2 text-black bg-white rounded-lg hover:bg-green-600 border border-solid "
+            >
+              Back
+            </button>
+          </div>
+
+          <div className="flex flex-col p-2">
+            <button
+              type="submit"
+              className="w-full px-4 py-2 text-white bg-[#26ACE2] rounded-lg hover:bg-[#5688f3]"
             >
               Save
             </button>

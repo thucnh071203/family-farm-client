@@ -89,9 +89,9 @@ export const Register = () => {
     formDataToSend.append("Email", formData.email);
     formDataToSend.append("Phone", formData.phone);
     formDataToSend.append(formData.isExpert ? "Identifier" : "Identify", formData.identify);
-    formDataToSend.append("City", provinces.find((p) => p.id === formData.province)?.name || "");
+    formDataToSend.append("City", provinces.find((p) => p.id === formData.province)?.name_en || "");
     formDataToSend.append("Country", formData.country);
-    formDataToSend.append("Address", wards.find((w) => w.id === formData.ward)?.name || "");
+    formDataToSend.append("Address", wards.find((w) => w.id === formData.ward)?.name_en || "");
 
     if (formData.isExpert) {
       formDataToSend.append("Certificate", formData.certificate);
@@ -244,7 +244,7 @@ export const Register = () => {
                   <option value="">Select province/city</option>
                   {provinces.map((province) => (
                     <option key={province.id} value={province.id}>
-                      {province.full_name}
+                      {province.name_en}
                     </option>
                   ))}
                 </select>
@@ -270,7 +270,7 @@ export const Register = () => {
                   <option value="">Select district</option>
                   {districts.map((district) => (
                     <option key={district.id} value={district.id}>
-                      {district.full_name}
+                      {district.name_en}
                     </option>
                   ))}
                 </select>
@@ -296,7 +296,7 @@ export const Register = () => {
                   <option value="">Select ward</option>
                   {wards.map((ward) => (
                     <option key={ward.id} value={ward.id}>
-                      {ward.full_name}
+                      {ward.name_en}
                     </option>
                   ))}
                 </select>
