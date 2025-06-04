@@ -5,50 +5,67 @@ import mdiClock from ".././assets/images/mdi_clock.png";
 import iconEye from ".././assets/images/mdi_eye (1).png";
 import googleIcon from ".././assets/images/devicon_google.png";
 import fbIcon from ".././assets/images/devicon-plain_facebook.png";
+import { getOwnProfile } from "../services/authService";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
+import instance from "../Axios/axiosConfig";
 import { useState } from "react";
-import axios from "../Axios/axiosConfig";
-import { toast } from "sonner";
+import { toast, Bounce } from "react-toastify";
 
 const LoginForm = () => {
-  //Dùng để lấy và set giá trị cho 2 input là username và password
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
+  const [errors, setErrors] = useState({ username: "", password: "" });
   const navigate = useNavigate();
 
-  //Xử lý logic đăng nhập
   const handleLogin = async () => {
-    axios
-      .post('/api/authen/login', {
+
+    try {
+      const loginResponse = await instance.post('/api/authen/login', {
+
         Identifier: username,
         Password: password,
-      })
-      .then((response) => {
-        const data = response.data;
-
-        if (response.status === 200) {
-          localStorage.setItem("accessToken", data.accessToken);
-          localStorage.setItem("refreshToken", data.refreshToken);
-          localStorage.setItem("username", data.username);
-          localStorage.setItem("tokenExpiryIn", data.tokenExpiryIn);
-
-          toast.success("Đăng nhập thành công!");
-          navigate("/");
-        } else {
-          toast.error("Đăng nhập thất bại!");
-        }
-      })
-      .catch((error) => {
-        toast.error("Đăng nhập thất bại!");
       });
+
+      const loginData = loginResponse.data;
+      if (loginResponse.status === 200) {
+        const storage = rememberMe ? localStorage : sessionStorage;
+
+        // Lưu accessToken, refreshToken, username
+        storage.setItem("accessToken", loginData.accessToken);
+        storage.setItem("refreshToken", loginData.refreshToken);
+        storage.setItem("username", loginData.username);
+        storage.setItem("accId", loginData.accId);
+
+        // Tính thời điểm hết hạn (current time + tokenExpiryIn giây)
+        const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
+        storage.setItem("tokenExpiry", expiryTime);
+
+        // const profileResponse = await instance.get('/api/account/own-profile');
+        const profileData = await getOwnProfile();
+
+        storage.setItem("fullName", profileData.data.fullName || loginData.username);
+        storage.setItem("avatarUrl", profileData.data.avatar || "");
+
+        toast.success("LOGIN SUCCESSFULLY!");
+        navigate("/");
+      } else {
+        toast.error("Login failed! Please check your username or password!");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        toast.error("Login failed! Please check your username or password!");
+      } else {
+        toast.error("Server not responding");
+      }
+    }
   };
 
   return (
-    <div className="overlap w-full md:w-1/2 mt-6 md:mt-0 md:ml-[5%]">
+    <div className="overlap w-full md:w-1/2 mt-6 md:mt-0 md:ml-[5%] bg-gray-200 bg-opacity-25">
       <div className="form-container w-full max-w-[466px] flex flex-col gap-7 mx-auto">
-        <div className="logo flex justify-center items-center gap-x-4 mx-auto">
+        <div className="flex items-center justify-center mx-auto logo gap-x-4">
           <img className="image" src={logo} alt="Logo" />
           <div className="family-farm">Family Farm</div>
         </div>
@@ -63,11 +80,9 @@ const LoginForm = () => {
             <div className="text-wrapper-6">Enter your Username</div>
             <div className="text-wrapper-7">*</div>
           </div>
-          <div className="overlap-group-wrapper mt-4 w-full">
-            <div className="overlap-group w-full flex">
+          <div className="w-full mt-4 overlap-group-wrapper">
+            <div className="flex w-full overlap-group">
               <img className="mdi-user" src={mdiUser} alt="User Icon" />
-
-              {/* INPUT USERNAME  */}
               <input
                 className="input-text"
                 type="text"
@@ -77,7 +92,9 @@ const LoginForm = () => {
               />
             </div>
           </div>
-          <div className="text-wrapper-9">Your username is required.</div>
+          {errors.username && (
+            <span className="text-sm italic text-red-600">{errors.username}</span>
+          )}
         </div>
 
         <div className="group-2">
@@ -85,11 +102,9 @@ const LoginForm = () => {
             <div className="text-wrapper-6">Enter your Password</div>
             <div className="text-wrapper-7">*</div>
           </div>
-          <div className="overlap-group-wrapper mt-4 w-full">
-            <div className="overlap-group w-full flex">
+          <div className="w-full mt-4 overlap-group-wrapper">
+            <div className="flex w-full overlap-group">
               <img className="mdi-clock" src={mdiClock} alt="Clock Icon" />
-
-              {/* INPUT CHO PASSWORD  */}
               <input
                 className="input-text"
                 type="password"
@@ -97,16 +112,22 @@ const LoginForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-
               <img className="mdi-eye" src={iconEye} alt="Eye Icon" />
             </div>
           </div>
-          <div className="text-wrapper-9">Your password is required.</div>
+          {errors.password && (
+            <span className="text-sm italic text-red-600">{errors.password}</span>
+          )}
         </div>
 
         <div className="login-options">
           <label className="remember-me">
-            <input type="checkbox" />
+            <input
+              type="checkbox"
+              value="check"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
             <span className="text-wrapper-10">Remember me!</span>
           </label>
           <Link to="/forgot-password" className="text-wrapper-11" href="#">
@@ -114,13 +135,10 @@ const LoginForm = () => {
           </Link>
         </div>
 
-        <div className="frame-2 w-full">
-          <div className="div-wrapper">
-            <button
-              type="button"
-              className="text-wrapper-2"
-              onClick={handleLogin}
-            >
+        <div className="w-full frame-2">
+          <div className="div-wrapper" onClick={handleLogin}>
+            <button type="button"
+              className="text-wrapper-2">
               Login
             </button>
           </div>
@@ -134,7 +152,7 @@ const LoginForm = () => {
 
         <div className="frame-8">
           <div className="text-wrapper-12">Login With</div>
-          <div className="frame-9 flex flex-col justify-center items-center lg:flex-row">
+          <div className="flex flex-col items-center justify-center frame-9 lg:flex-row">
             <div className="frame-10 w-full lg:w-[223px]">
               <img className="img" src={googleIcon} alt="Google Icon" />
               <div className="text-wrapper-13">Continue with Google</div>

@@ -22,7 +22,7 @@ html, body {
 }
 
 .service .container-service {
-  height: 810px;
+  height: auto;
   border: 1px solid;
   border-color: #f5f5f5;
 }
@@ -61,12 +61,12 @@ html, body {
 }
 
 .service .service-container{
-  height: 650px;
+  height: 100%;
   margin-top: 14px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: center;
+  justify-content: start;
 }
 
 .service .service-box{
@@ -99,11 +99,12 @@ html, body {
   -webkit-line-clamp: 2; /* số dòng muốn hiển thị */
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-align: start;
 }
 
 .service-container .body-service{
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   margin-top: 12px;
 }
 
@@ -135,6 +136,7 @@ html, body {
   font-family: 'Roboto', sans-serif;
   font-size: 12px;
   color: #3DB3FB;
+  text-align: start;
 }
 
 .service-container .price-content{
@@ -169,7 +171,7 @@ html, body {
   display: flex;
   justify-content: space-around;
   gap: 30px;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
 .service-container .rate-cotent{
@@ -215,12 +217,20 @@ html, body {
   cursor: pointer;
 }
 
+.service .mask-wrapper:hover {
+  background-color: rgb(194, 183, 183);
+}
+
 .service .mask-group-wrapper {
   width: 45px;
   height: 45px;
   background-color: #deebf3;
   border-radius: 22.5px;
   cursor: pointer;
+}
+
+.service .mask-group-wrapper:hover {
+  background-color: rgb(194, 183, 183);
 }
 
 .service .mask {
@@ -262,12 +272,20 @@ html, body {
   cursor: pointer;
 }
 
+.service .overlap-3:hover {
+  background-color: rgb(194, 183, 183);
+}
+
 .service .overlap-4 {
   width: 45px;
   height: 45px;
   background-color: #deebf3;
   border-radius: 22.5px;
   cursor: pointer;
+}
+
+.service .overlap-4:hover {
+  background-color: rgb(194, 183, 183);
 }
 
 .service .text-wrapper-3 {

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { toast, Bounce } from 'react-toastify';
 
 import * as signalR from "@microsoft/signalr";
 
@@ -40,7 +40,8 @@ export const UserGrowthChart = () => {
       const data = result.data;
 
       if (!data || Object.keys(data).length === 0) {
-        toast("Không có dữ liệu để hiển thị");
+        toast.info('Không có dữ liệu để hiển thị');
+
         return;
       }
 
@@ -78,9 +79,7 @@ export const UserGrowthChart = () => {
       });
     } catch (error) {
       console.error("Lỗi khi load dữ liệu:", error);
-      toast.error(
-        "Lỗi khi tải dữ liệu. Kiểm tra console để biết thêm chi tiết."
-      );
+      toast.error('Lỗi khi tải dữ liệu. Kiểm tra console để biết thêm chi tiết.');
     }
   };
 
@@ -116,7 +115,11 @@ export const UserGrowthChart = () => {
         {chartData && <Bar data={chartData} options={chartOptions} />}
       </div>
 
+
       <div className="flex flex-col md:flex-row items-center ml-24 gap-4">
+
+      //<div className="flex flex-col items-center gap-4 md:flex-row">
+
         <div className="space-y-1">
           <label htmlFor="fromDate">From : </label>
           <input
@@ -136,7 +139,7 @@ export const UserGrowthChart = () => {
           />
         </div>
         <button
-          className="mt-6 md:mt-0 hover:bg-lime-600 bg-lime-500 px-4 py-2 rounded transition text-white"
+          className="px-4 py-2 mt-6 text-white transition rounded md:mt-0 hover:bg-lime-600 bg-lime-500"
           onClick={fetchData}
         >
           Load

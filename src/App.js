@@ -1,15 +1,23 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { ToastContainer, Bounce } from "react-toastify";
+import { SignalRProvider } from "./context/SignalRContext";
+import useAuth from "./hooks/useAuth";
+
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
 import Register from "./components/Register/Register";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ServicePage from "./pages/ServicePage/ServicePage";
-import ProgressListPage from "./pages/ProgressPage/ProgressListPage";
+import ProcessListPage from "./pages/ProcessPage/ProcessListPage";
+import ProcessListFarmerPage from "./pages/ProcessPage/ProgressListFarmerPage";
+import CreateStepPage from "./pages/ProcessPage/CreateStepPage";
+import SavedPostPage from "./pages/SavedPostPage/SavedPostPage";
 import WaitingListPage from "./pages/WaitingPage/WaitingListPage";
 import FriendPage from "./pages/FriendPage/FriendPage";
 import ServiceManagement from "./components/ServiceManagement/ServiceManagement";
-import CreateProgessStep from "./components/ProgressStep/CreateProgessStep";
+import CreateProcessStep from "./components/ProcessStep/CreateProcessStep";
 import { Statistic1 } from "./components/Statistic/Statistic1";
 import MapChart from "./components/Statistic/MapChart";
 import { UserGrowthChart } from "./components/Statistic/UserGrowthChart";
@@ -20,23 +28,38 @@ import PostGroupPage from "./pages/GroupPage/PostGroupPage";
 import GroupPage from "./pages/GroupPage/GroupPage";
 import JoinRequestsListPage from "./pages/GroupPage/JoinRequestsListPage";
 import PermissionGroupPage from "./pages/GroupPage/PermissionGroupPage";
+import CreateServicePage from "./pages/ServicePage/CreateServicePage";
+import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
+import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
+import FilterService from "./components/FilterService/FilterService";
+import ChatPage from "./pages/Chat/ChatPage";
 
-import { Toaster } from "sonner";
+const AppContent = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, isLoading } = useAuth(navigate, location);
 
-function App() {
+  // đang kiểm tra token
+  if (isLoading) {
+    return <>
+      <LoginPage />
+      Loading...
+    </>;
+  }
+
+  const isPublicRoute = ["/Login", "/Register"].includes(location.pathname);
+
   return (
-    <div className="App">
-      {/* vị trí của toast  */}
-      <Toaster position="top-right" />
-      <Router>
-        <Routes>
+    <Routes>
+      {isPublicRoute || isAuthenticated ? (
+        <>
           <Route path="/" element={<HomePage />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/ServiceManagement" element={<ServiceManagement />} />
           <Route path="/Login" element={<LoginPage />} />
           <Route path="/PersonalPage" element={<PersonalPage />} />
           <Route path="/Friend" element={<FriendPage />} />
-          <Route path="/CreateProgessStep" element={<CreateProgessStep />} />
+          <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
           <Route path="/Statistic1" element={<Statistic1 />} />
           <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
           <Route path="/MapChart" element={<MapChart />} />
@@ -44,7 +67,8 @@ function App() {
           <Route path="/Group" element={<PostGroupPage />} />
           <Route path="/UpdateProfile" element={<UpdateProfile />} />
           <Route path="/UserFriends" element={<UserFriends />} />
-          <Route path="/ProgressList" element={<ProgressListPage />} />
+          <Route path="/ProcessList" element={<ProcessListPage />} />
+          <Route path="/ProcessResult" element={<ProcessResultPage />} />
           <Route path="/WaitingOrderList" element={<WaitingListPage />} />
           <Route path="/GroupPage" element={<GroupPage />} />
           <Route
@@ -56,6 +80,42 @@ function App() {
             element={<PermissionGroupPage />}
           />
         </Routes>
+          <Route path="/SavedPostPage" element={<SavedPostPage />} />
+          <Route path="/CreateService" element={<CreateServicePage />} />
+          <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
+          <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
+          <Route path="/CreateStepPage" element={<CreateStepPage />} />
+          <Route path="/Chats" element={<ChatPage />} />
+          <Route path="/FilterService" element={<FilterService />} />
+        </>
+      ) : (
+        <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
+      )}
+    </Routes>
+  );
+};
+
+function App() {
+  return (
+    <div className="App">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Bounce}
+      />
+      <Router>
+        <SignalRProvider>
+          <AppContent />
+        </SignalRProvider>
+
       </Router>
     </div>
   );

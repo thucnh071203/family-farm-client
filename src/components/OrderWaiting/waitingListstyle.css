@@ -1,20 +1,20 @@
-.progress-managament {
+.progress-management {
   background-color: #ffffff;
   width: 100%;
 }
 
-.progress-managament .div {
+.progress-management .div {
   background-color: #ffffff;
   width: 100%;
   height: 1024px;
   position: relative;
 }
 
-.progress-managament .frame {
+.progress-management .frame {
   gap: 59px;
 }
 
-.progress-managament .frame-overview {
+.progress-management .frame-overview {
   display: inline-flex;
   align-items: flex-end;
   justify-content: center;
@@ -24,7 +24,7 @@
   cursor: pointer;
 }
 
-.progress-managament .frame-service {
+.progress-management .frame-service {
   display: inline-flex;
   align-items: flex-end;
   justify-content: center;
@@ -34,7 +34,7 @@
   cursor: pointer;
 }
 
-.progress-managament .frame-2 {
+.progress-management .frame-2 {
   display: inline-flex;
   align-items: flex-end;
   justify-content: center;
@@ -43,14 +43,14 @@
   flex: 0 0 auto;
 }
 
-.progress-managament .img {
+.progress-management .img {
   position: relative;
   width: 24px;
   height: 24px;
   transition: filter 0.3s ease;
 }
 
-.progress-managament .text-wrapper-4 {
+.progress-management .text-wrapper-4 {
   position: relative;
   width: fit-content;
   font-family: "Roboto-Bold", Helvetica;
@@ -61,15 +61,15 @@
   transition: color 0.3s ease;
 }
 
-.progress-managament .frame-overview:hover .img {
+.progress-management .frame-overview:hover .img {
   filter: brightness(0) saturate(100%) invert(64%) sepia(79%) saturate(531%) hue-rotate(173deg) brightness(97%) contrast(93%);
 }
 
-.progress-managament .frame-overview:hover .text-wrapper-4 {
+.progress-management .frame-overview:hover .text-wrapper-4 {
   color: #3db3fb;
 }
 
-.progress-managament .text-wrapper-5 {
+.progress-management .text-wrapper-5 {
   position: relative;
   width: fit-content;
   font-family: "Roboto-Bold", Helvetica;
@@ -81,15 +81,15 @@
   transition: color 0.3s ease;
 }
 
-.progress-managament .frame-service:hover .img {
+.progress-management .frame-service:hover .img {
   filter: brightness(0) saturate(100%) invert(64%) sepia(79%) saturate(531%) hue-rotate(173deg) brightness(97%) contrast(93%);
 }
 
-.progress-managament .frame-service:hover .text-wrapper-5 {
+.progress-management .frame-service:hover .text-wrapper-5 {
   color: #3db3fb;
 }
 
-.progress-managament .text-wrapper-6 {
+.progress-management .text-wrapper-6 {
   position: relative;
   width: fit-content;
   font-family: "Roboto-Bold", Helvetica;
@@ -100,7 +100,7 @@
   white-space: nowrap;
 }
 
-.progress-managament .text-wrapper-title {
+.progress-management .text-wrapper-title {
   position: relative;
   width: fit-content;
   font-family: "Roboto-Bold", Helvetica;
@@ -112,18 +112,18 @@
   white-space: nowrap;
 }
 
-.progress-managament .overlap-wrapper {
+.progress-management .overlap-wrapper {
   height: 280px;
 }
 
-.progress-managament .overlap-3 {
+.progress-management .overlap-3 {
   position: relative;
   height: 280px;
   background-color: var(--variable-collection-light-gray);
   border-radius: 10px;
 }
 
-.progress-managament .text-wrapper-7 {
+.progress-management .text-wrapper-7 {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   color: var(--variable-collection-black-2);
@@ -133,7 +133,7 @@
   white-space: nowrap;
 }
 
-.progress-managament .frame-3 {
+.progress-management .frame-3 {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -145,17 +145,17 @@
   transition: background-color 0.2s ease;
 }
 
-.progress-managament .frame-3:hover {
+.progress-management .frame-3:hover {
   background-color: #D7D7D7;
 }
 
-.progress-managament .img-2 {
+.progress-management .img-2 {
   position: relative;
   width: 20px;
   height: 20px;
 }
 
-.progress-managament .text-wrapper-8 {
+.progress-management .text-wrapper-8 {
   position: relative;
   width: fit-content;
   font-family: 'Roboto', sans-serif;
@@ -167,7 +167,7 @@
   white-space: nowrap;
 }
 
-.progress-managament .frame-4 {
+.progress-management .frame-4 {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -179,11 +179,11 @@
   transition: background-color 0.2s ease;
 }
 
-.progress-managament .frame-4:hover {
+.progress-management .frame-4:hover {
   background-color: #D7D7D7;
 }
 
-.progress-managament .frame-5 {
+.progress-management .frame-5 {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -195,31 +195,31 @@
   transition: background-color 0.2s ease;
 }
 
-.progress-managament .frame-5:hover {
+.progress-management .frame-5:hover {
   background-color: #D7D7D7;
 }
 
-.progress-managament .frame-6 {
+.progress-management .frame-6 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 40px;
 }
 
-.progress-managament .polygon {
+.progress-management .polygon {
   position: relative;
   width: 16px;
   height: 16px;
   color: #ffffff;
 }
 
-.progress-managament .frame-10 {
+.progress-management .frame-10 {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.progress-managament .text-wrapper-12 {
+.progress-management .text-wrapper-12 {
   font-family: "Roboto-Light", Helvetica;
   font-weight: 300;
   color: var(--variable-collection-black-2);
@@ -235,12 +235,12 @@
   height: 24px;
 }
 
-.progress-managament .group-2 {
+.progress-management .group-2 {
   width: 100%;
   height: 88px;
 }
 
-.progress-managament .overlap-4 {
+.progress-management .overlap-4 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -253,11 +253,11 @@
   border-radius: 10px;
 }
 
-.progress-managament .frame-11 {
+.progress-management .frame-11 {
   cursor: pointer;
 }
 
-.progress-managament .text-wrapper-13 {
+.progress-management .text-wrapper-13 {
   position: relative;
   width: fit-content;
   font-family: 'Roboto', sans-serif;
@@ -269,13 +269,13 @@
   white-space: nowrap;
 }
 
-.progress-managament .frame-12 {
+.progress-management .frame-12 {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.progress-managament .p {
+.progress-management .p {
   position: relative;
   margin-top: -1.00px;
   font-family: 'Roboto', sans-serif;
@@ -286,7 +286,7 @@
   line-height: normal;
 }
 
-.progress-managament .p-date {
+.progress-management .p-date {
   position: relative;
   width: fit-content;
   margin-top: -1.00px;
@@ -299,7 +299,7 @@
   white-space: nowrap;
 }
 
-.progress-managament .text-wrapper-14 {
+.progress-management .text-wrapper-14 {
   font-family: "Roboto-Light", Helvetica;
   font-weight: 300;
   color: var(--variable-collection-black-2);
@@ -309,23 +309,23 @@
   white-space: nowrap;
 }
 
-.progress-managament .date-create {
+.progress-management .date-create {
   padding: 7px 10px;
   border-radius: 10px;
 }
 
-.progress-managament .group-5 {
+.progress-management .group-5 {
   height: 24px;
 }
 
-.progress-managament .frame-16 {
+.progress-management .frame-16 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
 }
 
-.progress-managament .text-wrapper-16 {
+.progress-management .text-wrapper-16 {
   position: relative;
   width: fit-content;
   font-family: "Roboto-Bold", Helvetica;
@@ -337,7 +337,7 @@
   white-space: nowrap;
 }
 
-.progress-managament .text-wrapper-17 {
+.progress-management .text-wrapper-17 {
   font-family: "Roboto-Bold", Helvetica;
   font-weight: 700;
   color: var(--variable-collection-black-2);
@@ -347,7 +347,7 @@
   white-space: nowrap;
 }
 
-.progress-managament .text-wrapper-18 {
+.progress-management .text-wrapper-18 {
   font-family: "Roboto-Bold", Helvetica;
   font-weight: 700;
   color: var(--variable-collection-black-2);
@@ -357,10 +357,10 @@
   white-space: nowrap;
 }
 
-.progress-managament .frame-17 {
+.progress-management .frame-17 {
 }
 
-.progress-managament .text-wrapper-19 {
+.progress-management .text-wrapper-19 {
   position: relative;
   width: fit-content;
   margin-top: -1.00px;
@@ -373,7 +373,7 @@
   white-space: nowrap;
 }
 
-.progress-managament .text-wrapper-20 {
+.progress-management .text-wrapper-20 {
   position: relative;
   width: fit-content;
   margin-top: -1.00px;
@@ -386,20 +386,20 @@
   white-space: nowrap;
 }
 
-.progress-managament .frame-18 {
+.progress-management .frame-18 {
 }
 
-.progress-managament .mask-group {
+.progress-management .mask-group {
   width: 22px;
   height: 22px;
 }
 
 @media (min-width: 1024px) and (max-width: 1157px) {
-  .progress-managament .group-5 {
+  .progress-management .group-5 {
     min-width: 547px;
   }
 
-  .progress-managament .overlap-4 {
+  .progress-management .overlap-4 {
     gap: 10px;
   }
 }

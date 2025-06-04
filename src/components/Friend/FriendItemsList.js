@@ -1,21 +1,20 @@
 import React from "react";
-import FriendActionButton from "./FriendActionButton";
-import UserFriends from "../../pages/Profile/UserFriends";
 import { Link } from "react-router-dom";
+import FriendItem from "./FriendItem";
 
 const FriendList = ({ friends }) => {
   const defaultFriends = [
-    { name: "Dang Khoa", status: null },
-    { name: "Huu Thuc", status: "pending" },
-    { name: "Mai Xuan", status: "friend" },
-    { name: "Minh Uyen", status: "following" },
+    { name: "Dang Khoa", city: "Can Tho", status: null , roleId: "expert"},
+    { name: "Huu Thuc", city: "Can Tho", status: "pending" },
+    { name: "Mai Xuan", city: "An Giang", status: "friend" },
+    { name: "Minh Uyen", city: "Kien Giang", status: "following" },
   ];
   const friendList = friends || defaultFriends;
 
   const defaultFriend = {
     name: "Mai Xuan",
     avatar: "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png",
-    status: null, // null, "pending", "friend", or "following"
+    status: null,
   };
 
   return (
@@ -27,22 +26,12 @@ const FriendList = ({ friends }) => {
         </Link>
       </div>
       <div className="flex flex-col gap-3">
-        {friendList.map((friend) => {
-          const friendData = { ...defaultFriend, ...friend };
-          return (
-            <div key={friendData.name} className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <img
-                  src={friendData.avatar}
-                  alt={`Friend ${ friendData.name}`}
-                  className="w-10 h-10 rounded-full"
-                />
-                <span>{friendData.name}</span>
-              </div>
-              <FriendActionButton status={friendData.status} />
-            </div>
-          );
-        })}
+        {friendList.map((friend) => (
+          <FriendItem 
+            key={friend.name} 
+            friend={{ ...defaultFriend, ...friend }} 
+          />
+        ))}
       </div>
     </div>
   );

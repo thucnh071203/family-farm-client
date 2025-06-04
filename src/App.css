@@ -1,10 +1,53 @@
-html, body {
+html,
+body {
   font-family: 'Arial', sans-serif !important;
 }
 
+.rich-text-editor strong {
+  font-weight: bold;
+}
+
+.rich-text-editor em {
+  font-style: italic;
+}
+
+.rich-text-editor h1 {
+  font-size: 32px;
+}
+
+.rich-text-editor h2 {
+  font-size: 24px;
+}
+
+.rich-text-editor h3 {
+  font-size: 18.72px;
+}
+
+.rich-text-editor ol li {
+  list-style: decimal;
+  margin-left: 20px;
+}
+
+.rich-text-editor ul li {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+.ReactQuill .ql-toolbar .ql-snow{
+  padding: 0px !important;
+}
+  
+.Toastify__toast-container{
+  text-align: left;
+}
 #root {
   height: 100%;
   overflow: auto;
+}
+.chat-container {
+  overflow-y: auto;
+  max-height: 100%;
+  position: relative;
 }
 
 .App {
@@ -42,6 +85,7 @@ html, body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

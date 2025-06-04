@@ -202,6 +202,39 @@ header .login-box:hover a{
     display: none;
 }
 
+.sidebar-menu .chat-box,
+.sidebar-menu .notifi-box {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar-menu .chat-box i,
+.sidebar-menu .notifi-box i {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.sidebar-menu .chat-box .chat-number,
+.sidebar-menu .notifi-box .notifi-number {
+    position: absolute;
+    top: -45%;
+    right: -3%;
+    transform: translateX(50%);
+    background: #3DB3FB;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: 0.7rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid #F5F5F5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 @media screen and (max-width: 768px) {
     header .logo {
         grid-column: 1/3;

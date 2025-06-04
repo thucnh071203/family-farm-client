@@ -25,13 +25,8 @@ const YourFriendRight = () => {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-y-6 gap-x-6 place-items-center md:mx-20 md:w-[954px]">
-          <YourFriendCard/>
-          <YourFriendCard/>
-          <YourFriendCard/>
-          <YourFriendCard/>
-          <YourFriendCard/>
-          <YourFriendCard/>
-          <YourFriendCard/>
+          <YourFriendCard />
+          
         </div>
       </div>
     </div>
