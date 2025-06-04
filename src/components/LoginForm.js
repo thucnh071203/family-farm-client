@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import axios from "axios";
 import logo from ".././assets/images/logo_img.png";
 import mdiUser from ".././assets/images/mdi_user.png";
 import mdiClock from ".././assets/images/mdi_clock.png";
@@ -19,6 +20,166 @@ const LoginForm = () => {
   const [rememberMe, setRememberMe] = useState(true);
   const [errors, setErrors] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   window.fbAsyncInit = function () {
+  //     window.FB.init({
+  //       appId: "681934764486226", // appId thật của bạn
+  //       cookie: true,
+  //       xfbml: true,
+  //       version: "v17.0",
+  //     });
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    // Tải SDK Facebook nếu chưa có
+    if (!window.FB) {
+      const script = document.createElement("script");
+      script.src = "https://connect.facebook.net/en_US/sdk.js";
+      script.async = true;
+      script.defer = true;
+      script.crossOrigin = "anonymous";
+      script.onload = () => {
+        window.FB.init({
+          appId: "681934764486226",
+          cookie: true,
+          xfbml: true,
+          version: "v17.0", // Dùng version ổn định
+        });
+      };
+      document.body.appendChild(script);
+    } else {
+      // Nếu SDK đã sẵn sàng, chỉ cần init
+      window.FB.init({
+        appId: "681934764486226",
+        cookie: true,
+        xfbml: true,
+        version: "v17.0",
+      });
+    }
+  }, []);
+
+  // const handleFacebookLogin = () => {
+  //   window.FB.login(
+  //     function (response) {
+  //       if (response.authResponse) {
+  //         const accessToken = response.authResponse.accessToken;
+
+  //         // Gửi token này tới API backend của bạn
+  //         axios.post("https://localhost:7280/api/authen/login-facebook", {
+  //           accessToken: accessToken
+  //         })
+  //         .then((res) => {
+  //           console.log("Đăng nhập thành công", res.data);
+  //           // lưu token / session / điều hướng
+  //         })
+  //         .catch((err) => {
+  //           console.error("Đăng nhập thất bại", err);
+  //         });
+  //       } else {
+  //         console.log("Người dùng từ chối đăng nhập Facebook.");
+  //       }
+  //     },
+  //     { scope: "public_profile,email" } // phạm vi quyền truy cập
+  //   );
+  // };
+
+  // Đăng nhập bằng facebook
+  const handleFacebookLogin = () => {
+    window.FB.login(
+      function (response) {
+        if (response.authResponse) {
+          const accessToken = response.authResponse.accessToken;
+
+          // Gọi Facebook API để lấy thông tin người dùng
+          window.FB.api(
+            "/me",
+            { fields: "id,name,email,picture", access_token: accessToken },
+            async function (userInfo) {
+              console.log("Facebook user info:", userInfo);
+
+              const payload = {
+                facebookId: userInfo.id,
+                email: userInfo.email,
+                name: userInfo.name,
+                avatar: userInfo.picture?.data?.url || null,
+              };
+
+              console.log("Payload gửi lên backend:", payload);
+
+              // axios
+              //   .post("https://localhost:7280/api/authen/login-facebook", payload)
+              //   .then((res) => {
+              //     console.log("Đăng nhập thành công", res.data);
+              //     // Lưu session / chuyển trang tại đây
+              //     navigate("/");
+              //   })
+              //   .catch((err) => {
+              //     console.error("Đăng nhập thất bại", err);
+              //   });
+              try {
+                const loginResponse = await axios.post(
+                  "https://localhost:7280/api/authen/login-facebook",
+                  payload
+                );
+
+                const loginData = loginResponse.data;
+
+                if (loginResponse.status === 200) {
+                  const rememberMe = true; // Tùy bạn có lưu nhớ không
+                  const storage = rememberMe ? localStorage : sessionStorage;
+
+                  // Lưu accessToken, refreshToken, username
+                  storage.setItem("accessToken", loginData.accessToken);
+                  storage.setItem("refreshToken", loginData.refreshToken);
+                  storage.setItem("username", loginData.username);
+                  storage.setItem("accId", loginData.accId);
+
+                  // Hạn token
+                  const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
+                  storage.setItem("tokenExpiry", expiryTime);
+
+                  // Lấy thông tin profile (nếu cần thiết)
+                  const profileResponse = await axios.get(
+                    "https://localhost:7280/api/account/own-profile",
+                    {
+                      headers: {
+                        Authorization: `Bearer ${loginData.accessToken}`,
+                      },
+                    }
+                  );
+
+                  const profileData = profileResponse.data;
+
+                  storage.setItem(
+                    "fullName",
+                    profileData.fullName || loginData.username
+                  );
+                  storage.setItem("avatarUrl", profileData.avatar || "");
+
+                  toast.success("LOGIN SUCCESSFULLY!");
+                  navigate("/");
+                } else {
+                  toast.error("Login failed!");
+                }
+              } catch (error) {
+                if (error.response && error.response.status === 401) {
+                  toast.error("Login failed! Please check your Facebook info!");
+                } else {
+                  toast.error("Server not responding");
+                }
+              }
+            }
+          );
+        } else {
+          console.log("Người dùng từ chối đăng nhập Facebook.");
+        }
+      },
+      { scope: "public_profile,email" }
+    );
+  };
+
 
   const handleLogin = async () => {
 
@@ -64,6 +225,7 @@ const LoginForm = () => {
   };
 
   return (
+    
     <div className="overlap w-full md:w-1/2 mt-6 md:mt-0 md:ml-[5%] bg-gray-200 bg-opacity-25">
       <div className="form-container w-full max-w-[466px] flex flex-col gap-7 mx-auto">
         <div className="flex items-center justify-center mx-auto logo gap-x-4">
@@ -166,7 +328,7 @@ const LoginForm = () => {
                 }}  
               />
             </div>
-            <div className="frame-11 w-full lg:w-[223px]">
+            <div className="frame-11 w-full lg:w-[223px]"  onClick={handleFacebookLogin}>
               <img className="img" src={fbIcon} alt="Facebook Icon" />
               <div className="text-wrapper-14">Continue with Facebook</div>
             </div>
