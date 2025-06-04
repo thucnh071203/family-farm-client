@@ -8,8 +8,8 @@ const GroupSidebar = ({ setSection }) => {
       </div>
       <div className="mx-8 mt-11 w-[225px] h-[155px] flex flex-col gap-4">
 
-        <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
-          <div className="mx-4 flex items-center">
+        {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          <div className="mx-4 flex items-center"> */}
 
         <button onClick={() => setSection("post-in-group")}  className="hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3">
           <div className="flex items-center mx-2">
@@ -19,8 +19,8 @@ const GroupSidebar = ({ setSection }) => {
           <div className="flex items-center font-bold">Post in Group</div>
         </button>
 
-        <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
-          <div className="mx-4 flex items-center">
+        {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          <div className="mx-4 flex items-center"> */}
 
         <button
           onClick={() => setSection("user-group")}
@@ -33,8 +33,8 @@ const GroupSidebar = ({ setSection }) => {
           <div className="flex items-center font-bold">Your Groups</div>
         </button>
 
-        <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
-          <div className="mx-4 flex items-center">
+        {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          <div className="mx-4 flex items-center"> */}
 
         <button
           onClick={() => setSection("suggest-group")}
