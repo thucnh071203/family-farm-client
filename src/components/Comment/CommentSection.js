@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import formatTime from "../../utils/formatTime";
 import ReactionPopup from "../Reaction/ReactionPopup";
-import { getOwnProfile } from "../../services/authService";
+import { getOwnProfile } from "../../services/accountService";
 
 const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
   const [comments, setComments] = useState([

@@ -89,7 +89,7 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
                 )}
 
                 {selectedChat && (
-                    <div className="chat-details-container fixed md:bottom-3 md:right-20 bottom-0 right-0 z-[50] border border-gray-300 border-solid shadow-lg md:h-[500px] max-w-sm">
+                    <div className="chat-details-container fixed md:bottom-3 md:right-20 bottom-0 right-0 z-[50] border border-gray-300 border-solid rounded-md shadow-lg md:h-[500px] max-w-sm">
                         <ChatDetails
                             isVisible={!!selectedChat}
                             onClose={handleCloseDetails}

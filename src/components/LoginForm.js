@@ -6,12 +6,13 @@ import mdiClock from ".././assets/images/mdi_clock.png";
 import iconEye from ".././assets/images/mdi_eye (1).png";
 import googleIcon from ".././assets/images/devicon_google.png";
 import fbIcon from ".././assets/images/devicon-plain_facebook.png";
-import { getOwnProfile } from "../services/authService";
+import { getOwnProfile } from "../services/accountService";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import instance from "../Axios/axiosConfig";
 import { useState } from "react";
 import { toast, Bounce } from "react-toastify";
+import { GoogleLogin } from "@react-oauth/google";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -316,15 +317,23 @@ const LoginForm = () => {
           <div className="text-wrapper-12">Login With</div>
           <div className="flex flex-col items-center justify-center frame-9 lg:flex-row">
             <div className="frame-10 w-full lg:w-[223px]">
-              <img className="img" src={googleIcon} alt="Google Icon" />
-              <div className="text-wrapper-13">Continue with Google</div>
+              {/* <img className="img" src={googleIcon} alt="Google Icon" /> */}
+              {/* <div className="text-wrapper-13">Continue with Google</div> */}
+              <GoogleLogin 
+                onSuccess={credentialResponse => {
+                  console.log(credentialResponse);
+                }}
+                onError={() => {
+                  console.log('Login Failed');
+                }}  
+              />
             </div>
             <div className="frame-11 w-full lg:w-[223px]"  onClick={handleFacebookLogin}>
               <img className="img" src={fbIcon} alt="Facebook Icon" />
               <div className="text-wrapper-14">Continue with Facebook</div>
             </div>
           </div>
-        </div>
+        </div> 
       </div>
     </div>
   );
