@@ -60,78 +60,78 @@ export const handleSend = async ({
 
 // Hàm xử lý trạng thái nhập liệu
 export const handleTyping = ({ connection, currentUserId, receiverId, typingTimeoutRef }) => {
-  if (connection && connection.state === "Connected") {
-    connection.invoke("SendTyping", currentUserId, receiverId).catch((err) => {
-      console.error("Error invoking SendTyping:", err);
-    });
-    clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = setTimeout(() => {
-      connection.invoke("StopTyping", currentUserId, receiverId).catch((err) => {
-        console.error("Error invoking StopTyping:", err);
-      });
-    }, 1000);
-  }
+    if (connection && connection.state === "Connected") {
+        connection.invoke("SendTyping", currentUserId, receiverId).catch((err) => {
+            console.error("Error invoking SendTyping:", err);
+        });
+        clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => {
+            connection.invoke("StopTyping", currentUserId, receiverId).catch((err) => {
+                console.error("Error invoking StopTyping:", err);
+            });
+        }, 1000);
+    }
 };
 
 // Hàm tải tin nhắn
-export const fetchMessages = async ({
-    receiverId,
-    setLoading,
-    setLoadingMore,
-    setError,
-    setMessages,
-    setTotalMessages,
-    setHasMore,
-    chatContainerRef,
-    previousScrollHeightRef,
-    currentSkip,
-    reset = false,
-    TAKE,
-}) => {
-    if (!receiverId) {
-        setError("No receiver ID provided");
-        return;
-    }
+// export const fetchMessages = async ({
+//     receiverId,
+//     setLoading,
+//     setLoadingMore,
+//     setError,
+//     setMessages,
+//     setTotalMessages,
+//     setHasMore,
+//     chatContainerRef,
+//     previousScrollHeightRef,
+//     currentSkip,
+//     reset = false,
+//     TAKE,
+// }) => {
+//     if (!receiverId) {
+//         setError("No receiver ID provided");
+//         return;
+//     }
 
-    setLoading(true);
-    if (currentSkip > 0) setLoadingMore(true);
-    setError(null);
-    try {
-        const response = await instance.get(`/api/chat/get-messages/${receiverId}`, {
-            params: { skip: currentSkip, take: TAKE },
-        });
+//     setLoading(true);
+//     if (currentSkip > 0) setLoadingMore(true);
+//     setError(null);
+//     try {
+//         const response = await instance.get(`/api/chat/get-messages/${receiverId}`, {
+//             params: { skip: currentSkip, take: TAKE },
+//         });
 
-        if (response.data.success) {
-            const newMessages = response.data.chatDetails || [];
-            setTotalMessages(response.data.totalMessages || 0);
-            setHasMore(currentSkip + newMessages.length < response.data.totalMessages);
+//         if (response.data.success) {
+//             const newMessages = response.data.chatDetails || [];
+//             setTotalMessages(response.data.totalMessages || 0);
+//             setHasMore(currentSkip + newMessages.length < response.data.totalMessages);
 
-            if (chatContainerRef.current) {
-                previousScrollHeightRef.current = chatContainerRef.current.scrollHeight;
-            }
+//             if (chatContainerRef.current) {
+//                 previousScrollHeightRef.current = chatContainerRef.current.scrollHeight;
+//             }
 
-            setMessages((prevMessages) => (reset ? newMessages : [...newMessages, ...prevMessages]));
-        } else {
-            setError(response.data.message || "Failed to load messages");
-            toast.error(response.data.message || "Không thể tải tin nhắn.", {
-                position: "top-right",
-                autoClose: 3000,
-                transition: Bounce,
-            });
-        }
-    } catch (error) {
-        setError("Failed to fetch messages");
-        toast.error("Tải tin nhắn thất bại!", {
-            position: "top-right",
-            autoClose: 3000,
-            transition: Bounce,
-        });
-        console.error("Fetch messages error:", error.response?.data || error.message);
-    } finally {
-        setLoading(false);
-        setLoadingMore(false);
-    }
-};
+//             setMessages((prevMessages) => (reset ? newMessages : [...newMessages, ...prevMessages]));
+//         } else {
+//             setError(response.data.message || "Failed to load messages");
+//             toast.error(response.data.message || "Không thể tải tin nhắn.", {
+//                 position: "top-right",
+//                 autoClose: 3000,
+//                 transition: Bounce,
+//             });
+//         }
+//     } catch (error) {
+//         setError("Failed to fetch messages");
+//         toast.error("Tải tin nhắn thất bại!", {
+//             position: "top-right",
+//             autoClose: 3000,
+//             transition: Bounce,
+//         });
+//         console.error("Fetch messages error:", error.response?.data || error.message);
+//     } finally {
+//         setLoading(false);
+//         setLoadingMore(false);
+//     }
+// };
 
 // Hàm định dạng văn bản
 export const toggleFormat = ({ quillRef, format }) => {
@@ -170,4 +170,98 @@ export const scrollToBottom = ({ messagesEndRef }) => {
     if (messagesEndRef.current) {
         messagesEndRef.current.scrollIntoView({ behavior: "auto" });
     }
+};
+
+// Hàm fetchData dùng cho useInfiniteScroll
+export const fetchData = async ({
+    receiverId,
+    skip,
+    take,
+    setSkip,
+    setHasMore,
+    setLoadingMore,
+    setMessages,
+    setTotalMessages,
+    setError,
+    previousScrollHeightRef,
+    containerRef,
+    reset = false,
+}) => {
+    if (!receiverId) {
+        setError("No receiver ID provided");
+        return;
+    }
+
+    setLoadingMore(true);
+    setError(null);
+    try {
+        const response = await instance.get(`/api/chat/get-messages/${receiverId}`, {
+            params: { skip, take },
+        });
+
+        if (response.data.success) {
+            const newMessages = response.data.chatDetails || [];
+            setTotalMessages(response.data.totalMessages || 0);
+            setHasMore(skip + newMessages.length < response.data.totalMessages);
+
+            if (containerRef.current) {
+                previousScrollHeightRef.current = containerRef.current.scrollHeight;
+            }
+
+            setMessages((prevMessages) =>
+                reset ? newMessages : [...newMessages, ...prevMessages]
+            );
+            setSkip(skip);
+        } else {
+            setError(response.data.message || "Failed to load messages");
+            toast.error(response.data.message || "Không thể tải tin nhắn.", {
+                position: "top-right",
+                autoClose: 3000,
+                transition: Bounce,
+            });
+        }
+    } catch (error) {
+        setError("Failed to fetch messages");
+        toast.error("Tải tin nhắn thất bại!", {
+            position: "top-right",
+            autoClose: 3000,
+            transition: Bounce,
+        });
+        console.error("Fetch messages error:", error.response?.data || error.message);
+    } finally {
+        setLoadingMore(false);
+    }
+};
+
+// Hàm fetchMessages (được giữ lại để tương thích với code cũ, nhưng giờ gọi fetchData)
+export const fetchMessages = async ({
+    receiverId,
+    setLoading,
+    setLoadingMore,
+    setError,
+    setMessages,
+    setTotalMessages,
+    setHasMore,
+    chatContainerRef,
+    previousScrollHeightRef,
+    currentSkip,
+    reset = false,
+    TAKE,
+}) => {
+    setLoading(true);
+    await fetchData({
+        receiverId,
+        skip: currentSkip,
+        take: TAKE,
+        setSkip: () => { }, // Không cần setSkip trong trường hợp này
+        setHasMore,
+        setLoadingMore,
+        setMessages,
+        setTotalMessages,
+        setError,
+        previousScrollHeightRef,
+        containerRef: chatContainerRef,
+        reset,
+    });
+    setLoading(false);
 };
