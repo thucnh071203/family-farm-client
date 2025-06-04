@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OptionsPost from "./OptionsPost";
 import ReactionPopup from "../Reaction/ReactionPopup";
+import ReactionList from "../Reaction/ReactionList";
 import CommentSection from "../Comment/CommentSection";
 import formatTime from "../../utils/formatTime";
+import instance from "../../Axios/axiosConfig";
+import { toast, Bounce } from "react-toastify";
 
 const PostCard = ({ post, onCommentCountChange }) => {
+  // Default post data
   const defaultPost = {
     fullName: "Phuong Nam",
     avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
@@ -14,10 +18,11 @@ const PostCard = ({ post, onCommentCountChange }) => {
     images: null,
     hashtags: null,
     tagFriends: null,
-    likes: 100,
-    comments: 20,
-    shares: 10,
+    likes: 0,
+    comments: 0,
+    shares: 0,
   };
+
   const postData = { ...defaultPost, ...post };
   const hashTags = postData.hashtags || ["blog", "nienmoulming", "polytecode"];
   const categories = postData.categories || ["Pants", "Diseases"];
@@ -27,7 +32,157 @@ const PostCard = ({ post, onCommentCountChange }) => {
   const [commentCount, setCommentCount] = useState(postData.comments);
   const [likeCount, setLikeCount] = useState(postData.likes);
   const [reactionType, setReactionType] = useState(null);
-  const [isLikeHovered, setIsLikeHovered] = useState(false); // Thêm trạng thái hover
+  const [hasReacted, setHasReacted] = useState(false);
+  const [isLikeHovered, setIsLikeHovered] = useState(false);
+  const [showReactionList, setShowReactionList] = useState(false);
+  const [reactions, setReactions] = useState([]);
+  const [loadingReactions, setLoadingReactions] = useState(true);
+
+  // Get accId from localStorage or sessionStorage
+  const accId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
+
+  // Fetch reactions from API
+  useEffect(() => {
+    const fetchReactions = async () => {
+      try {
+        const response = await instance.get("/api/category-reaction/all-available");
+        if (response.data && Array.isArray(response.data)) {
+          const formattedReactions = response.data.map((item) => ({
+            id: item.id || item.categoryReactionId,
+            name: item.reactionName || item.name || "Unknown",
+            icon: item.iconUrl || item.image || "",
+          }));
+          setReactions(formattedReactions);
+        } else {
+          throw new Error("Invalid response format");
+        }
+      } catch (err) {
+        console.error("Error fetching reactions:", err);
+        toast.error("Không thể tải danh sách biểu cảm!", {
+          position: "top-right",
+          autoClose: 3000,
+          transition: Bounce,
+        });
+      } finally {
+        setLoadingReactions(false);
+      }
+    };
+
+    fetchReactions();
+  }, []);
+
+  // Get reaction count and user reaction state
+  useEffect(() => {
+    const fetchReactionData = async () => {
+      if (!postData.postId || !accId) return;
+
+      try {
+        const response = await instance.get(`/api/reaction/all-by-post/${postData.postId}`);
+        if (response.data.success && Array.isArray(response.data.reactionDTOs)) {
+          setLikeCount(response.data.availableCount || 0);
+
+          // Check if user has reacted
+          const userReaction = response.data.reactionDTOs.find(
+            (reaction) => reaction.account.accId === accId && !reaction.reaction.isDeleted
+          );
+          if (userReaction) {
+            setHasReacted(true);
+            setReactionType(userReaction.categoryReaction.id || userReaction.categoryReaction.categoryReactionId);
+          } else {
+            setHasReacted(false);
+            setReactionType(null);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching reaction data:", err);
+        toast.error("Unable to load reaction data!", {
+          position: "top-right",
+          autoClose: 3000,
+          transition: Bounce,
+        });
+      }
+    };
+
+    fetchReactionData();
+  }, [postData.postId, accId]);
+
+  // Handle add or remove reaction
+  const handleReact = async (categoryReactionId) => {
+    if (!accId) {
+      toast.error("Please log in to react!", {
+        position: "top-right",
+        autoClose: 3000,
+        transition: Bounce,
+      });
+      return;
+    }
+
+    try {
+      if (!postData.postId || !/^[0-9a-fA-F]{24}$/.test(postData.postId)) {
+        console.error("Invalid postId:", postData.postId);
+        toast.error("Invalid post ID!", { position: "top-right", autoClose: 3000, transition: Bounce });
+        return;
+      }
+      if (!categoryReactionId || !/^[0-9a-fA-F]{24}$/.test(categoryReactionId)) {
+        console.error("Invalid categoryReactionId:", categoryReactionId);
+        toast.error("Invalid reaction ID!", { position: "top-right", autoClose: 3000, transition: Bounce });
+        return;
+      }
+
+      console.log(`Calling API with postId: ${postData.postId}, categoryReactionId: ${categoryReactionId}`);
+      const response = await instance.post(
+        `/api/reaction/toggle-post/${postData.postId}?categoryReactionId=${categoryReactionId}`
+      );
+      console.log("API Response:", response.data);
+
+      if (
+        response.data === "Reaction has been toggled." ||
+        (response.data && response.data.success)
+      ) {
+        const reactionResponse = await instance.get(`/api/reaction/all-by-post/${postData.postId}`);
+        console.log("Reaction Count Response:", reactionResponse.data);
+        if (reactionResponse.data.success) {
+          setLikeCount(reactionResponse.data.availableCount || 0);
+
+          const userReaction = reactionResponse.data.reactionDTOs.find(
+            (reaction) => reaction.account.accId === accId && !reaction.reaction.isDeleted
+          );
+          if (userReaction) {
+            setHasReacted(true);
+            setReactionType(userReaction.categoryReaction.id || userReaction.categoryReaction.categoryReactionId);
+          } else {
+            setHasReacted(false);
+            setReactionType(null);
+          }
+        }
+
+        setIsLikeHovered(false);
+      } else {
+        throw new Error(
+          typeof response.data === "string"
+            ? response.data
+            : response.data.message || "Unable to toggle reaction"
+        );
+      }
+    } catch (err) {
+      console.error("Error toggling reaction:", {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+      });
+      toast.error(`Unable to react: ${err.message}`, {
+        position: "top-right",
+        autoClose: 3000,
+        transition: Bounce,
+      });
+    }
+  };
+
+  // Find the current reaction based on reactionType
+  const currentReaction = reactions.find((reaction) => reaction.id === reactionType) || {
+    name: "Like",
+    icon: "https://example.com/like.png", // Fallback icon
+  };
 
   const renderTagFriends = () => {
     const fullNameElement = (
@@ -66,13 +221,6 @@ const PostCard = ({ post, onCommentCountChange }) => {
         </span>
       </>
     );
-  };
-
-  const handleReact = (reaction) => {
-    setLikeCount((prev) => (reactionType ? prev : prev + 1));
-    setReactionType(reaction);
-    console.log(`User reacted with: ${reaction}`);
-    setIsLikeHovered(false); // Ẩn popup sau khi chọn phản ứng
   };
 
   const handleToggleComments = () => {
@@ -177,9 +325,13 @@ const PostCard = ({ post, onCommentCountChange }) => {
       )}
       <div className="flex flex-col items-center justify-between gap-3 lg:flex-row lg:gap-8">
         <div className="flex justify-around w-full lg:w-1/4 lg:justify-between">
-          <p>
+          <button
+            onClick={() => setShowReactionList(true)}
+            className="cursor-pointer hover:underline"
+            title="Xem danh sách phản ứng"
+          >
             <i className="text-blue-500 fa-solid fa-thumbs-up"></i> {likeCount}
-          </p>
+          </button>
           <p>
             <i className="text-blue-500 fas fa-comment"></i> {commentCount}
           </p>
@@ -187,25 +339,44 @@ const PostCard = ({ post, onCommentCountChange }) => {
             <i className="text-blue-500 fa-solid fa-share"></i> {postData.shares}
           </p>
         </div>
-        <div className="flex justify-between w-full gap-1 lg:w-3/4">
+        <div className="flex justify-between w-full gap-1 lg:w-3/4 items-center">
           <div
             className="relative flex-1"
             onMouseEnter={() => setIsLikeHovered(true)}
             onMouseLeave={() => setIsLikeHovered(false)}
           >
-            <button className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300 w-full">
-              <i className="mr-1 fa-solid fa-thumbs-up"></i> Like
+            <button
+              className="flex-1 p-2 text-center rounded-sm w-full flex items-center bg-gray-100 hover:bg-gray-200 h-9 justify-center"
+            >
+              {hasReacted ? (
+                <>
+                  <img
+                    src={currentReaction.icon}
+                    alt={currentReaction.name}
+                    className="inline-block w-5 h-5 mr-1 object-contain" // Thêm object-contain để giữ tỷ lệ
+                    style={{ verticalAlign: "middle" }} // Căn giữa theo chiều dọc
+                  />
+                  <span className="text-blue-600">{currentReaction.name}</span>
+                </>
+              ) : (
+                <>
+                  <i
+                    className="mr-2 fa-solid fa-thumbs-up"
+                  ></i>
+                  <span>Like</span>
+                </>
+              )}
             </button>
             {isLikeHovered && <ReactionPopup onReact={handleReact} />}
           </div>
           <button
-            className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300"
+            className="flex-1 p-2 text-center bg-gray-100 rounded-sm hover:bg-gray-200 items-center h-9"
             onClick={handleToggleComments}
           >
-            <i className="mr-1 fas fa-comment"></i> Comment
+            <i className="mr-2 fas fa-comment w-5 h-5"></i>Comment
           </button>
-          <button className="flex-1 p-2 text-center bg-gray-200 rounded-sm hover:bg-gray-300">
-            <i className="mr-1 fa-solid fa-share"></i> Share
+          <button className="flex-1 p-2 text-center bg-gray-100 rounded-sm hover:bg-gray-200 items-center h-9">
+            <i className="mr-2 fa-solid fa-share  w-5 h-5"></i>Share
           </button>
         </div>
       </div>
@@ -216,6 +387,11 @@ const PostCard = ({ post, onCommentCountChange }) => {
           onCommentCountChange={handleCommentCountChange}
         />
       )}
+      <ReactionList
+        postId={postData.postId}
+        isOpen={showReactionList}
+        onClose={() => setShowReactionList(false)}
+      />
     </div>
   );
 };

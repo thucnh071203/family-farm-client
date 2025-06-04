@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import coldImage from "../../assets/images/cold.png";
-import { getOwnProfile } from "../../services/authService";
+import { getOwnProfile } from "../../services/accountService";
 
 const WeatherWidget = () => {
   const [weatherData, setWeatherData] = useState(null); // Bỏ giá trị mặc định cứng
