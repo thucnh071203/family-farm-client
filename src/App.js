@@ -25,6 +25,9 @@ import PersonalPage from "./pages/Profile/PersonalPage";
 import UpdateProfile from "./pages/Profile/UpdateProfile";
 import UserFriends from "./pages/Profile/UserFriends";
 import PostGroupPage from "./pages/GroupPage/PostGroupPage";
+import GroupPage from "./pages/GroupPage/GroupPage";
+import JoinRequestsListPage from "./pages/GroupPage/JoinRequestsListPage";
+import PermissionGroupPage from "./pages/GroupPage/PermissionGroupPage";
 import CreateServicePage from "./pages/ServicePage/CreateServicePage";
 import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
@@ -67,6 +70,16 @@ const AppContent = () => {
           <Route path="/ProcessList" element={<ProcessListPage />} />
           <Route path="/ProcessResult" element={<ProcessResultPage />} />
           <Route path="/WaitingOrderList" element={<WaitingListPage />} />
+          <Route path="/GroupPage" element={<GroupPage />} />
+          <Route
+            path="/JoinRequestsListPage"
+            element={<JoinRequestsListPage />}
+          />
+          <Route
+            path="/PermissionGroupPage"
+            element={<PermissionGroupPage />}
+          />
+        </Routes>
           <Route path="/SavedPostPage" element={<SavedPostPage />} />
           <Route path="/CreateService" element={<CreateServicePage />} />
           <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
@@ -102,6 +115,7 @@ function App() {
         <SignalRProvider>
           <AppContent />
         </SignalRProvider>
+
       </Router>
     </div>
   );

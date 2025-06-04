@@ -7,26 +7,41 @@ const GroupSidebar = ({ setSection }) => {
         <p className="text-lg font-bold ">GROUP PAGE</p>
       </div>
       <div className="mx-8 mt-11 w-[225px] h-[155px] flex flex-col gap-4">
+
+        <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          <div className="mx-4 flex items-center">
+
         <button onClick={() => setSection("post-in-group")}  className="hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3">
           <div className="flex items-center mx-2">
+
             <i className="fa-solid fa-file-invoice"></i>
           </div>
           <div className="flex items-center font-bold">Post in Group</div>
         </button>
+
+        <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          <div className="mx-4 flex items-center">
+
         <button
           onClick={() => setSection("user-group")}
           className="hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3"
         >
           <div className="flex items-center mx-2">
+
             <i className="fa-solid fa-users"></i>
           </div>
           <div className="flex items-center font-bold">Your Groups</div>
         </button>
+
+        <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          <div className="mx-4 flex items-center">
+
         <button
           onClick={() => setSection("suggest-group")}
           className="hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3"
         >
           <div className="flex items-center mx-2">
+
             <i className="fa-solid fa-bolt"></i>
           </div>
           <div className="flex items-center font-bold">Suggested Groups </div>
