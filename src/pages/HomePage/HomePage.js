@@ -101,6 +101,7 @@ const HomePage = () => {
   return (
     <div className="HomePage bg-gray-100">
       <Header />
+
       <NavbarHeader />
       <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[65px]">
         <div className="gap-5 grid lg:grid-cols-[1fr_2fr_1fr] grid-cols-1">
@@ -178,6 +179,7 @@ const HomePage = () => {
           </section>
         </div>
       </main>
+
     </div>
   );
 };
