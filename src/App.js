@@ -79,7 +79,6 @@ const AppContent = () => {
             path="/PermissionGroupPage"
             element={<PermissionGroupPage />}
           />
-        </Routes>
           <Route path="/SavedPostPage" element={<SavedPostPage />} />
           <Route path="/CreateService" element={<CreateServicePage />} />
           <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
