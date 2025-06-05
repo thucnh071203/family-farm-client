@@ -152,11 +152,13 @@ const LoginForm = () => {
 
                   const profileData = profileResponse.data;
 
+                  console.log("🔥 Dữ liệu profile:", JSON.stringify(profileData, null, 2));
+
                   storage.setItem(
                     "fullName",
-                    profileData.fullName || loginData.username
+                    profileData.data.fullName || loginData.username
                   );
-                  storage.setItem("avatarUrl", profileData.avatar || "");
+                  storage.setItem("avatarUrl", profileData.data.avatar || "");
 
                   toast.success("LOGIN SUCCESSFULLY!");
                   navigate("/");
