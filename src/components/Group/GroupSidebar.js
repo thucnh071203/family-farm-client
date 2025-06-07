@@ -46,7 +46,9 @@ const GroupSidebar = ({ setSection }) => {
           </div>
           <div className="flex items-center font-bold">Suggested Groups </div>
         </button>
-        <button className="hover:bg-[#3DB3FB] flex justify-center items-center w-full h-10 rounded-[10px]  hover:text-white gap-2 p-3">
+        <button className="hover:bg-[#3DB3FB] flex justify-center items-center w-full h-10 rounded-[10px] hover:text-white gap-2 p-3"
+          onClick={() => setSection("create-group")}
+        >
           <div>
             <i className="fa-solid fa-plus"></i>
           </div>
