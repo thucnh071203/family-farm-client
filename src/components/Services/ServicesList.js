@@ -46,7 +46,8 @@ export default function ServicesList() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const res = await axios.get("https://localhost:7280/api/service/all");
+                // const res = await axios.get("https://localhost:7280/api/service/all");
+                const res = await instance.get("api/service/all");
                 if (res.data.success) {
                     const mappedServices = res.data.data
                         .filter(item => item.service)
@@ -55,7 +56,8 @@ export default function ServicesList() {
                     const enrichedServices = await Promise.all(
                         mappedServices.map(async (service) => {
                             try {
-                                const providerRes = await axios.get(`https://localhost:7280/api/account/profile-another/${service.providerId}`);
+                                // const providerRes = await axios.get(`https://localhost:7280/api/account/profile-another/${service.providerId}`);
+                                const providerRes = await instance.get(`api/account/profile-another/${service.providerId}`);
                                 const provider = providerRes.data?.data;
 
                                 return {
