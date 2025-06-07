@@ -1,15 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import ProcessNav from "../ProcessNav/ProcessNav";
 import Header from "../Header/Header";
+import instance from "../../Axios/axiosConfig";
 
 export const ServiceManagement = () => {
   const [isAllChecked, setIsAllChecked] = useState(false);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const handleSelectAll = (e) => {
     setIsAllChecked(e.target.checked);
   };
 
+  useEffect(() => {
+    const fetchServicesAndCategories = async () => {
+      try {
+        // Gọi API lấy tất cả dịch vụ theo provider
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+        console.log("📌 Token:", token);
+        const serviceRes = await instance.get("/api/service/all-by-provider", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const serviceWrappers = serviceRes.data.data || [];
+        const servicesOnly = serviceWrappers.map((item) => item.service);
+
+        console.log("✅ Danh sách dịch vụ gốc:", services);
+
+        // Gọi API từng category name theo categoryServiceId
+        const servicesWithCategory = await Promise.all(
+          servicesOnly.map(async (s) => {
+            try {
+              const res = await instance.get(`/api/category-service/get-by-id/${s.categoryServiceId}`);
+              console.log("📦 CategoryService Response:", res.data);
+              return {
+                ...s,
+                categoryName: res.data.data?.[0]?.categoryService?.categoryName || "Unknown",
+              };
+            } catch {
+              return { ...s, categoryName: "Unknown" };
+            }
+          })
+        );
+
+        console.log("🔄 Dữ liệu sau khi merge với category name:", servicesWithCategory);
+
+        setServices(servicesWithCategory);
+      } catch (err) {
+        console.error("Failed to fetch services", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServicesAndCategories();
+  }, []);
 
   return (
     <div className="text-gray-800 bg-white">
@@ -56,60 +104,34 @@ export const ServiceManagement = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="relative border-t">
-                <td className="p-3"></td>
-                <td className="p-3">
-                  <input type="checkbox" className="w-4 h-4"
-                    checked={isAllChecked}
-                    onChange={() => setIsAllChecked(!isAllChecked)} />
-                </td>
-                {/* <td className="p-3 text-blue-500 cursor-pointer hover:underline">
-                  SV12045
-                </td> */}
-                <td className="p-3">Support Coursera FPT</td>
-                <td className="hidden p-3 md:table-cell">200.000<span>VND</span></td>
-                <td className="hidden p-3 md:table-cell">
-                  <span className="px-2 py-1 text-sm text-white bg-green-500 rounded">
-                    Available
-                  </span>
-                </td>
-                <td className="hidden p-3 md:table-cell">
-                  Support study online and self help
-                </td>
-                <td className="p-3 space-x-3">
-                  <button className="text-sm text-red-500"><i className="fa-solid fa-trash"></i> Delete</button>
-                  <button className="text-sm text-blue-600"><i className="fa-solid fa-pen"></i> Edit</button>
-                </td>
-              </tr>
-              <tr className="relative border-t">
-                <td className="p-3"></td>
-                <td className="p-3">
-                  <input type="checkbox" className="w-4 h-4"
-                    checked={isAllChecked}
-                    onChange={() => setIsAllChecked(!isAllChecked)} />
-                </td>
-                {/* <td className="p-3 text-blue-500 cursor-pointer hover:underline">
-                  SV12045
-                </td> */}
-                <td className="p-3">Support Coursera FPT</td>
-                <td className="hidden p-3 md:table-cell">200.000<span>VND</span></td>
-                <td className="hidden p-3 md:table-cell">
-                  <span className="px-2 py-1 text-sm text-white bg-green-500 rounded">
-                    Available
-                  </span>
-                </td>
-                <td className="hidden p-3 md:table-cell">
-                  Support study online and self help
-                </td>
-                <td className="p-3 space-x-3">
-                  <button className="text-sm text-red-500"><i className="fa-solid fa-trash"></i> Delete</button>
-                  <button className="text-sm text-blue-600"><i className="fa-solid fa-pen"></i> Edit</button>
-                </td>
-                {/* Hot?????? */}
-                <td className="absolute flex items-center gap-1 px-3 py-2 font-bold text-red-600 bg-red-200 rounded-r-full top-1 -left-3">
-                  <span>Hot</span>
-                </td>
-              </tr>
+              {loading ? (
+                <tr><td colSpan={7} className="p-3 text-center">Loading services...</td></tr>
+              ) : services.length === 0 ? (
+                <tr><td colSpan={7} className="p-3 text-center">No services found for this expert.</td></tr>
+              ) : (
+                services.map((service, index) => (
+                  <tr key={index} className="border-t">
+                    <td className="p-3"></td>
+                    <td className="p-3">
+                      <input type="checkbox" className="w-4 h-4"
+                        checked={isAllChecked}
+                        onChange={() => setIsAllChecked(!isAllChecked)} />
+                    </td>
+                    <td className="p-3">{service.serviceName}</td>
+                    <td className="hidden p-3 md:table-cell">{service.price.toLocaleString()} <span>VND</span></td>
+                    <td className="hidden p-3 md:table-cell">
+                      <span className={`px-2 py-1 text-sm text-white rounded ${service.status === 1 ? 'bg-green-500' : 'bg-red-500'}`}>
+                        {service.status === 1 ? "Available" : "Unavailable"}
+                      </span>
+                    </td>
+                    <td className="hidden p-3 md:table-cell">{service.categoryName}</td>
+                    <td className="p-3 space-x-3">
+                      <button className="text-sm text-red-500"><i className="fa-solid fa-trash"></i> Delete</button>
+                      <button className="text-sm text-blue-600"><i className="fa-solid fa-pen"></i> Edit</button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
