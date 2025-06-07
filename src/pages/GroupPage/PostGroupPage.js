@@ -4,6 +4,7 @@ import NavbarHeader from "../../components/Header/NavbarHeader";
 import GroupSidebar from "../../components/Group/GroupSidebar";
 import PostInGroupRight from "../../components/Group/PostInGroupRight";
 import YourgroupRight from "../../components/Group/YourgroupRight";
+import CreateGroupForm from "../../components/Group/CreateGroupForm";
 const PostGroupPage = () => {
   const [section, setSection] = useState("post-in-group");
   const [roleId, setRoleId] = useState(null);
@@ -22,7 +23,9 @@ const PostGroupPage = () => {
         {section === "post-in-group" && (
           <PostInGroupRight/>
         )}
-        
+        {section === "create-group" && (
+          <CreateGroupForm/>
+        )}
       </div>
     </div>
   );
