@@ -62,7 +62,7 @@ const ChatPage = () => {
               />
             ) : (
               <div className="flex items-center justify-center h-full text-gray-600 text-sm">
-                Vui lòng chọn một cuộc trò chuyện để xem chi tiết
+                Please select a conversation to view details
               </div>
             )}
           </div>
