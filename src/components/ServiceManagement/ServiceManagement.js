@@ -8,10 +8,19 @@ export const ServiceManagement = () => {
   const [isAllChecked, setIsAllChecked] = useState(false);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const handleSelectAll = (e) => {
     setIsAllChecked(e.target.checked);
   };
+
+  // Lọc service theo trạng thái
+  const filteredServices = services.filter((service) => {
+    if (filterStatus === "available") return service.status === 1;
+    if (filterStatus === "unavailable") return service.status !== 1;
+    return true; // all
+  });
+
 
   useEffect(() => {
     const fetchServicesAndCategories = async () => {
@@ -28,7 +37,7 @@ export const ServiceManagement = () => {
         const serviceWrappers = serviceRes.data.data || [];
         const servicesOnly = serviceWrappers.map((item) => item.service);
 
-        console.log("✅ Danh sách dịch vụ gốc:", services);
+        console.log("✅ Danh sách dịch vụ gốc:", servicesOnly);
 
         // Gọi API từng category name theo categoryServiceId
         const servicesWithCategory = await Promise.all(
@@ -71,13 +80,34 @@ export const ServiceManagement = () => {
           </button>
         </div>
         <div className="flex items-center mt-4 space-x-6 lg:gap-40">
-          <div className="flex gap-4 lg:gap-8">
+          {/* <div className="flex gap-4 lg:gap-8">
             <div className="font-semibold text-blue-600 border-b-2 border-blue-600 cursor-pointer">
               All
             </div>
             <div className="text-gray-400 cursor-pointer">Available</div>
             <div className="text-gray-400 cursor-pointer">Unavailable</div>
+          </div> */}
+          <div className="flex gap-4 lg:gap-8">
+            <div
+              className={`cursor-pointer ${filterStatus === "all" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+              onClick={() => setFilterStatus("all")}
+            >
+              All
+            </div>
+            <div
+              className={`cursor-pointer ${filterStatus === "available" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+              onClick={() => setFilterStatus("available")}
+            >
+              Available
+            </div>
+            <div
+              className={`cursor-pointer ${filterStatus === "unavailable" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+              onClick={() => setFilterStatus("unavailable")}
+            >
+              Unavailable
+            </div>
           </div>
+
           <button className="flex items-center gap-2 ml-auto text-red-600">
             <i className="fa-solid fa-trash"></i>
             Delete choose
@@ -106,10 +136,10 @@ export const ServiceManagement = () => {
             <tbody>
               {loading ? (
                 <tr><td colSpan={7} className="p-3 text-center">Loading services...</td></tr>
-              ) : services.length === 0 ? (
+              ) : filteredServices.length === 0 ? (
                 <tr><td colSpan={7} className="p-3 text-center">No services found for this expert.</td></tr>
               ) : (
-                services.map((service, index) => (
+                filteredServices.map((service, index) => (
                   <tr key={index} className="border-t">
                     <td className="p-3"></td>
                     <td className="p-3">
@@ -128,6 +158,7 @@ export const ServiceManagement = () => {
                     <td className="p-3 space-x-3">
                       <button className="text-sm text-red-500"><i className="fa-solid fa-trash"></i> Delete</button>
                       <button className="text-sm text-blue-600"><i className="fa-solid fa-pen"></i> Edit</button>
+                      <button className="text-sm text-green-700"><i class="fa-solid fa-rotate-right"></i> Disable</button>
                     </td>
                   </tr>
                 ))

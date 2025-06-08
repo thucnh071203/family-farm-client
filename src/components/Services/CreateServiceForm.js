@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import instance from "../../Axios/axiosConfig";
 
 const CreateServiceForm = () => {
     const [serviceName, setServiceName] = useState("");
@@ -8,11 +9,8 @@ const CreateServiceForm = () => {
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
     const [publish, setPublish] = useState(false);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log({ serviceName, category, price, description, image, publish });
-    };
+    const [categoryList, setCategoryList] = useState([]);
+    const [errors, setErrors] = useState({});
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -33,6 +31,88 @@ const CreateServiceForm = () => {
         setPreview(null);
     };
 
+    // Load category từ API
+    useEffect(() => {
+        const fetchCategories = async () => {
+        try {
+            const res = await instance.get("/api/category-service/all");
+            const wrappedData = res.data.data || [];
+            const categories = wrappedData
+                .map(item => item.categoryService) // bóc tách ra đúng object
+                .filter(Boolean); // loại bỏ null
+
+            setCategoryList(categories); // lưu vào state
+            } catch (err) {
+            console.error("Lỗi khi lấy category services:", err);
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    // ✅ Validate dữ liệu đầu vào
+    const validate = () => {
+        const newErrors = {};
+        if (!serviceName.trim()) newErrors.serviceName = "Service name is required.";
+        if (!category) newErrors.category = "Category is required.";
+        // if (!price || isNaN(price) || price <= 0) newErrors.price = "Valid price is required.";
+        if (!price) {
+            newErrors.price = "Price is required.";
+        } else if (isNaN(price)) {
+            newErrors.price = "Price must be a number.";
+        } else if (Number(price) <= 0) {
+            newErrors.price = "Price must be a positive number.";
+        }
+        if (!description.trim()) newErrors.description = "Description is required.";
+        if (!image) newErrors.image = "Image is required.";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    // ✅ Submit form
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validate()) return;
+
+        const providerId = localStorage.getItem("accId");
+
+        const formData = new FormData();
+        formData.append("ProviderId", providerId);
+        formData.append("ServiceName", serviceName);
+        formData.append("CategoryServiceId", category);
+        formData.append("Price", parseFloat(price));
+        formData.append("ServiceDescription", description);
+        formData.append("Status", publish ? 1 : 0);
+        formData.append("AverageRate", 0);
+        formData.append("RateCount", 0);
+        if (image) formData.append("ImageUrl", image);
+
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+        try {
+            const res = await instance.post("/api/service/create", formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+            alert("✅ Service created successfully!");
+            console.log(res.data);
+
+            // Reset form
+            setServiceName("");
+            setCategory("");
+            setPrice("");
+            setDescription("");
+            setImage(null);
+            setPreview(null);
+            setPublish(false);
+            setErrors({});
+        } catch (err) {
+            console.error("❌ Error creating service:", err.response?.data || err);
+            alert("❌ Failed to create service: " + (err.response?.data?.message || "Unknown error"));
+        }
+    };
+
     return (
         <div className="p-6 bg-white shadow-xl rounded-lg text-left border border-solid border-gray-200">
             <h2 className="text-xl font-semibold mb-2 text-[#3DB3FB]">Create New Service</h2>
@@ -45,17 +125,27 @@ const CreateServiceForm = () => {
                         onChange={(e) => setServiceName(e.target.value)}
                         placeholder="Name or Title"
                         className="w-full p-3 border rounded-lg"/>
+                    {errors.serviceName && <p className="text-red-500 text-sm">{errors.serviceName}</p>}
                 </div>
                 <div className="flex gap-4">
                     <div className="w-1/2">
                         <label className="block mb-2 font-medium text-gray-700">Category</label>
-                        <select value={category}
+                        {/* <select value={category}
                             onChange={(e) => setCategory(e.target.value)}
                             className="w-full p-3 border rounded-lg">
                             <option value="">Service Category</option>
                             <option value="category1">Category 1</option>
                             <option value="category2">Category 2</option>
+                        </select> */}
+                        <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full p-3 border rounded-lg">
+                            <option value="">Service Category</option>
+                            {categoryList.map((cat) => (
+                                <option key={cat.categoryServiceId} value={cat.categoryServiceId}>
+                                {cat.categoryName}
+                                </option>
+                            ))}
                         </select>
+                        {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
                     </div>
                     <div className="w-1/2">
                         <label className="block mb-2 font-medium text-gray-700">Price</label>
@@ -66,8 +156,8 @@ const CreateServiceForm = () => {
                             placeholder="Price"
                             className="w-full p-3 border rounded-lg"/>
                         <span className="transform font-bold text-red-500">VND</span>
+                        {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
                         </div>
-                        
                     </div>
                 </div>
                 <div>
@@ -76,6 +166,7 @@ const CreateServiceForm = () => {
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Description..."
                         className="w-full p-3 border rounded-lg h-24"/>
+                    {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
                 </div>
                 <div>
                     <label className="block mb-2 font-medium text-gray-700">Image</label>
@@ -99,6 +190,7 @@ const CreateServiceForm = () => {
                             Click to upload Image Service
                         </label>
                     )}
+                    {errors.image && <p className="text-red-500 text-sm">{errors.image}</p>}
                 </div>
                 <div className="flex items-center py-5 gap-4">
                     <input type="checkbox"
@@ -111,7 +203,18 @@ const CreateServiceForm = () => {
                     <button type="submit" className="bg-blue-500 text-white p-2 rounded-xl w-1/4 font-bold">
                         CREATE
                     </button>
-                    <button type="reset" className="p-2 rounded-xl w-1/4 font-bold border border-solid border-black">
+                    <button type="reset" className="p-2 rounded-xl w-1/4 font-bold border border-solid border-black"
+                        onClick={() => {
+                            setServiceName("");
+                            setCategory("");
+                            setPrice("");
+                            setDescription("");
+                            setImage(null);
+                            setPreview(null);
+                            setPublish(false);
+                            setErrors({});
+                        }}
+                    >
                         RESET
                     </button>
                 </div>
