@@ -178,7 +178,7 @@ const PostCard = ({ post, onCommentCountChange }) => {
             <i className="text-blue-500 fa-solid fa-thumbs-up"></i> {likeCount}
           </button>
           <p>
-            <i className="text-blue-500 fas fa-comment"></i> {commentCount}
+            <i className="text-blue-500 fas fa-comment"></i> {commentCount > 0 ? commentCount : ""}
           </p>
           <p>
             <i className="text-blue-500 fa-solid fa-share"></i> {postData.shares}

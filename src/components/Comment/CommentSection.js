@@ -20,8 +20,6 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
           throw new Error("postId không hợp lệ");
         }
         const response = await instance.get(`/api/comment/all-by-post/${postId}`);
-        console.log("API comments response:", response.data);
-
         if (response.data.success) {
           const commentData = Array.isArray(response.data.data) ? response.data.data : [];
           const formattedComments = commentData.map((item) => ({
@@ -37,7 +35,7 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
             reactionType: null,
           }));
           setComments(formattedComments);
-          onCommentCountChange(response.data.count || formattedComments.length);
+          // Không cập nhật commentCount từ API vì đã có initialCommentCount
         } else {
           throw new Error(response.data.message || "Cannot load comments!");
         }
@@ -70,7 +68,7 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
       console.warn("postId is undefined or null");
       setComments([]);
     }
-  }, [postId, onCommentCountChange]);
+  }, [postId]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
