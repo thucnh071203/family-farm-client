@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import instance from "../../Axios/axiosConfig";
 import { toast, Bounce } from "react-toastify";
 
-const ReactionPopup = ({ onReact }) => {
+const CategoryReactionList = ({ onReact }) => {
   const [reactions, setReactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,7 +23,7 @@ const ReactionPopup = ({ onReact }) => {
         }
       } catch (err) {
         console.error("Error fetching reactions:", err);
-        toast.error("Không thể tải danh sách biểu cảm!", {
+        toast.error("Loading reactions failed!", {
           position: "top-right",
           autoClose: 3000,
           transition: Bounce,
@@ -50,10 +50,10 @@ const ReactionPopup = ({ onReact }) => {
           </button>
         ))
       ) : (
-        <div className="text-gray-600 text-sm">Không có biểu cảm nào</div>
+        <div className="text-gray-600 text-sm">No reaction</div>
       )}
     </div>
   );
 };
 
-export default ReactionPopup;
+export default CategoryReactionList;
