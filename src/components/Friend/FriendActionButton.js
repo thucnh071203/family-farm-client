@@ -1,6 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { toast, Bounce } from "react-toastify";
+const FriendActionButton = ({ status, roleId, accId, onLoadList }) => {
+  const handleAddFriend = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.post(
+        "https://localhost:7280/api/friend/send-friend-request",
+        { receiverId: accId },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.status === 200) {
+        // Gọi callback để reload danh sách
+        if (onLoadList) onLoadList();
+        toast.success("You sent the request successfully!");
+      }
+    } catch (error) {
+      console.error("Add friend failed", error);
+      toast.error("Failed to send request.");
+    }
+  };
 
-const FriendActionButton = ({ status, roleId }) => {
   const buttonConfig = {
     null: {
       text: "Add friend",
@@ -41,10 +63,15 @@ const FriendActionButton = ({ status, roleId }) => {
   };
 
   // Select config based on status and roleId
-  const config = status === null && roleId === "expert" ? buttonConfig.expert : buttonConfig[status] || buttonConfig.null;
+  const config =
+    status === null && roleId === "expert"
+      ? buttonConfig.expert
+      : buttonConfig[status] || buttonConfig.null;
 
   return (
-    <button className={`p-1 ${config.bgColor} ${config.hoverColor} text-white text-sm font-bold rounded-md w-28 transition`}>
+    <button  onClick={handleAddFriend}
+      className={`p-1 ${config.bgColor} ${config.hoverColor} text-white text-sm font-bold rounded-md w-28 transition`}
+    >
       <i className={`fa-solid ${config.icon} mr-2`}></i>
       {config.text}
     </button>

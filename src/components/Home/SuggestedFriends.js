@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import FriendItem from "../Friend/FriendItem";
+import axios from "axios";
 
-const SuggestedFriends = ({ friends }) => {
+const SuggestedFriends = ({ friends, onLoadList }) => {
   const defaultFriends = [
     { name: "Dang Khoa", city: "Can Tho", status: null },
     { name: "Huu Thuc", city: "Can Tho", status: null },
@@ -11,6 +12,7 @@ const SuggestedFriends = ({ friends }) => {
   ];
   const friendList = friends || defaultFriends;
 
+  
   const defaultFriend = {
     name: "Mai Xuan",
     avatar: "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png",
@@ -25,8 +27,9 @@ const SuggestedFriends = ({ friends }) => {
       <div className="flex flex-col gap-3">
         {friendList.map((friend) => (
           <FriendItem 
-            key={friend.name} 
+            key={friend.accId} 
             friend={{ ...defaultFriend, ...friend }} 
+            onLoadList={onLoadList}
           />
         ))}
       </div>
