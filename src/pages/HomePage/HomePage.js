@@ -10,6 +10,7 @@ import SuggestedGroups from "../../components/Home/SuggestedGroups";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import instance from "../../Axios/axiosConfig";
 import { toast, Bounce } from "react-toastify";
+import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
 
 const HomePage = () => {
   const [posts, setPosts] = useState([]);
@@ -101,7 +102,6 @@ const HomePage = () => {
   return (
     <div className="HomePage bg-gray-100">
       <Header />
-
       <NavbarHeader />
       <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[65px]">
         <div className="gap-5 grid lg:grid-cols-[1fr_2fr_1fr] grid-cols-1">
@@ -113,11 +113,15 @@ const HomePage = () => {
           {/* Posts Section */}
           <section
             ref={postContainerRef}
-            className="flex flex-col gap-5 lg:order-2 order-3 h-[calc(100vh-140px)] w-full overflow-y-auto"
+            className="flex flex-col gap-5 lg:order-2 order-3 h-[calc(100vh+140px)] w-full overflow-y-auto"
           >
             <PostCreate />
             {loading && skip === 0 ? (
-              <div className="text-center py-4">Đang tải bài viết...</div>
+              <div className="flex flex-col gap-5">
+                {[...Array(3)].map((_, index) => (
+                  <PostCardSkeleton key={index} />
+                ))}
+              </div>
             ) : error ? (
               <div className="text-center py-4">{error}</div>
             ) : posts.length > 0 ? (
@@ -127,16 +131,16 @@ const HomePage = () => {
                   post={{
                     postId: postMapper.post.postId,
                     fullName: postMapper.post.accId, // Có thể cần gọi API lấy tên user từ accId
-                    avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png", // Placeholder
+                    avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
                     createAt: postMapper.post.createdAt,
                     content: postMapper.post.postContent,
                     images: postMapper.postImages.map((img) => img.imageUrl),
                     hashtags: postMapper.hashTags.map((tag) => tag.hashTagContent),
                     tagFriends: postMapper.postTags.map((tag) => tag.username),
                     categories: postMapper.postCategories.map((cat) => cat.categoryName),
-                    likes: postMapper.post.likes || 0, // API chưa trả về, giả định 0
-                    comments: postMapper.post.comments || 0, // Giả định 0
-                    shares: postMapper.post.shares || 0, // Giả định 0
+                    likes: postMapper.post.likes || 0,
+                    comments: postMapper.post.comments || 0,
+                    shares: postMapper.post.shares || 0,
                   }}
                   onCommentCountChange={(newCount) =>
                     handleCommentCountChange(postMapper.post.postId, newCount)
@@ -147,28 +151,10 @@ const HomePage = () => {
               <div className="text-center py-4">Không tìm thấy bài viết</div>
             )}
             {loadingMore && (
-              <div className="text-center py-4">
-                <svg
-                  className="animate-spin h-5 w-5 mx-auto"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Đang tải thêm bài viết...
+              <div className="flex flex-col gap-5 py-4">
+                {[...Array(2)].map((_, index) => (
+                  <PostCardSkeleton key={`more-${index}`} />
+                ))}
               </div>
             )}
           </section>
@@ -179,7 +165,6 @@ const HomePage = () => {
           </section>
         </div>
       </main>
-
     </div>
   );
 };
