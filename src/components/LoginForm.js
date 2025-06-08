@@ -21,17 +21,6 @@ const LoginForm = () => {
   const [errors, setErrors] = useState({ username: "", password: "" });
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   window.fbAsyncInit = function () {
-  //     window.FB.init({
-  //       appId: "681934764486226", // appId thật của bạn
-  //       cookie: true,
-  //       xfbml: true,
-  //       version: "v17.0",
-  //     });
-  //   };
-  // }, []);
-
   useEffect(() => {
     // Tải SDK Facebook nếu chưa có
     if (!window.FB) {
@@ -60,31 +49,6 @@ const LoginForm = () => {
     }
   }, []);
 
-  // const handleFacebookLogin = () => {
-  //   window.FB.login(
-  //     function (response) {
-  //       if (response.authResponse) {
-  //         const accessToken = response.authResponse.accessToken;
-
-  //         // Gửi token này tới API backend của bạn
-  //         axios.post("https://localhost:7280/api/authen/login-facebook", {
-  //           accessToken: accessToken
-  //         })
-  //         .then((res) => {
-  //           console.log("Đăng nhập thành công", res.data);
-  //           // lưu token / session / điều hướng
-  //         })
-  //         .catch((err) => {
-  //           console.error("Đăng nhập thất bại", err);
-  //         });
-  //       } else {
-  //         console.log("Người dùng từ chối đăng nhập Facebook.");
-  //       }
-  //     },
-  //     { scope: "public_profile,email" } // phạm vi quyền truy cập
-  //   );
-  // };
-
   // Đăng nhập bằng facebook
   const handleFacebookLogin = () => {
     window.FB.login(
@@ -106,23 +70,12 @@ const LoginForm = () => {
                 avatar: userInfo.picture?.data?.url || null,
               };
 
-              console.log("Payload gửi lên backend:", payload);
-
-              // axios
-              //   .post("https://localhost:7280/api/authen/login-facebook", payload)
-              //   .then((res) => {
-              //     console.log("Đăng nhập thành công", res.data);
-              //     // Lưu session / chuyển trang tại đây
-              //     navigate("/");
-              //   })
-              //   .catch((err) => {
-              //     console.error("Đăng nhập thất bại", err);
-              //   });
               try {
-                const loginResponse = await axios.post(
-                  "https://localhost:7280/api/authen/login-facebook",
-                  payload
-                );
+                // const loginResponse = await axios.post(
+                //   "https://localhost:7280/api/authen/login-facebook",
+                //   payload
+                // );
+                const loginResponse = await instance.post("api/authen/login-facebook", payload);
 
                 const loginData = loginResponse.data;
 
@@ -149,6 +102,7 @@ const LoginForm = () => {
                       },
                     }
                   );
+                  // const profileResponse = await getOwnProfile();
 
                   const profileData = profileResponse.data;
 

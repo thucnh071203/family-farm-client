@@ -22,6 +22,8 @@ const HomePage = () => {
   const postContainerRef = useRef(null);
   const PAGE_SIZE = 5; // Phù hợp với mặc định của API
 
+  const [suggestedFriends, setSuggestedFriends] = useState([]);
+
   // Hàm gọi API để lấy bài viết
   const fetchPosts = async ({ lastPostId, reset = false }) => {
     setLoading(true);
@@ -38,7 +40,9 @@ const HomePage = () => {
 
       if (response.data.success) {
         const newPosts = response.data.data || [];
-        setPosts((prevPosts) => (reset ? newPosts : [...prevPosts, ...newPosts]));
+        setPosts((prevPosts) =>
+          reset ? newPosts : [...prevPosts, ...newPosts]
+        );
         setHasMore(response.data.hasMore);
 
         // Cập nhật lastPostId từ bài viết cuối cùng
@@ -99,6 +103,35 @@ const HomePage = () => {
     );
   };
 
+  // get suggestion friend
+  const fetchSuggestedFriends = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(
+        `https://localhost:7280/api/friend/suggestion-friend-home`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const json = await response.json();
+      if (json.data.length !== 0) {
+        setSuggestedFriends(json.data);
+      } else {
+        setSuggestedFriends([]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSuggestedFriends();
+  }, []);
+
   return (
     <div className="HomePage bg-gray-100">
       <Header />
@@ -135,12 +168,16 @@ const HomePage = () => {
                     createAt: postMapper.post.createdAt,
                     content: postMapper.post.postContent,
                     images: postMapper.postImages.map((img) => img.imageUrl),
-                    hashtags: postMapper.hashTags.map((tag) => tag.hashTagContent),
+                    hashtags: postMapper.hashTags.map(
+                      (tag) => tag.hashTagContent
+                    ),
                     tagFriends: postMapper.postTags.map((tag) => tag.username),
-                    categories: postMapper.postCategories.map((cat) => cat.categoryName),
-                    likes: postMapper.post.likes || 0,
-                    comments: postMapper.post.comments || 0,
-                    shares: postMapper.post.shares || 0,
+                    categories: postMapper.postCategories.map(
+                      (cat) => cat.categoryName
+                    ),
+                    likes: postMapper.post.likes || 0, // API chưa trả về, giả định 0
+                    comments: postMapper.post.comments || 0, // Giả định 0
+                    shares: postMapper.post.shares || 0, // Giả định 0
                   }}
                   onCommentCountChange={(newCount) =>
                     handleCommentCountChange(postMapper.post.postId, newCount)
@@ -160,7 +197,10 @@ const HomePage = () => {
           </section>
           {/* Right */}
           <section className="flex flex-col gap-5 lg:order-3 order-2">
-            <SuggestedFriends />
+            <SuggestedFriends
+              friends={suggestedFriends}
+              onLoadList={fetchSuggestedFriends} //load list suggestion khi click add friend success
+            />
             <SuggestedGroups />
           </section>
         </div>
