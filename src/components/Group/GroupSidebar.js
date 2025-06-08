@@ -23,7 +23,7 @@ const GroupSidebar = ({ setSection }) => {
           <div className="mx-4 flex items-center"> */}
 
         <button
-          onClick={() => setSection("user-group")}
+          onClick={() => setSection("all-group-user")}
           className="hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3"
         >
           <div className="flex items-center mx-2">

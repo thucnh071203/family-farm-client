@@ -15,17 +15,13 @@ const PostGroupPage = () => {
       <NavbarHeader />
       <div className="flex">
         <GroupSidebar setSection={setSection} />
-        {section === "user-group" && (
+        {section === "all-group-user" && (
           <div className="lg:mt-[120px] mt-[63px] ml-24 md:ml-[360px] pt-10">
-            <YourgroupRight section={section}/>
+            <YourgroupRight section={section} />
           </div>
         )}
-        {section === "post-in-group" && (
-          <PostInGroupRight/>
-        )}
-        {section === "create-group" && (
-          <CreateGroupForm/>
-        )}
+        {section === "post-in-group" && <PostInGroupRight />}
+        {section === "create-group" && <CreateGroupForm />}
       </div>
     </div>
   );

@@ -6,7 +6,10 @@ const FriendItem = ({ friend, onLoadList }) => {
     <div className="flex justify-between items-center text-left">
       <div className="flex items-center gap-2">
         <img
-          src={friend.avatar}
+          src={
+            friend.avatar ||
+            "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png"
+          }
           alt={`Friend ${friend.username}`}
           className="w-9 h-9 rounded-full"
         />
