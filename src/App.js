@@ -29,6 +29,7 @@ import GroupPage from "./pages/GroupPage/GroupPage";
 import JoinRequestsListPage from "./pages/GroupPage/JoinRequestsListPage";
 import PermissionGroupPage from "./pages/GroupPage/PermissionGroupPage";
 import CreateServicePage from "./pages/ServicePage/CreateServicePage";
+import EditServicePage from "./pages/ServicePage/EditServicePage";
 import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
 import FilterService from "./components/FilterService/FilterService";
@@ -81,6 +82,7 @@ const AppContent = () => {
           />
           <Route path="/SavedPostPage" element={<SavedPostPage />} />
           <Route path="/CreateService" element={<CreateServicePage />} />
+          <Route path="/EditService/:id" element={<EditServicePage />} />
           <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
           <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
           <Route path="/CreateStepPage" element={<CreateStepPage />} />

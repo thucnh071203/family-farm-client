@@ -1,30 +1,79 @@
 import React, { useState, useEffect } from "react";
 import instance from "../../Axios/axiosConfig";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const CreateServiceForm = () => {
+const EditServiceForm = () => {
+    const { id } = useParams(); // serviceId từ URL
+    const navigate = useNavigate();
+
     const [serviceName, setServiceName] = useState("");
     const [category, setCategory] = useState("");
     const [price, setPrice] = useState("");
     const [description, setDescription] = useState("");
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
-    const [publish, setPublish] = useState(false);
-    const [categoryList, setCategoryList] = useState([]);
     const [errors, setErrors] = useState({});
+    const [categoryList, setCategoryList] = useState([]);
+
+    // Các giá trị cần giữ lại để gửi lại
+    const [status, setStatus] = useState(1);
+    const [averageRate, setAverageRate] = useState(0);
+    const [rateCount, setRateCount] = useState(0);
+    const [providerId, setProviderId] = useState("");
+
+    useEffect(() => {
+        // Lấy danh sách category
+        const fetchCategories = async () => {
+            try {
+                const res = await instance.get("/api/category-service/all");
+                const wrappedData = res.data.data || [];
+                const categories = wrappedData
+                    .map(item => item.categoryService) // bóc tách ra đúng object
+                    .filter(Boolean); // loại bỏ null
+
+                setCategoryList(categories); // lưu vào state
+            } catch (err) {
+                console.error("Lỗi khi lấy danh sách category:", err);
+            }
+        };
+
+        // Lấy thông tin dịch vụ cần chỉnh sửa
+        const fetchService = async () => {
+            try {
+                const res = await instance.get(`/api/service/get-by-id/${id}`);
+                const getService = res.data.data;
+                const serviceOnly = getService
+                    .map(item => item.service) // bóc tách ra đúng object
+                    .filter(Boolean)[0];
+
+                console.log("Service để chỉnh sửa:", serviceOnly);
+
+                if (serviceOnly) {
+                    setServiceName(serviceOnly.serviceName);
+                    setCategory(serviceOnly.categoryServiceId);
+                    setPrice(serviceOnly.price);
+                    setDescription(serviceOnly.serviceDescription);
+                    setPreview(serviceOnly.imageUrl); // nếu có image
+
+                    setStatus(serviceOnly.status);
+                    setAverageRate(serviceOnly.averageRate);
+                    setRateCount(serviceOnly.rateCount);
+                    setProviderId(serviceOnly.providerId);
+                }
+            } catch (err) {
+                console.error("Lỗi khi lấy dữ liệu dịch vụ:", err);
+            }
+        };
+
+        fetchCategories();
+        fetchService();
+    }, [id]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         setImage(file);
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            setPreview(null);
-        }
+        setPreview(URL.createObjectURL(file));
     };
 
     const handleRemoveImage = () => {
@@ -32,25 +81,6 @@ const CreateServiceForm = () => {
         setPreview(null);
     };
 
-    // Load category từ API
-    useEffect(() => {
-        const fetchCategories = async () => {
-        try {
-            const res = await instance.get("/api/category-service/all");
-            const wrappedData = res.data.data || [];
-            const categories = wrappedData
-                .map(item => item.categoryService) // bóc tách ra đúng object
-                .filter(Boolean); // loại bỏ null
-
-            setCategoryList(categories); // lưu vào state
-            } catch (err) {
-            console.error("Lỗi khi lấy category services:", err);
-            }
-        };
-        fetchCategories();
-    }, []);
-
-    // ✅ Validate dữ liệu đầu vào
     const validate = () => {
         const newErrors = {};
         if (!serviceName.trim()) newErrors.serviceName = "Service name is required.";
@@ -64,17 +94,14 @@ const CreateServiceForm = () => {
             newErrors.price = "Price must be a positive number.";
         }
         if (!description.trim()) newErrors.description = "Description is required.";
-        if (!image) newErrors.image = "Image is required.";
+        if (!preview) newErrors.image = "Image is required."; // ✅ validate hình ảnh
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    // ✅ Submit form
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
-
-        const providerId = localStorage.getItem("accId");
 
         const formData = new FormData();
         formData.append("ProviderId", providerId);
@@ -82,43 +109,43 @@ const CreateServiceForm = () => {
         formData.append("CategoryServiceId", category);
         formData.append("Price", parseFloat(price));
         formData.append("ServiceDescription", description);
-        formData.append("Status", publish ? 1 : 0);
-        formData.append("AverageRate", 0);
-        formData.append("RateCount", 0);
-        if (image) formData.append("ImageUrl", image);
+        formData.append("Status", status);
+        formData.append("AverageRate", averageRate);
+        formData.append("RateCount", rateCount);
+
+        if (image) {
+            formData.append("ImageUrl", image);
+        } else {
+            formData.append("ImageUrl", preview);
+        }
 
         const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
 
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
+
         try {
-            const res = await instance.post("/api/service/create", formData, {
+            await instance.put(`/api/service/update/${id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data"
                 }
             });
-            // alert("✅ Service created successfully!");
-            toast.success("Service created successfully!");
-            console.log(res.data);
-
-            // Reset form
-            setServiceName("");
-            setCategory("");
-            setPrice("");
-            setDescription("");
-            setImage(null);
-            setPreview(null);
-            setPublish(false);
-            setErrors({});
+            // alert("✅ Service updated successfully!");
+            toast.success("Service updated successfully!");
+            navigate("/ServiceManagement");
         } catch (err) {
-            console.error("❌ Error creating service:", err.response?.data || err);
-            // alert("❌ Failed to create service: " + (err.response?.data?.message || "Unknown error"));
-            toast.error("Failed to create service.");
+            console.error("Cập nhật thất bại:", err);
+            console.error("Chi tiết lỗi:", err.response?.data || err.message); // ✅ thêm dòng này
+            // alert("Failed to update service.");
+            toast.error("Failed to update service.");
         }
     };
 
     return (
         <div className="p-6 bg-white shadow-xl rounded-lg text-left border border-solid border-gray-200">
-            <h2 className="text-xl font-semibold mb-2 text-[#3DB3FB]">Create New Service</h2>
+            <h2 className="text-xl font-semibold mb-2 text-[#3DB3FB]">Edit Service</h2>
             <hr />
             <form onSubmit={handleSubmit} className="space-y-4 mt-10">
                 <div>
@@ -127,24 +154,17 @@ const CreateServiceForm = () => {
                         value={serviceName}
                         onChange={(e) => setServiceName(e.target.value)}
                         placeholder="Name or Title"
-                        className="w-full p-3 border rounded-lg"/>
+                        className="w-full p-3 border rounded-lg" />
                     {errors.serviceName && <p className="text-red-500 text-sm">{errors.serviceName}</p>}
                 </div>
                 <div className="flex gap-4">
                     <div className="w-1/2">
                         <label className="block mb-2 font-medium text-gray-700">Category</label>
-                        {/* <select value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            className="w-full p-3 border rounded-lg">
-                            <option value="">Service Category</option>
-                            <option value="category1">Category 1</option>
-                            <option value="category2">Category 2</option>
-                        </select> */}
                         <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full p-3 border rounded-lg">
                             <option value="">Service Category</option>
                             {categoryList.map((cat) => (
                                 <option key={cat.categoryServiceId} value={cat.categoryServiceId}>
-                                {cat.categoryName}
+                                    {cat.categoryName}
                                 </option>
                             ))}
                         </select>
@@ -154,12 +174,12 @@ const CreateServiceForm = () => {
                         <label className="block mb-2 font-medium text-gray-700">Price</label>
                         <div className="flex items-center gap-4">
                             <input type="number"
-                            value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            placeholder="Price"
-                            className="w-full p-3 border rounded-lg"/>
-                        <span className="transform font-bold text-red-500">VND</span>
-                        {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                placeholder="Price"
+                                className="w-full p-3 border rounded-lg" />
+                            <span className="transform font-bold text-red-500">VND</span>
+                            {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
                         </div>
                     </div>
                 </div>
@@ -168,7 +188,7 @@ const CreateServiceForm = () => {
                     <textarea value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Description..."
-                        className="w-full p-3 border rounded-lg h-24"/>
+                        className="w-full p-3 border rounded-lg h-24" />
                     {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
                 </div>
                 <div>
@@ -176,12 +196,12 @@ const CreateServiceForm = () => {
                     <input type="file"
                         onChange={handleImageChange}
                         className="hidden"
-                        id="imageUpload"/>
+                        id="imageUpload" />
                     {preview ? (
                         <div className="relative w-full h-[250px] border rounded bg-gray-50">
                             <img src={preview}
                                 alt="Preview"
-                                className="w-full h-full object-cover rounded"/>
+                                className="w-full h-full object-cover rounded" />
                             <button onClick={handleRemoveImage}
                                 className="absolute top-1 right-1 rounded-full w-6 h-6 flex items-center justify-center" >
                                 <i className="fas fa-window-close"></i>
@@ -195,35 +215,15 @@ const CreateServiceForm = () => {
                     )}
                     {errors.image && <p className="text-red-500 text-sm">{errors.image}</p>}
                 </div>
-                <div className="flex items-center py-5 gap-4">
-                    <input type="checkbox"
-                        checked={publish}
-                        onChange={(e) => setPublish(e.target.checked)}
-                        className="h-4 w-4" />
-                    <label className="font-medium text-gray-700">Do you want to publish this service?</label>
-                </div>
                 <div className="flex gap-4">
                     <button type="submit" className="bg-blue-500 text-white p-2 rounded-xl w-1/4 font-bold">
-                        CREATE
+                        UPDATE
                     </button>
-                    <button type="reset" className="p-2 rounded-xl w-1/4 font-bold border border-solid border-black"
-                        onClick={() => {
-                            setServiceName("");
-                            setCategory("");
-                            setPrice("");
-                            setDescription("");
-                            setImage(null);
-                            setPreview(null);
-                            setPublish(false);
-                            setErrors({});
-                        }}
-                    >
-                        RESET
-                    </button>
+                    <button type="button" onClick={() => navigate("/ServiceManagement")} className="p-2 rounded-xl w-1/4 font-bold border border-black">CANCEL</button>
                 </div>
             </form>
         </div>
     );
 };
 
-export default CreateServiceForm;
+export default EditServiceForm;

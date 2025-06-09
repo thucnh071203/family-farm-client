@@ -61,12 +61,12 @@ const HomePage = () => {
       }
     } catch (error) {
       setError("Failed to load posts!");
-      toast.error("Tải bài đăng thất bại!", {
-        error: "top-right",
-        position: 3000,
-        autoClose: Bounce,
-        transition: "3000",
-      });
+      // toast.error("Tải bài đăng thất bại!", {
+      //   error: "top-right",
+      //   position: 3000,
+      //   autoClose: Bounce,
+      //   transition: "3000",
+      // });
     } finally {
       setLoading(false);
       setLoadingMore(false);
