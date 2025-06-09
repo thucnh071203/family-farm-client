@@ -1,6 +1,6 @@
 import React from "react";
 
-const SuggestedGroups = () => {
+const   SuggestedGroups = () => {
     const groups = [
         {
             name: "Support Coursera",
