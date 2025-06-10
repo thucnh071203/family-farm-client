@@ -5,9 +5,13 @@ import ReactionList from "../Reaction/ReactionList";
 import CommentSection from "../Comment/CommentSection";
 import formatTime from "../../utils/formatTime";
 import useReactions from "../../hooks/useReactions";
+import nam_like_icon from "../../assets/icons/nam_like.svg";
+import nam_comment_icon from "../../assets/icons/nam_comment.svg";
+import nam_share_icon from "../../assets/icons/nam_share.svg";
 
 const PostCard = ({ post, onCommentCountChange }) => {
   const defaultPost = {
+    accId: "",
     fullName: "Phuong Nam",
     avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
     createAt: "July 29 2024, 07:49 AM",
@@ -19,6 +23,8 @@ const PostCard = ({ post, onCommentCountChange }) => {
     comments: 0,
     shares: 0,
   };
+
+  // console.log(post)
 
   const postData = { ...defaultPost, ...post };
   const hashTags = postData.hashtags || ["blog", "nienmoulming", "polytecode"];
@@ -49,7 +55,7 @@ const PostCard = ({ post, onCommentCountChange }) => {
         <>
           {fullNameElement}
           <span className="text-black">
-            <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]}
+            <span className="text-gray-400 font-normal"> with </span> {tagFriends[0].fullname}
           </span>
         </>
       );
@@ -60,7 +66,7 @@ const PostCard = ({ post, onCommentCountChange }) => {
         <>
           {fullNameElement}
           <span className="text-black">
-            <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends[1]}
+            <span className="text-gray-400 font-normal"> with </span> {tagFriends[0].fullname} and {tagFriends[1].fullname}
           </span>
         </>
       );
@@ -70,7 +76,7 @@ const PostCard = ({ post, onCommentCountChange }) => {
       <>
         {fullNameElement}
         <span className="text-black">
-          <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends.length - 1} more
+          <span className="text-gray-400 font-normal"> with </span> {tagFriends[0].fullname} and {tagFriends.length - 1} more
         </span>
       </>
     );
@@ -174,14 +180,15 @@ const PostCard = ({ post, onCommentCountChange }) => {
             onClick={() => setShowReactionList(true)}
             className="cursor-pointer hover:underline"
             title="View list of reactions"
+            style={{display: "flex", alignItems: "center", justifyContent: "center", gap: "4px"}}
           >
-            <i className="text-blue-500 fa-solid fa-thumbs-up"></i> {likeCount}
+            <img src={nam_like_icon} alt="like" className="h-5" />  {likeCount}
           </button>
-          <p>
-            <i className="text-blue-500 fas fa-comment"></i> {commentCount > 0 ? commentCount : ""}
+          <p style={{display: "flex", alignItems: "center", justifyContent: "center", gap: "4px"}}>
+            <img src={nam_comment_icon} alt="comment" className="h-5" /> {commentCount > 0 ? commentCount : ""}
           </p>
-          <p>
-            <i className="text-blue-500 fa-solid fa-share"></i> {postData.shares}
+          <p style={{display: "flex", alignItems: "center", justifyContent: "center", gap: "4px"}}>
+            <img src={nam_share_icon} alt="share" className="h-5" /> {postData.shares}
           </p>
         </div>
         <div className="flex justify-between w-full gap-1 lg:w-3/4 items-center">

@@ -165,6 +165,7 @@ const LoginForm = () => {
 
         storage.setItem("fullName", profileData.data.fullName || loginData.username);
         storage.setItem("avatarUrl", profileData.data.avatar || "");
+        storage.setItem("profileData", JSON.stringify(profileData.data || {}));
 
         toast.success("LOGIN SUCCESSFULLY!");
         navigate("/");
