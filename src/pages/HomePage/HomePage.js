@@ -32,7 +32,6 @@ const HomePage = () => {
     if (lastPostId) setLoadingMore(true);
     setError(null);
 
-    console.log(lastPostId)
     try {
       const response = await instance.get("/api/post/infinite", {
         params: {
@@ -168,7 +167,10 @@ const HomePage = () => {
                       content: postMapper.post.postContent,
                       images: postMapper.postImages ? postMapper.postImages.map((img) => img.imageUrl) : [],
                       hashtags: postMapper.hashTags ? postMapper.hashTags.map((tag) => tag.hashTagContent) : [],
-                      tagFriends: postMapper.postTags ? postMapper.postTags.map((tag) => tag.username) : [],
+                      tagFriends: postMapper.postTags ? postMapper.postTags.map((tag) => ({
+                        accId: tag.accId,
+                        fullname: tag.fullname || "Unknown"
+                      })) : [],
                       categories: postMapper.postCategories ? postMapper.postCategories.map((cat) => cat.categoryName) : [],
                       likes: postMapper.reactionCount || 0,
                       comments: postMapper.commentCount || 0,

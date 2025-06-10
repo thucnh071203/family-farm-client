@@ -9,8 +9,46 @@ import PostCreate from "../../components/Post/PostCreate";
 import PostFilters from "../../components/Post/PostFilters";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import FriendActionButton from "../../components/Friend/FriendActionButton";
+import { useState, useEffect } from "react";
+
 
 const PersonalPage = () => {
+    const [isOwner, setIsOwner] = useState(true);
+    const [avatar, setAvatar] = useState("");
+    const [fullName, setFullName] = useState("Unknown");
+    const [background, setBackground] = useState("");
+    const [basicInfo, setBasicInfo] = useState(null);
+
+    const defaultBackground = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
+    //lay thong tin người dùng
+
+    //1. Kiểm tra xem trang đó của mình hay của người khác
+    //1.1 xử lý cho personal page của mình
+    useEffect(() => {
+        const storeData = localStorage.getItem("profileData") || sessionStorage.getItem("profileData");
+
+        if (storeData != null) {
+            try {
+                const profileData = JSON.parse(storeData);
+                setFullName(profileData.fullName);
+                setAvatar(profileData.avatar);
+                setBackground(profileData.background || defaultBackground)
+
+                console.log(profileData)
+                let basicInfoMapping = {
+                    gender: profileData.gender,
+                    location: profileData.address,
+                    study: profileData.studyAt,
+                    work: profileData.workAt
+                };
+                setBasicInfo(basicInfoMapping)
+            } catch (e) {
+                console.error("Lỗi parse profileData từ storage:", e);
+            }
+        }
+    }, []);
+
+    //1.2 xử lý khi là trang của người khác
     const posts = [
         {
             content: "Post with 2 images",
@@ -53,15 +91,19 @@ const PersonalPage = () => {
             <div className="flex-grow">
                 <div className="container mx-auto max-w-7xl">
                     <div className="relative">
-                        <CoverBackground />
-                        <div className="absolute right-4 bottom-4">
-                            <FriendActionButton />
-                        </div>  
-                        <ProfileAvatar />
+                        <CoverBackground coverImage={background} />
+
+                        {!isOwner && (
+                            <div className="absolute right-4 bottom-4">
+                                <FriendActionButton />
+                            </div>
+                        )}
+
+                        <ProfileAvatar initialProfileImage={avatar} fullName={fullName} />
                     </div>
                     <div className="flex flex-col gap-5 pt-20 lg:flex-row">
                         <aside className="flex flex-col w-full gap-5 lg:w-1/3">
-                            <BasicInfo />
+                            <BasicInfo info={basicInfo} />
                             <FriendList />
                             <PhotoGallery />
                         </aside>
