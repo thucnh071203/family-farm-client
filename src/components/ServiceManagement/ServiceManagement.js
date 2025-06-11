@@ -1,24 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import ProcessNav from "../ProcessNav/ProcessNav";
 import Header from "../Header/Header";
+import PopupDeleteService from "../Services/PopupDeleteService";
+import PopupToggleService from "../Services/PopupToggleService";
 import instance from "../../Axios/axiosConfig";
+import { useParams, useNavigate } from "react-router-dom";
 
 export const ServiceManagement = () => {
   const [isAllChecked, setIsAllChecked] = useState(false);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [showDeletePopup, setDeleteShowPopup] = useState(false);
+  const [selectedServiceId, setSelectedServiceId] = useState(null);
+  const [showTogglePopup, setShowTogglePopup] = useState(false);
+  const [toggleServiceId, setToggleServiceId] = useState(null);
+  const [isDisabling, setIsDisabling] = useState(true);
+  const navigate = useNavigate();
 
   const handleSelectAll = (e) => {
     setIsAllChecked(e.target.checked);
   };
+
+  // Lọc service theo trạng thái
+  const filteredServices = services.filter((service) => {
+    if (filterStatus === "available") return service.status === 1;
+    if (filterStatus === "unavailable") return service.status !== 1;
+    return true; // all
+  });
+
 
   useEffect(() => {
     const fetchServicesAndCategories = async () => {
       try {
         // Gọi API lấy tất cả dịch vụ theo provider
         const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-        console.log("📌 Token:", token);
+        // console.log("📌 Token:", token);
         const serviceRes = await instance.get("/api/service/all-by-provider", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -28,14 +47,14 @@ export const ServiceManagement = () => {
         const serviceWrappers = serviceRes.data.data || [];
         const servicesOnly = serviceWrappers.map((item) => item.service);
 
-        console.log("✅ Danh sách dịch vụ gốc:", services);
+        // console.log("✅ Danh sách dịch vụ gốc:", servicesOnly);
 
         // Gọi API từng category name theo categoryServiceId
         const servicesWithCategory = await Promise.all(
           servicesOnly.map(async (s) => {
             try {
               const res = await instance.get(`/api/category-service/get-by-id/${s.categoryServiceId}`);
-              console.log("📦 CategoryService Response:", res.data);
+              // console.log("📦 CategoryService Response:", res.data);
               return {
                 ...s,
                 categoryName: res.data.data?.[0]?.categoryService?.categoryName || "Unknown",
@@ -46,7 +65,7 @@ export const ServiceManagement = () => {
           })
         );
 
-        console.log("🔄 Dữ liệu sau khi merge với category name:", servicesWithCategory);
+        // console.log("🔄 Dữ liệu sau khi merge với category name:", servicesWithCategory);
 
         setServices(servicesWithCategory);
       } catch (err) {
@@ -58,6 +77,71 @@ export const ServiceManagement = () => {
 
     fetchServicesAndCategories();
   }, []);
+
+  const handleDeleteClick = (serviceId) => {
+    setSelectedServiceId(serviceId);
+    setDeleteShowPopup(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await instance.delete(`/api/service/delete/${selectedServiceId}`);
+      
+      // ❗ Cập nhật danh sách sau khi xóa
+      setServices(prev => prev.filter(service => service.serviceId !== selectedServiceId));
+
+      toast.success("Delete service successful");
+    } catch (error) {
+      console.error(error);
+      toast.error("Delete failed!");
+    } finally {
+      setDeleteShowPopup(false);
+      setSelectedServiceId(null);
+    }
+  };
+
+  const handleToggleStatusClick = (serviceId, currentStatus) => {
+    setToggleServiceId(serviceId);
+    setIsDisabling(currentStatus === 1); // Nếu đang là available thì sắp disable
+    setShowTogglePopup(true);
+  };
+
+
+  const handleConfirmToggleStatus = async () => {
+    try {
+      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+      const res = await instance.put(
+        `/api/service/change-status/${toggleServiceId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        setServices((prev) =>
+          prev.map((s) =>
+            s.serviceId === toggleServiceId
+              ? { ...s, status: s.status === 1 ? 0 : 1 }
+              : s
+          )
+        );
+        toast.success("Status updated successfully!");
+      } else {
+        toast.error("Failed to update service status!");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong");
+    } finally {
+      setShowTogglePopup(false);
+      setToggleServiceId(null);
+    }
+  };
+
 
   return (
     <div className="text-gray-800 bg-white">
@@ -71,13 +155,34 @@ export const ServiceManagement = () => {
           </button>
         </div>
         <div className="flex items-center mt-4 space-x-6 lg:gap-40">
-          <div className="flex gap-4 lg:gap-8">
+          {/* <div className="flex gap-4 lg:gap-8">
             <div className="font-semibold text-blue-600 border-b-2 border-blue-600 cursor-pointer">
               All
             </div>
             <div className="text-gray-400 cursor-pointer">Available</div>
             <div className="text-gray-400 cursor-pointer">Unavailable</div>
+          </div> */}
+          <div className="flex gap-4 lg:gap-8">
+            <div
+              className={`cursor-pointer ${filterStatus === "all" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+              onClick={() => setFilterStatus("all")}
+            >
+              All
+            </div>
+            <div
+              className={`cursor-pointer ${filterStatus === "available" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+              onClick={() => setFilterStatus("available")}
+            >
+              Available
+            </div>
+            <div
+              className={`cursor-pointer ${filterStatus === "unavailable" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+              onClick={() => setFilterStatus("unavailable")}
+            >
+              Unavailable
+            </div>
           </div>
+
           <button className="flex items-center gap-2 ml-auto text-red-600">
             <i className="fa-solid fa-trash"></i>
             Delete choose
@@ -106,10 +211,10 @@ export const ServiceManagement = () => {
             <tbody>
               {loading ? (
                 <tr><td colSpan={7} className="p-3 text-center">Loading services...</td></tr>
-              ) : services.length === 0 ? (
+              ) : filteredServices.length === 0 ? (
                 <tr><td colSpan={7} className="p-3 text-center">No services found for this expert.</td></tr>
               ) : (
-                services.map((service, index) => (
+                filteredServices.map((service, index) => (
                   <tr key={index} className="border-t">
                     <td className="p-3"></td>
                     <td className="p-3">
@@ -126,11 +231,40 @@ export const ServiceManagement = () => {
                     </td>
                     <td className="hidden p-3 md:table-cell">{service.categoryName}</td>
                     <td className="p-3 space-x-3">
-                      <button className="text-sm text-red-500"><i className="fa-solid fa-trash"></i> Delete</button>
-                      <button className="text-sm text-blue-600"><i className="fa-solid fa-pen"></i> Edit</button>
+                      <button className="text-sm text-red-500" onClick={() => handleDeleteClick(service.serviceId)}><i className="fa-solid fa-trash"></i> Delete</button>
+                      <button className="text-sm text-blue-600" onClick={() => navigate(`/EditService/${service.serviceId}`)}><i className="fa-solid fa-pen"></i> Edit</button>
+                      {service.status === 1 ? (
+                        <button
+                          className="text-sm text-yellow-600"
+                          onClick={() => handleToggleStatusClick(service.serviceId, service.status)}
+                        >
+                          <i className="fa-solid fa-ban"></i> Disable
+                        </button>
+                      ) : (
+                        <button
+                          className="text-sm text-green-700"
+                          onClick={() => handleToggleStatusClick(service.serviceId, service.status)}
+                        >
+                          <i className="fa-solid fa-rotate-right"></i> Enable
+                        </button>
+                      )}
+
                     </td>
                   </tr>
                 ))
+              )}
+              {showDeletePopup && (
+                <PopupDeleteService
+                  onClose={() => setDeleteShowPopup(false)}
+                  onConfirm={handleConfirmDelete}
+                />
+              )}
+              {showTogglePopup && (
+                <PopupToggleService
+                  isDisabling={isDisabling}
+                  onClose={() => setShowTogglePopup(false)}
+                  onConfirm={handleConfirmToggleStatus}
+                />
               )}
             </tbody>
           </table>

@@ -13,14 +13,17 @@ import { toast, Bounce } from "react-toastify";
 import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
 
 const HomePage = () => {
+  //DÙNG CHO INFINITE SCROLL
   const [posts, setPosts] = useState([]);
   const [lastPostId, setLastPostId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const postContainerRef = useRef(null);
   const PAGE_SIZE = 5;
+
 
   const [suggestedFriends, setSuggestedFriends] = useState([]);
 
@@ -32,7 +35,7 @@ const HomePage = () => {
     try {
       const response = await instance.get("/api/post/infinite", {
         params: {
-          lastPostId,
+          lastPostId: lastPostId,
           pageSize: PAGE_SIZE,
         },
       });
@@ -48,6 +51,7 @@ const HomePage = () => {
 
         if (newPosts.length > 0) {
           setLastPostId(newPosts[newPosts.length - 1].post.postId);
+          
         } else {
           setLastPostId(null);
         }
@@ -61,21 +65,22 @@ const HomePage = () => {
       }
     } catch (error) {
       setError("Failed to load posts!");
-      toast.error("Tải bài đăng thất bại!", {
-        error: "top-right",
-        position: 3000,
-        autoClose: Bounce,
-        transition: "3000",
-      });
     } finally {
       setLoading(false);
       setLoadingMore(false);
     }
   };
 
+  //GỌI LẦN ĐẦU
+  useEffect(() => {
+    setSkip(0);
+    setLastPostId(null);
+    fetchPosts({ lastPostId: null, reset: true });
+  }, []);
+
   const { skip, setSkip } = useInfiniteScroll({
     fetchData: () => fetchPosts({ lastPostId }),
-    containerRef: postContainerRef,
+    containerRef: window, //thay đổi thành window do scroll nguyên trang
     direction: "down",
     threshold: 50,
     hasMore,
@@ -85,12 +90,6 @@ const HomePage = () => {
     data: PAGE_SIZE,
     take: posts.length,
   });
-
-  useEffect(() => {
-    setSkip(0);
-    setLastPostId(null);
-    fetchPosts({ lastPostId: null, reset: true });
-  }, []);
 
   const handleCommentCountChange = (postId, newCount) => {
     setPosts((prevPosts) =>
@@ -144,7 +143,7 @@ const HomePage = () => {
           {/* Posts Section */}
           <section
             ref={postContainerRef}
-            className="flex flex-col gap-5 lg:order-2 order-3 h-[calc(100vh+140px)] w-full overflow-y-auto"
+            className="flex flex-col gap-5 lg:order-2 order-3 w-full"
           >
             <PostCreate />
             {loading && skip === 0 ? (
@@ -161,6 +160,7 @@ const HomePage = () => {
                   <PostCard
                     key={`${postMapper.post.postId}-${index}`}
                     post={{
+                      accId: postMapper.ownerPost.accId,
                       postId: postMapper.post.postId,
                       fullName: postMapper.ownerPost ? postMapper.ownerPost.fullName || postMapper.post.accId : "Unknown User",
                       avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar || "https://via.placeholder.com/40" : "https://via.placeholder.com/40",
@@ -168,7 +168,10 @@ const HomePage = () => {
                       content: postMapper.post.postContent,
                       images: postMapper.postImages ? postMapper.postImages.map((img) => img.imageUrl) : [],
                       hashtags: postMapper.hashTags ? postMapper.hashTags.map((tag) => tag.hashTagContent) : [],
-                      tagFriends: postMapper.postTags ? postMapper.postTags.map((tag) => tag.username) : [],
+                      tagFriends: postMapper.postTags ? postMapper.postTags.map((tag) => ({
+                        accId: tag.accId,
+                        fullname: tag.fullname || "Unknown"
+                      })) : [],
                       categories: postMapper.postCategories ? postMapper.postCategories.map((cat) => cat.categoryName) : [],
                       likes: postMapper.reactionCount || 0,
                       comments: postMapper.commentCount || 0,

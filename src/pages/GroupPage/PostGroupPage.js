@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import GroupSidebar from "../../components/Group/GroupSidebar";
@@ -6,7 +7,16 @@ import PostInGroupRight from "../../components/Group/PostInGroupRight";
 import YourgroupRight from "../../components/Group/YourgroupRight";
 import CreateGroupForm from "../../components/Group/CreateGroupForm";
 const PostGroupPage = () => {
-  const [section, setSection] = useState("post-in-group");
+  const location = useLocation();
+
+  const [section, setSection] = useState("post-in-group"); // Đặt mặc định ban đầu
+
+  useEffect(() => {
+    if (location.state?.section) {
+      setSection(location.state.section);
+    }
+  }, [location.state]);
+
   const [roleId, setRoleId] = useState(null);
 
   return (

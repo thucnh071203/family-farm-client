@@ -17,14 +17,23 @@ const useInfiniteScroll = ({
     const previousScrollHeightRef = useRef(null);
 
     useEffect(() => {
-        const container = containerRef.current;
+        const container = containerRef?.current || window;
         if (!container) return;
 
         const handleScroll = () => {
             if (!hasMore || loading || loadingMore) return;
 
-            const { scrollTop, scrollHeight, clientHeight } = container;
+            let scrollTop, scrollHeight, clientHeight;
 
+            if (container === window) {
+                scrollTop = window.scrollY;
+                scrollHeight = document.documentElement.scrollHeight;
+                clientHeight = window.innerHeight;
+            } else {
+                scrollTop = container.scrollTop;
+                scrollHeight = container.scrollHeight;
+                clientHeight = container.clientHeight;
+            }
             // Cuộn lên (cho chat)
             if (direction === "up" && scrollTop < threshold) {
                 setSkip((prevSkip) => prevSkip + take);

@@ -1,13 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import OptionsPost from "./OptionsPost";
 import CategoryReactionList from "../Reaction/CategoryReactionList";
 import ReactionList from "../Reaction/ReactionList";
 import CommentSection from "../Comment/CommentSection";
 import formatTime from "../../utils/formatTime";
 import useReactions from "../../hooks/useReactions";
+import nam_like_icon from "../../assets/icons/nam_like.svg";
+import nam_comment_icon from "../../assets/icons/nam_comment.svg";
+import nam_share_icon from "../../assets/icons/nam_share.svg";
+import { useNavigate } from "react-router-dom";
 
 const PostCard = ({ post, onCommentCountChange }) => {
+  const navigate = useNavigate();
+
   const defaultPost = {
+    accId: "",
     fullName: "Phuong Nam",
     avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
     createAt: "July 29 2024, 07:49 AM",
@@ -19,6 +26,8 @@ const PostCard = ({ post, onCommentCountChange }) => {
     comments: 0,
     shares: 0,
   };
+
+  // console.log(post)
 
   const postData = { ...defaultPost, ...post };
   const hashTags = postData.hashtags || ["blog", "nienmoulming", "polytecode"];
@@ -40,7 +49,7 @@ const PostCard = ({ post, onCommentCountChange }) => {
   } = useReactions({ entityType: "Post", entityId: postData.postId });
 
   const renderTagFriends = () => {
-    const fullNameElement = <span className="text-[#088DD0]">{postData.fullName}</span>;
+    const fullNameElement = <span style={{cursor: "pointer"}} onClick={() => handleClickToProfile(postData.accId)} className="text-[#088DD0]">{postData.fullName}</span>;
 
     if (!tagFriends.length) return fullNameElement;
 
@@ -49,7 +58,7 @@ const PostCard = ({ post, onCommentCountChange }) => {
         <>
           {fullNameElement}
           <span className="text-black">
-            <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]}
+            <span className="text-gray-400 font-normal"> with </span> <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{cursor: "pointer"}}>{tagFriends[0].fullname}</span>
           </span>
         </>
       );
@@ -60,7 +69,7 @@ const PostCard = ({ post, onCommentCountChange }) => {
         <>
           {fullNameElement}
           <span className="text-black">
-            <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends[1]}
+            <span className="text-gray-400 font-normal"> with </span> <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{cursor: "pointer"}}>{tagFriends[0].fullname}</span> and <span onClick={() => handleClickToProfile(tagFriends[1].accId)} style={{cursor: "pointer"}}>{tagFriends[1].fullname}</span>
           </span>
         </>
       );
@@ -70,11 +79,15 @@ const PostCard = ({ post, onCommentCountChange }) => {
       <>
         {fullNameElement}
         <span className="text-black">
-          <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends.length - 1} more
+          <span className="text-gray-400 font-normal"> with </span> <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{cursor: "pointer"}}>{tagFriends[0].fullname}</span> and {tagFriends.length - 1} more
         </span>
       </>
     );
   };
+
+  const handleClickToProfile = (accId) => {
+    navigate(`/PersonalPage/${accId}`) 
+  }
 
   const handleToggleComments = () => {
     setShowComments(!showComments);
@@ -91,7 +104,8 @@ const PostCard = ({ post, onCommentCountChange }) => {
     <div className="p-4 text-left bg-white border border-gray-200 border-solid rounded-lg shadow-md">
       <div className="flex justify-between">
         <div className="flex items-center gap-3 mb-3">
-          <img src={postData.avatar} alt="Avatar" className="w-10 h-10 rounded-full" />
+          <img src={postData.avatar} alt="Avatar" className="w-10 h-10 rounded-full" style={{ cursor: "pointer" }}
+            onClick={() => handleClickToProfile(postData.accId)} />
           <div>
             <h3 className="font-bold">{renderTagFriends()}</h3>
             <p className="text-sm text-gray-500">{formatTime(postData.createAt)}</p>
@@ -174,14 +188,15 @@ const PostCard = ({ post, onCommentCountChange }) => {
             onClick={() => setShowReactionList(true)}
             className="cursor-pointer hover:underline"
             title="View list of reactions"
+            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}
           >
-            <i className="text-blue-500 fa-solid fa-thumbs-up"></i> {likeCount}
+            <img src={nam_like_icon} alt="like" className="h-5" />  {likeCount}
           </button>
-          <p>
-            <i className="text-blue-500 fas fa-comment"></i> {commentCount > 0 ? commentCount : ""}
+          <p style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+            <img src={nam_comment_icon} alt="comment" className="h-5" /> {commentCount > 0 ? commentCount : ""}
           </p>
-          <p>
-            <i className="text-blue-500 fa-solid fa-share"></i> {postData.shares}
+          <p style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+            <img src={nam_share_icon} alt="share" className="h-5" /> {postData.shares}
           </p>
         </div>
         <div className="flex justify-between w-full gap-1 lg:w-3/4 items-center">
