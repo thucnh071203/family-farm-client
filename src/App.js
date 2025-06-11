@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
 import { SignalRProvider } from "./context/SignalRContext";
 import useAuth from "./hooks/useAuth";
@@ -33,6 +39,7 @@ import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
 import FilterService from "./components/FilterService/FilterService";
 import ChatPage from "./pages/Chat/ChatPage";
+import GroupDetailPage from "./pages/GroupPage/GroupDetailPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -41,10 +48,12 @@ const AppContent = () => {
 
   // đang kiểm tra token
   if (isLoading) {
-    return <>
-      <LoginPage />
-      Loading...
-    </>;
+    return (
+      <>
+        <LoginPage />
+        Loading...
+      </>
+    );
   }
 
   const isPublicRoute = ["/Login", "/Register"].includes(location.pathname);
@@ -71,6 +80,7 @@ const AppContent = () => {
           <Route path="/ProcessResult" element={<ProcessResultPage />} />
           <Route path="/WaitingOrderList" element={<WaitingListPage />} />
           <Route path="/GroupPage" element={<GroupPage />} />
+          <Route path="/group/:id" element={<GroupDetailPage />} />
           <Route
             path="/JoinRequestsListPage"
             element={<JoinRequestsListPage />}
@@ -82,7 +92,10 @@ const AppContent = () => {
           <Route path="/SavedPostPage" element={<SavedPostPage />} />
           <Route path="/CreateService" element={<CreateServicePage />} />
           <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
-          <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
+          <Route
+            path="/ProgressListFarmer"
+            element={<ProcessListFarmerPage />}
+          />
           <Route path="/CreateStepPage" element={<CreateStepPage />} />
           <Route path="/Chats" element={<ChatPage />} />
           <Route path="/FilterService" element={<FilterService />} />
@@ -114,7 +127,6 @@ function App() {
         <SignalRProvider>
           <AppContent />
         </SignalRProvider>
-
       </Router>
     </div>
   );

@@ -1,6 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const YourGroupCard = ({ group }) => {
+  const navigate = useNavigate();
+
+  const handleViewGroup = () => {
+    navigate(`/group/${group.groupId}`);
+  };
   return (
     <div className="group w-60 md:w-[267px] h-72 md:h-[24rem] shadow-md relative rounded-md overflow-hidden">
       <img
@@ -28,7 +34,10 @@ const YourGroupCard = ({ group }) => {
             <button className="hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-[#E74C3C] rounded-lg">
               <i class="fa-solid fa-arrow-right-from-bracket px-2"></i>Leave
             </button>
-            <button className="hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-[#5596E6] rounded-lg">
+            <button
+              onClick={handleViewGroup}
+              className="hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-[#5596E6] rounded-lg"
+            >
               <i class="fa-solid fa-eye px-2"></i>View Group
             </button>
           </div>
