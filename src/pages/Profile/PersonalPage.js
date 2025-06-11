@@ -10,6 +10,8 @@ import PostFilters from "../../components/Post/PostFilters";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import FriendActionButton from "../../components/Friend/FriendActionButton";
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
 
 
 const PersonalPage = () => {
@@ -17,38 +19,68 @@ const PersonalPage = () => {
     const [avatar, setAvatar] = useState("");
     const [fullName, setFullName] = useState("Unknown");
     const [background, setBackground] = useState("");
-    const [basicInfo, setBasicInfo] = useState(null);
+    const [basicInfo, setBasicInfo] = useState({});
+
+    //Biến lấy accId từ param khi xem profile người khác
+    const { accId } = useParams();
 
     const defaultBackground = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
-    //lay thong tin người dùng
 
-    //1. Kiểm tra xem trang đó của mình hay của người khác
-    //1.1 xử lý cho personal page của mình
+
+
     useEffect(() => {
+        //lay thong tin người dùng đang đăng nhập
         const storeData = localStorage.getItem("profileData") || sessionStorage.getItem("profileData");
+        const myProfile = storeData ? JSON.parse(storeData) : null;
+        const fetchProfile = async () => {
+            if (!accId || accId === myProfile.accId) {
+                // Trang cá nhân của mình
+                setIsOwner(true);
 
-        if (storeData != null) {
-            try {
-                const profileData = JSON.parse(storeData);
-                setFullName(profileData.fullName);
-                setAvatar(profileData.avatar);
-                setBackground(profileData.background || defaultBackground)
+                if (myProfile) {
+                    setFullName(myProfile.fullName);
+                    setAvatar(myProfile.avatar);
+                    setBackground(myProfile.background || defaultBackground);
 
-                console.log(profileData)
-                let basicInfoMapping = {
-                    gender: profileData.gender,
-                    location: profileData.address,
-                    study: profileData.studyAt,
-                    work: profileData.workAt
-                };
-                setBasicInfo(basicInfoMapping)
-            } catch (e) {
-                console.error("Lỗi parse profileData từ storage:", e);
+                    let basicInfoMapping = {
+                        gender: myProfile.gender,
+                        location: myProfile.address,
+                        study: myProfile.studyAt,
+                        work: myProfile.workAt
+                    };
+                    setBasicInfo(basicInfoMapping);
+                }
+
+            } else {
+                // Trang cá nhân của người khác
+                setIsOwner(false);
+                try {
+                    const response = await instance.get(`/api/account/profile-another/${accId}`);
+
+                    if (response.status === 200) {
+                        console.log(response.data.data);
+                        // Cập nhật state giống như của mình luôn
+                        setFullName(response.data.data.fullName || "Unknown");
+                        setAvatar(response.data.data.avatar);
+                        setBackground(response.data.data.background || defaultBackground);
+
+                        let basicInfoMapping = {
+                            gender: (response.data.data.gender || "Updating"),
+                            location: (response.data.data.address || "Updating"),
+                            study: (response.data.data.studyAt || "Updating"),
+                            work: (response.data.data.workAt || "Updating")
+                        };
+                        setBasicInfo(basicInfoMapping);
+                    }
+                } catch (error) {
+                    console.error("Lỗi lấy profile người khác:", error);
+                }
             }
-        }
-    }, []);
+        };
 
-    //1.2 xử lý khi là trang của người khác
+        fetchProfile(); // gọi function async
+    }, [accId]);
+
     const posts = [
         {
             content: "Post with 2 images",

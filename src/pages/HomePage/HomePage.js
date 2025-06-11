@@ -160,6 +160,7 @@ const HomePage = () => {
                   <PostCard
                     key={`${postMapper.post.postId}-${index}`}
                     post={{
+                      accId: postMapper.ownerPost.accId,
                       postId: postMapper.post.postId,
                       fullName: postMapper.ownerPost ? postMapper.ownerPost.fullName || postMapper.post.accId : "Unknown User",
                       avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar || "https://via.placeholder.com/40" : "https://via.placeholder.com/40",
