@@ -1,21 +1,27 @@
 import React, { useState } from "react";
 import adminImg from "../../assets/images/ri_admin-fill.svg";
 import memberImg from "../../assets/images/subway_admin.svg";
-const MemberPermission = () => {
+const MemberPermission = ({ member, userRole }) => {
   const [isOpen, setIsOpen] = useState(null);
   const id = 1;
   return (
     <div className="bg-gray-50 p-3 rounded flex justify-between items-center mb-3">
       <div className="flex items-center gap-3">
         <img
-          src="https://th.bing.com/th/id/OIP.EKontM__37mRqxwRkIqX8wHaEK?rs=1&pid=ImgDetMain"
+          src={
+            member.avatar ||
+            "https://th.bing.com/th/id/OIP.EKontM__37mRqxwRkIqX8wHaEK?rs=1&pid=ImgDetMain"
+          }
           className="w-10 h-10 rounded-full"
           alt="Member"
         />
         <div>
-          <p className="font-bold text-left">Minh Uyen</p>
-          <p className="text-xs text-gray-500">Joined: May 20, 2025</p>
-          <p className="text-xs text-left  text-gray-500">Kien Giang</p>
+          <p className="font-bold text-left">{member.fullName}</p>
+          <p className="text-xs text-gray-500">
+            Joined:{new Date(member.jointAt).toLocaleDateString("vi-VN")}{" "}
+            &nbsp;&nbsp;{" "}
+          </p>
+          <p className="text-xs text-left  text-gray-500">{member.city}</p>
         </div>
       </div>
       <div className="relative inline-block text-left">
@@ -39,24 +45,31 @@ const MemberPermission = () => {
               />
             </svg>
           </button>
+          {userRole === "680ce8722b3eec497a30201e" && (
+            <div>
+              {isOpen === id && (
+                <div className="absolute right-3 w-30 rounded-md shadow-lg bg-blue z-50">
+                  <div className="py-2 space-y-2">
+                    <div className="flex items-center gap-1 px-1 py-1 rounded bg-green-200 text-green-700 hover:bg-green-100">
+                      <img src={adminImg} alt="adminImg" className="w-5 h-5" />
+                      <button className="text-sm text-center flex-1 rounded py-1">
+                        Administrator
+                      </button>
+                    </div>
 
-          {isOpen === id && (
-            <div className="absolute right-3 w-30 rounded-md shadow-lg bg-blue z-50">
-              <div className="py-2 space-y-2">
-                <div className="flex items-center gap-1 px-1 py-1 rounded bg-green-200 text-green-700 hover:bg-green-100">
-                  <img src={adminImg} alt="adminImg" className="w-5 h-5" />
-                  <button className="text-sm text-center flex-1 rounded py-1">
-                    Administrator
-                  </button>
+                    <div className="flex items-center gap-1 px-1 py-1 rounded bg-blue-200 text-blue-700 hover:bg-blue-100">
+                      <img
+                        src={memberImg}
+                        alt="memberImg"
+                        className="w-5 h-5"
+                      />
+                      <button className="text-sm text-center flex-1 rounded py-1">
+                        Member
+                      </button>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-1 px-1 py-1 rounded bg-blue-200 text-blue-700 hover:bg-blue-100">
-                  <img src={memberImg} alt="memberImg" className="w-5 h-5" />
-                  <button className="text-sm text-center flex-1 rounded py-1">
-                    Member
-                  </button>
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>
