@@ -43,6 +43,7 @@ import ChatPage from "./pages/Chat/ChatPage";
 import GroupDetailPage from "./pages/GroupPage/GroupDetailPage";
 import ScrollToTop from "./components/ScrollToTop";
 import UpdatePostPage from "./pages/Profile/UpdatePostPage";
+import RecycleBin from "./pages/Profile/RecycleBin";
 
 
 const AppContent = () => {
@@ -107,6 +108,7 @@ const AppContent = () => {
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
             <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
+            <Route path="/Trash" element={<RecycleBin />}/>
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
