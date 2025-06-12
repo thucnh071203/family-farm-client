@@ -12,6 +12,8 @@ import { useNavigate } from "react-router-dom";
 
 const PostCard = ({ post, onCommentCountChange }) => {
   const navigate = useNavigate();
+  const accIdStorage = localStorage.getItem("accId") || sessionStorage.getItem("accId");
+  const isOwner = (post.accId !== accIdStorage) ? false : true;
 
   const defaultPost = {
     accId: "",
@@ -112,7 +114,7 @@ const PostCard = ({ post, onCommentCountChange }) => {
           </div>
         </div>
         <div>
-          <OptionsPost />
+          <OptionsPost postIdParam={postData.postId} isOwnerParam={isOwner} />
         </div>
       </div>
       <div className="flex flex-col items-start mt-3 text-sm">

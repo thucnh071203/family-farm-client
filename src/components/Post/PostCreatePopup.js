@@ -215,6 +215,7 @@ const PostCreatePopup = ({ onClose }) => {
                             ))}
                         </div>
                     )}
+
                     {categories.length > 0 && (
                         <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-500">
                             Categories:
@@ -232,6 +233,7 @@ const PostCreatePopup = ({ onClose }) => {
                             ))}
                         </div>
                     )}
+
                     {taggedFriends.length > 0 && (
                         <div className="flex flex-wrap items-center gap-2 mb-2 text-sm text-gray-500">
                             Tags:
@@ -248,6 +250,7 @@ const PostCreatePopup = ({ onClose }) => {
                             ))}
                         </div>
                     )}
+                    
                     <div className="relative mb-4 text-sm">
                         <i className="absolute text-gray-400 transform -translate-y-1/2 fa-solid fa-magnifying-glass left-3 top-1/2"></i>
                         <input ref={withWhomInputRef}
@@ -333,7 +336,7 @@ const PostCreatePopup = ({ onClose }) => {
 
                         </div>
                     </div>
-                    <p>image length: {imagesFile.length}</p>
+                    
                     <div className="grid grid-cols-3 gap-3 mb-2 lg:grid-cols-6">
                         {images.slice(0, 6).map((image, index) => (
                             <div key={index} className="relative">
