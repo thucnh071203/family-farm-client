@@ -101,7 +101,7 @@ const YourgroupRight = ({ section }) => {
         <p>Loading...</p>
       ) : (
         groupsData.map((group) => {
-          return <YourGroupCard key={group.grouId} group={group} />;
+          return <YourGroupCard key={group.groupId} group={group} />;
         })
       )}
     </div>

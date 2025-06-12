@@ -1,4 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
 import { SignalRProvider } from "./context/SignalRContext";
 import useAuth from "./hooks/useAuth";
@@ -34,8 +40,10 @@ import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
 import FilterService from "./components/FilterService/FilterService";
 import ChatPage from "./pages/Chat/ChatPage";
+import GroupDetailPage from "./pages/GroupPage/GroupDetailPage";
 import ScrollToTop from "./components/ScrollToTop";
 import UpdatePostPage from "./pages/Profile/UpdatePostPage";
+
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -44,10 +52,12 @@ const AppContent = () => {
 
   // đang kiểm tra token
   if (isLoading) {
-    return <>
-      <LoginPage />
-      Loading...
-    </>;
+    return (
+      <>
+        <LoginPage />
+        Loading...
+      </>
+    );
   }
 
   const isPublicRoute = ["/Login", "/Register"].includes(location.pathname);
@@ -73,6 +83,7 @@ const AppContent = () => {
             <Route path="/MapChart" element={<MapChart />} />
             <Route path="/Service" element={<ServicePage />} />
             <Route path="/Group" element={<PostGroupPage />} />
+            <Route path="/group/:id" element={<GroupDetailPage />} />
             <Route path="/UpdateProfile" element={<UpdateProfile />} />
             <Route path="/UserFriends" element={<UserFriends />} />
             <Route path="/ProcessList" element={<ProcessListPage />} />
@@ -103,6 +114,7 @@ const AppContent = () => {
       </Routes>
     </>
 
+
   );
 };
 
@@ -126,7 +138,6 @@ function App() {
         <SignalRProvider>
           <AppContent />
         </SignalRProvider>
-
       </Router>
     </div>
   );
