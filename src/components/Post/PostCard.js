@@ -10,7 +10,7 @@ import nam_comment_icon from "../../assets/icons/nam_comment.svg";
 import nam_share_icon from "../../assets/icons/nam_share.svg";
 import { useNavigate } from "react-router-dom";
 
-const PostCard = ({ onDeletePost, post, onCommentCountChange }) => {
+const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCommentCountChange }) => {
   const navigate = useNavigate();
   const accIdStorage = localStorage.getItem("accId") || sessionStorage.getItem("accId");
   const isOwner = (post.accId !== accIdStorage) ? false : true;
@@ -51,7 +51,7 @@ const PostCard = ({ onDeletePost, post, onCommentCountChange }) => {
   } = useReactions({ entityType: "Post", entityId: postData.postId });
 
   const renderTagFriends = () => {
-    const fullNameElement = <span style={{cursor: "pointer"}} onClick={() => handleClickToProfile(postData.accId)} className="text-[#088DD0]">{postData.fullName}</span>;
+    const fullNameElement = <span style={{ cursor: "pointer" }} onClick={() => handleClickToProfile(postData.accId)} className="text-[#088DD0]">{postData.fullName}</span>;
 
     if (!tagFriends.length) return fullNameElement;
 
@@ -60,7 +60,7 @@ const PostCard = ({ onDeletePost, post, onCommentCountChange }) => {
         <>
           {fullNameElement}
           <span className="text-black">
-            <span className="text-gray-400 font-normal"> with </span> <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{cursor: "pointer"}}>{tagFriends[0].fullname}</span>
+            <span className="text-gray-400 font-normal"> with </span> <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{ cursor: "pointer" }}>{tagFriends[0].fullname}</span>
           </span>
         </>
       );
@@ -71,7 +71,7 @@ const PostCard = ({ onDeletePost, post, onCommentCountChange }) => {
         <>
           {fullNameElement}
           <span className="text-black">
-            <span className="text-gray-400 font-normal"> with </span> <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{cursor: "pointer"}}>{tagFriends[0].fullname}</span> and <span onClick={() => handleClickToProfile(tagFriends[1].accId)} style={{cursor: "pointer"}}>{tagFriends[1].fullname}</span>
+            <span className="text-gray-400 font-normal"> with </span> <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{ cursor: "pointer" }}>{tagFriends[0].fullname}</span> and <span onClick={() => handleClickToProfile(tagFriends[1].accId)} style={{ cursor: "pointer" }}>{tagFriends[1].fullname}</span>
           </span>
         </>
       );
@@ -81,14 +81,14 @@ const PostCard = ({ onDeletePost, post, onCommentCountChange }) => {
       <>
         {fullNameElement}
         <span className="text-black">
-          <span className="text-gray-400 font-normal"> with </span> <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{cursor: "pointer"}}>{tagFriends[0].fullname}</span> and {tagFriends.length - 1} more
+          <span className="text-gray-400 font-normal"> with </span> <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{ cursor: "pointer" }}>{tagFriends[0].fullname}</span> and {tagFriends.length - 1} more
         </span>
       </>
     );
   };
 
   const handleClickToProfile = (accId) => {
-    navigate(`/PersonalPage/${accId}`) 
+    navigate(`/PersonalPage/${accId}`)
   }
 
   const handleToggleComments = () => {
@@ -114,7 +114,13 @@ const PostCard = ({ onDeletePost, post, onCommentCountChange }) => {
           </div>
         </div>
         <div>
-          <OptionsPost onDeletePost={onDeletePost} postIdParam={postData.postId} isOwnerParam={isOwner} />
+          <OptionsPost
+            onRestore={onRestore}
+            onHardDelete={onHardDelete}
+            isDeleted={isDeleted}
+            onDeletePost={onDeletePost}
+            postIdParam={postData.postId}
+            isOwnerParam={isOwner} />
         </div>
       </div>
       <div className="flex flex-col items-start mt-3 text-sm">

@@ -44,6 +44,7 @@ import GroupDetailPage from "./pages/GroupPage/GroupDetailPage";
 import ScrollToTop from "./components/ScrollToTop";
 import UpdatePostPage from "./pages/Profile/UpdatePostPage";
 import EditGroupPage from "./pages/GroupPage/EditGroupPage";
+import RecycleBin from "./pages/Profile/RecycleBin";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -109,6 +110,7 @@ const AppContent = () => {
             <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
             <Route path="/EditGroup/:groupId" element={<EditGroupPage />} />
 
+            <Route path="/Trash" element={<RecycleBin />}/>
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
