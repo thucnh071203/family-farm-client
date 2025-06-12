@@ -6,6 +6,7 @@ const GroupDetailHeader = ({
   countMember,
   selectedTab,
   setSelectedTab,
+  reload
 }) => {
   if (!group) return <div>Loading...</div>;
   return (
