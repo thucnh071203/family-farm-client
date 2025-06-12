@@ -35,6 +35,7 @@ import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
 import FilterService from "./components/FilterService/FilterService";
 import ChatPage from "./pages/Chat/ChatPage";
 import ScrollToTop from "./components/ScrollToTop";
+import UpdatePostPage from "./pages/Profile/UpdatePostPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -94,6 +95,7 @@ const AppContent = () => {
             <Route path="/CreateStepPage" element={<CreateStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
+            <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
