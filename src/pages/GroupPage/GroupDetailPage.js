@@ -8,10 +8,13 @@ import MemberPermission from "../../components/Group/MemberPermission";
 import MemberCard from "../../components/Group/MemberCard";
 import PopularService from "../../components/Services/PopularService";
 import { useParams } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 const GroupDetailPage = () => {
   const { id } = useParams(); // lấy groupId từ URL
   const [groupDetail, setGroupDetail] = useState(null);
   const [listMemberOfgroup, setListmember] = useState([]);
+  const [userRole, setUserRole] = useState(null);
+  const [userAccId, setUserAccId] = useState(null);
 
   // get list request join group
   const [listRequestToJoin, setListRequestToJoin] = useState([]);
@@ -22,6 +25,19 @@ const GroupDetailPage = () => {
   //List your group đã join
   const [yourGroupsData, setGroupData] = useState([]);
 
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      const decoded = jwtDecode(token);
+      const accId = decoded.AccId;
+      setUserAccId(accId);
+    }
+  }, []);
+  useEffect(() => {
+    if (userAccId) {
+      fetchListMemberData();
+    }
+  }, [userAccId]); // gọi lại khi userAccId được cập nhật
   // get your group
   const fetchYourGroupsData = async () => {
     try {
@@ -89,7 +105,7 @@ const GroupDetailPage = () => {
 
       // Kiểm tra dữ liệu và cập nhật state
 
-      setGroupDetail(data);
+      setGroupDetail(data.data[0]);
     } catch (err) {
       console.error("Error fetching groups:", err.message || err);
     } finally {
@@ -134,15 +150,84 @@ const GroupDetailPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchGroupDetailData();
-    fetchListMemberData();
-  }, [id]); // Chạy lại khi id trong URL thay đổi
+  // get list resquest to join
+  const fetchListRequestToJoinData = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("No access token found.");
+        return;
+      }
 
+      const res = await fetch(
+        `https://localhost:7280/api/group-member/list-request-to-join/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      if (Array.isArray(data.data)) {
+        const list = Array.isArray(data.data) ? data.data : [];
+
+        // Luôn tạo mảng mới để React biết là thay đổi
+        setListRequestToJoin([...list]);
+      } else {
+        console.warn("Unexpected response format:", data);
+        setListRequestToJoin([]);
+      }
+    } catch (err) {
+      console.error("Error fetching groups:", err.message || err);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      const decoded = jwtDecode(token);
+      const accId = decoded.AccId;
+      setUserAccId(accId);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (listMemberOfgroup && listMemberOfgroup.length > 0 && userAccId) {
+      const person = listMemberOfgroup.find(
+        (member) => member.accId.trim() === userAccId.trim()
+      );
+      setUserRole(person?.roleInGroupId);
+      console.log(
+        "Role of current user:",
+        person?.fullName,
+        person?.roleInGroupId
+      );
+    }
+  }, [listMemberOfgroup, userAccId]);
+  // phụ thuộc cả 2
+
+  useEffect(() => {
+    fetchListMemberData();
+    fetchGroupDetailData();
+    fetchListRequestToJoinData();
+  }, [id]);
   useEffect(() => {
     fetchYourGroupsData();
-  }, []); // chỉ muốn lấy danh sách group một lần
+  }, []);
 
+  const ReloadData = () => {
+    fetchListRequestToJoinData();
+    fetchListMemberData();
+  };
   return (
     <div>
       <Header />
@@ -159,14 +244,50 @@ const GroupDetailPage = () => {
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
           />
-          {selectedTab === "posts" && <MemberCard />}
-          {selectedTab === "members" && <MemberCard />}
-          {selectedTab === "requests" && <div>
-            <RequestGroupCard />
-            <RequestGroupCard />
-            <RequestGroupCard />
-          </div>}
-          {selectedTab === "permission" && <MemberPermission />}
+          {/* {selectedTab === "posts" && <MemberCard />} */}
+          {selectedTab === "members" && (
+            <div>
+              {listMemberOfgroup.map((member) => {
+                return (
+                  <MemberCard
+                    key={member.accId}
+                    member={member}
+                    userRole={userRole}
+                    userAccId={userAccId}
+                    reload={ReloadData}
+                  />
+                );
+              })}
+            </div>
+          )}
+          {selectedTab === "requests" && (
+            <div>
+              {listRequestToJoin.map((request) => {
+                return (
+                  <RequestGroupCard
+                    key={request.groupMemberId + request.memberStatus}
+                    request={request}
+                    userRole={userRole}
+                    reload={ReloadData}
+                    setListRequestToJoin={setListRequestToJoin}
+                  />
+                );
+              })}
+            </div>
+          )}
+          {selectedTab === "permission" && (
+            <div>
+              {listMemberOfgroup.map((member) => {
+                return (
+                  <MemberPermission
+                    key={member.accId}
+                    member={member}
+                    userRole={userRole}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </div>

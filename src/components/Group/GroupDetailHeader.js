@@ -36,7 +36,9 @@ const GroupDetailHeader = ({
       <div>
         <div className="p-4 text-left">
           <div className="flex justify-between">
-            <h2 className="text-2xl font-bold mb-5">{group.groupName}</h2>
+            <h2 className="text-2xl font-bold mb-5">
+              {group.groupName || "groupName"}
+            </h2>
             <Link to="" className=" hover:text-[#3DB3FB]">
               Setting group
             </Link>
