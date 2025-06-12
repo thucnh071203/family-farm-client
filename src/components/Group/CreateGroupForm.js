@@ -28,7 +28,7 @@ export default function CreateGroupForm() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedMembers, setSelectedMembers] = useState([]);
 
-
+    // Get user information
     useEffect(() => {
         const storedUsername = localStorage.getItem("username") || sessionStorage.getItem("username");
         const storedFullName = localStorage.getItem("fullName") || sessionStorage.getItem("fullName");
