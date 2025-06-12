@@ -177,7 +177,7 @@ export default function CreateGroupForm() {
                     setListFriends(listFriendDb);
                 }
             } catch (error) {
-                toast.error("Cannot get list friend!")
+                console.log("Cannot get list friend!")
             }
         }
 
