@@ -10,7 +10,7 @@ import nam_comment_icon from "../../assets/icons/nam_comment.svg";
 import nam_share_icon from "../../assets/icons/nam_share.svg";
 import { useNavigate } from "react-router-dom";
 
-const PostCard = ({ post, onCommentCountChange }) => {
+const PostCard = ({ onDeletePost, post, onCommentCountChange }) => {
   const navigate = useNavigate();
   const accIdStorage = localStorage.getItem("accId") || sessionStorage.getItem("accId");
   const isOwner = (post.accId !== accIdStorage) ? false : true;
@@ -114,7 +114,7 @@ const PostCard = ({ post, onCommentCountChange }) => {
           </div>
         </div>
         <div>
-          <OptionsPost postIdParam={postData.postId} isOwnerParam={isOwner} />
+          <OptionsPost onDeletePost={onDeletePost} postIdParam={postData.postId} isOwnerParam={isOwner} />
         </div>
       </div>
       <div className="flex flex-col items-start mt-3 text-sm">

@@ -11,8 +11,12 @@ import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import instance from "../../Axios/axiosConfig";
 import { toast, Bounce } from "react-toastify";
 import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
+import defaultAvatar from '../../assets/images/default-avatar.png';
 
 const HomePage = () => {
+  const [accountId, setAccountId] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+
   //DÙNG CHO INFINITE SCROLL
   const [posts, setPosts] = useState([]);
   const [lastPostId, setLastPostId] = useState(null);
@@ -23,9 +27,18 @@ const HomePage = () => {
   const [hasMore, setHasMore] = useState(true);
   const postContainerRef = useRef(null);
   const PAGE_SIZE = 5;
-
-
   const [suggestedFriends, setSuggestedFriends] = useState([]);
+
+  //lấy thông tin người dùng từ storage
+  useEffect(() => {
+    const storedAccId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
+    const storedAvatarUrl = localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
+
+    if (storedAccId) {
+      setAccountId(storedAccId);
+      setAvatarUrl(storedAvatarUrl || defaultAvatar);
+    }
+  }, []);
 
   const fetchPosts = async ({ lastPostId, reset = false }) => {
     setLoading(true);
@@ -51,7 +64,7 @@ const HomePage = () => {
 
         if (newPosts.length > 0) {
           setLastPostId(newPosts[newPosts.length - 1].post.postId);
-          
+
         } else {
           setLastPostId(null);
         }
@@ -129,6 +142,14 @@ const HomePage = () => {
     fetchSuggestedFriends();
   }, []);
 
+  const handleDeletePost = (postId) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
+  };
+
+  const handlePostCreate = (newPostData) => {
+    setPosts((prevPosts) => [newPostData, ...prevPosts]);
+  }
+
   return (
     <div className="HomePage bg-gray-100">
       <Header />
@@ -145,7 +166,7 @@ const HomePage = () => {
             ref={postContainerRef}
             className="flex flex-col gap-5 lg:order-2 order-3 w-full"
           >
-            <PostCreate />
+            <PostCreate profileImage={avatarUrl} onPostCreate={handlePostCreate} />
             {loading && skip === 0 ? (
               <div className="flex flex-col gap-5">
                 {[...Array(3)].map((_, index) => (
@@ -158,6 +179,7 @@ const HomePage = () => {
               posts.map((postMapper, index) => (
                 postMapper && postMapper.post ? (
                   <PostCard
+                    onDeletePost={handleDeletePost}
                     key={`${postMapper.post.postId}-${index}`}
                     post={{
                       accId: postMapper.ownerPost.accId,

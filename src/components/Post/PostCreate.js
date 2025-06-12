@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import PostCreatePopup from "./PostCreatePopup";
 
-const PostCreate = ({ profileImage }) => {
+const PostCreate = ({ onPostCreate, profileImage }) => {
   const [showPopup, setShowPopup] = useState(false);
+
+  const handlePostCreated = (newPost) => {
+    onPostCreate(newPost);
+    setShowPopup(false);
+  };
 
   return (
     <div className="bg-white p-3 rounded-lg shadow-md border text-left"
@@ -27,7 +32,7 @@ const PostCreate = ({ profileImage }) => {
           className="flex-grow p-2 border border-gray-300 rounded-full"
         />
       </div>
-      {showPopup && <PostCreatePopup onClose={() => setShowPopup(false)} />}
+      {showPopup && <PostCreatePopup onCreatedPost={handlePostCreated}  onClose={() => setShowPopup(false)} />}
     </div>
   );
 };

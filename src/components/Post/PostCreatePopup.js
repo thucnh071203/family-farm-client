@@ -9,7 +9,7 @@ import defaultAvatar from '../../assets/images/default-avatar.png';
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 
-const PostCreatePopup = ({ onClose }) => {
+const PostCreatePopup = ({ onCreatedPost, onClose }) => {
 
     const [withWhom, setWithWhom] = useState("");
     const [images, setImages] = useState([]);
@@ -56,11 +56,11 @@ const PostCreatePopup = ({ onClose }) => {
                 }
             });
 
-            console.log(response.data.message)
+            console.log(response.data.data)
 
             if(response.status === 200){
-                onClose();
-                toast.success(response.data.message);
+                toast.success("Post successfully!");
+                onCreatedPost(response.data.data);
             }
         } catch (err) {
             console.error("Lỗi khi gửi bài viết:", err);
