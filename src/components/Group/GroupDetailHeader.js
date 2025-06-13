@@ -6,6 +6,7 @@ const GroupDetailHeader = ({
   countMember,
   selectedTab,
   setSelectedTab,
+  reload
 }) => {
   if (!group) return <div>Loading...</div>;
   return (
@@ -39,7 +40,7 @@ const GroupDetailHeader = ({
             <h2 className="text-2xl font-bold mb-5">
               {group.groupName || "groupName"}
             </h2>
-            <Link to="" className=" hover:text-[#3DB3FB]">
+            <Link to={`/EditGroup/${group.groupId}`} className=" hover:text-[#3DB3FB]">
               Setting group
             </Link>
           </div>
