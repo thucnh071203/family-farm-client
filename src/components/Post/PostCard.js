@@ -195,7 +195,7 @@ const PostCard = ({ onDeletePost, post, onCommentCountChange }) => {
             <img src={nam_like_icon} alt="like" className="h-5" />  {likeCount}
           </button>
           <p style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
-            <img src={nam_comment_icon} alt="comment" className="h-5" /> {commentCount > 0 ? commentCount : ""}
+            <img src={nam_comment_icon} alt="comment" className="h-5" /> {commentCount > 0 ? commentCount : 0}
           </p>
           <p style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
             <img src={nam_share_icon} alt="share" className="h-5" /> {postData.shares}
