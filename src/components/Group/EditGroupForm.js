@@ -42,24 +42,6 @@ export default function EditGroupForm() {
         }
     }, []);
 
-    // useEffect(() => {
-    //     const fetchGroup = async () => {
-    //         try {
-    //             const res = await instance.get(`/api/group/get-by-id/${groupId}`);
-    //             const group = res.data;
-
-    //             setGroupName(group.groupName || "");
-    //             setPrivacyType(group.privacyType || "Public");
-    //             setAvatarImage(group.groupAvatar || null);
-    //             setBgImage(group.groupBackground || null);
-    //         } catch (err) {
-    //             toast.error("Failed to load group info.");
-    //         }
-    //     };
-
-    //     fetchGroup();
-    // }, [groupId]);
-
     useEffect(() => {
         const fetchGroup = async () => {
             try {
@@ -109,16 +91,6 @@ export default function EditGroupForm() {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-
-    // const validateImages = (avatar, background) => {
-    //     if (!avatar || !background) {
-    //         setErrors((prev) => ({ ...prev, image: "Background or Avatar is required." }));
-    //         return false;
-    //     }
-
-    //     setErrors((prev) => ({ ...prev, image: null }));
-    //     return true;
-    // };
 
     const validateImages = (avatar, background) => {
         if (!avatarImage && !avatar) {
