@@ -1,25 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast, Bounce } from "react-toastify";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 const MemberCard = ({ member, userRole, userAccId, reload }) => {
-  const handleAccept = async () => {
+  const [farmers, setFarmers] = useState([]);
+  const [experts, setExperts] = useState([]);
+  const [accRole, setAccRole] = useState(null);
+  const [friendRequestSent, setFriendRequestSent] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      const decoded = jwtDecode(token);
+      const accId = decoded.RoleId;
+      setAccRole(accId);
+    }
+  }, []);
+
+  const fetchFriends = async () => {
     try {
-      const response = await fetch(`/api/friends/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ friendId: member.accountId }),
-      });
+      const token = localStorage.getItem("accessToken");
 
-      if (!response.ok) {
-        throw new Error("Failed to add friend");
+      const res = await fetch(
+        `https://localhost:7280/api/friend/list-account-no-relation`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const json = await res.json();
+      if (json.length > 0) {
+        // Gán farmers và experts từ API
+        setFarmers(json[0]?.data || []);
+        setExperts(json[1]?.data || []);
+      } else {
+        setFarmers([]);
+        setExperts([]);
       }
+    } catch (err) {
+      console.error("Error fetching friends:", err.message || err);
+    } finally {
+    }
+  };
 
-      alert("Friend added successfully!");
-      // Optionally refresh list or update UI
+  useEffect(() => {
+    fetchFriends(); // chỉ gọi khi component load hoặc section thay đổi
+  }, []);
+
+  const handleSendRequestFriend = async () => {
+    const token = localStorage.getItem("accessToken");
+    try {
+      // Gửi lời mời kết bạn hoặc follow
+      const response = await axios.post(
+        "https://localhost:7280/api/friend/send-friend-request",
+        { receiverId: member.accId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setFriendRequestSent(true); // cập nhật trạng thái đã click
+        toast.success("You sent the request successfully!");
+      } else {
+        toast.error("Failed to send request.");
+      }
     } catch (error) {
-      console.error(error);
-      alert("Error adding friend.");
+      console.error("Error during friend action:", error);
+      toast.error("An error occurred while processing the action.");
     }
   };
 
@@ -53,6 +106,10 @@ const MemberCard = ({ member, userRole, userAccId, reload }) => {
     }
   };
 
+  const allAccIdFarmer = new Set([...farmers.map((f) => f.accId)]);
+
+  const allAccIdExpert = new Set([...experts.map((e) => e.accId)]);
+
   return (
     <div className="bg-gray-50 p-3 rounded flex justify-between items-center mb-3">
       <div className="flex items-center gap-3">
@@ -66,7 +123,7 @@ const MemberCard = ({ member, userRole, userAccId, reload }) => {
         />
         <div>
           <p className="font-bold text-left">{member.fullName}</p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 text-left">
             Joined:{new Date(member.jointAt).toLocaleDateString("vi-VN")}{" "}
             &nbsp;&nbsp;{" "}
           </p>
@@ -75,10 +132,40 @@ const MemberCard = ({ member, userRole, userAccId, reload }) => {
       </div>
       {member.accId !== userAccId && (
         <div className="flex items-center gap-2">
-          <button className="bg-blue-100 text-blue-500 px-4 py-2 text-sm rounded hover:bg-blue-300">
-            Add Friend
-          </button>
+          {/* kiểm tra nếu người dùng là expert thì có trường hợp add friend */}
+          {accRole === "68007b2a87b41211f0af1d57" &&
+            allAccIdExpert.has(member.accId) &&
+            !friendRequestSent && (
+              <button
+                onClick={() => handleSendRequestFriend()}
+                className="bg-blue-100 text-blue-500 px-4 py-2 text-sm rounded hover:bg-blue-300"
+              >
+                Add Friend
+              </button>
+            )}
+          {/* kiểm tra nếu người dùng là farmer thì có trường hợp add friend và follow*/}
+          {accRole === "68007b0387b41211f0af1d56" &&
+            allAccIdExpert.has(member.accId) &&
+            !friendRequestSent && (
+              <button
+                onClick={() => handleSendRequestFriend()}
+                className="bg-blue-100 text-blue-500 px-4 py-2 text-sm rounded hover:bg-blue-300"
+              >
+                Follow
+              </button>
+            )}
+          {accRole === "68007b0387b41211f0af1d56" &&
+            allAccIdFarmer.has(member.accId) &&
+            !friendRequestSent && (
+              <button
+                onClick={() => handleSendRequestFriend()}
+                className="bg-blue-100 text-blue-500 px-4 py-2 text-sm rounded hover:bg-blue-300"
+              >
+                Add Friend
+              </button>
+            )}
 
+          {/* kiểm tra role in group */}
           {userRole && (
             <>
               {userRole === "680ce8722b3eec497a30201e" && (

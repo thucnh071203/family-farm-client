@@ -243,6 +243,7 @@ const GroupDetailPage = () => {
             countMember={listMemberOfgroup.length}
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
+            reload={ReloadData}
           />
           {/* {selectedTab === "posts" && <MemberCard />} */}
           {selectedTab === "members" && (
@@ -280,9 +281,11 @@ const GroupDetailPage = () => {
               {listMemberOfgroup.map((member) => {
                 return (
                   <MemberPermission
-                    key={member.accId}
+                    key={member.groupMemberId}
                     member={member}
                     userRole={userRole}
+                    userAccId={userAccId}
+                    reload={ReloadData}
                   />
                 );
               })}
