@@ -147,7 +147,10 @@ const HomePage = () => {
   };
 
   const handlePostCreate = (newPostData) => {
-    setPosts((prevPosts) => [newPostData, ...prevPosts]);
+    if(newPostData.postScope === "Public") {
+      setPosts((prevPosts) => [newPostData, ...prevPosts]);
+    }
+    
   }
 
   return (
