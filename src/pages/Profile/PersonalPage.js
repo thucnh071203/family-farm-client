@@ -12,29 +12,31 @@ import FriendActionButton from "../../components/Friend/FriendActionButton";
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
+import { toast } from "react-toastify";
 
 
 const PersonalPage = () => {
-    const [isOwner, setIsOwner] = useState(true);
     const [avatar, setAvatar] = useState("");
     const [fullName, setFullName] = useState("Unknown");
     const [background, setBackground] = useState("");
     const [basicInfo, setBasicInfo] = useState({});
+    const [accessToken, setAccessToken] = useState("");
 
     //Biến lấy accId từ param khi xem profile người khác
     const { accId } = useParams();
 
     const defaultBackground = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
+    //lay thong tin người dùng đang đăng nhập
+    const storeData = localStorage.getItem("profileData") || sessionStorage.getItem("profileData");
+    const myProfile = storeData ? JSON.parse(storeData) : null;
+
+    // Tính isOwner ngay tại render
+    const isOwner = !accId || accId === myProfile?.accId;
 
     useEffect(() => {
-        //lay thong tin người dùng đang đăng nhập
-        const storeData = localStorage.getItem("profileData") || sessionStorage.getItem("profileData");
-        const myProfile = storeData ? JSON.parse(storeData) : null;
         const fetchProfile = async () => {
-            if (!accId || accId === myProfile.accId) {
+            if (isOwner) {
                 // Trang cá nhân của mình
-                setIsOwner(true);
-
                 if (myProfile) {
                     setFullName(myProfile.fullName);
                     setAvatar(myProfile.avatar);
@@ -51,7 +53,6 @@ const PersonalPage = () => {
 
             } else {
                 // Trang cá nhân của người khác
-                setIsOwner(false);
                 try {
                     const response = await instance.get(`/api/account/profile-another/${accId}`);
 
@@ -77,9 +78,72 @@ const PersonalPage = () => {
         };
 
         fetchProfile(); // gọi function async
-    }, [accId]);
+    }, [accId, isOwner]);
 
-    const posts = [];
+    //lấy thông tin người dùng từ storage
+    useEffect(() => {
+        const storedAccId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
+        const storedAccesstoken = localStorage.getItem("accessToken");
+        if (storedAccId) {
+            setAccessToken(storedAccesstoken);
+        }
+    }, []);
+
+    //Goi api lay list post trong trang can nhan
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                let response;
+
+                if (isOwner) {
+                    response = await instance.get("/api/post/self-view", {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`
+                        }
+                    })
+                } else {
+                    console.log("Dang xem cua nguoi khac " + isOwner)
+                    response = await instance.get(`/api/post/another-view/${accId}`, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`
+                        }
+                    })
+                }
+
+                if (response.status === 200) {
+                    setPosts(response.data.data)
+                }
+            } catch (error) {
+                toast.error("Cannot load list post!")
+            }
+        }
+        fetchPosts()
+    }, [isOwner, accId, accessToken])
+
+    //CAC METHOD LIEN QUAN KHAC
+    const handleCommentCountChange = (postId, newCount) => {
+        setPosts((prevPosts) =>
+            prevPosts.map((postMapper) =>
+                postMapper.post && (postMapper.post.postId) === postId
+                    ? { ...postMapper, post: { ...postMapper.post, comments: newCount } }
+                    : postMapper
+            )
+        );
+    };
+
+    const handleDeletePost = (postId) => {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
+    };
+
+    const handleRestorePost = (postId) => {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
+    }
+
+    const handleHardDeletePost = (postId) => {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
+    }
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -113,11 +177,46 @@ const PersonalPage = () => {
                             <PhotoGallery />
                         </aside>
                         <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
-                            <PostCreate />
+                            {isOwner && (
+                                <PostCreate />
+                            )}
+
                             <PostFilters />
-                            {posts.map((post, index) => (
-                                <PostCard key={index} post={post} />
-                            ))}
+
+                            {!posts || posts.length <= 0 ? (
+                                <p className="font-normal text-gray-300 text-lg">You have no posts in the trash!</p>
+                            ) :
+                                posts.map((postMapper, index) => (
+                                    <PostCard
+                                        isDeleted="true"
+                                        onRestore={handleRestorePost}
+                                        onHardDelete={handleHardDeletePost}
+                                        onDeletePost={handleDeletePost}
+                                        key={`${postMapper.post.postId}-${index}`}
+                                        post={{
+                                            accId: postMapper.ownerPost.accId,
+                                            postId: postMapper.post.postId,
+                                            fullName: postMapper.ownerPost ? postMapper.ownerPost.fullName || postMapper.post.accId : "Unknown User",
+                                            avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar || "https://via.placeholder.com/40" : "https://via.placeholder.com/40",
+                                            createAt: postMapper.post.createdAt,
+                                            content: postMapper.post.postContent,
+                                            images: postMapper.postImages ? postMapper.postImages.map((img) => img.imageUrl) : [],
+                                            hashtags: postMapper.hashTags ? postMapper.hashTags.map((tag) => tag.hashTagContent) : [],
+                                            tagFriends: postMapper.postTags ? postMapper.postTags.map((tag) => ({
+                                                accId: tag.accId,
+                                                fullname: tag.fullname || "Unknown"
+                                            })) : [],
+                                            categories: postMapper.postCategories ? postMapper.postCategories.map((cat) => cat.categoryName) : [],
+                                            likes: postMapper.reactionCount || 0,
+                                            comments: postMapper.commentCount || 0,
+                                            shares: postMapper.shareCount || 0,
+                                        }}
+                                        onCommentCountChange={(newCount) =>
+                                            handleCommentCountChange(postMapper.post.postId, newCount)
+                                        }
+                                    />
+                                ))
+                            }
 
                         </section>
                     </div>

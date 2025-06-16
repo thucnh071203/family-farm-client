@@ -58,7 +58,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose }) => {
 
             console.log(response.data.data)
 
-            if(response.status === 200){
+            if (response.status === 200) {
                 toast.success("Post successfully!");
                 onCreatedPost(response.data.data);
             }
@@ -250,7 +250,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose }) => {
                             ))}
                         </div>
                     )}
-                    
+
                     <div className="relative mb-4 text-sm">
                         <i className="absolute text-gray-400 transform -translate-y-1/2 fa-solid fa-magnifying-glass left-3 top-1/2"></i>
                         <input ref={withWhomInputRef}
@@ -336,7 +336,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose }) => {
 
                         </div>
                     </div>
-                    
+
                     <div className="grid grid-cols-3 gap-3 mb-2 lg:grid-cols-6">
                         {images.slice(0, 6).map((image, index) => (
                             <div key={index} className="relative">
