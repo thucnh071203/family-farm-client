@@ -162,9 +162,6 @@ export default function ServicesList() {
             return matchName && matchStar && matchPrice && matchDate && matchCountry && matchCity;
         });
 
-        // console.log("🌍 Đã lọc theo vị trí:", filter.country, filter.city);
-        // console.log("📌 Dịch vụ sau khi lọc:", filtered);
-
         setFilteredServices(filtered);
     }, [services, filter]);
 
@@ -195,9 +192,6 @@ export default function ServicesList() {
                             <img className="mx-auto mt-2 line" src={lineService} />
                         </div>
 
-                        {/* <div className="container-list">
-
-                            </div> */}
                         <div className="service-container w-[91.8%] lg:w-[650px] mx-auto">
                             {/* Hiển thị list service */}
                             {currentServices.map((service, index) => {

@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import PopupChangeImage from "./PopupChangeImage";
 
 const GroupDetailHeader = ({
   group,
+  userRole,
+  userAccId,
   countMember,
   selectedTab,
   setSelectedTab,
   reload
 }) => {
+  const [showPopup, setShowPopup] = useState(false);
+
+  // useEffect(() => {
+  //   if (userRole && userAccId) {
+  //     console.log("userRole:", userRole);
+  //     console.log("userAccId:", userAccId);
+  //   }
+  // }, [userRole, userAccId]);
+
   if (!group) return <div>Loading...</div>;
   return (
     <div>
@@ -29,20 +41,43 @@ const GroupDetailHeader = ({
             alt=""
           />
         </div>
-        <button className="absolute right-8 z-10 bottom-6 bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white">
-          <i class="fa-solid fa-arrow-pointer px-1 text-[#3DB3FB] "></i>Click to
-          join
-        </button>
+        <div className="absolute right-8 z-10 bottom-6 flex flex-row gap-2">
+          <button className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white">
+            <i class="fa-solid fa-arrow-pointer px-1 text-[#3DB3FB] "></i>Click to
+            join
+          </button>
+          <button className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white"
+          onClick={() => setShowPopup(true)}
+          >
+            <i class="fa-solid fa-pen px-1 text-[#3DB3FB]"></i>Change image
+          </button>
+        </div>
       </div>
+      {showPopup && (
+        <PopupChangeImage
+          group={group}
+          userRole={userRole}
+          userAccId={userAccId}
+          onClose={() => setShowPopup(false)}
+          onSave={() => {
+            console.log("Save image clicked");
+            setShowPopup(false);
+            reload(); // nếu cần reload lại group
+          }}
+        />
+      )}
+
       <div>
         <div className="p-4 text-left">
           <div className="flex justify-between">
             <h2 className="text-2xl font-bold mb-5">
               {group.groupName || "groupName"}
             </h2>
-            <Link to={`/EditGroup/${group.groupId}`} className=" hover:text-[#3DB3FB]">
-              Setting group
-            </Link>
+            {['680cea9fd26b52bd2922a596', '680ce8722b3eec497a30201e'].includes(userRole) && (
+              <Link to={`/EditGroup/${group.groupId}`} className=" hover:text-[#3DB3FB]">
+                Setting group
+              </Link>
+            )}
           </div>
 
           <div className="flex justify-between">

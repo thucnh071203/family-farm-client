@@ -240,6 +240,8 @@ const GroupDetailPage = () => {
         <div>
           <GroupDetailHeader
             group={groupDetail}
+            userRole={userRole}
+            userAccId={userAccId}
             countMember={listMemberOfgroup.length}
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
