@@ -106,6 +106,7 @@ const GroupDetailPage = () => {
       // Kiểm tra dữ liệu và cập nhật state
 
       setGroupDetail(data.data[0]);
+      console.log(data.data[0].background);
     } catch (err) {
       console.error("Error fetching groups:", err.message || err);
     } finally {

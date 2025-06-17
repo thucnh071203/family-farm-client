@@ -6,7 +6,7 @@ const GroupDetailHeader = ({
   countMember,
   selectedTab,
   setSelectedTab,
-  reload
+  reload,
 }) => {
   if (!group) return <div>Loading...</div>;
   return (
@@ -16,8 +16,10 @@ const GroupDetailHeader = ({
         {/* background */}
         <div className="">
           <img
-            className="w-[-57%] h-[20%]"
-            src={group?.background || "https://gameroom.ee/83571/minecraft.jpg"}
+            className="w-full h-[20%]"
+            src={
+              group.groupBackground || "https://gameroom.ee/83571/minecraft.jpg"
+            }
             alt=""
           />
         </div>
@@ -25,7 +27,7 @@ const GroupDetailHeader = ({
         <div className="absolute left-8 z-10 bottom-6">
           <img
             className="rounded-full w-14 h-14 md:w-[130px] md:h-[130px] object-fill "
-            src={group?.avatar || "https://gameroom.ee/83571/minecraft.jpg"}
+            src={group.groupAvatar || "https://gameroom.ee/83571/minecraft.jpg"}
             alt=""
           />
         </div>
@@ -40,7 +42,10 @@ const GroupDetailHeader = ({
             <h2 className="text-2xl font-bold mb-5">
               {group.groupName || "groupName"}
             </h2>
-            <Link to={`/EditGroup/${group.groupId}`} className=" hover:text-[#3DB3FB]">
+            <Link
+              to={`/EditGroup/${group.groupId}`}
+              className=" hover:text-[#3DB3FB]"
+            >
               Setting group
             </Link>
           </div>
