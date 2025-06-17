@@ -41,6 +41,7 @@ const GroupDetailHeader = ({
           <img
             className="w-[-57%] h-[20%]"
             src={backgroundUrl}
+
             alt=""
           />
         </div>
@@ -84,11 +85,13 @@ const GroupDetailHeader = ({
             <h2 className="text-2xl font-bold mb-5">
               {group.groupName || "groupName"}
             </h2>
+
             {['680cea9fd26b52bd2922a596', '680ce8722b3eec497a30201e'].includes(userRole) && (
               <Link to={`/EditGroup/${group.groupId}`} className=" hover:text-[#3DB3FB]">
                 Setting group
               </Link>
             )}
+
           </div>
 
           <div className="flex justify-between">
