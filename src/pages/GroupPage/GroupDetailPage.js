@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Header from "../../components/Header/Header";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import YourGroupDetailListItem from "../../components/Group/YourGroupDetailListItem";
@@ -9,12 +9,17 @@ import MemberCard from "../../components/Group/MemberCard";
 import PopularService from "../../components/Services/PopularService";
 import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import instance from "../../Axios/axiosConfig";
+import { useSignalR } from "../../context/SignalRContext";
+
 const GroupDetailPage = () => {
   const { id } = useParams(); // lấy groupId từ URL
   const [groupDetail, setGroupDetail] = useState(null);
   const [listMemberOfgroup, setListmember] = useState([]);
   const [userRole, setUserRole] = useState(null);
   const [userAccId, setUserAccId] = useState(null);
+  const [groupReload, setGroupReload] = useState(null);
+  const { connection } = useSignalR();
 
   // get list request join group
   const [listRequestToJoin, setListRequestToJoin] = useState([]);
@@ -24,6 +29,50 @@ const GroupDetailPage = () => {
 
   //List your group đã join
   const [yourGroupsData, setGroupData] = useState([]);
+
+  const ReloadSignlR = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+      const res = await instance.get(`/api/group/get-by-id/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      // Backend của bạn trả về group ở res.da  ta.data
+      // const groupData = res.data?.data ? res.data.data : res.data;
+      // console.log("in group reload", groupData);
+      const groupDataRaw = res.data?.data ? res.data.data : res.data;
+      const groupData = Array.isArray(groupDataRaw) ? groupDataRaw[0] : groupDataRaw;
+      setGroupDetail(groupData);
+
+      // Nếu muốn load thành viên, gọi API tương tự ở đây (nếu cần)
+      // const memberRes = await instance.get(...);
+      // setListMemberOfGroup(memberRes.data.data);
+
+    } catch (err) {
+      console.error("Lỗi reload group:", err);
+    }
+  }, [id]);
+
+  // ---- Load group ngay khi mở page hoặc đổi groupId ----
+  useEffect(() => {
+    ReloadSignlR();
+  }, [ReloadSignlR]);
+
+  // Ở component cha (GroupDetailPage)
+  useEffect(() => {
+    if (!connection) return;
+    console.log("SignalR connection state:", connection.state);
+    const handler = (groupUpdated) => {
+      if (groupUpdated.groupId === groupDetail?.groupId) {
+        console.log("Nhận được GroupUpdated:", groupUpdated);
+        ReloadSignlR();
+      }
+    };
+    connection.on("GroupUpdated", handler);
+    return () => {
+      connection.off("GroupUpdated", handler);
+    };
+  }, [connection, groupDetail?.groupId, ReloadSignlR]);
+
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -112,6 +161,7 @@ const GroupDetailPage = () => {
     } finally {
     }
   };
+
   // get list member
   const fetchListMemberData = async () => {
     try {
@@ -229,6 +279,7 @@ const GroupDetailPage = () => {
     fetchListRequestToJoinData();
     fetchListMemberData();
   };
+
   return (
     <div>
       <Header />
@@ -241,10 +292,13 @@ const GroupDetailPage = () => {
         <div>
           <GroupDetailHeader
             group={groupDetail}
+            userRole={userRole}
+            userAccId={userAccId}
             countMember={listMemberOfgroup.length}
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
             reload={ReloadData}
+            reloadsignlR={ReloadSignlR}
           />
           {/* {selectedTab === "posts" && <MemberCard />} */}
           {selectedTab === "members" && (

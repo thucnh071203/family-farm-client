@@ -1,13 +1,36 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
+import PopupChangeImage from "./PopupChangeImage";
+import { useSignalR } from "../../context/SignalRContext";
+import instance from "../../Axios/axiosConfig";
 
 const GroupDetailHeader = ({
   group,
+  userRole,
+  userAccId,
   countMember,
   selectedTab,
   setSelectedTab,
   reload,
+  reloadsignlR
 }) => {
+  const [showPopup, setShowPopup] = useState(false);
+
+  function getCacheBustedUrl(url, updatedAt) {
+    if (!url) return url;
+    if (!updatedAt) return url + `?v=${Date.now()}`;
+    return url + `?v=${encodeURIComponent(updatedAt)}`;
+  }
+
+  const backgroundUrl = getCacheBustedUrl(group?.groupBackground, group?.updatedAt);
+  const avatarUrl = getCacheBustedUrl(group?.groupAvatar, group?.updatedAt);
+
+  useEffect(() => {
+    console.log('Group avatar URL:', group?.groupAvatar);
+    console.log('Group updatedAt:', group?.updatedAt);
+    console.log('Avatar URL render:', avatarUrl);
+  }, [group, avatarUrl]);
+
   if (!group) return <div>Loading...</div>;
   return (
     <div>
@@ -16,10 +39,9 @@ const GroupDetailHeader = ({
         {/* background */}
         <div className="">
           <img
-            className="w-full h-[20%]"
-            src={
-              group.groupBackground || "https://gameroom.ee/83571/minecraft.jpg"
-            }
+            className="w-[-57%] h-[20%]"
+            src={backgroundUrl}
+
             alt=""
           />
         </div>
@@ -27,27 +49,49 @@ const GroupDetailHeader = ({
         <div className="absolute left-8 z-10 bottom-6">
           <img
             className="rounded-full w-14 h-14 md:w-[130px] md:h-[130px] object-fill "
-            src={group.groupAvatar || "https://gameroom.ee/83571/minecraft.jpg"}
+            src={avatarUrl}
             alt=""
           />
         </div>
-        <button className="absolute right-8 z-10 bottom-6 bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white">
-          <i class="fa-solid fa-arrow-pointer px-1 text-[#3DB3FB] "></i>Click to
-          join
-        </button>
+        <div className="absolute right-8 z-10 bottom-6 flex flex-row gap-2">
+          <button className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white">
+            <i class="fa-solid fa-arrow-pointer px-1 text-[#3DB3FB] "></i>Click to
+            join
+          </button>
+          <button className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white"
+          onClick={() => setShowPopup(true)}
+          >
+            <i class="fa-solid fa-pen px-1 text-[#3DB3FB]"></i>Change image
+          </button>
+        </div>
       </div>
+      {showPopup && (
+        <PopupChangeImage
+          group={group}
+          userRole={userRole}
+          userAccId={userAccId}
+          onClose={() => setShowPopup(false)}
+          onSave={() => {
+            console.log("Save image clicked");
+            setShowPopup(false);
+            reloadsignlR(); // nếu cần reload lại group
+          }}
+        />
+      )}
+
       <div>
         <div className="p-4 text-left">
           <div className="flex justify-between">
             <h2 className="text-2xl font-bold mb-5">
               {group.groupName || "groupName"}
             </h2>
-            <Link
-              to={`/EditGroup/${group.groupId}`}
-              className=" hover:text-[#3DB3FB]"
-            >
-              Setting group
-            </Link>
+
+            {['680cea9fd26b52bd2922a596', '680ce8722b3eec497a30201e'].includes(userRole) && (
+              <Link to={`/EditGroup/${group.groupId}`} className=" hover:text-[#3DB3FB]">
+                Setting group
+              </Link>
+            )}
+
           </div>
 
           <div className="flex justify-between">
