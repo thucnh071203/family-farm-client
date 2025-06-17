@@ -16,6 +16,8 @@ import SuggestedExperts from "./SuggestedExperts";
 import SuggestedGroups from "../Home/SuggestedGroups";
 import FilterService from "../FilterService/FilterService";
 import instance from "../../Axios/axiosConfig";
+import defaultAvatar from '../../assets/images/default-avatar.png';
+
 
 export default function ServicesList() {
     const [services, setServices] = useState([]);
@@ -60,8 +62,12 @@ export default function ServicesList() {
                                 const providerRes = await instance.get(`api/account/profile-another/${service.providerId}`);
                                 const provider = providerRes.data?.data;
 
+                                console.log("provider", provider);
+
                                 return {
                                     ...service,
+                                    fullName: provider?.fullName || '',
+                                    avatar: provider?.avatar || '',
                                     country: provider?.country || '',
                                     city: provider?.city || '',
                                 };
@@ -69,6 +75,8 @@ export default function ServicesList() {
                                 console.error("❌ Không thể lấy thông tin provider:", service.providerId, err);
                                 return {
                                     ...service,
+                                    fullName: '',
+                                    avatar: '',
                                     country: '',
                                     city: '',
                                 };
@@ -203,10 +211,15 @@ export default function ServicesList() {
                                         <div className="body-service px-3">
                                             <div className="author-content">
                                                 <div className="avatar-content">
-                                                    <img src={userAvatar} alt="avatar" />
+                                                    {/* <img src={service.avatar} alt="avatar" /> */}
+                                                    <img className="w-[45px] h-[45px] rounded-full"
+                                                    src={service.avatar && service.avatar.trim() !== "" ? service.avatar : defaultAvatar}
+                                                    alt="avatar"
+                                                    />
+
                                                 </div>
                                                 <div className="author-info">
-                                                    <div className="author-name">Dang Khoa</div>
+                                                    <div className="author-name">{service.fullName}</div>
                                                     <div className="author-role">Expert</div>
                                                 </div>
                                             </div>
