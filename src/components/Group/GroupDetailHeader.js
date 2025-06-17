@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import PopupChangeImage from "./PopupChangeImage";
+import { useSignalR } from "../../context/SignalRContext";
+import instance from "../../Axios/axiosConfig";
 
 const GroupDetailHeader = ({
   group,
@@ -9,16 +11,25 @@ const GroupDetailHeader = ({
   countMember,
   selectedTab,
   setSelectedTab,
-  reload
+  reload,
+  reloadsignlR
 }) => {
   const [showPopup, setShowPopup] = useState(false);
 
-  // useEffect(() => {
-  //   if (userRole && userAccId) {
-  //     console.log("userRole:", userRole);
-  //     console.log("userAccId:", userAccId);
-  //   }
-  // }, [userRole, userAccId]);
+  function getCacheBustedUrl(url, updatedAt) {
+    if (!url) return url;
+    if (!updatedAt) return url + `?v=${Date.now()}`;
+    return url + `?v=${encodeURIComponent(updatedAt)}`;
+  }
+
+  const backgroundUrl = getCacheBustedUrl(group?.groupBackground, group?.updatedAt);
+  const avatarUrl = getCacheBustedUrl(group?.groupAvatar, group?.updatedAt);
+
+  useEffect(() => {
+    console.log('Group avatar URL:', group?.groupAvatar);
+    console.log('Group updatedAt:', group?.updatedAt);
+    console.log('Avatar URL render:', avatarUrl);
+  }, [group, avatarUrl]);
 
   if (!group) return <div>Loading...</div>;
   return (
@@ -29,7 +40,7 @@ const GroupDetailHeader = ({
         <div className="">
           <img
             className="w-[-57%] h-[20%]"
-            src={group?.background || "https://gameroom.ee/83571/minecraft.jpg"}
+            src={backgroundUrl}
             alt=""
           />
         </div>
@@ -37,7 +48,7 @@ const GroupDetailHeader = ({
         <div className="absolute left-8 z-10 bottom-6">
           <img
             className="rounded-full w-14 h-14 md:w-[130px] md:h-[130px] object-fill "
-            src={group?.avatar || "https://gameroom.ee/83571/minecraft.jpg"}
+            src={avatarUrl}
             alt=""
           />
         </div>
@@ -62,7 +73,7 @@ const GroupDetailHeader = ({
           onSave={() => {
             console.log("Save image clicked");
             setShowPopup(false);
-            reload(); // nếu cần reload lại group
+            reloadsignlR(); // nếu cần reload lại group
           }}
         />
       )}
