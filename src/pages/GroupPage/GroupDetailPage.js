@@ -17,6 +17,7 @@ const GroupDetailPage = () => {
   const [groupDetail, setGroupDetail] = useState(null);
   const [listMemberOfgroup, setListmember] = useState([]);
   const [userRole, setUserRole] = useState(null);
+  const [memberStatus, setMemberStatus] = useState(null);
   const [userAccId, setUserAccId] = useState(null);
   const [groupReload, setGroupReload] = useState(null);
   const { connection } = useSignalR();
@@ -30,15 +31,14 @@ const GroupDetailPage = () => {
   //List your group đã join
   const [yourGroupsData, setGroupData] = useState([]);
 
+  //Load trang signalR
   const ReloadSignlR = useCallback(async () => {
     try {
       const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
       const res = await instance.get(`/api/group/get-by-id/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      // Backend của bạn trả về group ở res.da  ta.data
-      // const groupData = res.data?.data ? res.data.data : res.data;
-      // console.log("in group reload", groupData);
+      
       const groupDataRaw = res.data?.data ? res.data.data : res.data;
       const groupData = Array.isArray(groupDataRaw) ? groupDataRaw[0] : groupDataRaw;
       setGroupDetail(groupData);
@@ -257,10 +257,12 @@ const GroupDetailPage = () => {
         (member) => member.accId.trim() === userAccId.trim()
       );
       setUserRole(person?.roleInGroupId);
+      setMemberStatus(person?.memberStatus)
       console.log(
         "Role of current user:",
         person?.fullName,
-        person?.roleInGroupId
+        person?.roleInGroupId,
+        person?.memberStatus,
       );
     }
   }, [listMemberOfgroup, userAccId]);
@@ -294,6 +296,7 @@ const GroupDetailPage = () => {
             group={groupDetail}
             userRole={userRole}
             userAccId={userAccId}
+            memberStatus={memberStatus}
             countMember={listMemberOfgroup.length}
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}

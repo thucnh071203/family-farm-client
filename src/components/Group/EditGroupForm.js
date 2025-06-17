@@ -7,7 +7,7 @@ import "./createGroupStyle.css";
 import defaultAvatar from '../../assets/images/default-avatar.png';
 import PopupDeleteGroup from "./PopupDeleteGroup";
 
-export default function EditGroupForm() {
+export default function EditGroupForm({ userRole, userAccId }) {
     const navigate = useNavigate();
 
     // User Information
@@ -17,6 +17,7 @@ export default function EditGroupForm() {
     const [accessToken, setAccessToken] = useState("");
 
     const { groupId } = useParams();
+    const [ownerId, setOwnerId] = useState("");
     const [groupName, setGroupName] = useState("");
     const [privacyType, setPrivacyType] = useState("Public");
     const [avatarImage, setAvatarImage] = useState(null);
@@ -48,11 +49,11 @@ export default function EditGroupForm() {
                 const res = await instance.get(`/api/group/get-by-id/${groupId}`);
                 const group = res.data?.data?.[0]; // <-- LẤY ĐÚNG OBJECT
                 if (!group) {
-                    // toast.error("Group not found.");
                     console.log("Group not found.");
                     return;
                 }
 
+                setOwnerId(group.ownerId || "");
                 setGroupName(group.groupName || "");
                 setPrivacyType(group.privacyType || "Public");
                 setAvatarImage(group.groupAvatar || null);
@@ -65,19 +66,6 @@ export default function EditGroupForm() {
 
         fetchGroup();
     }, [groupId]);
-
-
-    const handleAvatarChange = (e) => {
-        const file = e.target.files[0];
-        setAvatarFile(file);
-        setAvatarImage(URL.createObjectURL(file));
-    };
-
-    const handleBgChange = (e) => {
-        const file = e.target.files[0];
-        setBgFile(file);
-        setBgImage(URL.createObjectURL(file));
-    };
 
     const validate = () => {
         const newErrors = {};
@@ -92,27 +80,11 @@ export default function EditGroupForm() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const validateImages = (avatar, background) => {
-        if (!avatarImage && !avatar) {
-            setErrors((prev) => ({ ...prev, image: "Avatar image is required." }));
-            return false;
-        }
-
-        if (!bgImage && !background) {
-            setErrors((prev) => ({ ...prev, image: "Background image is required." }));
-            return false;
-        }
-
-        setErrors((prev) => ({ ...prev, image: null }));
-        return true;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const isFormValid = validate();
-        const isImageValid = validateImages(avatarFile, bgFile);
 
-        if (!isFormValid || !isImageValid) return;
+        if (!isFormValid) return;
 
         const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
 
@@ -130,7 +102,8 @@ export default function EditGroupForm() {
                 },
             });
             toast.success("Group updated successfully!");
-            navigate("/Group", { state: { section: "all-group-user" } });
+            // navigate("/Group", { state: { section: "all-group-user" } });
+            navigate(`/group/${groupId}`);
         } catch (error) {
             console.error("Update failed:", error);
             toast.error("Failed to update group!");
@@ -180,7 +153,7 @@ export default function EditGroupForm() {
                     </div>
                 </div>
 
-                <div className="image-upload-container mt-7 relative flex flex-col gap-4">
+                {/* <div className="image-upload-container mt-7 relative flex flex-col gap-4">
                     <div className="relative img-bg-container">
                         <input className="hidden" type="file" id="background-group-img" accept="image/*" onChange={handleBgChange} />
                         <label htmlFor="background-group-img"
@@ -206,7 +179,7 @@ export default function EditGroupForm() {
                                 className="absolute top-0 left-0 w-[130px] h-[130px] object-cover rounded-full border-[3px] border-solid border-[rgba(62,63,94,0.25)] z-10 pointer-events-none" />
                         )}
                     </div>
-                </div>
+                </div> */}
 
                 <div className="group-name-container w-fit mt-4">
                     <input
@@ -245,13 +218,23 @@ export default function EditGroupForm() {
                     >
                         <div className="create-btn-text w-fit text-white">Save Changes</div>
                     </button>
-                    <button
+                    {/* <button
                         className="create-button lg:w-[220px] p-[10px] flex items-center justify-center gap-[10px] bg-red-600 rounded-sm hover:bg-red-700 cursor-pointer"
                         type="button"
                         onClick={() => handleDeleteClick(groupId)}
                     >
                         <div className="create-btn-text w-fit text-white">Delete</div>
-                    </button>
+                    </button> */}
+                    {ownerId === userAccId && (
+                        <button
+                            className="create-button lg:w-[220px] p-[10px] flex items-center justify-center gap-[10px] bg-red-600 rounded-sm hover:bg-red-700 cursor-pointer"
+                            type="button"
+                            onClick={() => handleDeleteClick(groupId)}
+                        >
+                            <div className="create-btn-text w-fit text-white">Delete</div>
+                        </button>
+                    )}
+
                 </div>
             </form>
             {deleteShowPopup && (
