@@ -8,6 +8,7 @@ const GroupDetailHeader = ({
   group,
   userRole,
   userAccId,
+  memberStatus,
   countMember,
   selectedTab,
   setSelectedTab,
@@ -16,6 +17,7 @@ const GroupDetailHeader = ({
 }) => {
   const [showPopup, setShowPopup] = useState(false);
 
+  // Load ảnh theo thời gian thực
   function getCacheBustedUrl(url, updatedAt) {
     if (!url) return url;
     if (!updatedAt) return url + `?v=${Date.now()}`;
@@ -25,11 +27,11 @@ const GroupDetailHeader = ({
   const backgroundUrl = getCacheBustedUrl(group?.groupBackground, group?.updatedAt);
   const avatarUrl = getCacheBustedUrl(group?.groupAvatar, group?.updatedAt);
 
-  useEffect(() => {
-    console.log('Group avatar URL:', group?.groupAvatar);
-    console.log('Group updatedAt:', group?.updatedAt);
-    console.log('Avatar URL render:', avatarUrl);
-  }, [group, avatarUrl]);
+  // useEffect(() => {
+  //   console.log('Group avatar URL:', group?.groupAvatar);
+  //   console.log('Group updatedAt:', group?.updatedAt);
+  //   console.log('Avatar URL render:', avatarUrl);
+  // }, [group, avatarUrl]);
 
   if (!group) return <div>Loading...</div>;
   return (
@@ -53,10 +55,6 @@ const GroupDetailHeader = ({
           />
         </div>
         <div className="absolute right-8 z-10 bottom-6 flex flex-row gap-2">
-          <button className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white">
-            <i class="fa-solid fa-arrow-pointer px-1 text-[#3DB3FB] "></i>Click to
-            join
-          </button>
           <button className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white"
           onClick={() => setShowPopup(true)}
           >
@@ -85,7 +83,9 @@ const GroupDetailHeader = ({
               {group.groupName || "groupName"}
             </h2>
             {['680cea9fd26b52bd2922a596', '680ce8722b3eec497a30201e'].includes(userRole) && (
-              <Link to={`/EditGroup/${group.groupId}`} className=" hover:text-[#3DB3FB]">
+              <Link to={`/EditGroup/${group.groupId}`} className=" hover:text-[#3DB3FB]"
+              state={{ userRole: userRole, userAccId: userAccId }}
+              >
                 Setting group
               </Link>
             )}
