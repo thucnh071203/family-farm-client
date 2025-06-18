@@ -6,7 +6,7 @@ import Header from "../../components/Header/Header";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 
 const ListSavedPost = () => {
-
+    
 }
 
 export default ListSavedPost;
