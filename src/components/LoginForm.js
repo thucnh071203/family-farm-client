@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
+import axios from "axios";
 import logo from ".././assets/images/logo_img.png";
 import mdiUser from ".././assets/images/mdi_user.png";
 import mdiClock from ".././assets/images/mdi_clock.png";
 import iconEye from ".././assets/images/mdi_eye (1).png";
 import googleIcon from ".././assets/images/devicon_google.png";
 import fbIcon from ".././assets/images/devicon-plain_facebook.png";
-import { getOwnProfile } from "../services/authService";
+import { getOwnProfile } from "../services/accountService";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import instance from "../Axios/axiosConfig";
 import { useState } from "react";
 import { toast, Bounce } from "react-toastify";
+import { GoogleLogin } from "@react-oauth/google";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -18,6 +20,122 @@ const LoginForm = () => {
   const [rememberMe, setRememberMe] = useState(true);
   const [errors, setErrors] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Tải SDK Facebook nếu chưa có
+    if (!window.FB) {
+      const script = document.createElement("script");
+      script.src = "https://connect.facebook.net/en_US/sdk.js";
+      script.async = true;
+      script.defer = true;
+      script.crossOrigin = "anonymous";
+      script.onload = () => {
+        window.FB.init({
+          appId: "681934764486226",
+          cookie: true,
+          xfbml: true,
+          version: "v17.0", // Dùng version ổn định
+        });
+      };
+      document.body.appendChild(script);
+    } else {
+      // Nếu SDK đã sẵn sàng, chỉ cần init
+      window.FB.init({
+        appId: "681934764486226",
+        cookie: true,
+        xfbml: true,
+        version: "v17.0",
+      });
+    }
+  }, []);
+
+  // Đăng nhập bằng facebook
+  const handleFacebookLogin = () => {
+    window.FB.login(
+      function (response) {
+        if (response.authResponse) {
+          const accessToken = response.authResponse.accessToken;
+
+          // Gọi Facebook API để lấy thông tin người dùng
+          window.FB.api(
+            "/me",
+            { fields: "id,name,email,picture", access_token: accessToken },
+            async function (userInfo) {
+              console.log("Facebook user info:", userInfo);
+
+              const payload = {
+                facebookId: userInfo.id,
+                email: userInfo.email,
+                name: userInfo.name,
+                avatar: userInfo.picture?.data?.url || null,
+              };
+
+              try {
+                // const loginResponse = await axios.post(
+                //   "https://localhost:7280/api/authen/login-facebook",
+                //   payload
+                // );
+                const loginResponse = await instance.post("api/authen/login-facebook", payload);
+
+                const loginData = loginResponse.data;
+
+                if (loginResponse.status === 200) {
+                  const rememberMe = true; // Tùy bạn có lưu nhớ không
+                  const storage = rememberMe ? localStorage : sessionStorage;
+
+                  // Lưu accessToken, refreshToken, username
+                  storage.setItem("accessToken", loginData.accessToken);
+                  storage.setItem("refreshToken", loginData.refreshToken);
+                  storage.setItem("username", loginData.username);
+                  storage.setItem("accId", loginData.accId);
+
+                  // Hạn token
+                  const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
+                  storage.setItem("tokenExpiry", expiryTime);
+
+                  // Lấy thông tin profile (nếu cần thiết)
+                  const profileResponse = await axios.get(
+                    "https://localhost:7280/api/account/own-profile",
+                    {
+                      headers: {
+                        Authorization: `Bearer ${loginData.accessToken}`,
+                      },
+                    }
+                  );
+                  // const profileResponse = await getOwnProfile();
+
+                  const profileData = profileResponse.data;
+
+                  console.log("🔥 Dữ liệu profile:", JSON.stringify(profileData, null, 2));
+
+                  storage.setItem(
+                    "fullName",
+                    profileData.data.fullName || loginData.username
+                  );
+                  storage.setItem("avatarUrl", profileData.data.avatar || "");
+
+                  toast.success("LOGIN SUCCESSFULLY!");
+                  navigate("/");
+                } else {
+                  toast.error("Login failed!");
+                }
+              } catch (error) {
+                if (error.response && error.response.status === 401) {
+                  toast.error("Login failed! Please check your Facebook info!");
+                } else {
+                  toast.error("Server not responding");
+                }
+              }
+            }
+          );
+        } else {
+          console.log("Người dùng từ chối đăng nhập Facebook.");
+        }
+      },
+      { scope: "public_profile,email" }
+    );
+  };
+
 
   const handleLogin = async () => {
 
@@ -47,6 +165,7 @@ const LoginForm = () => {
 
         storage.setItem("fullName", profileData.data.fullName || loginData.username);
         storage.setItem("avatarUrl", profileData.data.avatar || "");
+        storage.setItem("profileData", JSON.stringify(profileData.data || {}));
 
         toast.success("LOGIN SUCCESSFULLY!");
         navigate("/");
@@ -63,6 +182,7 @@ const LoginForm = () => {
   };
 
   return (
+    
     <div className="overlap w-full md:w-1/2 mt-6 md:mt-0 md:ml-[5%] bg-gray-200 bg-opacity-25">
       <div className="form-container w-full max-w-[466px] flex flex-col gap-7 mx-auto">
         <div className="flex items-center justify-center mx-auto logo gap-x-4">
@@ -154,15 +274,23 @@ const LoginForm = () => {
           <div className="text-wrapper-12">Login With</div>
           <div className="flex flex-col items-center justify-center frame-9 lg:flex-row">
             <div className="frame-10 w-full lg:w-[223px]">
-              <img className="img" src={googleIcon} alt="Google Icon" />
-              <div className="text-wrapper-13">Continue with Google</div>
+              {/* <img className="img" src={googleIcon} alt="Google Icon" /> */}
+              {/* <div className="text-wrapper-13">Continue with Google</div> */}
+              <GoogleLogin 
+                onSuccess={credentialResponse => {
+                  console.log(credentialResponse);
+                }}
+                onError={() => {
+                  console.log('Login Failed');
+                }}  
+              />
             </div>
-            <div className="frame-11 w-full lg:w-[223px]">
+            <div className="frame-11 w-full lg:w-[223px]"  onClick={handleFacebookLogin}>
               <img className="img" src={fbIcon} alt="Facebook Icon" />
               <div className="text-wrapper-14">Continue with Facebook</div>
             </div>
           </div>
-        </div>
+        </div> 
       </div>
     </div>
   );

@@ -133,7 +133,7 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
     if (!selectedChat) {
         return (
             <div className="text-gray-600 text-sm text-center py-4">
-                Chọn một cuộc trò chuyện để xem thông tin
+                Select a conversation to view information
             </div>
         );
     }

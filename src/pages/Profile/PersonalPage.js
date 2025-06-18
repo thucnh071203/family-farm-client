@@ -9,42 +9,141 @@ import PostCreate from "../../components/Post/PostCreate";
 import PostFilters from "../../components/Post/PostFilters";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import FriendActionButton from "../../components/Friend/FriendActionButton";
+import { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
+import { toast } from "react-toastify";
+
 
 const PersonalPage = () => {
-    const posts = [
-        {
-            content: "Post with 2 images",
-            createAt: "2 minutes ago",
-            hashtags: "",
-            images: [
-                "https://gameroom.ee/83571/minecraft.jpg",
-                "https://gameroom.ee/83571/minecraft.jpg",
-            ],
-        },
-        {
-            content: "Post with multiple images",
-            images: [
-                "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-                "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-                "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-                "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-                "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-                "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-            ],
-        },
-        {
-            content: "Post with one image",
-            images: ["https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg"],
-        },
-        {
-            content: "Post with 3 images",
-            images: [
-                "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-                "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-                "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-            ],
-        },
-    ];
+    const [avatar, setAvatar] = useState("");
+    const [fullName, setFullName] = useState("Unknown");
+    const [background, setBackground] = useState("");
+    const [basicInfo, setBasicInfo] = useState({});
+    const [accessToken, setAccessToken] = useState("");
+
+    //Biến lấy accId từ param khi xem profile người khác
+    const { accId } = useParams();
+
+    const defaultBackground = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
+    //lay thong tin người dùng đang đăng nhập
+    const storeData = localStorage.getItem("profileData") || sessionStorage.getItem("profileData");
+    const myProfile = storeData ? JSON.parse(storeData) : null;
+
+    // Tính isOwner ngay tại render
+    const isOwner = !accId || accId === myProfile?.accId;
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (isOwner) {
+                // Trang cá nhân của mình
+                if (myProfile) {
+                    setFullName(myProfile.fullName);
+                    setAvatar(myProfile.avatar);
+                    setBackground(myProfile.background || defaultBackground);
+
+                    let basicInfoMapping = {
+                        gender: myProfile.gender,
+                        location: myProfile.address,
+                        study: myProfile.studyAt,
+                        work: myProfile.workAt
+                    };
+                    setBasicInfo(basicInfoMapping);
+                }
+
+            } else {
+                // Trang cá nhân của người khác
+                try {
+                    const response = await instance.get(`/api/account/profile-another/${accId}`);
+
+                    if (response.status === 200) {
+                        console.log(response.data.data);
+                        // Cập nhật state giống như của mình luôn
+                        setFullName(response.data.data.fullName || "Unknown");
+                        setAvatar(response.data.data.avatar);
+                        setBackground(response.data.data.background || defaultBackground);
+
+                        let basicInfoMapping = {
+                            gender: (response.data.data.gender || "Updating"),
+                            location: (response.data.data.address || "Updating"),
+                            study: (response.data.data.studyAt || "Updating"),
+                            work: (response.data.data.workAt || "Updating")
+                        };
+                        setBasicInfo(basicInfoMapping);
+                    }
+                } catch (error) {
+                    console.error("Lỗi lấy profile người khác:", error);
+                }
+            }
+        };
+
+        fetchProfile(); // gọi function async
+    }, [accId, isOwner]);
+
+    //lấy thông tin người dùng từ storage
+    useEffect(() => {
+        const storedAccId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
+        const storedAccesstoken = localStorage.getItem("accessToken");
+        if (storedAccId) {
+            setAccessToken(storedAccesstoken);
+        }
+    }, []);
+
+    //Goi api lay list post trong trang can nhan
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            try {
+                let response;
+
+                if (isOwner) {
+                    response = await instance.get("/api/post/self-view", {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`
+                        }
+                    })
+                } else {
+                    console.log("Dang xem cua nguoi khac " + isOwner)
+                    response = await instance.get(`/api/post/another-view/${accId}`, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`
+                        }
+                    })
+                }
+
+                if (response.status === 200) {
+                    setPosts(response.data.data)
+                }
+            } catch (error) {
+                toast.error("Cannot load list post!")
+            }
+        }
+        fetchPosts()
+    }, [isOwner, accId, accessToken])
+
+    //CAC METHOD LIEN QUAN KHAC
+    const handleCommentCountChange = (postId, newCount) => {
+        setPosts((prevPosts) =>
+            prevPosts.map((postMapper) =>
+                postMapper.post && (postMapper.post.postId) === postId
+                    ? { ...postMapper, post: { ...postMapper.post, comments: newCount } }
+                    : postMapper
+            )
+        );
+    };
+
+    const handleDeletePost = (postId) => {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
+    };
+
+    const handleRestorePost = (postId) => {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
+    }
+
+    const handleHardDeletePost = (postId) => {
+        setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
+    }
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -53,66 +152,72 @@ const PersonalPage = () => {
             <div className="flex-grow">
                 <div className="container mx-auto max-w-7xl">
                     <div className="relative">
-                        <CoverBackground />
-                        <div className="absolute right-4 bottom-4">
-                            <FriendActionButton />
-                        </div>  
-                        <ProfileAvatar />
+                        <CoverBackground coverImage={background} />
+
+                        {!isOwner && (
+                            <div className="absolute right-4 bottom-4">
+                                <FriendActionButton />
+                            </div>
+                        )}
+
+                        <ProfileAvatar initialProfileImage={avatar} fullName={fullName} />
                     </div>
                     <div className="flex flex-col gap-5 pt-20 lg:flex-row">
                         <aside className="flex flex-col w-full gap-5 lg:w-1/3">
-                            <BasicInfo />
+                            <BasicInfo info={basicInfo} />
+                            {isOwner && (
+                                <>
+                                    <Link to="/Trash" className="text-start font-normal text-sky-300">Recycle Bin</Link>
+                                    <Link to="/SetPassword" className="text-start font-normal text-sky-300">Set Password of your Account</Link>
+                                    <Link to="/ChangePassword" className="text-start font-normal text-sky-300">Change Password of your Account</Link>
+                                </>
+                            )}
+
                             <FriendList />
                             <PhotoGallery />
                         </aside>
                         <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
-                            <PostCreate />
+                            {isOwner && (
+                                <PostCreate />
+                            )}
+
                             <PostFilters />
-                            {posts.map((post, index) => (
-                                <PostCard key={index} post={post} />
-                            ))}
-                            {/* <div class="bg-white p-5 rounded-lg shadow-md border mt-5">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <img src="https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png"
-                                        alt="Avatar" className="w-10 h-10 rounded-full" />
-                                    <div>
-                                        <h3 class="font-bold">Khoa Dang</h3>
-                                        <p class="text-sm text-gray-500">July 29, 2018, 08:49 AM</p>
-                                    </div>
-                                </div>
-                                <p class="mb-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta nostrum
-                                    molestias</p>
-                                <div class="bg-white p-5 rounded-lg shadow-md border border-solid border-gray-200">
-                                    <div class="flex items-center gap-3 mb-3">
-                                        <img src="https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png"
-                                            alt="Avatar" className="w-10 h-10 rounded-full" />
-                                        <div>
-                                            <h3 class="font-bold">Phuong Nam</h3>
-                                            <p class="text-sm text-gray-500">July 29, 2018, 07:49 AM</p>
-                                        </div>
-                                    </div>
-                                    <p class="mb-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta nostrum
-                                        laboriosam dolore suscipit quibusdam fugit. #blog
-                                        #nienmoulming #polytecode</p>
-                                    <img src="https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg"
-                                        alt="Post" className="object-cover w-full h-full mb-3 rounded-md" />
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex gap-3">
-                                            <p><i class="fa-solid fa-thumbs-up text-blue-500"></i> 100 </p>
-                                            <p><i class="fas fa-comment text-blue-500"></i> 20 </p>
-                                            <p><i class="fa-solid fa-share text-blue-500"></i> 10 </p>
-                                        </div>
-                                        <div class="flex gap-3">
-                                            <button class="p-1 bg-gray-200 rounded-sm"><i class="fa-solid fa-thumbs-up"></i>
-                                                Like</button>
-                                            <button class="p-1 bg-gray-200 rounded-sm"><i class="fas fa-comment"></i>
-                                                Comment</button>
-                                            <button class="p-1 bg-gray-200 rounded-sm"><i class="fa-solid fa-share"></i>
-                                                Share</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> */}
+
+                            {!posts || posts.length <= 0 ? (
+                                <p className="font-normal text-gray-300 text-lg">You have no posts in the trash!</p>
+                            ) :
+                                posts.map((postMapper, index) => (
+                                    <PostCard
+                                        isDeleted="true"
+                                        onRestore={handleRestorePost}
+                                        onHardDelete={handleHardDeletePost}
+                                        onDeletePost={handleDeletePost}
+                                        key={`${postMapper.post.postId}-${index}`}
+                                        post={{
+                                            accId: postMapper.ownerPost.accId,
+                                            postId: postMapper.post.postId,
+                                            fullName: postMapper.ownerPost ? postMapper.ownerPost.fullName || postMapper.post.accId : "Unknown User",
+                                            avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar || "https://via.placeholder.com/40" : "https://via.placeholder.com/40",
+                                            createAt: postMapper.post.createdAt,
+                                            content: postMapper.post.postContent,
+                                            images: postMapper.postImages ? postMapper.postImages.map((img) => img.imageUrl) : [],
+                                            hashtags: postMapper.hashTags ? postMapper.hashTags.map((tag) => tag.hashTagContent) : [],
+                                            tagFriends: postMapper.postTags ? postMapper.postTags.map((tag) => ({
+                                                accId: tag.accId,
+                                                fullname: tag.fullname || "Unknown"
+                                            })) : [],
+                                            categories: postMapper.postCategories ? postMapper.postCategories.map((cat) => cat.categoryName) : [],
+                                            likes: postMapper.reactionCount || 0,
+                                            comments: postMapper.commentCount || 0,
+                                            shares: postMapper.shareCount || 0,
+                                        }}
+                                        onCommentCountChange={(newCount) =>
+                                            handleCommentCountChange(postMapper.post.postId, newCount)
+                                        }
+                                    />
+                                ))
+                            }
+
                         </section>
                     </div>
                 </div>

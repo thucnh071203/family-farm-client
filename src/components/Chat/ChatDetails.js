@@ -15,6 +15,7 @@ import {
 } from "../../services/chatService";
 import instance from "../../Axios/axiosConfig";
 import { useSignalR } from "../../context/SignalRContext";
+import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 
 const modules = {
     toolbar: false,
@@ -38,7 +39,6 @@ const ChatDetails = ({
     const [loading, setLoading] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(null);
-    const [skip, setSkip] = useState(0);
     const [totalMessages, setTotalMessages] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
@@ -52,6 +52,32 @@ const ChatDetails = ({
     const { connection, currentUserId } = useSignalR();
 
     const TAKE = 20;
+
+    // Sử dụng hook useInfiniteScroll
+    const { skip, setSkip } = useInfiniteScroll({
+        fetchData: ({ currentSkip, previousScrollHeightRef }) =>
+            fetchMessages({
+                receiverId,
+                setLoading,
+                setLoadingMore,
+                setError,
+                setMessages,
+                setTotalMessages,
+                setHasMore,
+                chatContainerRef,
+                previousScrollHeightRef,
+                currentSkip,
+                TAKE,
+            }),
+        containerRef: chatContainerRef,
+        direction: "up",
+        threshold: 50,
+        hasMore,
+        loading,
+        loadingMore,
+        take: TAKE,
+        data: messages,
+    });
 
     useEffect(() => {
         if (!chatId || !currentUserId) return;
@@ -164,7 +190,7 @@ const ChatDetails = ({
         });
     }, [receiverId]);
 
-    // Handle scroll to load more messages
+    // Show/hide scroll button
     useEffect(() => {
         const handleScroll = () => {
             const container = chatContainerRef.current;
@@ -172,23 +198,6 @@ const ChatDetails = ({
                 const isNearBottom =
                     container.scrollHeight - container.scrollTop - container.clientHeight < 50;
                 setShowScrollButton(!isNearBottom);
-
-                if (container.scrollTop < 50 && hasMore && !loading && !loadingMore) {
-                    setSkip((prevSkip) => prevSkip + TAKE);
-                    fetchMessages({
-                        receiverId,
-                        setLoading,
-                        setLoadingMore,
-                        setError,
-                        setMessages,
-                        setTotalMessages,
-                        setHasMore,
-                        chatContainerRef,
-                        previousScrollHeightRef,
-                        currentSkip: skip + TAKE,
-                        TAKE,
-                    });
-                }
             }
         };
 
@@ -197,15 +206,7 @@ const ChatDetails = ({
             containerRef.addEventListener("scroll", handleScroll);
             return () => containerRef.removeEventListener("scroll", handleScroll);
         }
-    }, [hasMore, loading, loadingMore, skip, receiverId]);
-
-    // Maintain scroll position after loading more messages
-    useEffect(() => {
-        if (previousScrollHeightRef.current && chatContainerRef.current) {
-            const newScrollHeight = chatContainerRef.current.scrollHeight;
-            chatContainerRef.current.scrollTop = newScrollHeight - previousScrollHeightRef.current;
-        }
-    }, [messages]);
+    }, []);
 
     useEffect(() => {
         if (skip === 0) {
@@ -281,7 +282,7 @@ const ChatDetails = ({
                             className="animate-spin h-5 w-5 mx-auto text-[#344258]"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
-                            viewBox="0 0 24 24"
+                            viewBox="0 24"
                         >
                             <circle
                                 className="opacity-25"
@@ -364,8 +365,8 @@ const ChatDetails = ({
                                             {detail.isRecalled ? (
                                                 <div
                                                     className={`p-2 rounded-lg ${group.senderId === currentUserId
-                                                            ? "bg-[#3DB3FB] text-white"
-                                                            : "bg-gray-100 text-[#344258]"
+                                                        ? "bg-[#3DB3FB] text-white"
+                                                        : "bg-gray-100 text-[#344258]"
                                                         } break-all w-fit overflow-hidden`}
                                                 >
                                                     <p
@@ -394,8 +395,8 @@ const ChatDetails = ({
                                                     {detail.fileUrl && detail.fileType !== "image" && (
                                                         <div
                                                             className={`p-2 rounded-lg ${group.senderId === currentUserId
-                                                                    ? "bg-[#3DB3FB] text-white"
-                                                                    : "bg-gray-100 text-[#344258]"
+                                                                ? "bg-[#3DB3FB] text-white"
+                                                                : "bg-gray-100 text-[#344258]"
                                                                 } break-all w-fit overflow-hidden`}
                                                         >
                                                             <a
@@ -412,8 +413,8 @@ const ChatDetails = ({
                                                     {detail.message?.trim() && (
                                                         <div
                                                             className={`p-2 rich-text-editor rounded-lg ${group.senderId === currentUserId
-                                                                    ? "bg-[#3DB3FB] text-white"
-                                                                    : "bg-gray-100 text-[#344258]"
+                                                                ? "bg-[#3DB3FB] text-white"
+                                                                : "bg-gray-100 text-[#344258]"
                                                                 } break-all w-fit overflow-hidden`}
                                                         >
                                                             <div

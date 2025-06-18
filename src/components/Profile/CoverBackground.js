@@ -18,7 +18,7 @@ const CoverBackground = ({ coverImage: initialCoverImage }) => {
     <div className="relative h-[330px] bg-gray-200 group lg:mt-[120px] mt-[63px]">
       <img src={
         coverImage ||
-        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg"
+        "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
       }
         alt="Background"
         className="w-full h-full object-cover transition-all duration-300 ease-in-out group-hover:brightness-90 cursor-pointer"

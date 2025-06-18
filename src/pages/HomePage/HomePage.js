@@ -1,153 +1,164 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Header from "../../components/Header/Header";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import WeatherWidget from "../../components/Home/WeatherWidget";
 import PopularService from "../../components/Services/PopularService";
 import PostCreate from "../../components/Post/PostCreate";
 import PostCard from "../../components/Post/PostCard";
-import SharePostCard from "../../components/Post/SharePostCard";
 import SuggestedFriends from "../../components/Home/SuggestedFriends";
 import SuggestedGroups from "../../components/Home/SuggestedGroups";
-import { Link } from "react-router-dom";
+import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import instance from "../../Axios/axiosConfig";
+import { toast, Bounce } from "react-toastify";
+import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
+import defaultAvatar from '../../assets/images/default-avatar.png';
+
 
 const HomePage = () => {
+  const [accountId, setAccountId] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+
+  //DÙNG CHO INFINITE SCROLL
   const [posts, setPosts] = useState([]);
-  const [sharePosts, setSharePosts] = useState([]);
 
-  // Dữ liệu mẫu cho posts (bài viết thường)
-  const samplePosts = [
-    {
-      postId: "post1",
-      type: "post",
-      fullName: "Phuong Nam",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      createAt: "2025-05-30T22:00:00Z",
-      content: "Hôm nay là một ngày đẹp trời! #blog #nature",
-      images: [
-        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-        "https://gameroom.ee/83571/minecraft.jpg",
-      ],
-      hashtags: ["blog", "nature"],
-      tagFriends: ["Huu Thuc"],
-      categories: ["Nature", "Lifestyle"],
-      likes: 150,
-      comments: 25,
-      shares: 15,
-    },
-    {
-      postId: "post2",
-      type: "post",
-      fullName: "Huu Thuc",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      createAt: "2025-05-30T15:00:00Z",
-      content: "Post với nhiều ảnh! #minecraft #gaming",
-      images: [
-        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      ],
-      hashtags: ["minecraft", "gaming"],
-      tagFriends: ["Mai Xuan", "Phuong Nam", "Lan Anh"],
-      categories: ["Gaming"],
-      likes: 120,
-      comments: 30,
-      shares: 20,
-    },
-  ];
+  const [lastPostId, setLastPostId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  // Dữ liệu mẫu cho sharePosts
-  const sampleSharePosts = [
-    {
-      postId: "share1",
-      fullName: "Mai Xuan",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      createAt: "2025-05-30T21:30:00Z",
-      content: "Chia sẻ bài viết tuyệt vời về lập trình! #coding #polytecode",
-      hashtags: ["coding", "polytecode"],
-      tagFriends: ["Phuong Nam", "Huu Thuc"],
-      likes: 80,
-      comments: 10,
-      shares: 5,
-      sharedPost: {
-        postId: "shared1",
-        fullName: "Huu Thuc",
-        avatar:
-          "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-        createAt: "2025-05-30T10:00:00Z",
-        content: "Học lập trình thật thú vị! #coding",
-        images: [
-          "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-        ],
-        hashtags: ["coding"],
-        categories: ["Programming"],
-        likes: 200,
-        comments: 50,
-        shares: 30,
-      },
-    },
-    {
-      postId: "share2",
-      fullName: "Phuong Nam",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      createAt: "2025-05-29T08:00:00Z",
-      content: "Chia sẻ một bài viết về nông nghiệp! #farming",
-      hashtags: ["farming"],
-      tagFriends: ["Huu Thuc", "Mai Xuan", "Lan Anh"],
-      likes: 60,
-      comments: 15,
-      shares: 8,
-      sharedPost: {
-        postId: "shared2",
-        fullName: "Mai Xuan",
-        avatar:
-          "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-        createAt: "2025-05-28T09:00:00Z",
-        content: "Nông nghiệp bền vững là tương lai! #farming #sustainability",
-        images: null,
-        hashtags: ["farming", "sustainability"],
-        categories: ["Agriculture"],
-        likes: 90,
-        comments: 20,
-        shares: 10,
-      },
-    },
-  ];
+  const [error, setError] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
+  const postContainerRef = useRef(null);
+  const PAGE_SIZE = 5;
+  const [suggestedFriends, setSuggestedFriends] = useState([]);
 
-  // Giả lập gọi API
+  //lấy thông tin người dùng từ storage
   useEffect(() => {
-    setPosts(samplePosts);
-    setSharePosts(sampleSharePosts);
+    const storedAccId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
+    const storedAvatarUrl = localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
+
+    if (storedAccId) {
+      setAccountId(storedAccId);
+      setAvatarUrl(storedAvatarUrl || defaultAvatar);
+    }
   }, []);
 
-  // Hàm cập nhật số lượng comment
+  const fetchPosts = async ({ lastPostId, reset = false }) => {
+    setLoading(true);
+    if (lastPostId) setLoadingMore(true);
+    setError(null);
+
+    try {
+      const response = await instance.get("/api/post/infinite", {
+        params: {
+          lastPostId: lastPostId,
+          pageSize: PAGE_SIZE,
+        },
+      });
+
+      console.log("API posts response:", response.data.data); // Debug
+
+      if (response.data.success) {
+        const newPosts = response.data.data || [];
+        setPosts((prevPosts) =>
+          reset ? newPosts : [...prevPosts, ...newPosts]
+        );
+        setHasMore(response.data.hasMore);
+
+        if (newPosts.length > 0) {
+          setLastPostId(newPosts[newPosts.length - 1].post.postId);
+
+        } else {
+          setLastPostId(null);
+        }
+      } else {
+        setError(response.data.message || "Tải bài post thất bại!");
+        toast.error(response.data.message || "Tải bài post thất bại!", {
+          position: "top-right",
+          autoClose: 3000,
+          transition: Bounce,
+        });
+      }
+    } catch (error) {
+      setError("Failed to load posts!");
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  //GỌI LẦN ĐẦU
+
+  useEffect(() => {
+    setSkip(0);
+    setLastPostId(null);
+    fetchPosts({ lastPostId: null, reset: true });
+  }, []);
+
+  const { skip, setSkip } = useInfiniteScroll({
+    fetchData: () => fetchPosts({ lastPostId }),
+    containerRef: window, //thay đổi thành window do scroll nguyên trang
+    direction: "down",
+    threshold: 50,
+    hasMore,
+    loading,
+    loadingMore,
+    comments: posts.length,
+    data: PAGE_SIZE,
+    take: posts.length,
+  });
+
   const handleCommentCountChange = (postId, newCount) => {
     setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post.postId === postId ? { ...post, comments: newCount } : post
-      )
-    );
-    setSharePosts((prevSharePosts) =>
-      prevSharePosts.map((post) =>
-        post.postId === postId ? { ...post, comments: newCount } : post
+      prevPosts.map((postMapper) =>
+        postMapper.post && (postMapper.post.postId) === postId
+          ? { ...postMapper, post: { ...postMapper.post, comments: newCount } }
+          : postMapper
       )
     );
   };
 
-  // Gộp và sắp xếp bài viết
-  const allPosts = [...posts, ...sharePosts].sort(
-    (a, b) => new Date(b.createAt) - new Date(a.createAt)
-  );
+  const fetchSuggestedFriends = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(
+        `https://localhost:7280/api/friend/suggestion-friend-home`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const json = await response.json();
+      if (json.data.length !== 0) {
+        setSuggestedFriends(json.data);
+      } else {
+        setSuggestedFriends([]);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSuggestedFriends();
+  }, []);
+
+  const handleDeletePost = (postId) => {
+    setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
+  };
+
+  const handlePostCreate = (newPostData) => {
+    if(newPostData.postScope === "Public") {
+      setPosts((prevPosts) => [newPostData, ...prevPosts]);
+    }
+    
+  }
 
   return (
     <div className="HomePage bg-gray-100">
       <Header />
-
-      <Link to="/StatisticPage">Link</Link>
 
       <NavbarHeader />
       <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[65px]">
@@ -158,31 +169,66 @@ const HomePage = () => {
             <PopularService />
           </aside>
           {/* Posts Section */}
-          <section className="flex flex-col gap-5 lg:order-2 order-3 h-full w-full">
-            <PostCreate />
-            {allPosts.map((post, index) =>
-              post.type === "post" ? (
-                <PostCard
-                  key={index}
-                  post={post}
-                  onCommentCountChange={(newCount) =>
-                    handleCommentCountChange(post.postId, newCount)
-                  }
-                />
-              ) : (
-                <SharePostCard
-                  key={index}
-                  post={post}
-                  onCommentCountChange={(newCount) =>
-                    handleCommentCountChange(post.postId, newCount)
-                  }
-                />
-              )
+          <section
+            ref={postContainerRef}
+            className="flex flex-col gap-5 lg:order-2 order-3 w-full"
+          >
+            <PostCreate profileImage={avatarUrl} onPostCreate={handlePostCreate} />
+            {loading && skip === 0 ? (
+              <div className="flex flex-col gap-5">
+                {[...Array(3)].map((_, index) => (
+                  <PostCardSkeleton key={index} />
+                ))}
+              </div>
+            ) : error ? (
+              <div className="text-center py-4">{error}</div>
+            ) : posts.length > 0 ? (
+              posts.map((postMapper, index) => (
+                postMapper && postMapper.post ? (
+                  <PostCard
+                    onDeletePost={handleDeletePost}
+                    key={`${postMapper.post.postId}-${index}`}
+                    post={{
+                      accId: postMapper.ownerPost.accId,
+                      postId: postMapper.post.postId,
+                      fullName: postMapper.ownerPost ? postMapper.ownerPost.fullName || postMapper.post.accId : "Unknown User",
+                      avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar || "https://via.placeholder.com/40" : "https://via.placeholder.com/40",
+                      createAt: postMapper.post.createdAt,
+                      content: postMapper.post.postContent,
+                      images: postMapper.postImages ? postMapper.postImages.map((img) => img.imageUrl) : [],
+                      hashtags: postMapper.hashTags ? postMapper.hashTags.map((tag) => tag.hashTagContent) : [],
+                      tagFriends: postMapper.postTags ? postMapper.postTags.map((tag) => ({
+                        accId: tag.accId,
+                        fullname: tag.fullname || "Unknown"
+                      })) : [],
+                      categories: postMapper.postCategories ? postMapper.postCategories.map((cat) => cat.categoryName) : [],
+                      likes: postMapper.reactionCount || 0,
+                      comments: postMapper.commentCount || 0,
+                      shares: postMapper.shareCount || 0,
+                    }}
+                    onCommentCountChange={(newCount) =>
+                      handleCommentCountChange(postMapper.post.postId, newCount)
+                    }
+                  />
+                ) : null
+              ))
+            ) : (
+              <div className="text-center py-4">Không tìm thấy bài viết</div>
+            )}
+            {loadingMore && (
+              <div className="flex flex-col gap-5 py-4">
+                {[...Array(2)].map((_, index) => (
+                  <PostCardSkeleton key={`more-${index}`} />
+                ))}
+              </div>
             )}
           </section>
           {/* Right */}
           <section className="flex flex-col gap-5 lg:order-3 order-2">
-            <SuggestedFriends />
+            <SuggestedFriends
+              friends={suggestedFriends}
+              onLoadList={fetchSuggestedFriends}
+            />
             <SuggestedGroups />
           </section>
         </div>

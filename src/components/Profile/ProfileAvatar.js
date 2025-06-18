@@ -1,7 +1,9 @@
-import React, { useState, useCallback, useRef } from "react";
+
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import Cropper from "react-easy-crop";
 
-const ProfileAvatar = ({ profileImage: initialProfileImage, fullName }) => {
+const ProfileAvatar = ({ initialProfileImage, fullName }) => {
+
   const [profileImage, setProfileImage] = useState(initialProfileImage);
   const [showCropper, setShowCropper] = useState(false);
   const [imageToCrop, setImageToCrop] = useState(null);
@@ -11,6 +13,12 @@ const ProfileAvatar = ({ profileImage: initialProfileImage, fullName }) => {
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const profileInputRef = useRef(null);
 
+  console.log("prop từ comp cha: " + profileImage)
+
+  useEffect(() => {
+    setProfileImage(initialProfileImage)
+  }, [initialProfileImage])
+  
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {

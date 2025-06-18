@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { toast, Bounce } from "react-toastify";
 
-const YourFriendCard = ({ friend }) => {
+const YourFriendCard = ({ friend, onActionComplete }) => {
+  const [status, setStatus] = useState(friend.friendStatus);
   const buttonConfig = {
     null: {
       text: "Add friend",
@@ -36,6 +39,55 @@ const YourFriendCard = ({ friend }) => {
 
   const config = buttonConfig[friend.friendStatus] || buttonConfig.null;
 
+  const handleClick = async () => {
+    const token = localStorage.getItem("accessToken");
+    const isExpert = friend.role === "68007b2a87b41211f0af1d57";
+
+    try {
+      if (!status || status === "") {
+        // Gửi lời mời kết bạn
+        const response = await axios.post(
+          "https://localhost:7280/api/friend/send-friend-request",
+          { receiverId: friend.accId },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          onActionComplete();
+          setStatus(isExpert ? "Following" : "Pending");
+          toast.success("You sent the request successfully!");
+        } else {
+          toast.error("Failed to send request.");
+        }
+      } else {
+        // Huỷ kết bạn / Huỷ theo dõi / Huỷ lời mời
+        const response = await axios.delete(
+          `https://localhost:7280/api/friend/unfriend/${friend.accId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Kiểm tra response.data === true
+        if (response.status === 200 && response.data === true) {
+          onActionComplete();
+          setStatus(null); // Reset lại để hiển thị nút "Add Friend"
+          toast.success("Action completed successfully!");
+        } else {
+          toast.error("Failed to process the action.");
+        }
+      }
+    } catch (error) {
+      console.error("Error during friend action:", error);
+      toast.error("An error occurred while processing the action.");
+    }
+  };
   return (
     <div className="w-[224px] h-[207px] bg-white rounded-[10px] border shadow-[0_4px_6px_rgba(0,0,0,0.45)]">
       <div className="mt-3 h-6">
@@ -67,6 +119,7 @@ const YourFriendCard = ({ friend }) => {
         </div>
         <div>
           <button
+            onClick={handleClick}
             className={`w-[120px] h-6 ${config.bgColor} ${config.hoverColor} rounded-[5px] font-normal mt-2 text-sm text-white p-1 flex items-center justify-center`}
           >
             <i className={`fa-solid ${config.icon} mr-2`}></i>

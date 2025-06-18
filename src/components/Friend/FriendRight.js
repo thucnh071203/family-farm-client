@@ -85,6 +85,7 @@ const FriendRight = ({ section }) => {
     "list-follower": "Follower list",
     "list-following": "Following list",
     "list-friend": "Your friends",
+    "suggestion-friend": "Friend suggestion",
     // ... các section khác
   };
 
@@ -94,6 +95,7 @@ const FriendRight = ({ section }) => {
     "list-follower": "FOLLOWER",
     "list-following": "FOLLOWING",
     "list-friend": "FRIENDS",
+    "suggestion-friend": "FRIENDS SUGGESTON",
     // ... các section khác
   };
 
@@ -117,7 +119,7 @@ const FriendRight = ({ section }) => {
                 </div>
               </div>
               <div className="flex gap-1">
-                <p className="font-bold ">{count}</p>
+                <p className="font-bold ">{friendsData.length}</p>
                 <p className="text-[#999999] font-bold">
                   {" "}
                   {countListTitles[section] || "Default title"}
@@ -144,7 +146,7 @@ const FriendRight = ({ section }) => {
                     );
                   } else {
                     return (
-                      <YourFriendCard key={friend.accId} friend={friend} />
+                      <YourFriendCard key={friend.accId} friend={friend} onActionComplete={fetchFriends}/>
                     );
                   }
                 })

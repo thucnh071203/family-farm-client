@@ -16,6 +16,8 @@ import SuggestedExperts from "./SuggestedExperts";
 import SuggestedGroups from "../Home/SuggestedGroups";
 import FilterService from "../FilterService/FilterService";
 import instance from "../../Axios/axiosConfig";
+import defaultAvatar from '../../assets/images/default-avatar.png';
+
 
 export default function ServicesList() {
     const [services, setServices] = useState([]);
@@ -46,7 +48,8 @@ export default function ServicesList() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const res = await axios.get("https://localhost:7280/api/service/all");
+                // const res = await axios.get("https://localhost:7280/api/service/all");
+                const res = await instance.get("api/service/all");
                 if (res.data.success) {
                     const mappedServices = res.data.data
                         .filter(item => item.service)
@@ -55,11 +58,16 @@ export default function ServicesList() {
                     const enrichedServices = await Promise.all(
                         mappedServices.map(async (service) => {
                             try {
-                                const providerRes = await axios.get(`https://localhost:7280/api/account/profile-another/${service.providerId}`);
+                                // const providerRes = await axios.get(`https://localhost:7280/api/account/profile-another/${service.providerId}`);
+                                const providerRes = await instance.get(`api/account/profile-another/${service.providerId}`);
                                 const provider = providerRes.data?.data;
+
+                                console.log("provider", provider);
 
                                 return {
                                     ...service,
+                                    fullName: provider?.fullName || '',
+                                    avatar: provider?.avatar || '',
                                     country: provider?.country || '',
                                     city: provider?.city || '',
                                 };
@@ -67,6 +75,8 @@ export default function ServicesList() {
                                 console.error("❌ Không thể lấy thông tin provider:", service.providerId, err);
                                 return {
                                     ...service,
+                                    fullName: '',
+                                    avatar: '',
                                     country: '',
                                     city: '',
                                 };
@@ -160,9 +170,6 @@ export default function ServicesList() {
             return matchName && matchStar && matchPrice && matchDate && matchCountry && matchCity;
         });
 
-        // console.log("🌍 Đã lọc theo vị trí:", filter.country, filter.city);
-        // console.log("📌 Dịch vụ sau khi lọc:", filtered);
-
         setFilteredServices(filtered);
     }, [services, filter]);
 
@@ -193,9 +200,6 @@ export default function ServicesList() {
                             <img className="mx-auto mt-2 line" src={lineService} />
                         </div>
 
-                        {/* <div className="container-list">
-
-                            </div> */}
                         <div className="service-container w-[91.8%] lg:w-[650px] mx-auto">
                             {/* Hiển thị list service */}
                             {currentServices.map((service, index) => {
@@ -207,10 +211,15 @@ export default function ServicesList() {
                                         <div className="body-service px-3">
                                             <div className="author-content">
                                                 <div className="avatar-content">
-                                                    <img src={userAvatar} alt="avatar" />
+                                                    {/* <img src={service.avatar} alt="avatar" /> */}
+                                                    <img className="w-[45px] h-[45px] rounded-full"
+                                                    src={service.avatar && service.avatar.trim() !== "" ? service.avatar : defaultAvatar}
+                                                    alt="avatar"
+                                                    />
+
                                                 </div>
                                                 <div className="author-info">
-                                                    <div className="author-name">Dang Khoa</div>
+                                                    <div className="author-name">{service.fullName}</div>
                                                     <div className="author-role">Expert</div>
                                                 </div>
                                             </div>
