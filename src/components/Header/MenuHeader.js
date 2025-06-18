@@ -6,6 +6,8 @@ import service_black_icon from "../../assets/icons/service_black_icon.svg";
 import payment_icon from "../../assets/icons/payment_icon.svg";
 import cancelIcon from "../../assets/images/cancel_vector.png";
 import headLine from "../../assets/images/head_line.png";
+import recycle_bin_icon from "../../assets/icons/recycle-bin-svgrepo-com.svg";
+import password_icon_black from "../../assets/icons/password_icon_black.svg";
 
 const MenuHeader = ({ onToggle, isVisible }) => {
     const navigate = useNavigate();
@@ -67,6 +69,22 @@ const MenuHeader = ({ onToggle, isVisible }) => {
                         >
                             <img src={service_black_icon} alt="Service" className="h-5" />
                             <p className="mt-2">Your Service</p>
+                        </Link>
+                        <Link
+                            to="/Trash"
+                            className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                            onClick={onToggle}
+                        >
+                            <img src={recycle_bin_icon} alt="Service" className="h-5" />
+                            <p className="mt-2">Recycle Bin</p>
+                        </Link>
+                        <Link
+                            to="/ChangePassword"
+                            className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                            onClick={onToggle}
+                        >
+                            <img src={password_icon_black} alt="Service" className="h-5" />
+                            <p className="mt-2">Change Password</p>
                         </Link>
                     </div>
                     <button
