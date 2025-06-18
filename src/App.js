@@ -76,7 +76,8 @@ const AppContent = () => {
   const isPublicRoute = ["/Login", "/Register"].includes(location.pathname);
 
   return (
-    <div>
+    <>
+      <ScrollToTop />
       <Routes>
         {isPublicRoute || isAuthenticated ? (
           <>
@@ -84,31 +85,55 @@ const AppContent = () => {
             <Route path="/Register" element={<Register />} />
             <Route path="/ServiceManagement" element={<ServiceManagement />} />
             <Route path="/Login" element={<LoginPage />} />
-            <Route path="/PersonalPage" element={<PersonalPage />} />
+            <Route path="/PersonalPage">
+              <Route index element={<PersonalPage />} /> {/* my profile */}
+              <Route path=":accId" element={<PersonalPage />} />{" "}
+              {/* other profile */}
+            </Route>
             <Route path="/Friend" element={<FriendPage />} />
             <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
             <Route path="/Statistic1" element={<Statistic1 />} />
             <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
-            <Route
-              path="/CreateReactionPage"
-              element={<CreateReactionPage />}
-            />
-            <Route path="/SidebarDash" element={<SidebarDash />} />
             <Route path="/MapChart" element={<MapChart />} />
-            <Route path="/ReactionPage" element={<ReactionPage />} />
-            <Route
-              path="/DashboardPage/PostCatePage"
-              element={<PostCatePage />}
-            />
-            <Route path="/MostUser" element={<MostUser />} />
             <Route path="/Service" element={<ServicePage />} />
             <Route path="/Group" element={<PostGroupPage />} />
+            <Route path="/group/:id" element={<GroupDetailPage />} />
             <Route path="/UpdateProfile" element={<UpdateProfile />} />
             <Route path="/UserFriends" element={<UserFriends />} />
             <Route path="/ProcessList" element={<ProcessListPage />} />
             <Route path="/ProcessResult" element={<ProcessResultPage />} />
             <Route path="/WaitingOrderList" element={<WaitingListPage />} />
             <Route path="/GroupPage" element={<GroupPage />} />
+            <Route
+              path="/JoinRequestsListPage"
+              element={<JoinRequestsListPage />}
+            />
+            <Route
+              path="/PermissionGroupPage"
+              element={<PermissionGroupPage />}
+            />
+            <Route path="/SavedPostPage" element={<SavedPostPage />} />
+            <Route path="/CreateService" element={<CreateServicePage />} />
+            <Route path="/EditService/:id" element={<EditServicePage />} />
+            <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
+            <Route
+              path="/ProgressListFarmer"
+              element={<ProcessListFarmerPage />}
+            />
+            <Route path="/CreateStepPage" element={<CreateStepPage />} />
+            <Route path="/Chats" element={<ChatPage />} />
+            <Route path="/FilterService" element={<FilterService />} />
+            <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
+            <Route path="/EditGroup/:groupId" element={<EditGroupPage />} />
+
+            <Route path="/Trash" element={<RecycleBin />} />
+
+            <Route path="/ReactionPage" element={<ReactionPage />} />
+            <Route
+              path="/DashboardPage/PostCatePage"
+              element={<PostCatePage />}
+            />
+            <Route path="/SidebarDash" element={<SidebarDash />} />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/DashboardPage" element={<DashboardPage />} />
             <Route
@@ -123,95 +148,12 @@ const AppContent = () => {
               path="/DashboardPage/PostCatePage/DetailPostCate/:id"
               element={<DetailPostCate />}
             />
-            <Route
-              path="/JoinRequestsListPage"
-              element={<JoinRequestsListPage />}
-            />
-            <Route
-              path="/PermissionGroupPage"
-              element={<PermissionGroupPage />}
-            />
-
-            <Route path="/SavedPostPage" element={<SavedPostPage />} />
-            <Route path="/CreateService" element={<CreateServicePage />} />
-            <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
-            <Route
-              path="/ProgressListFarmer"
-              element={<ProcessListFarmerPage />}
-            />
-            <Route path="/CreateStepPage" element={<CreateStepPage />} />
-            <Route path="/Chats" element={<ChatPage />} />
-            <Route path="/FilterService" element={<FilterService />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
         )}
       </Routes>
-
-      <>
-        <ScrollToTop />
-        <Routes>
-          {isPublicRoute || isAuthenticated ? (
-            <>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/Register" element={<Register />} />
-              <Route
-                path="/ServiceManagement"
-                element={<ServiceManagement />}
-              />
-              <Route path="/Login" element={<LoginPage />} />
-              <Route path="/PersonalPage">
-                <Route index element={<PersonalPage />} /> {/* my profile */}
-                <Route path=":accId" element={<PersonalPage />} />{" "}
-                {/* other profile */}
-              </Route>
-              <Route path="/Friend" element={<FriendPage />} />
-              <Route
-                path="/CreateProcessStep"
-                element={<CreateProcessStep />}
-              />
-              <Route path="/Statistic1" element={<Statistic1 />} />
-              <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
-              <Route path="/MapChart" element={<MapChart />} />
-              <Route path="/Service" element={<ServicePage />} />
-              <Route path="/Group" element={<PostGroupPage />} />
-              <Route path="/group/:id" element={<GroupDetailPage />} />
-              <Route path="/UpdateProfile" element={<UpdateProfile />} />
-              <Route path="/UserFriends" element={<UserFriends />} />
-              <Route path="/ProcessList" element={<ProcessListPage />} />
-              <Route path="/ProcessResult" element={<ProcessResultPage />} />
-              <Route path="/WaitingOrderList" element={<WaitingListPage />} />
-              <Route path="/GroupPage" element={<GroupPage />} />
-              <Route
-                path="/JoinRequestsListPage"
-                element={<JoinRequestsListPage />}
-              />
-              <Route
-                path="/PermissionGroupPage"
-                element={<PermissionGroupPage />}
-              />
-              <Route path="/SavedPostPage" element={<SavedPostPage />} />
-              <Route path="/CreateService" element={<CreateServicePage />} />
-              <Route path="/EditService/:id" element={<EditServicePage />} />
-              <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
-              <Route
-                path="/ProgressListFarmer"
-                element={<ProcessListFarmerPage />}
-              />
-              <Route path="/CreateStepPage" element={<CreateStepPage />} />
-              <Route path="/Chats" element={<ChatPage />} />
-              <Route path="/FilterService" element={<FilterService />} />
-              <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
-              <Route path="/EditGroup/:groupId" element={<EditGroupPage />} />
-
-              <Route path="/Trash" element={<RecycleBin />} />
-            </>
-          ) : (
-            <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
-          )}
-        </Routes>
-      </>
-    </div>
+    </>
   );
 };
 
