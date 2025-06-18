@@ -13,12 +13,14 @@ import { toast, Bounce } from "react-toastify";
 import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
 import defaultAvatar from '../../assets/images/default-avatar.png';
 
+
 const HomePage = () => {
   const [accountId, setAccountId] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
 
   //DÙNG CHO INFINITE SCROLL
   const [posts, setPosts] = useState([]);
+
   const [lastPostId, setLastPostId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -85,6 +87,7 @@ const HomePage = () => {
   };
 
   //GỌI LẦN ĐẦU
+
   useEffect(() => {
     setSkip(0);
     setLastPostId(null);
@@ -156,6 +159,7 @@ const HomePage = () => {
   return (
     <div className="HomePage bg-gray-100">
       <Header />
+
       <NavbarHeader />
       <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[65px]">
         <div className="gap-5 grid lg:grid-cols-[1fr_2fr_1fr] grid-cols-1">

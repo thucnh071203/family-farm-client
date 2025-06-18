@@ -26,6 +26,8 @@ import ServiceManagement from "./components/ServiceManagement/ServiceManagement"
 import CreateProcessStep from "./components/ProcessStep/CreateProcessStep";
 import { Statistic1 } from "./components/Statistic/Statistic1";
 import MapChart from "./components/Statistic/MapChart";
+import MostUser from "./components/Statistic/MostUser";
+import SidebarDash from "./components/DashboardCom/SidebarDash";
 import { UserGrowthChart } from "./components/Statistic/UserGrowthChart";
 import PersonalPage from "./pages/Profile/PersonalPage";
 import UpdateProfile from "./pages/Profile/UpdateProfile";
@@ -40,11 +42,22 @@ import ServiceDetailPage from "./pages/ServicePage/ServiceDetailPage";
 import ProcessResultPage from "./pages/ProcessPage/ProcessResultPage";
 import FilterService from "./components/FilterService/FilterService";
 import ChatPage from "./pages/Chat/ChatPage";
+
+import StatisticPage from "./pages/Dashboard/StatisticPage";
+import DashboardPage from "./pages/Dashboard/DashboardPage";
+import ReactionPage from "./pages/Dashboard/ReactionPage";
+import PostCatePage from "./pages/Dashboard/PostCatePage";
+import CreateReactionPage from "./pages/Dashboard/CreateReactionPage";
+import CreatePostCate from "./pages/Dashboard/CreatePostCate";
+import UpdatePostCate from "./pages/Dashboard/UpdatePostCate";
+import DetailPostCate from "./pages/Dashboard/DetailPostCate";
+
 import GroupDetailPage from "./pages/GroupPage/GroupDetailPage";
 import ScrollToTop from "./components/ScrollToTop";
 import UpdatePostPage from "./pages/Profile/UpdatePostPage";
 import EditGroupPage from "./pages/GroupPage/EditGroupPage";
 import RecycleBin from "./pages/Profile/RecycleBin";
+
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -64,6 +77,75 @@ const AppContent = () => {
   const isPublicRoute = ["/Login", "/Register"].includes(location.pathname);
 
   return (
+
+    <Routes>
+      {isPublicRoute || isAuthenticated ? (
+        <>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/Register" element={<Register />} />
+          <Route path="/ServiceManagement" element={<ServiceManagement />} />
+          <Route path="/Login" element={<LoginPage />} />
+          <Route path="/PersonalPage" element={<PersonalPage />} />
+          <Route path="/Friend" element={<FriendPage />} />
+          <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
+          <Route path="/Statistic1" element={<Statistic1 />} />
+          <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
+          <Route path="/CreateReactionPage" element={<CreateReactionPage />} />
+          <Route path="/SidebarDash" element={<SidebarDash />} />
+          <Route path="/MapChart" element={<MapChart />} />
+          <Route path="/ReactionPage" element={<ReactionPage />} />
+          <Route
+            path="/DashboardPage/PostCatePage"
+            element={<PostCatePage />}
+          />
+          <Route path="/MostUser" element={<MostUser />} />
+          <Route path="/Service" element={<ServicePage />} />
+          <Route path="/Group" element={<PostGroupPage />} />
+          <Route path="/UpdateProfile" element={<UpdateProfile />} />
+          <Route path="/UserFriends" element={<UserFriends />} />
+          <Route path="/ProcessList" element={<ProcessListPage />} />
+          <Route path="/ProcessResult" element={<ProcessResultPage />} />
+          <Route path="/WaitingOrderList" element={<WaitingListPage />} />
+          <Route path="/GroupPage" element={<GroupPage />} />
+          <Route path="/StatisticPage" element={<StatisticPage />} />
+          <Route path="/DashboardPage" element={<DashboardPage />} />
+          <Route
+            path="/DashboardPage/PostCatePage/CreatePostCate"
+            element={<CreatePostCate />}
+          />
+          <Route
+            path="/DashboardPage/PostCatePage/UpdatePostCate/:id"
+            element={<UpdatePostCate />}
+          />
+          <Route
+            path="/DashboardPage/PostCatePage/DetailPostCate/:id"
+            element={<DetailPostCate />}
+          />
+          <Route
+            path="/JoinRequestsListPage"
+            element={<JoinRequestsListPage />}
+          />
+          <Route
+            path="/PermissionGroupPage"
+            element={<PermissionGroupPage />}
+          />
+
+          <Route path="/SavedPostPage" element={<SavedPostPage />} />
+          <Route path="/CreateService" element={<CreateServicePage />} />
+          <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
+          <Route
+            path="/ProgressListFarmer"
+            element={<ProcessListFarmerPage />}
+          />
+          <Route path="/CreateStepPage" element={<CreateStepPage />} />
+          <Route path="/Chats" element={<ChatPage />} />
+          <Route path="/FilterService" element={<FilterService />} />
+        </>
+      ) : (
+        <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
+      )}
+    </Routes>
+
     <>
     <ScrollToTop />
       <Routes>
@@ -117,6 +199,7 @@ const AppContent = () => {
         )}
       </Routes>
     </>
+
 
 
   );
