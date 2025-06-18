@@ -7,13 +7,14 @@ import PopupDeleteService from "../Services/PopupDeleteService";
 import PopupToggleService from "../Services/PopupToggleService";
 import instance from "../../Axios/axiosConfig";
 import { useParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export const ServiceManagement = () => {
   const [isAllChecked, setIsAllChecked] = useState(false);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
-  const [showDeletePopup, setDeleteShowPopup] = useState(false);
+  // const [showDeletePopup, setDeleteShowPopup] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [showTogglePopup, setShowTogglePopup] = useState(false);
   const [toggleServiceId, setToggleServiceId] = useState(null);
@@ -78,67 +79,150 @@ export const ServiceManagement = () => {
     fetchServicesAndCategories();
   }, []);
 
-  const handleDeleteClick = (serviceId) => {
-    setSelectedServiceId(serviceId);
-    setDeleteShowPopup(true);
-  };
+  // const handleDeleteClick = (serviceId) => {
+  //   setSelectedServiceId(serviceId);
+  //   setDeleteShowPopup(true);
+  // };
 
-  const handleConfirmDelete = async () => {
-    try {
-      await instance.delete(`/api/service/delete/${selectedServiceId}`);
-      
-      // ❗ Cập nhật danh sách sau khi xóa
-      setServices(prev => prev.filter(service => service.serviceId !== selectedServiceId));
+  // const handleConfirmDelete = async () => {
+  //   try {
+  //     await instance.delete(`/api/service/delete/${selectedServiceId}`);
 
-      toast.success("Delete service successful");
-    } catch (error) {
-      console.error(error);
-      toast.error("Delete failed!");
-    } finally {
-      setDeleteShowPopup(false);
-      setSelectedServiceId(null);
-    }
-  };
+  //     // ❗ Cập nhật danh sách sau khi xóa
+  //     setServices(prev => prev.filter(service => service.serviceId !== selectedServiceId));
 
-  const handleToggleStatusClick = (serviceId, currentStatus) => {
-    setToggleServiceId(serviceId);
-    setIsDisabling(currentStatus === 1); // Nếu đang là available thì sắp disable
-    setShowTogglePopup(true);
-  };
+  //     toast.success("Delete service successful");
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("Delete failed!");
+  //   } finally {
+  //     setDeleteShowPopup(false);
+  //     setSelectedServiceId(null);
+  //   }
+  // };
 
-
-  const handleConfirmToggleStatus = async () => {
-    try {
-      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-
-      const res = await instance.put(
-        `/api/service/change-status/${toggleServiceId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+const handleDeleteClick = (serviceId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This service will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      customClass: {
+        confirmButton: 'bg-red-300 hover:bg-red-600 text-white px-4 py-2 rounded mx-3',
+        cancelButton: 'bg-blue-300 hover:bg-blue-600 text-white px-4 py-2 rounded',
+      },
+      confirmButtonText: 'Yes, delete it!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await instance.delete(`/api/service/delete/${serviceId}`);
+          setServices((prev) => prev.filter((s) => s.serviceId !== serviceId));
+          // Swal.fire("Deleted!", "The service has been deleted.", "success");
+          toast.success("Delete service successfully!");
+        } catch (error) {
+          console.error(error);
+          // Swal.fire("Error", "Failed to delete service.", "error");
+          toast.error("Delete service failed.");
         }
-      );
-
-      if (res.status === 200) {
-        setServices((prev) =>
-          prev.map((s) =>
-            s.serviceId === toggleServiceId
-              ? { ...s, status: s.status === 1 ? 0 : 1 }
-              : s
-          )
-        );
-        toast.success("Status updated successfully!");
-      } else {
-        toast.error("Failed to update service status!");
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong");
-    } finally {
-      setShowTogglePopup(false);
-      setToggleServiceId(null);
+    });
+  };
+
+
+  // const handleToggleStatusClick = (serviceId, currentStatus) => {
+  //   setToggleServiceId(serviceId);
+  //   setIsDisabling(currentStatus === 1); // Nếu đang là available thì sắp disable
+  //   setShowTogglePopup(true);
+  // };
+
+
+  // const handleConfirmToggleStatus = async () => {
+  //   try {
+  //     const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+  //     const res = await instance.put(
+  //       `/api/service/change-status/${toggleServiceId}`,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (res.status === 200) {
+  //       setServices((prev) =>
+  //         prev.map((s) =>
+  //           s.serviceId === toggleServiceId
+  //             ? { ...s, status: s.status === 1 ? 0 : 1 }
+  //             : s
+  //         )
+  //       );
+  //       toast.success("Status updated successfully!");
+  //     } else {
+  //       toast.error("Failed to update service status!");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("Something went wrong");
+  //   } finally {
+  //     setShowTogglePopup(false);
+  //     setToggleServiceId(null);
+  //   }
+  // };
+
+  const handleToggleStatusClick = async (serviceId, currentStatus) => {
+    const isDisabling = currentStatus === 1;
+
+    const result = await Swal.fire({
+      title: isDisabling ? "Disable Service" : "Enable Service",
+      text: `Are you sure you want to ${isDisabling ? "disable" : "enable"} this service?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: isDisabling ? "Yes, Disable" : "Yes, Enable",
+      // cancelButtonText: "Cancel",
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: isDisabling
+          ? "bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded  mx-3"
+          : "bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded  mx-3",
+        cancelButton: "bg-gray-400 hover:bg-gray-500 text-white font-semibold px-4 py-2 rounded",
+      },
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+        const res = await instance.put(
+          `/api/service/change-status/${serviceId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (res.status === 200) {
+          setServices((prev) =>
+            prev.map((s) =>
+              s.serviceId === serviceId
+                ? { ...s, status: s.status === 1 ? 0 : 1 }
+                : s
+            )
+          );
+
+          toast.success("Status changed successfully!");
+        } else {
+          Swal.fire("Error", "Failed to update service status!", "error");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Change status failed.");
+      }
     }
   };
 
@@ -155,13 +239,6 @@ export const ServiceManagement = () => {
           </button>
         </div>
         <div className="flex items-center mt-4 space-x-6 lg:gap-40">
-          {/* <div className="flex gap-4 lg:gap-8">
-            <div className="font-semibold text-blue-600 border-b-2 border-blue-600 cursor-pointer">
-              All
-            </div>
-            <div className="text-gray-400 cursor-pointer">Available</div>
-            <div className="text-gray-400 cursor-pointer">Unavailable</div>
-          </div> */}
           <div className="flex gap-4 lg:gap-8">
             <div
               className={`cursor-pointer ${filterStatus === "all" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
@@ -253,19 +330,19 @@ export const ServiceManagement = () => {
                   </tr>
                 ))
               )}
-              {showDeletePopup && (
+              {/* {showDeletePopup && (
                 <PopupDeleteService
                   onClose={() => setDeleteShowPopup(false)}
                   onConfirm={handleConfirmDelete}
                 />
-              )}
-              {showTogglePopup && (
+              )} */}
+              {/* {showTogglePopup && (
                 <PopupToggleService
                   isDisabling={isDisabling}
                   onClose={() => setShowTogglePopup(false)}
                   onConfirm={handleConfirmToggleStatus}
                 />
-              )}
+              )} */}
             </tbody>
           </table>
         </div>

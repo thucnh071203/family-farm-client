@@ -1,7 +1,9 @@
+
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import Cropper from "react-easy-crop";
 
 const ProfileAvatar = ({ initialProfileImage, fullName }) => {
+
   const [profileImage, setProfileImage] = useState(initialProfileImage);
   const [showCropper, setShowCropper] = useState(false);
   const [imageToCrop, setImageToCrop] = useState(null);

@@ -104,7 +104,7 @@ export function MapChart() {
           "https://localhost:7280/api/statistic/users-by-province"
         );
         const result = await response.json();
-        renderChart(result);
+        renderChart(result.data);
 
         //SignalR
         connection = new signalR.HubConnectionBuilder()
@@ -114,7 +114,7 @@ export function MapChart() {
 
         connection.on("UsersByProvince", (newData) => {
           console.log("Realtime update:", newData);
-          renderChart(newData);
+          renderChart(newData.data);
         });
 
         await connection.start();
@@ -141,7 +141,7 @@ export function MapChart() {
     <div className="p-10">
       <div
         ref={chartRef}
-        style={{ width: "50%", height: "700px" }}
+        style={{ width: "100%", height: "100%" }}
         className="border rounded shadow"
       ></div>
     </div>

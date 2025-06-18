@@ -77,6 +77,7 @@ const CreateServiceForm = () => {
         const providerId = localStorage.getItem("accId");
 
         const formData = new FormData();
+        console.log("Test status", publish);
         formData.append("ProviderId", providerId);
         formData.append("ServiceName", serviceName);
         formData.append("CategoryServiceId", category);

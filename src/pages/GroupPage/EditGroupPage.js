@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import YourGroupDetailListItem from "../../components/Group/YourGroupDetailListItem";
@@ -7,6 +8,9 @@ import PopularService from "../../components/Services/PopularService";
 
 export default function EditGroupPage() {
     const [yourGroupsData, setGroupData] = useState([]);
+    const location = useLocation();
+
+    const { userRole, userAccId } = location.state || {};
 
     const fetchYourGroupsData = async () => {
         try {
@@ -60,7 +64,10 @@ export default function EditGroupPage() {
                     <YourGroupDetailListItem YourGroupList={yourGroupsData} />
                     <PopularService />
                 </div>
-                <EditGroupForm />
+                <EditGroupForm 
+                 userRole={userRole}
+                 userAccId={userAccId}
+                />
             </div>
         </div >
     );

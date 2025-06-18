@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../../Axios/axiosConfig";
 import "./createGroupStyle.css";
-import defaultAvatar from '../../assets/images/default-avatar.png';
 import memberAvt from "../../assets/images/Ellipse 52.png";
+import defaultAvatar from '../../assets/images/default-avatar.png';
+
 
 export default function CreateGroupForm() {
     const navigate = useNavigate();
@@ -223,7 +224,7 @@ export default function CreateGroupForm() {
                 </div>
                 <div className="user-admin-container mt-5 flex md:flex-row items-center gap-4">
                     <div className="avatar-admin rounded-full w-[60px] h-[60px]">
-                        <img src={avatarUrl} alt="" />
+                        <img src={avatarUrl} alt="avatar" />
                     </div>
                     <div className="admin-info flex flex-col gap-2">
                         <div className="admin-name">{fullName}</div>
@@ -326,8 +327,8 @@ export default function CreateGroupForm() {
                     </div>
                     <div className="search-container h-10 relative w-[190px] flex flex-row items-center gap-4 p-2">
                         <i className="fa-solid fa-magnifying-glass relative text-[#3db3fb]"></i>
-                        <input className="input-friend w-fit relative text-black placeholder:text-[#3db3fb] focus:outline-none focus:ring-0 focus:border-none" 
-                            type="text" 
+                        <input className="input-friend w-fit relative text-black placeholder:text-[#3db3fb] focus:outline-none focus:ring-0 focus:border-none"
+                            type="text"
                             placeholder="Search friend..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}

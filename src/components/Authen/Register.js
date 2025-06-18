@@ -38,13 +38,17 @@ export const Register = () => {
   const certificateInputRef = useRef(null); // Ref for certificate file input
 
   // Use custom hook for address data
-  const { provinces, districts, wards } = useAddress(formData.province, formData.district);
+  const { provinces, districts, wards } = useAddress(
+    formData.province,
+    formData.district
+  );
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : type === "file" ? files[0] : value,
+      [name]:
+        type === "checkbox" ? checked : type === "file" ? files[0] : value,
       ...(name === "province" ? { district: "", ward: "" } : {}), // Reset district and ward if province changes
       ...(name === "district" ? { ward: "" } : {}), // Reset ward if district changes
     }));
@@ -56,25 +60,32 @@ export const Register = () => {
     const newErrors = {};
 
     // Common validation for both Farmer and Expert
-    if (!formData.fullName.trim()) newErrors.fullName = "Full name is required.";
+    if (!formData.fullName.trim())
+      newErrors.fullName = "Full name is required.";
     if (!formData.email.trim()) newErrors.email = "Email is required.";
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Invalid email format.";
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "Invalid email format.";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
-    if (!formData.province.trim()) newErrors.province = "Province/City is required.";
+    if (!formData.province.trim())
+      newErrors.province = "Province/City is required.";
     if (!formData.district.trim()) newErrors.district = "District is required.";
     if (!formData.ward.trim()) newErrors.ward = "Ward (Address) is required.";
     if (!formData.country.trim()) newErrors.country = "Country is required.";
-    if (!formData.identify.trim()) newErrors.identify = "ID Number is required.";
+    if (!formData.identify.trim())
+      newErrors.identify = "ID Number is required.";
     if (!formData.username.trim()) newErrors.username = "Username is required.";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
-    else if (formData.password.length < 6) newErrors.password = "Password must be at least 6 characters.";
+    else if (formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters.";
     if (formData.passwordConfirm !== formData.password)
       newErrors.passwordConfirm = "Passwords do not match.";
 
     // Expert-specific validation
     if (formData.isExpert) {
-      if (!formData.certificate) newErrors.certificate = "Certificate file is required.";
-      if (!formData.birthday.trim()) newErrors.birthday = "Date of birth is required.";
+      if (!formData.certificate)
+        newErrors.certificate = "Certificate file is required.";
+      if (!formData.birthday.trim())
+        newErrors.birthday = "Date of birth is required.";
       if (!formData.gender.trim()) newErrors.gender = "Gender is required.";
     }
 
@@ -85,13 +96,25 @@ export const Register = () => {
     const formDataToSend = new FormData();
     formDataToSend.append("Username", formData.username);
     formDataToSend.append("Password", formData.password);
-    formDataToSend.append(formData.isExpert ? "Fullname" : "FullName", formData.fullName);
+    formDataToSend.append(
+      formData.isExpert ? "Fullname" : "FullName",
+      formData.fullName
+    );
     formDataToSend.append("Email", formData.email);
     formDataToSend.append("Phone", formData.phone);
-    formDataToSend.append(formData.isExpert ? "Identifier" : "Identify", formData.identify);
-    formDataToSend.append("City", provinces.find((p) => p.id === formData.province)?.name_en || "");
+    formDataToSend.append(
+      formData.isExpert ? "Identifier" : "Identify",
+      formData.identify
+    );
+    formDataToSend.append(
+      "City",
+      provinces.find((p) => p.id === formData.province)?.name_en || ""
+    );
     formDataToSend.append("Country", formData.country);
-    formDataToSend.append("Address", wards.find((w) => w.id === formData.ward)?.name_en || "");
+    formDataToSend.append(
+      "Address",
+      wards.find((w) => w.id === formData.ward)?.name_en || ""
+    );
 
     if (formData.isExpert) {
       formDataToSend.append("Certificate", formData.certificate);
@@ -103,17 +126,35 @@ export const Register = () => {
 
     try {
       if (formData.isExpert) {
-        toast.info("Expert registration is not yet supported. Please try again later.");
+        const response = await instance.post(
+          "/api/authen/register-expert",
+          formDataToSend,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+
+        if (response.status === 201 || response.status === 200) {
+          toast.info("Please wait for admin moderation your request!");
+        }
+        // toast.info(
+        //   "Expert registration is not yet supported. Please try again later."
+        // );
         return;
-      }
+      } else {
+        // if login for farmer
+        const response = await instance.post(
+          "/api/authen/register-farmer",
+          formDataToSend,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
 
-      const response = await instance.post("/api/authen/register-farmer", formDataToSend, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.status === 201 || response.status === 200) {
-        toast.success("Registration successful!");
-        navigate("/Login");
+        if (response.status === 201 || response.status === 200) {
+          toast.success("Registration successful!");
+          navigate("/Login");
+        }
       }
     } catch (error) {
       const backendMessage = error.response?.data?.messageError;
@@ -145,10 +186,14 @@ export const Register = () => {
         <div className="z-10 w-full p-8 text-left bg-white border border-gray-400 border-solid rounded-lg shadow-lg lg:w-2/3">
           <div className="flex items-center mb-6">
             <img src={logo} alt="Logo" className="h-10 mr-2" />
-            <h1 className="text-xl font-bold text-red-500">Create an Account for Free</h1>
+            <h1 className="text-xl font-bold text-red-500">
+              Create an Account for Free
+            </h1>
           </div>
 
-          <h2 className="mb-4 font-semibold text-left text-green-600">1 - Personal Information</h2>
+          <h2 className="mb-4 font-semibold text-left text-green-600">
+            1 - Personal Information
+          </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-left">
@@ -161,9 +206,13 @@ export const Register = () => {
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="Enter your full name"
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.fullName ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.fullName ? "border-red-500" : ""
+                  }`}
                 />
-                {errors.fullName && <p className="mt-1 text-xs text-red-500">{errors.fullName}</p>}
+                {errors.fullName && (
+                  <p className="mt-1 text-xs text-red-500">{errors.fullName}</p>
+                )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <img src={user_icon} alt="" />
                 </span>
@@ -181,9 +230,13 @@ export const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter your email"
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.email ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.email ? "border-red-500" : ""
+                  }`}
                 />
-                {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+                {errors.email && (
+                  <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <img src={mail_icon} alt="" />
                 </span>
@@ -201,9 +254,13 @@ export const Register = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Enter your phone number"
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.phone ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.phone ? "border-red-500" : ""
+                  }`}
                 />
-                {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone}</p>}
+                {errors.phone && (
+                  <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
+                )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <img src={phone_icon} alt="" />
                 </span>
@@ -221,9 +278,13 @@ export const Register = () => {
                   value={formData.identify}
                   onChange={handleChange}
                   placeholder="Enter your ID number"
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.identify ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.identify ? "border-red-500" : ""
+                  }`}
                 />
-                {errors.identify && <p className="mt-1 text-xs text-red-500">{errors.identify}</p>}
+                {errors.identify && (
+                  <p className="mt-1 text-xs text-red-500">{errors.identify}</p>
+                )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <img src={identify_icon} alt="" />
                 </span>
@@ -239,7 +300,9 @@ export const Register = () => {
                   name="province"
                   value={formData.province}
                   onChange={handleChange}
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.province ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.province ? "border-red-500" : ""
+                  }`}
                 >
                   <option value="">Select province/city</option>
                   {provinces.map((province) => (
@@ -248,7 +311,9 @@ export const Register = () => {
                     </option>
                   ))}
                 </select>
-                {errors.province && <p className="mt-1 text-xs text-red-500">{errors.province}</p>}
+                {errors.province && (
+                  <p className="mt-1 text-xs text-red-500">{errors.province}</p>
+                )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <img src={address_icon} alt="" />
                 </span>
@@ -264,7 +329,9 @@ export const Register = () => {
                   name="district"
                   value={formData.district}
                   onChange={handleChange}
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.district ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.district ? "border-red-500" : ""
+                  }`}
                   disabled={!formData.province}
                 >
                   <option value="">Select district</option>
@@ -274,7 +341,9 @@ export const Register = () => {
                     </option>
                   ))}
                 </select>
-                {errors.district && <p className="mt-1 text-xs text-red-500">{errors.district}</p>}
+                {errors.district && (
+                  <p className="mt-1 text-xs text-red-500">{errors.district}</p>
+                )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <img src={address_icon} alt="" />
                 </span>
@@ -290,7 +359,9 @@ export const Register = () => {
                   name="ward"
                   value={formData.ward}
                   onChange={handleChange}
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.ward ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.ward ? "border-red-500" : ""
+                  }`}
                   disabled={!formData.district}
                 >
                   <option value="">Select ward</option>
@@ -300,7 +371,9 @@ export const Register = () => {
                     </option>
                   ))}
                 </select>
-                {errors.ward && <p className="mt-1 text-xs text-red-500">{errors.ward}</p>}
+                {errors.ward && (
+                  <p className="mt-1 text-xs text-red-500">{errors.ward}</p>
+                )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <img src={address_icon} alt="" />
                 </span>
@@ -318,10 +391,14 @@ export const Register = () => {
                   value={formData.country}
                   onChange={handleChange}
                   placeholder="Enter country"
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.country ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.country ? "border-red-500" : ""
+                  }`}
                   readOnly
                 />
-                {errors.country && <p className="mt-1 text-xs text-red-500">{errors.country}</p>}
+                {errors.country && (
+                  <p className="mt-1 text-xs text-red-500">{errors.country}</p>
+                )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <img src={address_icon} alt="" />
                 </span>
@@ -340,9 +417,15 @@ export const Register = () => {
                       name="birthday"
                       value={formData.birthday}
                       onChange={handleChange}
-                      className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.birthday ? "border-red-500" : ""}`}
+                      className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                        errors.birthday ? "border-red-500" : ""
+                      }`}
                     />
-                    {errors.birthday && <p className="mt-1 text-xs text-red-500">{errors.birthday}</p>}
+                    {errors.birthday && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.birthday}
+                      </p>
+                    )}
                     <span className="absolute left-3 top-2.5 text-blue-400">
                       <img src={user_icon} alt="" />
                     </span>
@@ -358,14 +441,20 @@ export const Register = () => {
                       name="gender"
                       value={formData.gender}
                       onChange={handleChange}
-                      className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.gender ? "border-red-500" : ""}`}
+                      className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                        errors.gender ? "border-red-500" : ""
+                      }`}
                     >
                       <option value="">Select gender</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                       <option value="Other">Other</option>
                     </select>
-                    {errors.gender && <p className="mt-1 text-xs text-red-500">{errors.gender}</p>}
+                    {errors.gender && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors.gender}
+                      </p>
+                    )}
                     <span className="absolute left-3 top-2.5 text-blue-400">
                       <img src={user_icon} alt="" />
                     </span>
@@ -375,7 +464,9 @@ export const Register = () => {
             )}
           </div>
 
-          <h2 className="mt-4 mb-4 font-semibold text-left text-green-600">2 - Security Information</h2>
+          <h2 className="mt-4 mb-4 font-semibold text-left text-green-600">
+            2 - Security Information
+          </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-left">
@@ -388,9 +479,13 @@ export const Register = () => {
                   value={formData.username}
                   onChange={handleChange}
                   placeholder="Enter username"
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.username ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.username ? "border-red-500" : ""
+                  }`}
                 />
-                {errors.username && <p className="mt-1 text-xs text-red-500">{errors.username}</p>}
+                {errors.username && (
+                  <p className="mt-1 text-xs text-red-500">{errors.username}</p>
+                )}
                 <span className="absolute left-3 top-2.5 text-blue-400">
                   <img src={user_icon} alt="" />
                 </span>
@@ -408,9 +503,13 @@ export const Register = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter password"
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.password ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.password ? "border-red-500" : ""
+                  }`}
                 />
-                {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
+                {errors.password && (
+                  <p className="mt-1 text-xs text-red-500">{errors.password}</p>
+                )}
                 <span className="absolute text-blue-400 left-3 top-2">
                   <img src={password_icon} alt="" />
                 </span>
@@ -428,10 +527,14 @@ export const Register = () => {
                   value={formData.passwordConfirm}
                   onChange={handleChange}
                   placeholder="Confirm password"
-                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${errors.passwordConfirm ? "border-red-500" : ""}`}
+                  className={`w-full border rounded px-4 py-2 pl-10 text-sm ${
+                    errors.passwordConfirm ? "border-red-500" : ""
+                  }`}
                 />
                 {errors.passwordConfirm && (
-                  <p className="mt-1 text-xs text-red-500">{errors.passwordConfirm}</p>
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.passwordConfirm}
+                  </p>
                 )}
                 <span className="absolute text-blue-400 left-3 top-2">
                   <img src={password_icon} alt="" />
@@ -440,7 +543,9 @@ export const Register = () => {
             </div>
           </div>
 
-          <h2 className="mt-4 mb-4 font-semibold text-left text-green-600">3 - Upload Files and Select Role</h2>
+          <h2 className="mt-4 mb-4 font-semibold text-left text-green-600">
+            3 - Upload Files and Select Role
+          </h2>
           <div className="mb-4">
             <label className="flex items-center text-sm font-medium text-left">
               <input
@@ -476,16 +581,24 @@ export const Register = () => {
                   className="hidden"
                 />
                 {formData.certificate && (
-                  <span className="text-sm text-blue-400">{formData.certificate.name}</span>
+                  <span className="text-sm text-blue-400">
+                    {formData.certificate.name}
+                  </span>
                 )}
-                {errors.certificate && <p className="mt-1 text-xs text-red-500">{errors.certificate}</p>}
+                {errors.certificate && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.certificate}
+                  </p>
+                )}
               </div>
             </>
           )}
 
           {!formData.isExpert && (
             <>
-              <label className="block text-sm font-medium text-left">Certificate (Optional for Farmers)</label>
+              <label className="block text-sm font-medium text-left">
+                Certificate (Optional for Farmers)
+              </label>
               <div className="flex items-center gap-4 mb-4">
                 <button
                   type="button"
@@ -503,7 +616,9 @@ export const Register = () => {
                   className="hidden"
                 />
                 {formData.certificate && (
-                  <span className="text-sm text-blue-400">{formData.certificate.name}</span>
+                  <span className="text-sm text-blue-400">
+                    {formData.certificate.name}
+                  </span>
                 )}
               </div>
             </>
@@ -526,7 +641,9 @@ export const Register = () => {
         <div className="relative flex-col hidden w-1/3 pt-8 lg:flex">
           <div className="absolute -right-[850px] -top-[600px] border-t-green-500 border-l-transparent rotate-45 bg-emerald-500 h-[1000px] w-[1000px]"></div>
           <div className="right-0 z-10 flex justify-around w-full mb-4 text-center top-20">
-            <p className="text-xl font-semibold text-blue-500">Your Expertise</p>
+            <p className="text-xl font-semibold text-blue-500">
+              Your Expertise
+            </p>
             <p className="text-xl font-semibold text-white">Their Growth</p>
           </div>
           <img src={registerPoster} alt="Farm" className="z-10" />

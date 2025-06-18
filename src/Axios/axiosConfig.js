@@ -88,7 +88,6 @@ instance.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${refreshData.accessToken}`;
         return instance(originalRequest);
       } catch (refreshError) {
-        console.error("❌ Failed to refresh token in interceptor", refreshError);
         processQueue(refreshError);
         // Chỉ xóa các token liên quan
         const storage = localStorage.getItem("refreshToken") ? localStorage : sessionStorage;
