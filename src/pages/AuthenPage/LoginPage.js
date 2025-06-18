@@ -7,10 +7,7 @@ import backgroundImg from '../../assets/images/469337637_593611579790872_3160416
 import { Link } from "react-router-dom";
 
 const LoginPage = () => {
-  console.log('REACT_APP_API_BASE_URL:', process.env.REACT_APP_API_BASE_URL);
-  console.log('Client ID:', process.env.REACT_APP_CLIENT_ID);
-
-
+ 
   return (
     <div className="login-page">
       <div className="img-background">

@@ -52,7 +52,6 @@ const useAuth = (navigate, location) => {
       console.log("✅ New Token: ", refreshData.accessToken);
       setIsAuthenticated(true);
     } catch (error) {
-      console.error("❌ Failed to refresh token", error);
       if (!publicRoutes.includes(location.pathname)) {
         navigate("/Login");
       }

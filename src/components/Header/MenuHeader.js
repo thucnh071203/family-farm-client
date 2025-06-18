@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import user_black_icon from "../../assets/icons/user_black_icon.svg";
 import plus_icon from "../../assets/icons/plus_icon.svg";
@@ -8,16 +8,40 @@ import cancelIcon from "../../assets/images/cancel_vector.png";
 import headLine from "../../assets/images/head_line.png";
 import recycle_bin_icon from "../../assets/icons/recycle-bin-svgrepo-com.svg";
 import password_icon_black from "../../assets/icons/password_icon_black.svg";
+import { getOwnProfile } from "../../services/accountService";
+import instance from '../../Axios/axiosConfig';
 
 const MenuHeader = ({ onToggle, isVisible }) => {
     const navigate = useNavigate();
+    const [profileData, setProfileData] = useState(null);
+
+    // Lấy profile data
+    useEffect(() => {
+        const fetchProfile = async () => {
+            const data = await getOwnProfile();
+            setProfileData(data.data);
+        };
+        fetchProfile();
+    }, []);
+
     // Xử lý logout
-    const handleLogout = () => {
-        sessionStorage.clear();
-        localStorage.clear();
-        navigate('/Login');
-        onToggle();
+    const handleLogout = async () => {
+        try {
+            await instance.post('/api/authen/logout');
+            sessionStorage.clear();
+            localStorage.clear();
+            navigate('/Login');
+            onToggle();
+        } catch (error) {
+            console.error('Logout failed:', error);
+            sessionStorage.clear();
+            localStorage.clear();
+            navigate('/Login');
+            onToggle();
+        }
     };
+
+    if (!profileData) return null;
 
     return (
         isVisible && (
@@ -79,12 +103,12 @@ const MenuHeader = ({ onToggle, isVisible }) => {
                             <p className="mt-2">Recycle Bin</p>
                         </Link>
                         <Link
-                            to="/ChangePassword"
+                            to={profileData.otp === -1 ? "/SetPassword" : "/ChangePassword"}
                             className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
                             onClick={onToggle}
                         >
                             <img src={password_icon_black} alt="Service" className="h-5" />
-                            <p className="mt-2">Change Password</p>
+                            <p className="mt-2">{profileData.otp === -1 ? "Set Password" : "Change Password"}</p>
                         </Link>
                     </div>
                     <button
