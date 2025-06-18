@@ -120,33 +120,33 @@ export const UserGrowthChart = () => {
       <div className="flex flex-col md:flex-row items-center ml-24 gap-4">
         {/* //<div className="flex flex-col items-center gap-4 md:flex-row"> */}
 
-          <div className="space-y-1">
-            <label htmlFor="fromDate">From : </label>
-            <input
-              type="date"
-              id="fromDate"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-            />
-          </div>
-          <div className="space-y-1">
-            <label htmlFor="toDate">To : </label>
-            <input
-              type="date"
-              id="toDate"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-            />
-          </div>
-          <button
-            className="px-4 py-2 mt-6 text-white transition rounded md:mt-0 hover:bg-lime-600 bg-lime-500"
-            onClick={fetchData}
-          >
-            Load
-          </button>
+        <div className="space-y-1">
+          <label htmlFor="fromDate">From : </label>
+          <input
+            type="date"
+            id="fromDate"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+          />
         </div>
+        <div className="space-y-1">
+          <label htmlFor="toDate">To : </label>
+          <input
+            type="date"
+            id="toDate"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+          />
+        </div>
+        <button
+          className="px-4 py-2 mt-6 text-white transition rounded md:mt-0 hover:bg-lime-600 bg-lime-500"
+          onClick={fetchData}
+        >
+          Load
+        </button>
       </div>
     </div>
   );
 };
+
 export default UserGrowthChart;
