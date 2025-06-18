@@ -1,6 +1,10 @@
 import logo from "../../assets/images/logo_img.png";
 import { useFormValidation } from "../../utils/validate";
 import { PasswordInput } from "../Authen/InputField";
+import instance from "../../Axios/axiosConfig";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ChangePasswordForm = () => {
     const { values, errors, showPassword, handleChange, handleSubmit, togglePasswordVisibility } = useFormValidation({
@@ -9,9 +13,36 @@ const ChangePasswordForm = () => {
         confirmPassword: '',
     });
 
-    // Xử lý đổi mật khẩu sau
-    const onSubmit = (values) => {
-        console.log('Change Password Form submitted:', values);
+        const navigate = useNavigate();
+
+
+    // Xử lý đổi mật khẩu
+    const onSubmit = async (values) => {
+        try {
+            // Gọi API đổi mật khẩu
+            const response = await instance.put('/api/authen/change-password', {
+                oldPassword: values.currentPassword,
+                newPassword: values.newPassword,
+                confirmPassword: values.confirmPassword,
+            });
+            toast.success(response.data || 'Password changed successfully! Please log in again.');
+
+            // Gọi API logout
+            try {
+                await instance.post('/api/authen/logout');
+            } catch (logoutErr) {
+                console.error('Logout failed:', logoutErr);
+            }
+
+            // Xóa dữ liệu lưu trữ
+            sessionStorage.clear();
+            localStorage.clear();
+            // Chuyển hướng đến trang Login
+            navigate('/Login');
+        } catch (err) {
+            toast.error(err.response?.data || 'Current password is wrong. Please try again.');
+            console.error('Change password error:', err);
+        }
     };
 
     return (

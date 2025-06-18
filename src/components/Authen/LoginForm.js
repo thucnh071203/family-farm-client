@@ -13,6 +13,7 @@ import instance from "../../Axios/axiosConfig";
 import { useState } from "react";
 import { toast, Bounce } from "react-toastify";
 import { GoogleLogin } from "@react-oauth/google";
+import useGoogleAuth from "../../hooks/useGoogleAuth";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -20,6 +21,12 @@ const LoginForm = () => {
   const [rememberMe, setRememberMe] = useState(true);
   const [errors, setErrors] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+
+  const { initiateGoogleLogin, loading, error } = useGoogleAuth();
+
+  const handleGoogleLogin = () => {
+    initiateGoogleLogin(rememberMe, navigate);
+  };
 
   useEffect(() => {
     // Tải SDK Facebook nếu chưa có
@@ -182,7 +189,7 @@ const LoginForm = () => {
   };
 
   return (
-    
+
     <div className="overlap w-full md:w-1/2 mt-6 md:mt-0 md:ml-[5%] bg-gray-200 bg-opacity-25">
       <div className="form-container w-full max-w-[466px] flex flex-col gap-7 mx-auto">
         <div className="flex items-center justify-center mx-auto logo gap-x-4">
@@ -276,21 +283,22 @@ const LoginForm = () => {
             <div className="frame-10 w-full lg:w-[223px]">
               {/* <img className="img" src={googleIcon} alt="Google Icon" /> */}
               {/* <div className="text-wrapper-13">Continue with Google</div> */}
-              <GoogleLogin 
-                onSuccess={credentialResponse => {
-                  console.log(credentialResponse);
-                }}
-                onError={() => {
-                  console.log('Login Failed');
-                }}  
-              />
+              <div
+                className={`frame-10 w-full lg:w-[223px] cursor-pointer flex items-center justify-center border border-gray-300 rounded-md py-2 ${loading ? 'opacity-50 pointer-events-none' : ''}`}
+                onClick={handleGoogleLogin}
+              >
+                <img className="img w-6 h-6 mr-2" src={googleIcon} alt="Google Icon" />
+                <div className="text-wrapper-13">
+                  {loading ? 'Logging in...' : 'Continue with Google'}
+                </div>
+              </div>
             </div>
-            <div className="frame-11 w-full lg:w-[223px]"  onClick={handleFacebookLogin}>
+            <div className="frame-11 w-full lg:w-[223px]" onClick={handleFacebookLogin}>
               <img className="img" src={fbIcon} alt="Facebook Icon" />
               <div className="text-wrapper-14">Continue with Facebook</div>
             </div>
           </div>
-        </div> 
+        </div>
       </div>
     </div>
   );

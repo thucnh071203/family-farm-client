@@ -1,16 +1,44 @@
 import logo from "../../assets/images/logo_img.png";
 import { useFormValidation } from "../../utils/validate";
 import { PasswordInput } from "../Authen/InputField";
+import instance from "../../Axios/axiosConfig";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SetPasswordForm = () => {
     const { values, errors, showPassword, handleChange, handleSubmit, togglePasswordVisibility } = useFormValidation({
         newPassword: '',
         confirmPassword: '',
     });
+    const navigate = useNavigate();
 
-    const onSubmit = (values) => {
-        console.log('Set Password Form submitted:', values);
-        // Xử lý đặt mật khẩu
+    // Xử lý đặt mật khẩu và logout
+    const onSubmit = async (values) => {
+        try {
+            // Gọi API đặt mật khẩu
+            const response = await instance.put('/api/authen/set-password', {
+                Password: values.newPassword,
+                ConfirmPassword: values.confirmPassword,
+            });
+            toast.success(response.data || 'Password set successfully! Please log in again.');
+
+            // Gọi API logout
+            try {
+                await instance.post('/api/authen/logout');
+            } catch (logoutErr) {
+                console.error('Logout failed:', logoutErr);
+            }
+
+            // Xóa dữ liệu lưu trữ
+            sessionStorage.clear();
+            localStorage.clear();
+            // Chuyển hướng đến trang Login
+            navigate('/Login');
+        } catch (err) {
+            toast.error(err.response?.data || 'Failed to set password. Please try again.');
+            console.error('Set password error:', err);
+        }
     };
 
     return (
