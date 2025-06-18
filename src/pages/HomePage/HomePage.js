@@ -150,10 +150,10 @@ const HomePage = () => {
   };
 
   const handlePostCreate = (newPostData) => {
-    if(newPostData.postScope === "Public") {
+    if (newPostData.postScope === "Public") {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
     }
-    
+
   }
 
   return (
@@ -184,24 +184,24 @@ const HomePage = () => {
               <div className="text-center py-4">{error}</div>
             ) : posts.length > 0 ? (
               posts.map((postMapper, index) => (
-                postMapper && postMapper.post ? (
+                postMapper && postMapper.post && postMapper.ownerPost ? (
                   <PostCard
                     onDeletePost={handleDeletePost}
                     key={`${postMapper.post.postId}-${index}`}
                     post={{
-                      accId: postMapper.ownerPost.accId,
+                      accId: postMapper.ownerPost.accId || "Unknown",
                       postId: postMapper.post.postId,
-                      fullName: postMapper.ownerPost ? postMapper.ownerPost.fullName || postMapper.post.accId : "Unknown User",
-                      avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar || "https://via.placeholder.com/40" : "https://via.placeholder.com/40",
+                      fullName: postMapper.ownerPost.fullName || "Unknown User",
+                      avatar: postMapper.ownerPost.avatar || "https://via.placeholder.com/40",
                       createAt: postMapper.post.createdAt,
                       content: postMapper.post.postContent,
-                      images: postMapper.postImages ? postMapper.postImages.map((img) => img.imageUrl) : [],
-                      hashtags: postMapper.hashTags ? postMapper.hashTags.map((tag) => tag.hashTagContent) : [],
-                      tagFriends: postMapper.postTags ? postMapper.postTags.map((tag) => ({
+                      images: postMapper.postImages?.map((img) => img.imageUrl) || [],
+                      hashtags: postMapper.hashTags?.map((tag) => tag.hashTagContent) || [],
+                      tagFriends: postMapper.postTags?.map((tag) => ({
                         accId: tag.accId,
-                        fullname: tag.fullname || "Unknown"
-                      })) : [],
-                      categories: postMapper.postCategories ? postMapper.postCategories.map((cat) => cat.categoryName) : [],
+                        fullname: tag.fullname || tag.username || "Unknown", // Sử dụng username nếu fullname là null
+                      })) || [],
+                      categories: postMapper.postCategories?.map((cat) => cat.categoryName) || [],
                       likes: postMapper.reactionCount || 0,
                       comments: postMapper.commentCount || 0,
                       shares: postMapper.shareCount || 0,
