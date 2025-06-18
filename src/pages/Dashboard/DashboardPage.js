@@ -1,5 +1,5 @@
 import React from "react";
-import SidebarDash from "../../components/DashboardCom/SidebarDash";
+import SidebarDashboard from "../../components/Dashboard/SidebarDashboard";
 // import StatisticPage from "../../pages/Dashboard/StatisticPage";
 import CreatePostCate from "../../pages/Dashboard/CreatePostCate";
 import ListAccountSensor from "../../components/AccountManage/ListAccountSensor";
@@ -8,7 +8,7 @@ const DashboardPage = () => {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar bên trái */}
-      <SidebarDash />
+      <SidebarDashboard />
 
       {/* <div className="flex-1 ml-64">
         <StatisticPage />

@@ -26,7 +26,7 @@ import CreateProcessStep from "./components/ProcessStep/CreateProcessStep";
 import { Statistic1 } from "./components/Statistic/Statistic1";
 import MapChart from "./components/Statistic/MapChart";
 import MostUser from "./components/Statistic/MostUser";
-import SidebarDash from "./components/DashboardCom/SidebarDash";
+import SidebarDashboard from "./components/Dashboard/SidebarDashboard";
 import { UserGrowthChart } from "./components/Statistic/UserGrowthChart";
 import PersonalPage from "./pages/Profile/PersonalPage";
 import UpdateProfile from "./pages/Profile/UpdateProfile";
@@ -141,9 +141,8 @@ const AppContent = () => {
               path="/DashboardPage/PostCatePage"
               element={<PostCatePage />}
             />
-            <Route path="/SidebarDash" element={<SidebarDash />} />
             <Route path="/StatisticPage" element={<StatisticPage />} />
-            <Route path="/DashboardPage" element={<DashboardPage />} />
+            <Route path="/Dashboard" element={<DashboardPage />} />
             <Route
               path="/DashboardPage/PostCatePage/CreatePostCate"
               element={<CreatePostCate />}
