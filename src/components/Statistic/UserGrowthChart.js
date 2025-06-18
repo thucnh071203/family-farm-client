@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { toast, Bounce } from 'react-toastify';
+import { toast, Bounce } from "react-toastify";
 
 import * as signalR from "@microsoft/signalr";
 
@@ -40,7 +40,7 @@ export const UserGrowthChart = () => {
       const data = result.data;
 
       if (!data || Object.keys(data).length === 0) {
-        toast.info('Không có dữ liệu để hiển thị');
+        toast.info("Không có dữ liệu để hiển thị");
 
         return;
       }
@@ -79,7 +79,9 @@ export const UserGrowthChart = () => {
       });
     } catch (error) {
       console.error("Lỗi khi load dữ liệu:", error);
-      toast.error('Lỗi khi tải dữ liệu. Kiểm tra console để biết thêm chi tiết.');
+      toast.error(
+        "Lỗi khi tải dữ liệu. Kiểm tra console để biết thêm chi tiết."
+      );
     }
   };
 
@@ -111,14 +113,12 @@ export const UserGrowthChart = () => {
     <div className="space-y-1">
       <h1 className="text-2xl font-bold">User Growth</h1>
 
-      <div className="w-full max-w-[700px] h-[400px]">
+      <div className="w-full max-w-[700px] h-[300px]">
         {chartData && <Bar data={chartData} options={chartOptions} />}
       </div>
 
-
       <div className="flex flex-col md:flex-row items-center ml-24 gap-4">
-
-      //<div className="flex flex-col items-center gap-4 md:flex-row">
+        {/* //<div className="flex flex-col items-center gap-4 md:flex-row"> */}
 
         <div className="space-y-1">
           <label htmlFor="fromDate">From : </label>
@@ -148,3 +148,4 @@ export const UserGrowthChart = () => {
     </div>
   );
 };
+export default UserGrowthChart;

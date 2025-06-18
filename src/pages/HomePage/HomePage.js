@@ -8,6 +8,7 @@ import PostCard from "../../components/Post/PostCard";
 import SharePostCard from "../../components/Post/SharePostCard";
 import SuggestedFriends from "../../components/Home/SuggestedFriends";
 import SuggestedGroups from "../../components/Home/SuggestedGroups";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [posts, setPosts] = useState([]);
@@ -19,7 +20,8 @@ const HomePage = () => {
       postId: "post1",
       type: "post",
       fullName: "Phuong Nam",
-      avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
       createAt: "2025-05-30T22:00:00Z",
       content: "Hôm nay là một ngày đẹp trời! #blog #nature",
       images: [
@@ -37,7 +39,8 @@ const HomePage = () => {
       postId: "post2",
       type: "post",
       fullName: "Huu Thuc",
-      avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
       createAt: "2025-05-30T15:00:00Z",
       content: "Post với nhiều ảnh! #minecraft #gaming",
       images: [
@@ -60,7 +63,8 @@ const HomePage = () => {
     {
       postId: "share1",
       fullName: "Mai Xuan",
-      avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
       createAt: "2025-05-30T21:30:00Z",
       content: "Chia sẻ bài viết tuyệt vời về lập trình! #coding #polytecode",
       hashtags: ["coding", "polytecode"],
@@ -71,7 +75,8 @@ const HomePage = () => {
       sharedPost: {
         postId: "shared1",
         fullName: "Huu Thuc",
-        avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+        avatar:
+          "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
         createAt: "2025-05-30T10:00:00Z",
         content: "Học lập trình thật thú vị! #coding",
         images: [
@@ -87,7 +92,8 @@ const HomePage = () => {
     {
       postId: "share2",
       fullName: "Phuong Nam",
-      avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
       createAt: "2025-05-29T08:00:00Z",
       content: "Chia sẻ một bài viết về nông nghiệp! #farming",
       hashtags: ["farming"],
@@ -98,7 +104,8 @@ const HomePage = () => {
       sharedPost: {
         postId: "shared2",
         fullName: "Mai Xuan",
-        avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+        avatar:
+          "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
         createAt: "2025-05-28T09:00:00Z",
         content: "Nông nghiệp bền vững là tương lai! #farming #sustainability",
         images: null,
@@ -140,6 +147,8 @@ const HomePage = () => {
     <div className="HomePage bg-gray-100">
       <Header />
 
+      <Link to="/StatisticPage">Link</Link>
+
       <NavbarHeader />
       <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[65px]">
         <div className="gap-5 grid lg:grid-cols-[1fr_2fr_1fr] grid-cols-1">
@@ -178,7 +187,6 @@ const HomePage = () => {
           </section>
         </div>
       </main>
-
     </div>
   );
 };
