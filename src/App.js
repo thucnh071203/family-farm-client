@@ -12,8 +12,7 @@ import useAuth from "./hooks/useAuth";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
-import Register from "./components/Register/Register";
-import LoginPage from "./pages/LoginPage/LoginPage";
+import LoginPage from "./pages/AuthenPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ServicePage from "./pages/ServicePage/ServicePage";
 import ProcessListPage from "./pages/ProcessPage/ProcessListPage";
@@ -57,6 +56,11 @@ import ScrollToTop from "./components/ScrollToTop";
 import UpdatePostPage from "./pages/Profile/UpdatePostPage";
 import EditGroupPage from "./pages/GroupPage/EditGroupPage";
 import RecycleBin from "./pages/Profile/RecycleBin";
+import ChangePasswordPage from "./pages/Profile/ChangePasswordPage";
+import SetPasswordPage from "./pages/Profile/SetPasswordPage";
+import ForgotPasswordPage from "./pages/AuthenPage/ForgotPasswordPage";
+import ConfirmOtpPage from "./pages/AuthenPage/ConfirmOtpPage";
+import Register from "./components/Authen/Register";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -127,6 +131,10 @@ const AppContent = () => {
             <Route path="/EditGroup/:groupId" element={<EditGroupPage />} />
 
             <Route path="/Trash" element={<RecycleBin />} />
+            <Route path="/ChangePassword" element={<ChangePasswordPage />}/>
+            <Route path="/SetPassword" element={<SetPasswordPage />}/>
+            <Route path="/ForgotPassword" element={<ForgotPasswordPage />}/>
+            <Route path="/ConfirmOtp" element={<ConfirmOtpPage />}/>
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
             <Route

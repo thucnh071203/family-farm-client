@@ -815,7 +815,6 @@ body{
     font-family: "Roboto", Helvetica;
     font-weight: 300;
     font-size: 14px;
-    color: var(--variable-collection-black);
     outline: none;     /* Bỏ viền khi focus */
   }
 

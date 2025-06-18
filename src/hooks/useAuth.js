@@ -1,69 +1,3 @@
-// import { useEffect, useState } from "react";
-// import instance from "../Axios/axiosConfig";
-
-// const useAuth = (navigate, location) => {
-//   const [isAuthenticated, setIsAuthenticated] = useState(false); // Trạng thái xác thực
-//   const [isLoading, setIsLoading] = useState(true); // Trạng thái đang kiểm tra
-
-//   useEffect(() => {
-//     const refreshToken = async () => {
-//       try {
-//         const currentRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
-
-//         // Nếu không có refreshToken và không ở trang Login/Register, chuyển hướng
-//         if (!currentRefreshToken && !["/Login", "/Register"].includes(location.pathname)) {
-//           setIsAuthenticated(false);
-//           navigate("/Login");
-//           setIsLoading(false);
-//           return;
-//         }
-
-//         const response = await instance.post(
-//           "/api/authen/refresh-token",
-//           { token: currentRefreshToken },
-//           {
-//             headers: {
-//               "Content-Type": "application/json",
-//             },
-//           }
-//         );
-
-//         const refreshData = response.data;
-//         const storage = localStorage.getItem("refreshToken") ? localStorage : sessionStorage;
-
-//         // Cập nhật token và thông tin
-//         storage.setItem("accessToken", refreshData.accessToken);
-//         storage.setItem("refreshToken", refreshData.refreshToken);
-//         storage.setItem("username", refreshData.username);
-
-//         const expiryTime = Date.now() + refreshData.tokenExpiryIn * 1000;
-//         storage.setItem("tokenExpiry", expiryTime);
-
-//         console.log("✅ Token refreshed and stored");
-//         console.info("New accessToken: ", refreshData.accessToken);
-//         setIsAuthenticated(true);
-//       } catch (error) {
-//         console.error("❌ Failed to refresh token", error);
-//         if (!["/Login", "/Register"].includes(location.pathname)) {
-//           navigate("/Login");
-//         }
-//         setIsAuthenticated(false);
-//       } finally {
-//         setIsLoading(false); // Kết thúc kiểm tra
-//       }
-//     };
-
-//     refreshToken();
-
-//     const intervalId = setInterval(refreshToken, 5 * 1000); // Mỗi 5 phút
-//     return () => clearInterval(intervalId);
-//   }, [navigate, location.pathname]);
-
-//   return { isAuthenticated, isLoading };
-// };
-
-// export default useAuth;
-
 import { useEffect, useState } from "react";
 import instance from "../Axios/axiosConfig";
 
@@ -71,11 +5,13 @@ const useAuth = (navigate, location) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const publicRoutes = ["/Login", "/Register", "/ConfirmOtp", "/ForgotPassword"];
+
   const refreshToken = async () => {
     try {
       const currentRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
 
-      if (!currentRefreshToken && !["/Login", "/Register"].includes(location.pathname)) {
+      if (!currentRefreshToken && !publicRoutes.includes(location.pathname)) {
         setIsAuthenticated(false);
         navigate("/Login");
         setIsLoading(false);
@@ -104,11 +40,11 @@ const useAuth = (navigate, location) => {
       const refreshData = response.data;
       const storage = localStorage.getItem("refreshToken") ? localStorage : sessionStorage;
 
-      // Cập nhật token và thông tin
       storage.setItem("accessToken", refreshData.accessToken);
       storage.setItem("refreshToken", refreshData.refreshToken);
       storage.setItem("username", refreshData.username);
-      storage.setItem("accId", refreshData.accId); // Đồng bộ với backend
+      storage.setItem("accId", refreshData.accId);
+
       const newExpiryTime = Date.now() + refreshData.tokenExpiryIn * 1000;
       storage.setItem("tokenExpiry", newExpiryTime);
 
@@ -117,7 +53,7 @@ const useAuth = (navigate, location) => {
       setIsAuthenticated(true);
     } catch (error) {
       console.error("❌ Failed to refresh token", error);
-      if (!["/Login", "/Register"].includes(location.pathname)) {
+      if (!publicRoutes.includes(location.pathname)) {
         navigate("/Login");
       }
       setIsAuthenticated(false);
@@ -127,15 +63,14 @@ const useAuth = (navigate, location) => {
   };
 
   useEffect(() => {
-    refreshToken(); // Gọi ngay khi mount
+    refreshToken();
 
-    // Gọi refresh token mỗi 10 phút
     const intervalId = setInterval(() => {
       console.log("⏰ Scheduled token refresh triggered");
       refreshToken();
-    }, 10 * 60 * 1000); // 10 phút
+    }, 10 * 60 * 1000);
 
-    return () => clearInterval(intervalId); // Cleanup khi unmount
+    return () => clearInterval(intervalId);
   }, [navigate, location.pathname]);
 
   return { isAuthenticated, isLoading };
