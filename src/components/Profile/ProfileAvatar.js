@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import Cropper from "react-easy-crop";
 
-const ProfileAvatar = ({ initialProfileImage, fullName }) => {
+const ProfileAvatar = ({ avatarImage, initialProfileImage, fullName }) => {
 
   const [profileImage, setProfileImage] = useState(initialProfileImage);
   const [showCropper, setShowCropper] = useState(false);
@@ -90,7 +90,7 @@ const ProfileAvatar = ({ initialProfileImage, fullName }) => {
         <div className="relative">
           <img
             src={
-              profileImage ||
+              avatarImage && avatarImage.trim() !== "" ? avatarImage :
               "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png"
             }
             alt="Avatar"

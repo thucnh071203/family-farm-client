@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-const CoverBackground = ({ coverImage: initialCoverImage }) => {
+const CoverBackground = ({ backgroundImage, coverImage: initialCoverImage }) => {
   const [coverImage, setCoverImage] = useState(initialCoverImage);
   const [showCoverPopup, setShowCoverPopup] = useState(false);
   const coverInputRef = useRef(null);
@@ -16,8 +16,15 @@ const CoverBackground = ({ coverImage: initialCoverImage }) => {
 
   return (
     <div className="relative h-[330px] bg-gray-200 group lg:mt-[120px] mt-[63px]">
-      <img src={
+      {/* <img src={
         coverImage ||
+        "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
+      }
+        alt="Background"
+        className="w-full h-full object-cover transition-all duration-300 ease-in-out group-hover:brightness-90 cursor-pointer"
+        onClick={() => setShowCoverPopup(true)} /> */}
+      <img src={
+         backgroundImage && backgroundImage.trim() !== "" ? backgroundImage : 
         "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
       }
         alt="Background"

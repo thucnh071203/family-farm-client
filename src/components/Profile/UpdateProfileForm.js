@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import useAddress from '../../hooks/useAddress';
+import instance from "../../Axios/axiosConfig";
 
-const UpdateProfileForm = () => {
+const UpdateProfileForm = ({ profileData }) => {
+  // 👇 Khi profileData thay đổi → map vào formData
   const [formData, setFormData] = useState({
     name: '',
     birthday: '',
@@ -16,6 +18,24 @@ const UpdateProfileForm = () => {
     school: '',
     workplace: '',
   });
+
+  useEffect(() => {
+    if (profileData) {
+      setFormData({
+        name: profileData.fullName || '',
+        birthday: profileData.birthday ? profileData.birthday.substring(0, 10) : '', // cắt yyyy-mm-dd nếu có
+        gender: profileData.gender ? profileData.gender.toLowerCase() : '',
+        email: profileData.email || '',
+        phone: profileData.phoneNumber || '',
+        province: profileData.city || '',
+        district: profileData.district || '',
+        ward: profileData.address || '',
+        country: profileData.country || 'Vietnam',
+        school: profileData.studyAt || '',
+        workplace: profileData.workAt || '',
+      });
+    }
+  }, [profileData]);
 
   const [errors, setErrors] = useState({
     name: '',
@@ -89,18 +109,76 @@ const UpdateProfileForm = () => {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (validateForm()) {
+  //     // Chuẩn bị dữ liệu để gửi (ánh xạ tên đầy đủ cho API hoặc hiển thị)
+  //     const submittedData = {
+  //       ...formData,
+  //       province: provinces.find((p) => p.id === formData.province)?.name_en || '',
+  //       district: districts.find((d) => d.id === formData.district)?.name_en || '',
+  //       ward: wards.find((w) => w.id === formData.ward)?.name_en || '',
+  //     };
+  //     toast.success('PROFILE UPDATED SUCCESSFULLY!');
+  //     console.log('Form submitted:', submittedData);
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Chuẩn bị dữ liệu để gửi (ánh xạ tên đầy đủ cho API hoặc hiển thị)
-      const submittedData = {
-        ...formData,
-        province: provinces.find((p) => p.id === formData.province)?.name_en || '',
-        district: districts.find((d) => d.id === formData.district)?.name_en || '',
-        ward: wards.find((w) => w.id === formData.ward)?.name_en || '',
-      };
-      toast.success('PROFILE UPDATED SUCCESSFULLY!');
-      console.log('Form submitted:', submittedData);
+    if (!validateForm()) return;
+
+    const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("FullName", formData.name);
+      formDataToSend.append("Birthday", formData.birthday);
+      formDataToSend.append("Gender", formData.gender);
+      formDataToSend.append("Email", formData.email);
+      formDataToSend.append("PhoneNumber", formData.phone);
+      // formDataToSend.append("City", formData.province);
+      // formDataToSend.append("District", formData.district);
+      // formDataToSend.append("Address", formData.ward);
+      formDataToSend.append(
+        "City",
+        provinces.find(p => p.id === formData.province)?.name_en || ''
+      );
+      formDataToSend.append(
+        "District",
+        districts.find(d => d.id === formData.district)?.name_en || ''
+      );      
+      formDataToSend.append(
+      "Address",
+        wards.find(w => w.id === formData.ward)?.name_en || ''
+      );
+      formDataToSend.append("Country", formData.country);
+      formDataToSend.append("StudyAt", formData.school);
+      formDataToSend.append("WorkAt", formData.workplace);
+
+    console.log("FormData to send:");
+    for (let pair of formDataToSend.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
+    }
+
+      // Nếu có thêm Certificate (cho expert), bạn có thể append thêm
+
+      const res = await instance.put("/api/account/update-profile", formDataToSend, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (res.status === 200 && res.data?.isSuccess) {
+        toast.success("PROFILE UPDATED SUCCESSFULLY!");
+        console.log("Updated profile:", res.data);
+      } else {
+        toast.error(res.data?.message || "Failed to update profile.");
+      }
+    } catch (err) {
+      console.error("Update profile failed:", err);
+      toast.error("Error updating profile.");
     }
   };
 
@@ -318,7 +396,7 @@ const UpdateProfileForm = () => {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
           <div className="flex flex-col p-2">
             <button
-              type="submit"
+              type="button"
               className="w-full px-4 py-2 text-black bg-white rounded-lg hover:bg-green-600 border border-solid "
             >
               Back
