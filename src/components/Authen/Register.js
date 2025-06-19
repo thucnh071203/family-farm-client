@@ -121,6 +121,7 @@ export const Register = () => {
     formDataToSend.append(
       "Address",
       `${selectedDistrict}, ${selectedWard}`.trim()
+      // districts.find((d) => d.id === formData.district)?.name_en + ", " + wards.find((w) => w.id === formData.ward)?.name_en || ""
     );
 
     if (formData.isExpert) {
