@@ -95,7 +95,7 @@ const LoginForm = () => {
                   storage.setItem("refreshToken", loginData.refreshToken);
                   storage.setItem("username", loginData.username);
                   storage.setItem("accId", loginData.accId);
-
+                  
                   // Hạn token
                   const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
                   storage.setItem("tokenExpiry", expiryTime);
@@ -112,6 +112,8 @@ const LoginForm = () => {
                   // const profileResponse = await getOwnProfile();
 
                   const profileData = profileResponse.data;
+
+                  storage.setItem("profileData", JSON.stringify(profileData.data || {}));
 
                   console.log("🔥 Dữ liệu profile:", JSON.stringify(profileData, null, 2));
 
