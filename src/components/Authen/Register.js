@@ -113,7 +113,7 @@ export const Register = () => {
     formDataToSend.append("Country", formData.country);
     formDataToSend.append(
       "Address",
-      wards.find((w) => w.id === formData.ward)?.name_en || ""
+      districts.find((d) => d.id === formData.district)?.name_en + ", " + wards.find((w) => w.id === formData.ward)?.name_en || ""
     );
 
     if (formData.isExpert) {

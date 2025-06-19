@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import PostCreatePopup from "./PostCreatePopup";
+import { useUser } from "../../context/UserContext";
 
 const PostCreate = ({ onPostCreate, profileImage }) => {
   const [showPopup, setShowPopup] = useState(false);
+const { user } = useUser();
 
   const handlePostCreated = (newPost) => {
     onPostCreate(newPost);
@@ -19,8 +21,7 @@ const PostCreate = ({ onPostCreate, profileImage }) => {
       </button>
       <div className="flex items-center gap-3">
         <img
-          src={
-            profileImage ||
+            src={user?.avatar || 
             "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png"
           }
           alt="Avatar"
