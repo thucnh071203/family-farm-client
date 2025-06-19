@@ -9,7 +9,7 @@ import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-const OptionsPost = ({ onRestore, onHardDelete, isDeleted, onDeletePost, postIdParam, isOwnerParam }) => {
+const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isDeleted, onDeletePost, postIdParam, isOwnerParam }) => {
   const navigate = useNavigate();
   const [accessToken, setAccessToken] = useState("");
   const [showPopup, setShowPopup] = useState(false);
@@ -80,7 +80,7 @@ const OptionsPost = ({ onRestore, onHardDelete, isDeleted, onDeletePost, postIdP
       });
       if (response.status === 200) {
         toast.success("Restored successfully!");
-        onRestore(postId);  
+        onRestore(postId);
       } else {
         toast.error("Restore failed!");
       }
@@ -119,6 +119,42 @@ const OptionsPost = ({ onRestore, onHardDelete, isDeleted, onDeletePost, postIdP
     } catch (error) {
       console.error('Delete failed:', error);
       alert('Failed to delete post. Please try again later.');
+    }
+  }
+
+  const handleSavedPost = async () => {
+    try {
+      const response = await instance.post(`/api/post/saved-post/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+      if (response.status === 200) {
+        toast.success("Saved this post successfully!")
+        setIsSavedPost(true)
+      }
+    } catch (error) {
+      console.log("Cannot call api save post: " + error)
+      toast.error("Error saving post.");
+    }
+  }
+
+  const handleUnsavedPost = async () => {
+    try {
+      const response = await instance.delete(`/api/post/unsaved/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+      if (response.status === 200) {
+        toast.success("Delete post in favourite posts successfully!!")
+        setIsSavedPost(false)
+      }
+    } catch (error) {
+      console.log("Cannot call api save post: " + error)
+      toast.error("Error saving post.");
     }
   }
 
@@ -182,15 +218,27 @@ const OptionsPost = ({ onRestore, onHardDelete, isDeleted, onDeletePost, postIdP
             )
           ) : (
             <>
-              <div className="flex items-center gap-2">
-                <img src={namSavePost} alt="save" className="h-5" />
-                <p className=" flex flex-col items-start gap-1">
-                  Save post
-                  <p className="font-light text-[10px] text-[#9195AE] opacity-50">
-                    Add this post to favourite list
+              {!isSavedPost ? (
+                <div className="flex items-center gap-2" style={{ cursor: "pointer" }} onClick={handleSavedPost}>
+                  <img src={namSavePost} alt="save" className="h-5" />
+                  <p className=" flex flex-col items-start gap-1">
+                    Save post
+                    <p className="font-light text-[10px] text-[#9195AE] opacity-50">
+                      Add this post to favourite list
+                    </p>
                   </p>
-                </p>
-              </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2" style={{ cursor: "pointer" }} onClick={handleUnsavedPost}>
+                  <img src={namSavePost} alt="save" className="h-5" />
+                  <p className=" flex flex-col items-start gap-1">
+                    Unsaved post
+                    <p className="font-light text-[10px] text-[#9195AE] opacity-50">
+                      Delete this post in favourite list
+                    </p>
+                  </p>
+                </div>
+              )}
 
               <div className="flex items-center gap-2">
                 <img src={namReportIcon} alt="report" className="h-5" />

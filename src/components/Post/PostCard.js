@@ -9,11 +9,14 @@ import nam_like_icon from "../../assets/icons/nam_like.svg";
 import nam_comment_icon from "../../assets/icons/nam_comment.svg";
 import nam_share_icon from "../../assets/icons/nam_share.svg";
 import { useNavigate } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
 
 const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCommentCountChange }) => {
   const navigate = useNavigate();
   const accIdStorage = localStorage.getItem("accId") || sessionStorage.getItem("accId");
   const isOwner = (post.accId !== accIdStorage) ? false : true;
+  const [isSavedPost, setIsSavedPost] = useState(false);
+  const [accessToken, setAccessToken] = useState("");
 
   const defaultPost = {
     accId: "",
@@ -30,6 +33,14 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
   };
 
   // console.log(post)
+  //lấy thông tin người dùng từ storage
+  useEffect(() => {
+    const storedAccId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
+    const storedAccesstoken = localStorage.getItem("accessToken");
+    if (storedAccId) {
+      setAccessToken(storedAccesstoken);
+    }
+  }, []);
 
   const postData = { ...defaultPost, ...post };
   const hashTags = postData.hashtags || ["blog", "nienmoulming", "polytecode"];
@@ -102,6 +113,28 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
     }
   };
 
+  useEffect(() => {
+    const checkIsSavedPost = async () => {
+      try {
+        const response = await instance.get(`/api/post/check-saved/${post.postId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+
+        if (response.status === 200) {
+          setIsSavedPost(response.data)
+          console.log("Post is saved?", isSavedPost); // ← Log đúng giá trị
+        }
+      } catch (error) {
+        console.log("Cannot fetch api checkIsSavedPost: " + error)
+        setIsSavedPost(false);
+      }
+    }
+
+    checkIsSavedPost();
+  }, [post?.postId]);
+
   return (
     <div className="p-4 text-left bg-white border border-gray-200 border-solid rounded-lg shadow-md">
       <div className="flex justify-between">
@@ -115,6 +148,8 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
         </div>
         <div>
           <OptionsPost
+            isSavedPost={isSavedPost}
+            setIsSavedPost={setIsSavedPost}
             onRestore={onRestore}
             onHardDelete={onHardDelete}
             isDeleted={isDeleted}
