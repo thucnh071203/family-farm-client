@@ -92,6 +92,9 @@ export const Register = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
+    const selectedDistrict = districts.find((d) => d.id === formData.district)?.name_en || "";
+    const selectedWard = wards.find((w) => w.id === formData.ward)?.name_en || "";
+
     // Prepare data for submission
     const formDataToSend = new FormData();
     formDataToSend.append("Username", formData.username);
@@ -111,9 +114,13 @@ export const Register = () => {
       provinces.find((p) => p.id === formData.province)?.name_en || ""
     );
     formDataToSend.append("Country", formData.country);
+    // formDataToSend.append(
+    //   "Address",
+    //   wards.find((w) => w.id === formData.ward)?.name_en || ""
+    // );
     formDataToSend.append(
       "Address",
-      wards.find((w) => w.id === formData.ward)?.name_en || ""
+      `${selectedDistrict}, ${selectedWard}`.trim()
     );
 
     if (formData.isExpert) {
