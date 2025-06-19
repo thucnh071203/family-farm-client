@@ -6,8 +6,10 @@ import ChatListPopup from '../Chat/ChatListPopup';
 import logo from '../../assets/images/logo.png';
 import defaultAvatar from '../../assets/images/default-avatar.png';
 import MenuHeader from './MenuHeader';
+import { useUser } from '../../context/UserContext';
 
 const Header = () => {
+    const { user } = useUser();
     const [isSidebarActive, setIsSidebarActive] = useState(false);
     const [username, setUsername] = useState("");
     const [fullName, setFullName] = useState("");
@@ -21,6 +23,11 @@ const Header = () => {
     const handlePopupToggle = (popupName) => {
         setActivePopup((prev) => (prev === popupName ? null : popupName));
     };
+
+    useEffect(() => {
+        setAvatarUrl(user?.avatar || defaultAvatar);
+        setFullName(user?.fullName || "");
+    }, [user]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {

@@ -14,12 +14,10 @@ const useAddress = (selectedProvince, selectedDistrict) => {
                 const response = await axios.get("https://esgoo.net/api-tinhthanh/1/0.htm");
                 if (response.data.error === 0) {
                     setProvinces(response.data.data);
-                } else {
-                    toast.error("Unable to load province list.");
                 }
             } catch (error) {
                 console.error("Error fetching provinces:", error);
-                toast.error("Unable to load province list.");
+                // toast.error("Unable to load province list.");
             }
         };
         fetchProvinces();
@@ -34,12 +32,10 @@ const useAddress = (selectedProvince, selectedDistrict) => {
                     if (response.data.error === 0) {
                         setDistricts(response.data.data);
                         setWards([]);
-                    } else {
-                        toast.error("Unable to load district list.");
                     }
                 } catch (error) {
                     console.error("Error fetching districts:", error);
-                    toast.error("Unable to load district list.");
+                    // toast.error("Unable to load district list.");
                 }
             };
             fetchDistricts();
@@ -57,12 +53,10 @@ const useAddress = (selectedProvince, selectedDistrict) => {
                     const response = await axios.get(`https://esgoo.net/api-tinhthanh/3/${selectedDistrict}.htm`);
                     if (response.data.error === 0) {
                         setWards(response.data.data);
-                    } else {
-                        toast.error("Unable to load ward list.");
                     }
                 } catch (error) {
                     console.error("Error fetching wards:", error);
-                    toast.error("Unable to load ward list.");
+                    // toast.error("Unable to load ward list.");
                 }
             };
             fetchWards();
