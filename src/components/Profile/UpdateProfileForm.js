@@ -256,21 +256,6 @@ const UpdateProfileForm = ({ profileData }) => {
     return isValid;
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (validateForm()) {
-  //     // Chuẩn bị dữ liệu để gửi (ánh xạ tên đầy đủ cho API hoặc hiển thị)
-  //     const submittedData = {
-  //       ...formData,
-  //       province: provinces.find((p) => p.id === formData.province)?.name_en || '',
-  //       district: districts.find((d) => d.id === formData.district)?.name_en || '',
-  //       ward: wards.find((w) => w.id === formData.ward)?.name_en || '',
-  //     };
-  //     toast.success('PROFILE UPDATED SUCCESSFULLY!');
-  //     console.log('Form submitted:', submittedData);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;

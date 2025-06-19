@@ -114,14 +114,10 @@ export const Register = () => {
       provinces.find((p) => p.id === formData.province)?.name_en || ""
     );
     formDataToSend.append("Country", formData.country);
-    // formDataToSend.append(
-    //   "Address",
-    //   wards.find((w) => w.id === formData.ward)?.name_en || ""
-    // );
+
     formDataToSend.append(
       "Address",
       `${selectedDistrict}, ${selectedWard}`.trim()
-      // districts.find((d) => d.id === formData.district)?.name_en + ", " + wards.find((w) => w.id === formData.ward)?.name_en || ""
     );
 
     if (formData.isExpert) {
