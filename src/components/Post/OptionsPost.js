@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import ReportModal from "./ReportModal"; // Import component mới
 
 const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isDeleted, onDeletePost, postIdParam, isOwnerParam }) => {
   const navigate = useNavigate();
@@ -15,148 +16,41 @@ const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isD
   const [showPopup, setShowPopup] = useState(false);
   const [postId, setPostId] = useState("");
   const [isOwner, setIsOwner] = useState(false);
-
-  //lấy thông tin người dùng từ storage
-  useEffect(() => {
-    const storedAccId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
-    const storedAccesstoken = localStorage.getItem("accessToken");
-    if (storedAccId) {
-      setAccessToken(storedAccesstoken);
-    }
-  }, []);
-
-  const togglePopup = () => {
-    setShowPopup((prev) => !prev);
-  };
+  const [showReportModal, setShowReportModal] = useState(false); // State cho report modal
 
   useEffect(() => {
     setPostId(postIdParam);
-    setIsOwner(isOwnerParam)
-  }, [postIdParam, isOwnerParam])
+    setIsOwner(isOwnerParam);
+    const storedAccessToken = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+    setAccessToken(storedAccessToken);
+  }, [postIdParam, isOwnerParam]);
 
-  const handleClickToUpdate = () => {
-    navigate(`/EditPost/${postId}`);
-  }
+  const togglePopup = () => {
+    setShowPopup(!showPopup);
+  };
 
-  const handleDelete = async () => {
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "The post will be moved to the trash.",
-      icon: 'warning',
-      showCancelButton: true,
-      customClass: {
-        confirmButton: 'bg-red-300 hover:bg-red-600 text-white px-4 py-2 rounded mx-3',
-        cancelButton: 'bg-blue-300 hover:bg-blue-600 text-white px-4 py-2 rounded',
-      },
-      confirmButtonText: 'Yes, delete it!',
-      buttonsStyling: false
-    });
-    if (!result.isConfirmed) return;
-
-    try {
-      const response = await instance.delete(`/api/post/soft-delete/${postId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-
-      if (response.status === 200) {
-        toast.success("Deleted post successfully. Please view in trash!");
-        onDeletePost(postId);
+  // Đóng popup khi click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showPopup && !event.target.closest('.relative')) {
+        setShowPopup(false);
       }
+    };
 
-    } catch (error) {
-      console.error('Delete failed:', error);
-      alert('Failed to delete post. Please try again later.');
-    }
-  }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showPopup]);
 
-  const handleRestore = async () => {
-    try {
-      const response = await instance.put(`/api/post/restore/${postId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-      if (response.status === 200) {
-        toast.success("Restored successfully!");
-        onRestore(postId);
-      } else {
-        toast.error("Restore failed!");
-      }
-    } catch (err) {
-      toast.error("Error while restoring");
-    }
-  }
+  const handleReportClick = () => {
+    setShowPopup(false); // Đóng popup options
+    setShowReportModal(true); // Mở report modal
+  };
 
-  const handleHardDelete = async () => {
-    const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "The post will be completely deleted from the system.",
-      icon: 'warning',
-      showCancelButton: true,
-      customClass: {
-        confirmButton: 'bg-red-300 hover:bg-red-600 text-white px-4 py-2 rounded mx-3',
-        cancelButton: 'bg-blue-300 hover:bg-blue-600 text-white px-4 py-2 rounded',
-      },
-      confirmButtonText: 'Yes, delete it!',
-      buttonsStyling: false
-    });
-    if (!result.isConfirmed) return;
-
-    try {
-      const response = await instance.delete(`/api/post/hard-delete/${postId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-
-      if (response.status === 200) {
-        toast.success("Deleted post successfully!");
-        onHardDelete(postId);
-      }
-
-    } catch (error) {
-      console.error('Delete failed:', error);
-      alert('Failed to delete post. Please try again later.');
-    }
-  }
-
-  const handleSavedPost = async () => {
-    try {
-      const response = await instance.post(`/api/post/saved-post/${postId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
-
-      if (response.status === 200) {
-        toast.success("Saved this post successfully!")
-        setIsSavedPost(true)
-      }
-    } catch (error) {
-      console.log("Cannot call api save post: " + error)
-      toast.error("Error saving post.");
-    }
-  }
-
-  const handleUnsavedPost = async () => {
-    try {
-      const response = await instance.delete(`/api/post/unsaved/${postId}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      })
-
-      if (response.status === 200) {
-        toast.success("Delete post in favourite posts successfully!!")
-        setIsSavedPost(false)
-      }
-    } catch (error) {
-      console.log("Cannot call api save post: " + error)
-      toast.error("Error saving post.");
-    }
-  }
+  const handleCloseReportModal = () => {
+    setShowReportModal(false);
+  };
 
   return (
     <div className="relative inline-block">
@@ -173,44 +67,48 @@ const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isD
           {isOwner ? (
             !isDeleted ? (
               <>
-                <div className="flex items-center gap-2" style={{ cursor: "pointer" }} onClick={() => handleClickToUpdate(postId)}>
+                {/* Edit option */}
+                <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
                   <img src={namEditIcon} alt="edit" className="h-5" />
-                  <p className=" flex flex-col items-start gap-1">
-                    Edit
+                  <p className="flex flex-col items-start gap-1">
+                    Edit Post
                     <p className="font-light text-[10px] text-[#9195AE] opacity-50">
-                      Change post content
+                      Modify your post
                     </p>
                   </p>
                 </div>
-
-                <div style={{ cursor: "pointer" }} onClick={handleDelete} className="flex items-center gap-2">
+                
+                {/* Delete option */}
+                <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
                   <img src={namDeleteIcon} alt="delete" className="h-5" />
-                  <p className=" flex flex-col items-start gap-1">
-                    Delete
+                  <p className="flex flex-col items-start gap-1">
+                    Delete Post
                     <p className="font-light text-[10px] text-[#9195AE] opacity-50">
-                      The post will be moved to the trash.
+                      Move to trash
                     </p>
                   </p>
                 </div>
               </>
             ) : (
               <>
-                <div className="flex items-center gap-2" style={{ cursor: "pointer" }} onClick={handleRestore}>
-                  <img src={namEditIcon} alt="edit" className="h-5" />
-                  <p className=" flex flex-col items-start gap-1">
-                    Restore
+                {/* Restore option */}
+                <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
+                  <i className="fas fa-undo h-5"></i>
+                  <p className="flex flex-col items-start gap-1">
+                    Restore Post
                     <p className="font-light text-[10px] text-[#9195AE] opacity-50">
-                      Change status of post
+                      Restore from trash
                     </p>
                   </p>
                 </div>
-
-                <div style={{ cursor: "pointer" }} onClick={handleHardDelete} className="flex items-center gap-2">
-                  <img src={namDeleteIcon} alt="delete" className="h-5" />
-                  <p className=" flex flex-col items-start gap-1">
-                    Delete from trash
+                
+                {/* Hard delete option */}
+                <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
+                  <img src={namDeleteIcon} alt="delete permanently" className="h-5" />
+                  <p className="flex flex-col items-start gap-1">
+                    Delete Permanently
                     <p className="font-light text-[10px] text-[#9195AE] opacity-50">
-                      The post will be completely deleted from the system.
+                      Cannot be undone
                     </p>
                   </p>
                 </div>
@@ -218,31 +116,24 @@ const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isD
             )
           ) : (
             <>
-              {!isSavedPost ? (
-                <div className="flex items-center gap-2" style={{ cursor: "pointer" }} onClick={handleSavedPost}>
-                  <img src={namSavePost} alt="save" className="h-5" />
-                  <p className=" flex flex-col items-start gap-1">
-                    Save post
-                    <p className="font-light text-[10px] text-[#9195AE] opacity-50">
-                      Add this post to favourite list
-                    </p>
+              {/* Save post option */}
+              <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
+                <img src={namSavePost} alt="save" className="h-5" />
+                <p className="flex flex-col items-start gap-1">
+                  {isSavedPost ? 'Unsave Post' : 'Save Post'}
+                  <p className="font-light text-[10px] text-[#9195AE] opacity-50">
+                    {isSavedPost ? 'Remove from saved' : 'Add to saved posts'}
                   </p>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2" style={{ cursor: "pointer" }} onClick={handleUnsavedPost}>
-                  <img src={namSavePost} alt="save" className="h-5" />
-                  <p className=" flex flex-col items-start gap-1">
-                    Unsaved post
-                    <p className="font-light text-[10px] text-[#9195AE] opacity-50">
-                      Delete this post in favourite list
-                    </p>
-                  </p>
-                </div>
-              )}
+                </p>
+              </div>
 
-              <div className="flex items-center gap-2">
+              {/* Report option */}
+              <div 
+                className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer"
+                onClick={handleReportClick}
+              >
                 <img src={namReportIcon} alt="report" className="h-5" />
-                <p className=" flex flex-col items-start gap-1">
+                <p className="flex flex-col items-start gap-1">
                   Report
                   <p className="font-light text-[10px] text-[#9195AE] opacity-50">
                     Inappropriate content
@@ -250,11 +141,16 @@ const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isD
                 </p>
               </div>
             </>
-          )
-          }
-
+          )}
         </div>
       )}
+
+      {/* Report Modal */}
+      <ReportModal 
+        isOpen={showReportModal}
+        onClose={handleCloseReportModal}
+        postId={postId}
+      />
     </div>
   );
 };

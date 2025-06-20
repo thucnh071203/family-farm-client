@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
 import { SignalRProvider } from "./context/SignalRContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import useAuth from "./hooks/useAuth";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -184,7 +185,9 @@ function App() {
       <Router>
         <UserProvider>
           <SignalRProvider>
-            <AppContent />
+            <NotificationProvider>
+               <AppContent />
+            </NotificationProvider>
           </SignalRProvider>
         </UserProvider>
       </Router>
