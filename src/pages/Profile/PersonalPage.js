@@ -13,114 +13,110 @@ import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
-
+import { useUser } from "../../context/UserContext";
 
 const PersonalPage = () => {
+    const { user } = useUser();
     const [avatar, setAvatar] = useState("");
-    const [fullName, setFullName] = useState("Unknown");
+    const [fullName, setFullName] = useState(user?.fullName || "Unknown");
     const [background, setBackground] = useState("");
     const [basicInfo, setBasicInfo] = useState({});
     const [accessToken, setAccessToken] = useState("");
+    const [posts, setPosts] = useState([]);
 
-    //Biến lấy accId từ param khi xem profile người khác
     const { accId } = useParams();
-
-    const defaultBackground = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
-    //lay thong tin người dùng đang đăng nhập
+    const defaultBackground = "...";
     const storeData = localStorage.getItem("profileData") || sessionStorage.getItem("profileData");
     const myProfile = storeData ? JSON.parse(storeData) : null;
-
-    // Tính isOwner ngay tại render
     const isOwner = !accId || accId === myProfile?.accId;
 
     useEffect(() => {
         const fetchProfile = async () => {
-            if (isOwner) {
-                // Trang cá nhân của mình
-                if (myProfile) {
-                    setFullName(myProfile.fullName);
-                    setAvatar(myProfile.avatar);
-                    setBackground(myProfile.background || defaultBackground);
-
-                    let basicInfoMapping = {
-                        gender: myProfile.gender,
-                        location: myProfile.address,
-                        study: myProfile.studyAt,
-                        work: myProfile.workAt
-                    };
-                    setBasicInfo(basicInfoMapping);
-                }
-
-            } else {
-                // Trang cá nhân của người khác
-                try {
-                    const response = await instance.get(`/api/account/profile-another/${accId}`);
-
+            try {
+                let response;
+                if (isOwner) {
+                    response = await instance.get("/api/account/profile", {
+                        headers: { Authorization: `Bearer ${accessToken}` },
+                    });
                     if (response.status === 200) {
-                        console.log(response.data.data);
-                        // Cập nhật state giống như của mình luôn
-                        setFullName(response.data.data.fullName || "Unknown");
-                        setAvatar(response.data.data.avatar);
-                        setBackground(response.data.data.background || defaultBackground);
+                        const data = response.data.data;
+                        setFullName(data.fullName || "Unknown");
+                        setAvatar(data.avatar);
+                        setBackground(data.background || defaultBackground);
 
-                        let basicInfoMapping = {
-                            gender: (response.data.data.gender || "Updating"),
-                            location: (response.data.data.address || "Updating"),
-                            study: (response.data.data.studyAt || "Updating"),
-                            work: (response.data.data.workAt || "Updating")
+                        const basicInfoMapping = {
+                            gender: data.gender || "Updating",
+                            location: data.address || "Updating",
+                            study: data.studyAt || "Updating",
+                            work: data.workAt || "Updating",
+                        };
+                        setBasicInfo(basicInfoMapping);
+
+                        const storage = localStorage.getItem("accessToken") ? localStorage : sessionStorage;
+                        storage.setItem("profileData", JSON.stringify(data));
+                        storage.setItem("avatarUrl", data.avatar);
+                        storage.setItem("fullName", data.fullName);
+                    }
+                } else {
+                    response = await instance.get(`/api/account/profile-another/${accId}`);
+                    if (response.status === 200) {
+                        const data = response.data.data;
+                        setFullName(data.fullName || "Unknown");
+                        setAvatar(data.avatar);
+                        setBackground(data.background || defaultBackground);
+
+                        const basicInfoMapping = {
+                            gender: data.gender || "Updating",
+                            location: data.address || "Updating",
+                            study: data.studyAt || "Updating",
+                            work: data.workAt || "Updating",
                         };
                         setBasicInfo(basicInfoMapping);
                     }
-                } catch (error) {
-                    console.error("Lỗi lấy profile người khác:", error);
                 }
+            } catch (error) {
+                console.error("Lỗi lấy profile:", error);
             }
         };
 
-        fetchProfile(); // gọi function async
-    }, [accId, isOwner]);
+        fetchProfile();
+    }, [accId, isOwner, accessToken]);
 
     //lấy thông tin người dùng từ storage
     useEffect(() => {
         const storedAccId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
-        const storedAccesstoken = localStorage.getItem("accessToken");
+        const storedAccesstoken = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
         if (storedAccId) {
             setAccessToken(storedAccesstoken);
         }
     }, []);
 
     //Goi api lay list post trong trang can nhan
-    const [posts, setPosts] = useState([]);
+    // const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
                 let response;
-
                 if (isOwner) {
                     response = await instance.get("/api/post/self-view", {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`
-                        }
-                    })
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
                 } else {
-                    console.log("Dang xem cua nguoi khac " + isOwner)
                     response = await instance.get(`/api/post/another-view/${accId}`, {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`
-                        }
-                    })
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
                 }
-
                 if (response.status === 200) {
-                    setPosts(response.data.data)
+                    setPosts(response.data.data);
                 }
             } catch (error) {
-                toast.error("Cannot load list post!")
+                toast.error("Cannot load list post!");
             }
-        }
-        fetchPosts()
-    }, [isOwner, accId, accessToken])
+        };
+        fetchPosts();
+    }, [isOwner, accId, accessToken, user?.avatar]);
 
     //CAC METHOD LIEN QUAN KHAC
     const handleCommentCountChange = (postId, newCount) => {
@@ -160,19 +156,11 @@ const PersonalPage = () => {
                             </div>
                         )}
 
-                        <ProfileAvatar initialProfileImage={avatar} fullName={fullName} />
+                        <ProfileAvatar initialProfileImage={avatar} fullName={fullName || user?.fullName} />
                     </div>
                     <div className="flex flex-col gap-5 pt-20 lg:flex-row">
                         <aside className="flex flex-col w-full gap-5 lg:w-1/3">
                             <BasicInfo info={basicInfo} />
-                            {isOwner && (
-                                <>
-                                    <Link to="/Trash" className="text-start font-normal text-sky-300">Recycle Bin</Link>
-                                    <Link to="/SetPassword" className="text-start font-normal text-sky-300">Set Password of your Account</Link>
-                                    <Link to="/ChangePassword" className="text-start font-normal text-sky-300">Change Password of your Account</Link>
-                                </>
-                            )}
-
                             <FriendList />
                             <PhotoGallery />
                         </aside>

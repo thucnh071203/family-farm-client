@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
 import { SignalRProvider } from "./context/SignalRContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import useAuth from "./hooks/useAuth";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -62,6 +63,8 @@ import ForgotPasswordPage from "./pages/AuthenPage/ForgotPasswordPage";
 import ConfirmOtpPage from "./pages/AuthenPage/ConfirmOtpPage";
 import Register from "./components/Authen/Register";
 import CensorDetailPage from "./pages/Dashboard/CensorDetailPage";
+import { UserProvider } from "./context/UserContext";
+
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -186,9 +189,13 @@ function App() {
         transition={Bounce}
       />
       <Router>
-        <SignalRProvider>
-          <AppContent />
-        </SignalRProvider>
+        <UserProvider>
+          <SignalRProvider>
+            <NotificationProvider>
+               <AppContent />
+            </NotificationProvider>
+          </SignalRProvider>
+        </UserProvider>
       </Router>
     </div>
   );

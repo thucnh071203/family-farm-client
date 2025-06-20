@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import useAddress from '../../hooks/useAddress';
+import instance from "../../Axios/axiosConfig";
+import { useNavigate } from "react-router-dom";
 
-const UpdateProfileForm = () => {
+const UpdateProfileForm = ({ profileData }) => {
+  // 👇 Khi profileData thay đổi → map vào formData
+  const [certificateFile, setCertificateFile] = useState(null);
+  const [certificatePreview, setCertificatePreview] = useState(null); // để hiện ảnh
+  const [userRole, setUserRole] = useState("");
+
   const [formData, setFormData] = useState({
     name: '',
     birthday: '',
@@ -24,23 +31,173 @@ const UpdateProfileForm = () => {
     province: '', // Thay cho city
     ward: '', // Thay cho address
     country: '',
+    certificate: '',
   });
+
+  const [isInitialLoad, setIsInitialLoad] = useState(false);
 
   // Sử dụng useAddress hook
   const { provinces, districts, wards } = useAddress(formData.province, formData.district);
 
+  const navigate = useNavigate();
+
+  const fetchUserProfile = async () => {
+    if (!profileData?.accId) return;
+
+    try {
+      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+      const res = await instance.get(`/api/account/profile-another/${profileData.accId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (res.data?.success && res.data.data) {
+        console.log("Profile another:", res.data.data);
+        setUserRole(res.data.data.roleId); // 👉 set vào state
+        console.log("check role id", userRole);
+      } else {
+        console.error("Failed to load profile another!");
+      }
+    } catch (err) {
+      console.error("Error fetching profile another:", err);
+    }
+  };
+
+  // Chao nha
+
+  useEffect(() => {
+    if (profileData) {
+      fetchUserProfile();
+
+      setFormData(prev => ({
+        ...prev,
+        name: profileData.fullName || '',
+        birthday: profileData.birthday ? profileData.birthday.substring(0, 10) : '',
+        gender: profileData.gender ? profileData.gender.toLowerCase() : '',
+        email: profileData.email || '',
+        phone: profileData.phoneNumber || '',
+        country: profileData.country || 'Vietnam',
+        school: profileData.studyAt || '',
+        workplace: profileData.workAt || '',
+        certificate: profileData.certificate || '',
+      }));
+    }
+  }, [profileData]);
+
+  useEffect(() => {
+    if (profileData && provinces.length > 0 && !isInitialLoad) {
+      const selectedProvince = provinces.find(
+        p => p.name_en.trim().toLowerCase() === profileData.city.trim().toLowerCase()
+      );
+
+      setFormData(prev => ({
+        ...prev,
+        province: selectedProvince?.id || '',
+      }));
+
+      setIsInitialLoad(true);
+    }
+  }, [profileData, provinces, isInitialLoad]);
+
+  useEffect(() => {
+    if (districts.length > 0) {
+      let district = "";
+      let ward = "";
+
+      if (profileData?.address) {
+        const parts = profileData.address.split(",").map(part => part.trim());
+        if (parts.length === 2) {
+          district = parts[0];
+          ward = parts[1];
+        } else if (parts.length === 1) {
+          district = parts[0];
+        }
+      }
+
+      const selectedDistrict = districts.find(
+        d => d.name_en.trim().toLowerCase() === district.trim().toLowerCase()
+      );
+
+      setFormData(prev => ({
+        ...prev,
+        district: selectedDistrict?.id || '',
+      }));
+    }
+  }, [districts, profileData?.address]);
+
+  // Tách useEffect cho ward:
+  useEffect(() => {
+    if (formData.district && wards.length > 0) {
+      let district = "";
+      let ward = "";
+
+      if (profileData?.address) {
+        const parts = profileData.address.split(",").map(part => part.trim());
+        if (parts.length === 2) {
+          district = parts[0];
+          ward = parts[1];
+        } else if (parts.length === 1) {
+          district = parts[0];
+        }
+      }
+
+      // console.log("Ward from address:", ward);
+      // console.log("Wards list:", wards.map(w => w.name_en));
+
+      const selectedWard = wards.find(
+        w => w.name_en.trim().toLowerCase() === ward.trim().toLowerCase()
+      );
+
+      setFormData(prev => ({
+        ...prev,
+        ward: selectedWard?.id || '',
+      }));
+
+      // console.log("Selected Ward:", selectedWard);
+    }
+  }, [formData.district, wards, profileData?.address]);
+
+
+  useEffect(() => {
+    console.log("✅ Current formData:", formData);
+  }, [formData]);
+
+  // 👉 Handle change 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-      ...(name === 'province' ? { district: '', ward: '' } : {}), // Reset district và ward khi province thay đổi
-      ...(name === 'district' ? { ward: '' } : {}), // Reset ward khi district thay đổi
-    }));
-    setErrors((prevErrors) => ({
+
+    setFormData(prevData => {
+      let updatedData = { ...prevData, [name]: value };
+
+      // Nếu chọn province mới → reset district và ward
+      if (name === 'province') {
+        updatedData = { ...updatedData, district: '', ward: '' };
+      }
+
+      // Nếu chọn district mới → reset ward
+      if (name === 'district') {
+        updatedData = { ...updatedData, ward: '' };
+      }
+
+      return updatedData;
+    });
+
+    setErrors(prevErrors => ({
       ...prevErrors,
       [name]: '',
     }));
+  };
+
+  // Handler khi chọn ảnh:
+  const handleCertificateChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCertificateFile(file);
+      setCertificatePreview(URL.createObjectURL(file));
+      setErrors(prev => ({ ...prev, certificate: '' })); // clear lỗi khi chọn file
+    }
   };
 
   const validateForm = () => {
@@ -51,6 +208,7 @@ const UpdateProfileForm = () => {
       province: '',
       ward: '',
       country: '',
+      certificate: '',
     };
     let isValid = true;
 
@@ -85,22 +243,94 @@ const UpdateProfileForm = () => {
       isValid = false;
     }
 
+    // Nếu là expert thì phải có file
+    if (
+      userRole === '68007b2a87b41211f0af1d57' &&
+      !certificateFile && // chưa upload mới
+      !profileData?.certificate // và ảnh cũ cũng không có
+    ) {
+      newErrors.certificate = 'Certificate is required for expert!';
+      isValid = false;
+    }
+
+
     setErrors(newErrors);
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Chuẩn bị dữ liệu để gửi (ánh xạ tên đầy đủ cho API hoặc hiển thị)
-      const submittedData = {
-        ...formData,
-        province: provinces.find((p) => p.id === formData.province)?.name_en || '',
-        district: districts.find((d) => d.id === formData.district)?.name_en || '',
-        ward: wards.find((w) => w.id === formData.ward)?.name_en || '',
-      };
-      toast.success('PROFILE UPDATED SUCCESSFULLY!');
-      console.log('Form submitted:', submittedData);
+    if (!validateForm()) return;
+
+    const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+    const selectedDistrict = districts.find((d) => d.id === formData.district)?.name_en || "";
+    const selectedWard = wards.find((w) => w.id === formData.ward)?.name_en || "";
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("FullName", formData.name);
+      formDataToSend.append("Birthday", formData.birthday);
+      formDataToSend.append("Gender", formData.gender);
+      formDataToSend.append("Email", formData.email);
+      formDataToSend.append("PhoneNumber", formData.phone);
+      formDataToSend.append(
+        "City",
+        provinces.find(p => p.id === formData.province)?.name_en || ''
+      );
+      formDataToSend.append(
+        "Address",
+        `${selectedDistrict}, ${selectedWard}`.trim()
+      );
+      formDataToSend.append("Country", formData.country);
+      formDataToSend.append("StudyAt", formData.school);
+      formDataToSend.append("WorkAt", formData.workplace);
+      if (userRole === '68007b2a87b41211f0af1d57' && certificateFile) {
+        formDataToSend.append('Certificate', certificateFile);
+      }
+
+      console.log("FormData to send:");
+      for (let pair of formDataToSend.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
+
+      // Nếu có thêm Certificate (cho expert), bạn có thể append thêm
+
+      const res = await instance.put("/api/account/update-profile", formDataToSend, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (res.status === 200 && res.data?.isSuccess) {
+        const rememberMe = true; // Tùy bạn có lưu nhớ không
+        const storage = rememberMe ? localStorage : sessionStorage;
+
+        const profileResponse = await instance.get(
+          "https://localhost:7280/api/account/own-profile",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        // const profileResponse = await getOwnProfile();
+
+        const profileData = profileResponse.data;
+
+        storage.setItem("profileData", JSON.stringify(profileData.data || {}));
+
+        toast.success("PROFILE UPDATED SUCCESSFULLY!");
+        storage.setItem("fullName", formData.name);
+        console.log("Updated profile:", res.data);
+        navigate("/PersonalPage");
+      } else {
+        toast.error(res.data?.message || "Failed to update profile.");
+      }
+    } catch (err) {
+      console.error("Update profile failed:", err);
+      toast.error("Error updating profile.");
     }
   };
 
@@ -315,11 +545,46 @@ const UpdateProfileForm = () => {
             />
           </div>
         </div>
+        <div className="grid grid-cols-1 gap-4">
+          {userRole === '68007b2a87b41211f0af1d57' && (
+            <div className="flex flex-col p-2 w-full">
+              <label className="text-sm font-medium text-gray-700" htmlFor="certificate">
+                Certificate <span className="text-red-500">*</span>
+              </label>
+
+              <input
+                id="certificate-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleCertificateChange}
+              />
+
+              <label htmlFor="certificate-upload" className="block cursor-pointer mt-2 w-full relative">
+                <img
+                  className="relative px-3 object-cover rounded-[12px] w-full min-h-[200px] h-auto border z-50"
+                  src={certificatePreview || profileData.certificate}
+                />
+
+                {!certificatePreview && (
+                  <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-xl z-0">
+                    <i className="fa-solid fa-cloud-arrow-up"></i>Upload certificate here {/* icon FA upload */}
+                  </div>
+                )}
+              </label>
+
+              {errors.certificate && (
+                <p className="mt-1 text-sm text-red-500">{errors.certificate}</p>
+              )}
+            </div>
+          )}
+        </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
           <div className="flex flex-col p-2">
             <button
-              type="submit"
+              type="button"
               className="w-full px-4 py-2 text-black bg-white rounded-lg hover:bg-green-600 border border-solid "
+              onClick={() => navigate('/PersonalPage')}
             >
               Back
             </button>
