@@ -3,6 +3,7 @@ import SidebarDashboard from "../../components/Dashboard/SidebarDashboard";
 // import StatisticPage from "../../pages/Dashboard/StatisticPage";
 import CreatePostCate from "../../pages/Dashboard/CreatePostCate";
 import ListAccountSensor from "../../components/AccountManage/ListAccountSensor";
+import AccountSencorDetail from "../../components/AccountManage/AccountSencorDetail";
 
 const DashboardPage = () => {
   return (
@@ -15,8 +16,8 @@ const DashboardPage = () => {
       </div> */}
 
       <div className="flex-1">
-        {/* <CreatePostCate /> */}
-        <ListAccountSensor />
+        <CreatePostCate />
+        {/* <ListAccountSensor /> */}
       </div>
     </div>
   );

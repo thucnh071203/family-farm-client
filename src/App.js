@@ -61,6 +61,7 @@ import SetPasswordPage from "./pages/Profile/SetPasswordPage";
 import ForgotPasswordPage from "./pages/AuthenPage/ForgotPasswordPage";
 import ConfirmOtpPage from "./pages/AuthenPage/ConfirmOtpPage";
 import Register from "./components/Authen/Register";
+import CensorDetailPage from "./pages/Dashboard/CensorDetailPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -131,10 +132,10 @@ const AppContent = () => {
             <Route path="/EditGroup/:groupId" element={<EditGroupPage />} />
 
             <Route path="/Trash" element={<RecycleBin />} />
-            <Route path="/ChangePassword" element={<ChangePasswordPage />}/>
-            <Route path="/SetPassword" element={<SetPasswordPage />}/>
-            <Route path="/ForgotPassword" element={<ForgotPasswordPage />}/>
-            <Route path="/ConfirmOtp" element={<ConfirmOtpPage />}/>
+            <Route path="/ChangePassword" element={<ChangePasswordPage />} />
+            <Route path="/SetPassword" element={<SetPasswordPage />} />
+            <Route path="/ForgotPassword" element={<ForgotPasswordPage />} />
+            <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
             <Route
@@ -143,6 +144,10 @@ const AppContent = () => {
             />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
+            <Route
+              path="/Dashboard/CensorDetail/:accId"
+              element={<CensorDetailPage />}
+            />
             <Route
               path="/DashboardPage/PostCatePage/CreatePostCate"
               element={<CreatePostCate />}
