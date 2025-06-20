@@ -62,7 +62,9 @@ import SetPasswordPage from "./pages/Profile/SetPasswordPage";
 import ForgotPasswordPage from "./pages/AuthenPage/ForgotPasswordPage";
 import ConfirmOtpPage from "./pages/AuthenPage/ConfirmOtpPage";
 import Register from "./components/Authen/Register";
+import CensorDetailPage from "./pages/Dashboard/CensorDetailPage";
 import { UserProvider } from "./context/UserContext";
+
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -145,6 +147,10 @@ const AppContent = () => {
             />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
+            <Route
+              path="/Dashboard/CensorDetail/:accId"
+              element={<CensorDetailPage />}
+            />
             <Route
               path="/DashboardPage/PostCatePage/CreatePostCate"
               element={<CreatePostCate />}
