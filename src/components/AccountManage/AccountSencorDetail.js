@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 const AccountSencorDetail = ({ account }) => {
   const navigate = useNavigate();
   const updateCensor = async (status) => {
@@ -27,11 +28,30 @@ const AccountSencorDetail = ({ account }) => {
   };
 
   return (
-    <div className="ml-20 mt-8">
-      <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-8">
+    <div className="ml-20 mt-3 ">
+      <div className="flex">
+        <div className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6.52734 13V8.5H9.52734V13H13.2773V7H15.5273L8.02734 0.25L0.527344 7H2.77734V13H6.52734Z"
+              fill="rgba(62,63,94,0.25)"
+            />
+          </svg>
+          <Link to={'/Dashboard'}>HOME</Link>
+        </div>
+        <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">/ Account Censor</span>
+      </div>
+
+      <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-4">
         ACCOUNT SENSOR
       </h1>
-      <div className="mt-8 text-left bg-[rgba(61,179,251,0.1)] w-[80%] rounded-xl">
+      <div className="mt-4 text-left bg-[rgba(61,179,251,0.1)] w-[80%] rounded-xl">
         <div className="p-4">
           <p className="text-left">
             A user has just created an account with the expert role. Please
@@ -68,55 +88,79 @@ const AccountSencorDetail = ({ account }) => {
           {account.roleId === "68007b2a87b41211f0af1d57" ? "Expert" : "Farmer"}
         </p>
       </div>
-      <div className="w-[80%] mt-7">
-        <div className="flex text-left items-center pt-4 pb-4">
-          <div>
-            <p className="w-[180px]">Full Name</p>
+      <div className="w-[80%] mt-7 bg-white">
+        <div className="flex text-left items-center">
+          <div
+            className="pt-4 pb-4"
+            style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
+          >
+            <p className="w-[180px] pl-4">Full Name</p>
           </div>
 
-          <p>{account.fullName}</p>
+          <p className="pl-4 ">{account.fullName}</p>
         </div>
-        <div className="flex text-left items-center pt-4 pb-4">
-          <div>
-            <p className="w-[180px]">Username</p>
+        <div className="flex text-left items-center">
+          <div
+            className="pt-4 pb-4"
+            style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
+          >
+            <p className="w-[180px] pl-4">Username</p>
           </div>
-          <p className="text-left">{account.username}</p>
+          <p className="text-left pl-4">{account.username}</p>
         </div>
-        <div className="flex text-left items-center pt-4 pb-4">
-          <div>
-            <p className="w-[180px]">Address</p>
+        <div className="flex text-left items-center">
+          <div
+            className="pt-4 pb-4"
+            style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
+          >
+            <p className="w-[180px] pl-4">Address</p>
           </div>
-          <p className="text-left">{account.address}</p>
+          <p className="text-left pl-4 ">{account.address}</p>
         </div>
-        <div className="flex text-left items-center pt-4 pb-4">
-          <div>
-            <p className="w-[180px]">Phone</p>
+        <div className="flex text-left items-center">
+          <div
+            className="pt-4 pb-4"
+            style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
+          >
+            <p className="w-[180px] pl-4">Phone</p>
           </div>
-          <p className="text-left">{account.phoneNumber}</p>
+          <p className="text-left pl-4 ">{account.phoneNumber}</p>
         </div>
-        <div className="flex text-left items-center pt-4 pb-4">
-          <div>
-            <p className="w-[180px]">Email</p>
+        <div className="flex text-left items-center">
+          <div
+            className="pt-4 pb-4"
+            style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
+          >
+            <p className="w-[180px] pl-4">Email</p>
           </div>
-          <p className="text-left">{account.email}</p>
+          <p className="text-left pl-4 ">{account.email}</p>
         </div>
-        <div className="flex text-left items-center pt-4 pb-4">
-          <div>
-            <p className="w-[180px]">Work at</p>
+        <div className="flex text-left items-center">
+          <div
+            className="pt-4 pb-4 "
+            style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
+          >
+            <p className="w-[180px] pl-4">Work at</p>
           </div>
-          <p className="text-left">{account.workAt || "Fpt"}</p>
+          <p className="text-left pl-4 ">{account.workAt || "Fpt"}</p>
         </div>
-        <div className="flex text-left items-center pt-4 pb-4">
-          <div>
-            <p className="w-[180px]">Study at</p>
+        <div className="flex text-left items-center">
+          <div
+            className="pt-4 pb-4"
+            style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
+          >
+            <p className="w-[180px] pl-4">Study at</p>
           </div>
-          <p className="text-left">{account.studyAt || "Fpt"}</p>
+          <p className="text-left pl-4 ">{account.studyAt || "Fpt"}</p>
         </div>
-        <div className="flex text-left items-center pt-4 pb-4">
-          <div>
-            <p className="w-[180px]">Certificate</p>
+        <div className="flex text-left items-center">
+          <div
+            className="pt-4 pb-4"
+            style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
+          >
+            <p className="w-[180px] pl-4 ">Certificate</p>
           </div>
-          <p className="text-left">huuthuc</p>
+          <p className="text-left pl-4 ">huuthuc</p>
         </div>
       </div>
     </div>
