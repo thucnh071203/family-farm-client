@@ -2,14 +2,73 @@ import { useEffect, useState } from "react";
 import logo from "../../assets/images/logo_img.png";
 import { useFormValidation } from "../../utils/validate";
 import { TextInput } from "./InputField";
+import { useLocation, useNavigate } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
+import { toast } from "react-toastify";
 
 const ConfirmOtpForm = () => {
+    const location = useLocation();
+    const { email, accountId } = location.state || {};
+    const navigate = useNavigate();
+
     const [secondsLeft, setSecondsLeft] = useState(60);
-    const { values, errors, handleChange, handleSubmit } = useFormValidation({
+    const { values, errors, handleChange, handleSubmit, setErrors } = useFormValidation({
         otp: '',
     });
 
     useEffect(() => {
+        if (accountId && email) {
+            generateAndSendOTP();
+        }
+    }, [accountId, email]);
+
+    const generateAndSendOTP = async () => {
+        try {
+            const formData = new FormData();
+            formData.append("id", accountId);
+
+            await instance.post("/api/authen/generate-OTP", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+
+            // Gửi email
+            await instance.post("/api/authen/send-email", {
+                toEmail: email,
+                subject: "Your OTP Code",
+            });
+
+            console.log("OTP generated and email sent.");
+        } catch (err) {
+            console.error("Error generating/sending OTP:", err);
+        }
+    };
+
+    const handleResendOtp = async () => {
+        await generateAndSendOTP();
+        toast.success("OTP has been sent to your email.");
+        setSecondsLeft(60); // reset countdown
+    };
+
+
+    // useEffect(() => {
+    //     const timer = setInterval(() => {
+    //         setSecondsLeft((prev) => {
+    //             if (prev === 0) {
+    //                 clearInterval(timer);
+    //                 return 0;
+    //             }
+    //             return prev - 1;
+    //         });
+    //     }, 1000);
+    //     return () => clearInterval(timer);
+    // }, []);
+
+    useEffect(() => {
+        if (secondsLeft === 0) return;
+
         const timer = setInterval(() => {
             setSecondsLeft((prev) => {
                 if (prev === 0) {
@@ -19,13 +78,100 @@ const ConfirmOtpForm = () => {
                 return prev - 1;
             });
         }, 1000);
-        return () => clearInterval(timer);
-    }, []);
 
-    const onSubmit = (values) => {
+        return () => clearInterval(timer);
+    }, [secondsLeft]); // 👈 phụ thuộc secondsLeft
+
+
+    // const onSubmit = (values) => {
+    //     console.log('OTP Form submitted:', values);
+    //     // Xử lý gửi OTP
+    // };
+
+    const onSubmit = async (values) => {
         console.log('OTP Form submitted:', values);
-        // Xử lý gửi OTP
+        try {
+            const res = await instance.get(`/api/account/get-by-accId/${accountId}`);
+            console.log("check data", res.data);
+            const account = res.data;
+
+            if (account) {
+                const serverOtp = account.otp;
+                const otpTime = account.createOtp;
+
+                if (!serverOtp || !otpTime) {
+                    setErrors((prev) => ({
+                        ...prev,
+                        otp: "OTP has not been generated. Please request again.",
+                    }));
+                    return;
+                }
+
+                // Kiểm tra OTP hết hạn (giả sử 2 phút)
+                const otpCreatedAt = new Date(otpTime);
+                const now = new Date();
+                const diffMinutes = (now - otpCreatedAt) / (1000 * 60);
+
+                if (diffMinutes > 1) {
+                    setErrors((prev) => ({
+                        ...prev,
+                        otp: "OTP has expired. Please request a new OTP.",
+                    }));
+                    return;
+                }
+
+                // Kiểm tra OTP nhập đúng không
+                if (parseInt(values.otp) !== serverOtp) {
+                    setErrors((prev) => ({
+                        ...prev,
+                        otp: "Invalid OTP. Please try again.",
+                    }));
+                    return;
+                }
+
+                toast.success("OTP verified successfully!");
+                navigate('/ResetPassword', { state: { accountId: accountId } });
+                // navigate('/ResetPassword');
+            } else {
+                setErrors((prev) => ({
+                    ...prev,
+                    otp: "Account not found.",
+                }));
+            }
+        } catch (err) {
+            console.error("Error verifying OTP:", err);
+            setErrors((prev) => ({
+                ...prev,
+                otp: "Failed to verify OTP. Please try again.",
+            }));
+        }
+
+        // try {
+        //     const res = await instance.post("/api/account/verify-OTP", {
+        //         accountId: accountId,
+        //         otp: parseInt(values.otp),
+        //     });
+
+        //     if (res.status === 200 && res.data?.success) {
+        //         toast.success("OTP verified successfully!");
+        //         // Redirect tới trang Reset Password hoặc Home
+        //     } else {
+        //         // Nếu verify lỗi, show lỗi dưới input
+        //         setErrors((prev) => ({
+        //             ...prev,
+        //             otp: res.data?.message || "Invalid OTP.",
+        //         }));
+        //     }
+        // } catch (err) {
+        //     console.error("Verify OTP failed:", err);
+
+        //     setErrors((prev) => ({
+        //         ...prev,
+        //         otp: "Failed to verify OTP. Please try again.",
+        //     }));
+        // }
     };
+
 
     return (
         <div className="text-left border-solid border-0 border-t-[5px] border-t-[#3DB3FB] border-b-[5px] border-b-[#2BB673] max-w-4xl w-full px-32 bg-white max-h-min">
@@ -59,7 +205,7 @@ const ConfirmOtpForm = () => {
             </form>
             <p className="pt-6 pb-10">
                 If you have not received the code, please click the following link:{' '}
-                <span className="cursor-pointer underline text-[#3DB3FB]">Resend OTP</span>
+                <span className="cursor-pointer underline text-[#3DB3FB]" onClick={handleResendOtp}>Resend OTP</span>
             </p>
         </div>
     );

@@ -35,7 +35,7 @@ const PersonalPage = () => {
             try {
                 let response;
                 if (isOwner) {
-                    response = await instance.get("/api/account/profile", {
+                    response = await instance.get("/api/account/own-profile", {
                         headers: { Authorization: `Bearer ${accessToken}` },
                     });
                     if (response.status === 200) {

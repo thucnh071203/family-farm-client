@@ -86,5 +86,6 @@ export const useFormValidation = (initialValues) => {
         handleChange,
         handleSubmit,
         togglePasswordVisibility,
+        setErrors,
     };
 };
