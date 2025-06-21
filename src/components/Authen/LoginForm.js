@@ -259,7 +259,7 @@ const LoginForm = () => {
             />
             <span className="text-wrapper-10">Remember me!</span>
           </label>
-          <Link to="/forgot-password" className="text-wrapper-11" href="#">
+          <Link to="/ForgotPassword" className="text-wrapper-11">
             Forgot password?
           </Link>
         </div>

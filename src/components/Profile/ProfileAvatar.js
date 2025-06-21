@@ -133,7 +133,7 @@ const ProfileAvatar = ({ initialProfileImage, fullName }) => { // Bỏ avatarIma
           />
         </div>
         <h1 className="mt-2 text-3xl font-bold text-center">
-          {fullName || "Phuong Nam"}
+          {fullName}
         </h1>
       </div>
 

@@ -61,6 +61,7 @@ import ChangePasswordPage from "./pages/Profile/ChangePasswordPage";
 import SetPasswordPage from "./pages/Profile/SetPasswordPage";
 import ForgotPasswordPage from "./pages/AuthenPage/ForgotPasswordPage";
 import ConfirmOtpPage from "./pages/AuthenPage/ConfirmOtpPage";
+import ResetPasswordPage from "./pages/AuthenPage/ResetPasswordPage";
 import Register from "./components/Authen/Register";
 import CensorDetailPage from "./pages/Dashboard/CensorDetailPage";
 import { UserProvider } from "./context/UserContext";
@@ -81,7 +82,16 @@ const AppContent = () => {
     );
   }
 
-  const isPublicRoute = ["/Login", "/Register"].includes(location.pathname);
+  console.log("Current path:", location.pathname);
+
+  const isPublicRoute = ["/Login", "/Register", "/ForgotPassword", "/ConfirmOtp", "/ResetPassword"].includes(location.pathname);
+
+  const skipAuthRoutes = ["/Login", "/Register", "/ForgotPassword", "/ConfirmOtp", "/ResetPassword"];
+
+  // const { isAuthenticated, isLoading } = useAuth(
+  //     skipAuthRoutes.includes(location.pathname) ? null : navigate,
+  //     location
+  // );
 
   return (
     <>
@@ -139,6 +149,7 @@ const AppContent = () => {
             <Route path="/SetPassword" element={<SetPasswordPage />} />
             <Route path="/ForgotPassword" element={<ForgotPasswordPage />} />
             <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
+            <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
             <Route
