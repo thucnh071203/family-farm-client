@@ -65,7 +65,7 @@ import ResetPasswordPage from "./pages/AuthenPage/ResetPasswordPage";
 import Register from "./components/Authen/Register";
 import CensorDetailPage from "./pages/Dashboard/CensorDetailPage";
 import { UserProvider } from "./context/UserContext";
-
+import AccountDetailPage from "./pages/Dashboard/AccountDetailPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -163,6 +163,10 @@ const AppContent = () => {
               element={<CensorDetailPage />}
             />
             <Route
+              path="/Dashboard/AccountDetail/:accId"
+              element={<AccountDetailPage />}
+            />
+            <Route
               path="/DashboardPage/PostCatePage/CreatePostCate"
               element={<CreatePostCate />}
             />
@@ -203,7 +207,7 @@ function App() {
         <UserProvider>
           <SignalRProvider>
             <NotificationProvider>
-               <AppContent />
+              <AppContent />
             </NotificationProvider>
           </SignalRProvider>
         </UserProvider>
