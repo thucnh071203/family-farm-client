@@ -2,6 +2,7 @@ import $ from "jquery";
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const ListReport = ({ filter }) => {
     const reportData = [
@@ -81,9 +82,9 @@ const ListReport = ({ filter }) => {
                             </td>
                             <td className="text-left">{report.createdAt}</td>
                             <td className="text-left">
-                                <a href="#" className="text-[#3DB3FB] text-sm px-2 py-0.5 rounded font-semibold">
+                                <Link to="/ReportDetail" className="text-[#3DB3FB] px-2 py-0.5 rounded font-semibold underline">
                                     Detail
-                                </a>
+                                </Link>
                             </td>
                         </tr>
                     ))}

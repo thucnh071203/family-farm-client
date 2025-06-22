@@ -7,6 +7,7 @@ import logo from '../../assets/images/logo.png';
 import defaultAvatar from '../../assets/images/default-avatar.png';
 import MenuHeader from './MenuHeader';
 import { useUser } from '../../context/UserContext';
+import { useNotification } from '../../context/NotificationContext';
 
 const Header = () => {
     const { user } = useUser();
@@ -15,6 +16,7 @@ const Header = () => {
     const [fullName, setFullName] = useState("");
     const [avatarUrl, setAvatarUrl] = useState("");
     const [activePopup, setActivePopup] = useState(null);
+    const { unreadCount } = useNotification(); // Lấy unreadCount từ context
 
     const toggleSidebar = () => {
         setIsSidebarActive((prev) => !prev);
