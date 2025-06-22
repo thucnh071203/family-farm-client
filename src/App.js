@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
 import { SignalRProvider } from "./context/SignalRContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import useAuth from "./hooks/useAuth";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -61,7 +62,13 @@ import SetPasswordPage from "./pages/Profile/SetPasswordPage";
 import ForgotPasswordPage from "./pages/AuthenPage/ForgotPasswordPage";
 import ConfirmOtpPage from "./pages/AuthenPage/ConfirmOtpPage";
 import Register from "./components/Authen/Register";
+import CensorDetailPage from "./pages/Dashboard/CensorDetailPage";
 import { UserProvider } from "./context/UserContext";
+import PaymentManagementPage from "./pages/Dashboard/PaymentManagementPage";
+import PostManagementPage from "./pages/Dashboard/PostManagementPage";
+import ReportManagementPage from "./pages/Dashboard/ReportManagementPage";
+import ReportDetailPage from "./pages/Dashboard/ReportDetailPage";
+
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -138,22 +145,31 @@ const AppContent = () => {
             <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
+            <Route path="/PaymentManagement" element={<PaymentManagementPage />} />
+            <Route path="/PostManagement" element={<PostManagementPage />} />
+            <Route path="/ReportManagement" element={<ReportManagementPage />} />
+            <Route path="/ReportDetail" element={<ReportDetailPage />} />
+
             <Route
-              path="/DashboardPage/PostCatePage"
+              path="/Dashboard/PostCatePage"
               element={<PostCatePage />}
             />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
             <Route
-              path="/DashboardPage/PostCatePage/CreatePostCate"
+              path="/Dashboard/CensorDetail/:accId"
+              element={<CensorDetailPage />}
+            />
+            <Route
+              path="/Dashboard/PostCatePage/CreatePostCate"
               element={<CreatePostCate />}
             />
             <Route
-              path="/DashboardPage/PostCatePage/UpdatePostCate/:id"
+              path="/Dashboard/PostCatePage/UpdatePostCate/:id"
               element={<UpdatePostCate />}
             />
             <Route
-              path="/DashboardPage/PostCatePage/DetailPostCate/:id"
+              path="/Dashboard/PostCatePage/DetailPostCate/:id"
               element={<DetailPostCate />}
             />
           </>
@@ -184,7 +200,9 @@ function App() {
       <Router>
         <UserProvider>
           <SignalRProvider>
-            <AppContent />
+            <NotificationProvider>
+               <AppContent />
+            </NotificationProvider>
           </SignalRProvider>
         </UserProvider>
       </Router>
