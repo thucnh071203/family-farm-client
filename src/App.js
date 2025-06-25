@@ -65,7 +65,11 @@ import ResetPasswordPage from "./pages/AuthenPage/ResetPasswordPage";
 import Register from "./components/Authen/Register";
 import CensorDetailPage from "./pages/Dashboard/CensorDetailPage";
 import { UserProvider } from "./context/UserContext";
-
+import PaymentManagementPage from "./pages/Dashboard/PaymentManagementPage";
+import PostManagementPage from "./pages/Dashboard/PostManagementPage";
+import ReportManagementPage from "./pages/Dashboard/ReportManagementPage";
+import ReportDetailPage from "./pages/Dashboard/ReportDetailPage";
+import AccountDetailPage from "./pages/Dashboard/AccountDetailPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -152,8 +156,13 @@ const AppContent = () => {
             <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
+            <Route path="/PaymentManagement" element={<PaymentManagementPage />} />
+            <Route path="/PostManagement" element={<PostManagementPage />} />
+            <Route path="/ReportManagement" element={<ReportManagementPage />} />
+            <Route path="/ReportDetail" element={<ReportDetailPage />} />
+
             <Route
-              path="/DashboardPage/PostCatePage"
+              path="/Dashboard/PostCatePage"
               element={<PostCatePage />}
             />
             <Route path="/StatisticPage" element={<StatisticPage />} />
@@ -163,15 +172,19 @@ const AppContent = () => {
               element={<CensorDetailPage />}
             />
             <Route
+              path="/Dashboard/AccountDetail/:accId"
+              element={<AccountDetailPage />}
+            />
+            <Route
               path="/DashboardPage/PostCatePage/CreatePostCate"
               element={<CreatePostCate />}
             />
             <Route
-              path="/DashboardPage/PostCatePage/UpdatePostCate/:id"
+              path="/Dashboard/PostCatePage/UpdatePostCate/:id"
               element={<UpdatePostCate />}
             />
             <Route
-              path="/DashboardPage/PostCatePage/DetailPostCate/:id"
+              path="/Dashboard/PostCatePage/DetailPostCate/:id"
               element={<DetailPostCate />}
             />
           </>
@@ -203,7 +216,7 @@ function App() {
         <UserProvider>
           <SignalRProvider>
             <NotificationProvider>
-               <AppContent />
+              <AppContent />
             </NotificationProvider>
           </SignalRProvider>
         </UserProvider>

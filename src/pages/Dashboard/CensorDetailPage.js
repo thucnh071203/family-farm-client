@@ -42,7 +42,7 @@ const CensorDetailPage = () => {
       {/* Sidebar bên trái */}
       <SidebarDashboard />
 
-      <div className="flex-1">
+      <div className="flex-1 bg-[rgba(61,179,251,0.05)]">
         {account ? (
           <AccountSencorDetail account={account} />
         ) : (

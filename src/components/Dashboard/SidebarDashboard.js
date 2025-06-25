@@ -1,6 +1,7 @@
 import logo from "../../assets/images/logo_img.png";
 import default_avatar from "../../assets/images/default-avatar.png";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const SidebarDashboard = () => {
   const [openSections, setOpenSections] = useState({
@@ -36,7 +37,7 @@ const SidebarDashboard = () => {
               <i className={`fa-solid ${openSections.censor ? "fa-angle-down" : "fa-angle-right"}`}></i>
             </span>
           </div>
-          <ul className={`ml-6 space-y-3 text-gray-500 font-semibold cursor-pointer ${openSections.censor ? "" : "hidden"}`}>
+          <ul className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.censor ? "" : "hidden"}`}>
             <li>AI Checker</li>
             <li>Account Censor</li>
           </ul>
@@ -49,11 +50,11 @@ const SidebarDashboard = () => {
               <i className={`fa-solid ${openSections.management ? "fa-angle-down" : "fa-angle-right"}`}></i>
             </span>
           </div>
-          <ul className={`ml-6 space-y-3 text-gray-500 font-semibold cursor-pointer ${openSections.management ? "" : "hidden"}`}>
+          <ul className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.management ? "" : "hidden"}`}>
             <li>Account Management</li>
-            <li>Report Management</li>
-            <li>Post Management</li>
-            <li>Payment</li>
+            <li><Link to="/ReportManagement">Report Management</Link></li>
+            <li><Link to="/PostManagement">Post Management</Link></li>
+            <li><Link to="/PaymentManagement">Payment</Link></li>
           </ul>
           <div className="font-bold flex items-center gap-2 py-3 pt-5 cursor-pointer" onClick={() => toggleSection("system")}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +65,7 @@ const SidebarDashboard = () => {
               <i className={`fa-solid ${openSections.system ? "fa-angle-down" : "fa-angle-right"}`}></i>
             </span>
           </div>
-          <ul className={`ml-6 space-y-3 text-gray-500 font-semibold cursor-pointer ${openSections.system ? "" : "hidden"}`}>
+          <ul className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.system ? "" : "hidden"}`}>
             <li>Chatbot</li>
             <li>Category Service</li>
             <li>Category Post</li>
