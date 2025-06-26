@@ -168,13 +168,12 @@ const AppContent = () => {
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
             <Route
-<<<<<<< uyenvm/FE2
               path="/PostCatePage"
               element={<PostCatePage />}
-=======
+            />
+            <Route
               path="/PaymentManagement"
               element={<PaymentManagementPage />}
->>>>>>> main
             />
             <Route path="/PostManagement" element={<PostManagementPage />} />
             <Route path="/ReportManagement" element={<ReportManagementPage />} />
@@ -196,7 +195,6 @@ const AppContent = () => {
               element={<AccountDetailPage />}
             />
             <Route
-<<<<<<< uyenvm/FE2
               path="/CreatePostCate"
               element={<CreatePostCate />}
             />
@@ -207,18 +205,6 @@ const AppContent = () => {
             <Route
               path="/DetailPostCate/:id"
               element={<DetailPostCate />}
-=======
-              path="/Dashboard/PostCatePage/CreatePostCate"
-              element={<CreatePostCatePage />}
-            />
-            <Route
-              path="/Dashboard/PostCatePage/UpdatePostCate/:id"
-              element={<UpdatePostCatePage />}
-            />
-            <Route
-              path="/Dashboard/PostCatePage/DetailPostCate/:id"
-              element={<DetailPostCatePage />}
->>>>>>> main
             />
           </>
         ) : (
