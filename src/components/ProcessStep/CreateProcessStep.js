@@ -25,6 +25,12 @@ const CreateProcessStep = () => {
   const [processTitle, setProcessTitle] = useState("");
   const [processDescription, setProcessDescription] = useState("");
 
+  const [errors, setErrors] = useState({
+    processTitle: "",
+    processDescription: "",
+    steps: [] // array of { title: "", description: "" } theo index
+  });
+
 
   const [steps, setSteps] = useState([
     { title: "", description: "", images: [] } // khởi tạo 1 bước đầu tiên (nếu muốn)
@@ -33,12 +39,34 @@ const CreateProcessStep = () => {
   // Sự kiện add step form
   const handleAddStep = () => {
     setSteps([...steps, { title: "", description: "", images: [] }]);
+
+    // ✅ Xóa lỗi toàn cục nếu đang có
+    setErrors((prev) => ({
+      ...prev,
+      global: ""
+    }));
   };
 
   const handleStepChange = (index, field, value) => {
     const updatedSteps = [...steps];
     updatedSteps[index][field] = value;
     setSteps(updatedSteps);
+
+    // Reset lỗi nếu có
+    setErrors((prev) => {
+      const stepErrors = [...(prev.steps || [])];
+
+      // Xóa lỗi cho field cụ thể trong step nếu có
+      if (stepErrors[index]?.[field]) {
+        stepErrors[index] = { ...stepErrors[index], [field]: "" };
+      }
+
+      return {
+        ...prev,
+        steps: stepErrors,
+        global: "" // ✅ Xóa luôn lỗi tổng nếu có
+      };
+    });
   };
 
   const handleImageChange = (index, files) => {
@@ -92,101 +120,84 @@ const CreateProcessStep = () => {
     }
   }, [serviceId]);
 
-  // Upload tất cả ảnh trước, gom URL theo từng step.
-  // const uploadImagesAndGetUrls = async () => {
-  //   const imageUrlsByStep = [];
-  //   const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+  // Validate input
+  const validate = () => {
+    const newErrors = {
+      processTitle: "",
+      processDescription: "",
+      steps: [],
+      global: "" // để hiển thị lỗi tổng quát như "Phải có ít nhất 1 step"
+    };
 
-  //   for (let i = 0; i < steps.length; i++) {
-  //     const step = steps[i];
-  //     if (step.images && step.images.length > 0) {
-  //       const formData = new FormData();
-  //       step.images.forEach((img) => formData.append("files", img));
+    let isValid = true;
 
-  //       const res = await instance.post("/api/process/upload-images", formData, {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //           "Content-Type": "multipart/form-data"
-  //         }
-  //       });
-
-  //       // imageUrlsByStep[i] = res.data; // res.data = List<string>
-  //       imageUrlsByStep[i] = res.data.map(file => file.url);
-  //     } else {
-  //       imageUrlsByStep[i] = [];
-  //     }
-  //   }
-
-  //   return imageUrlsByStep;
-  // };
-
-//   const uploadImagesAndGetUrls = async () => {
-//   const imageUrlsByStep = [];
-//   const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-
-//   for (let i = 0; i < steps.length; i++) {
-//     const step = steps[i];
-//     if (step.images && step.images.length > 0) {
-//       const formData = new FormData();
-//       step.images.forEach((img) => formData.append("files", img));
-
-//       const res = await instance.post("/api/process/upload-images", formData, {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "multipart/form-data"
-//         }
-//       });
-
-//       // 👉 DEBUG: Xem dữ liệu trả về từ API upload
-//       console.log("Ảnh trả về từ step", i, res.data);
-
-//       // Cập nhật mảng URL ảnh đúng cách
-//       let urls = Array.isArray(res.data)
-//         ? res.data.map(img => typeof img === 'string' ? img : img.url).filter(Boolean)
-//         : [];
-
-//       imageUrlsByStep[i] = urls;
-//     } else {
-//       imageUrlsByStep[i] = [];
-//     }
-//   }
-
-//   return imageUrlsByStep;
-// };
-
-const uploadImagesAndGetUrls = async () => {
-  const imageUrlsByStep = [];
-  const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-
-  if (!token) {
-    toast.error("Missing access token!");
-    return [];
-  }
-
-  for (let i = 0; i < steps.length; i++) {
-    const step = steps[i];
-    if (step.images && step.images.length > 0) {
-      const formData = new FormData();
-      step.images.forEach((img) => formData.append("files", img));
-
-      const res = await instance.post("/api/process/upload-images", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
-        }
-      });
-
-      console.log("Ảnh trả về từ step", i, res.data);
-
-      // ✅ Sửa đúng tại đây:
-      imageUrlsByStep[i] = res.data.map(file => file.urlFile).filter(Boolean);
-    } else {
-      imageUrlsByStep[i] = [];
+    if (!processTitle.trim()) {
+      newErrors.processTitle = "Title is required.";
+      isValid = false;
     }
-  }
 
-  return imageUrlsByStep;
-};
+    if (!processDescription.trim()) {
+      newErrors.processDescription = "Description is required.";
+      isValid = false;
+    }
+
+    // ✅ Kiểm tra phải có ít nhất 1 bước
+    if (steps.length === 0) {
+      newErrors.global = "At least one process step is required.";
+      isValid = false;
+    }
+
+    steps.forEach((step, i) => {
+      const stepError = { title: "", description: "" };
+      if (!step.title.trim()) {
+        stepError.title = "Step title is required.";
+        isValid = false;
+      }
+      if (!step.description.trim()) {
+        stepError.description = "Step description is required.";
+        isValid = false;
+      }
+      newErrors.steps[i] = stepError;
+    });
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  // Upload tất cả ảnh trước, gom URL theo từng step.
+  const uploadImagesAndGetUrls = async () => {
+    const imageUrlsByStep = [];
+    const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+    if (!token) {
+      toast.error("Missing access token!");
+      return [];
+    }
+
+    for (let i = 0; i < steps.length; i++) {
+      const step = steps[i];
+      if (step.images && step.images.length > 0) {
+        const formData = new FormData();
+        step.images.forEach((img) => formData.append("files", img));
+
+        const res = await instance.post("/api/process/upload-images", formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data"
+          }
+        });
+
+        console.log("Ảnh trả về từ step", i, res.data);
+
+        // ✅ Sửa đúng tại đây:
+        imageUrlsByStep[i] = res.data.map(file => file.urlFile).filter(Boolean);
+      } else {
+        imageUrlsByStep[i] = [];
+      }
+    }
+
+    return imageUrlsByStep;
+  };
 
   // Gửi thông tin process + step + url ảnh đến API
   const handleSave = async () => {
@@ -194,6 +205,8 @@ const uploadImagesAndGetUrls = async () => {
       toast.error("Missing serviceId");
       return;
     }
+
+    if (!validate()) return;
 
     try {
       const imageUrlsByStep = await uploadImagesAndGetUrls();
@@ -221,6 +234,7 @@ const uploadImagesAndGetUrls = async () => {
       toast.success("Process created successfully!");
       console.log("✅ Dữ liệu đã gửi thành công:");
       console.log(JSON.stringify(requestBody, null, 2));
+      navigate("/ServiceManagement");
       // navigate("/somewhere");
     } catch (err) {
       // console.error("❌ Failed to create process", err);
@@ -287,20 +301,35 @@ const uploadImagesAndGetUrls = async () => {
 
               <div className="basic-info-section flex flex-col items-start rounded-[10px] gap-6 w-full p-4">
                 <div className="basic-title">Basic Information for process</div>
-                <input className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none"
-                  type="text"
-                  placeholder="Write title for this process"
-                  value={processTitle}
-                  onChange={(e) => setProcessTitle(e.target.value)} />
-                <textarea
-                  className="text-description-basic w-full p-4 rounded-[10px] border outline-none" rows={5}
-                  placeholder="Write short description for this process"
-                  value={processDescription}
-                  onChange={(e) => setProcessDescription(e.target.value)}
-                ></textarea>
+                <div className="title-input w-full">
+                  <input className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none"
+                    type="text"
+                    placeholder="Write title for this process"
+                    value={processTitle}
+                    onChange={(e) => {
+                      setProcessTitle(e.target.value);
+                      if (errors.processTitle) {
+                        setErrors((prev) => ({ ...prev, processTitle: "" }));
+                      }
+                    }} />
+                  {errors.processTitle && <p className="text-start text-red-500 text-sm mt-1">{errors.processTitle}</p>}
+                </div>
+                <div className="description-input w-full">
+                  <textarea
+                    className="text-description-basic w-full p-4 rounded-[10px] border outline-none" rows={5}
+                    placeholder="Write short description for this process"
+                    value={processDescription}
+                    onChange={(e) => {
+                      setProcessDescription(e.target.value);
+                      if (errors.processDescription) {
+                        setErrors((prev) => ({ ...prev, processDescription: "" }));
+                      }
+                    }}
+                  ></textarea>
+                  {errors.processDescription && <p className="text-start text-red-500 text-sm mt-1">{errors.processDescription}</p>}
+                </div>
               </div>
               <div className="progress-list-section space-y-6 mt-7">
-
                 {steps.map((step, index) => (
                   <div key={index} className="progress-step-container flex flex-row gap-[50px]">
                     <div className="step-num-section">
@@ -310,21 +339,33 @@ const uploadImagesAndGetUrls = async () => {
                     </div>
 
                     <div className="step-form-section flex flex-col gap-6 p-4 w-full bg-white rounded shadow">
-                      <input
-                        className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none"
-                        type="text"
-                        placeholder="Write title for process step"
-                        value={step.title}
-                        onChange={(e) => handleStepChange(index, "title", e.target.value)}
-                      />
+                      <div className="title-step-input">
+                        <input
+                          className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none"
+                          type="text"
+                          placeholder="Write title for process step"
+                          value={step.title}
+                          onChange={(e) => handleStepChange(index, "title", e.target.value)}
+                        />
 
-                      <textarea
-                        className="text-description-basic w-full p-4 rounded-[10px] border outline-none"
-                        rows={5}
-                        placeholder="Write description detail for process step"
-                        value={step.description}
-                        onChange={(e) => handleStepChange(index, "description", e.target.value)}
-                      ></textarea>
+                        {errors.steps?.[index]?.title && (
+                          <p className="text-start text-red-500 text-sm mt-1">{errors.steps[index].title}</p>
+                        )}
+                      </div>
+
+                      <div className="description-step-input">
+                        <textarea
+                          className="text-description-basic w-full p-4 rounded-[10px] border outline-none"
+                          rows={5}
+                          placeholder="Write description detail for process step"
+                          value={step.description}
+                          onChange={(e) => handleStepChange(index, "description", e.target.value)}
+                        ></textarea>
+
+                        {errors.steps?.[index]?.description && (
+                          <p className="text-start text-red-500 text-sm mt-1">{errors.steps[index].description}</p>
+                        )}
+                      </div>
 
                       <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-2">
@@ -391,6 +432,10 @@ const uploadImagesAndGetUrls = async () => {
                   +
                 </div>
               </div>
+
+              {errors.global && (
+                <p className="text-red-500 text-sm mt-2">{errors.global}</p>
+              )}
 
             </div>
             <div className="w-full flex justify-end">
