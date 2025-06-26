@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const CreateServiceForm = () => {
+    const navigate = useNavigate();
     const [serviceName, setServiceName] = useState("");
     const [category, setCategory] = useState("");
     const [price, setPrice] = useState("");
@@ -99,7 +101,11 @@ const CreateServiceForm = () => {
             });
             // alert("✅ Service created successfully!");
             toast.success("Service created successfully!");
-            console.log(res.data);
+            console.log("data ne", res.data);
+
+            const serviceId = res.data?.data?.[0]?.service?.serviceId;
+
+            navigate(`/CreateStepPage/${serviceId}`);
 
             // Reset form
             setServiceName("");

@@ -48,7 +48,7 @@ const UpdatePostCate = () => {
         }
       );
       setTimeout(() => {
-        navigate("/DashboardPage/PostCatePage");
+        navigate("/Dashboard/PostCatePage");
       }, 1000);
     } catch (err) {
       console.error("Cập nhật thất bại:", err);

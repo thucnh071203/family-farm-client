@@ -70,7 +70,11 @@ import PostManagementPage from "./pages/Dashboard/PostManagementPage";
 import ReportManagementPage from "./pages/Dashboard/ReportManagementPage";
 import ReportDetailPage from "./pages/Dashboard/ReportDetailPage";
 import AccountDetailPage from "./pages/Dashboard/AccountDetailPage";
-
+import ListCensorPage from "./pages/Dashboard/ListCensorPage";
+import ListAccountPage from "./pages/Dashboard/ListAccountPage";
+import CreatePostCatePage from "./pages/Dashboard/CreatePostCatePage";
+import UpdatePostCatePage from "./pages/Dashboard/UpdatePostCatePage";
+import DetailPostCatePage from "./pages/Dashboard/DetailPostCatePage";
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -88,14 +92,21 @@ const AppContent = () => {
 
   console.log("Current path:", location.pathname);
 
-  const isPublicRoute = ["/Login", "/Register", "/ForgotPassword", "/ConfirmOtp", "/ResetPassword"].includes(location.pathname);
+  const isPublicRoute = [
+    "/Login",
+    "/Register",
+    "/ForgotPassword",
+    "/ConfirmOtp",
+    "/ResetPassword",
+  ].includes(location.pathname);
 
-  const skipAuthRoutes = ["/Login", "/Register", "/ForgotPassword", "/ConfirmOtp", "/ResetPassword"];
-
-  // const { isAuthenticated, isLoading } = useAuth(
-  //     skipAuthRoutes.includes(location.pathname) ? null : navigate,
-  //     location
-  // );
+  const skipAuthRoutes = [
+    "/Login",
+    "/Register",
+    "/ForgotPassword",
+    "/ConfirmOtp",
+    "/ResetPassword",
+  ];
 
   return (
     <>
@@ -142,7 +153,7 @@ const AppContent = () => {
               path="/ProgressListFarmer"
               element={<ProcessListFarmerPage />}
             />
-            <Route path="/CreateStepPage" element={<CreateStepPage />} />
+            <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
             <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
@@ -156,17 +167,21 @@ const AppContent = () => {
             <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
-            <Route path="/PaymentManagement" element={<PaymentManagementPage />} />
+            <Route
+              path="/PaymentManagement"
+              element={<PaymentManagementPage />}
+            />
             <Route path="/PostManagement" element={<PostManagementPage />} />
             <Route path="/ReportManagement" element={<ReportManagementPage />} />
             <Route path="/ReportDetail/:reportId" element={<ReportDetailPage />} />
-
-            <Route
-              path="/Dashboard/PostCatePage"
-              element={<PostCatePage />}
-            />
+            <Route path="/Dashboard/PostCatePage" element={<PostCatePage />} />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
+            <Route path="/Dashboard/ListCensor" element={<ListCensorPage />} />
+            <Route
+              path="/Dashboard/ListAccount"
+              element={<ListAccountPage />}
+            />
             <Route
               path="/Dashboard/CensorDetail/:accId"
               element={<CensorDetailPage />}
@@ -176,16 +191,16 @@ const AppContent = () => {
               element={<AccountDetailPage />}
             />
             <Route
-              path="/DashboardPage/PostCatePage/CreatePostCate"
-              element={<CreatePostCate />}
+              path="/Dashboard/PostCatePage/CreatePostCate"
+              element={<CreatePostCatePage />}
             />
             <Route
               path="/Dashboard/PostCatePage/UpdatePostCate/:id"
-              element={<UpdatePostCate />}
+              element={<UpdatePostCatePage />}
             />
             <Route
               path="/Dashboard/PostCatePage/DetailPostCate/:id"
-              element={<DetailPostCate />}
+              element={<DetailPostCatePage />}
             />
           </>
         ) : (
