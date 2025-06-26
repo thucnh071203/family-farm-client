@@ -59,18 +59,7 @@ const PostCatePage = () => {
   }, []);
 
   return (
-<<<<<<< uyenvm/FE2
-    <div className="p-6 bg-blue-50 min-h-screen">
-      <div className="text-sm text-gray-400">HOME / Category post</div>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold text-sky-500">CATEGORY POST</h1>
-        <Link to="/CreatePostCate">
-          <button className="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 text-sm">
-            New Post Category
-          </button>
-        </Link>
-      </div>
-=======
+
     <div className="flex min-h-screen">
       <SidebarDashboard />
       <div className="flex-1">
@@ -78,13 +67,12 @@ const PostCatePage = () => {
           <div className="text-sm text-gray-400">HOME / Category post</div>
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-xl font-bold text-sky-500">CATEGORY POST</h1>
-            <Link to="/Dashboard/PostCatePage/CreatePostCate">
+            <Link to="/CreatePostCate">
               <button className="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 text-sm">
                 New Post Category
               </button>
             </Link>
           </div>
->>>>>>> main
 
           {/* Tabs */}
           <div className="flex border-b text-sm mb-2">
@@ -142,30 +130,8 @@ const PostCatePage = () => {
                           <img src={trash} alt="" />
                         </button>
 
-<<<<<<< uyenvm/FE2
-                    <Link
-                      to={`/UpdatePostCate/${reaction.categoryId}`}
-                    >
-                      <button className="text-blue-500 hover:text-blue-700 text-lg">
-                        <img src={edit} alt="" />
-                      </button>
-                    </Link>
-
-                    <Link
-                      to={`/DetailPostCate/${reaction.categoryId}`}
-                    >
-                      <button className="text-blue-400 hover:text-blue-700 text-lg">
-                        <img src={eye} alt="" />
-                      </button>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-=======
                         <Link
-                          to={`/Dashboard/PostCatePage/UpdatePostCate/${reaction.categoryId}`}
+                          to={`/UpdatePostCate/${reaction.categoryId}`}
                         >
                           <button className="text-blue-500 hover:text-blue-700 text-lg">
                             <img src={edit} alt="" />
@@ -173,7 +139,7 @@ const PostCatePage = () => {
                         </Link>
 
                         <Link
-                          to={`/Dashboard/PostCatePage/DetailPostCate/${reaction.categoryId}`}
+                          to={`/DetailPostCate/${reaction.categoryId}`}
                         >
                           <button className="text-blue-400 hover:text-blue-700 text-lg">
                             <img src={eye} alt="" />
@@ -186,7 +152,6 @@ const PostCatePage = () => {
               </table>
             </div>
           )}
->>>>>>> main
         </div>
       </div>
     </div>
