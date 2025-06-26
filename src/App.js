@@ -108,11 +108,6 @@ const AppContent = () => {
     "/ResetPassword",
   ];
 
-  // const { isAuthenticated, isLoading } = useAuth(
-  //     skipAuthRoutes.includes(location.pathname) ? null : navigate,
-  //     location
-  // );
-
   return (
     <>
       <ScrollToTop />
@@ -158,7 +153,7 @@ const AppContent = () => {
               path="/ProgressListFarmer"
               element={<ProcessListFarmerPage />}
             />
-            <Route path="/CreateStepPage" element={<CreateStepPage />} />
+            <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
             <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
