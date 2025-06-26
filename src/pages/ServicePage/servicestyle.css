@@ -70,7 +70,7 @@ html, body {
 }
 
 .service .service-box{
-  height: 314px;
+  height: auto;
   border-radius: 10px;
   box-shadow: -5px 10px 10px rgba(0, 0, 0, 0.25);
   cursor: pointer;
