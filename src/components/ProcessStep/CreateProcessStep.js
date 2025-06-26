@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
 import MenuProcessStep from "./MenuProcessStep";
 import "./createProcessStepstyle.css";
 import ProcessNav from "../ProcessNav/ProcessNav";
@@ -12,7 +14,17 @@ import attentionIcon from "../../assets/images/icon-park-solid_attention.png";
 import addStepIcon from "../../assets/images/ic_baseline-plus.svg";
 
 const CreateProcessStep = () => {
+  const navigate = useNavigate();
   const fileInputRefs = useRef({});
+  const [accessToken, setAccessToken] = useState("");
+  const [searchParams] = useSearchParams();
+  const { id: serviceId } = useParams();
+  const [service, setService] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const [processTitle, setProcessTitle] = useState("");
+  const [processDescription, setProcessDescription] = useState("");
+
 
   const [steps, setSteps] = useState([
     { title: "", description: "", images: [] } // khởi tạo 1 bước đầu tiên (nếu muốn)
@@ -29,13 +41,6 @@ const CreateProcessStep = () => {
     setSteps(updatedSteps);
   };
 
-  // Upload ảnh (multi)
-  // const handleImageChange = (index, files) => {
-  //   const updatedSteps = [...steps];
-  //   updatedSteps[index].images = Array.from(files);
-  //   setSteps(updatedSteps);
-  // };
-
   const handleImageChange = (index, files) => {
     const updatedSteps = [...steps];
     const newFiles = Array.from(files);
@@ -46,9 +51,9 @@ const CreateProcessStep = () => {
 
     // Reset input để lần sau chọn lại vẫn trigger
     if (fileInputRefs.current[index]) {
-        fileInputRefs.current[index].value = "";
+      fileInputRefs.current[index].value = "";
     }
-};
+  };
 
   const handleDeleteImage = (stepIndex, imageIndex) => {
     const updatedSteps = [...steps];
@@ -62,6 +67,172 @@ const CreateProcessStep = () => {
     setSteps(updatedSteps);
   };
 
+  // fetchService
+  useEffect(() => {
+    const fetchService = async () => {
+      try {
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+        const res = await instance.get(`/api/service/get-by-id/${serviceId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        setService(res.data?.data?.[0]?.service || null);
+      } catch (err) {
+        console.error("Failed to fetch service:", err);
+        toast.error("Failed to load service.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (serviceId) {
+      fetchService();
+    }
+  }, [serviceId]);
+
+  // Upload tất cả ảnh trước, gom URL theo từng step.
+  // const uploadImagesAndGetUrls = async () => {
+  //   const imageUrlsByStep = [];
+  //   const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+  //   for (let i = 0; i < steps.length; i++) {
+  //     const step = steps[i];
+  //     if (step.images && step.images.length > 0) {
+  //       const formData = new FormData();
+  //       step.images.forEach((img) => formData.append("files", img));
+
+  //       const res = await instance.post("/api/process/upload-images", formData, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Content-Type": "multipart/form-data"
+  //         }
+  //       });
+
+  //       // imageUrlsByStep[i] = res.data; // res.data = List<string>
+  //       imageUrlsByStep[i] = res.data.map(file => file.url);
+  //     } else {
+  //       imageUrlsByStep[i] = [];
+  //     }
+  //   }
+
+  //   return imageUrlsByStep;
+  // };
+
+//   const uploadImagesAndGetUrls = async () => {
+//   const imageUrlsByStep = [];
+//   const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+//   for (let i = 0; i < steps.length; i++) {
+//     const step = steps[i];
+//     if (step.images && step.images.length > 0) {
+//       const formData = new FormData();
+//       step.images.forEach((img) => formData.append("files", img));
+
+//       const res = await instance.post("/api/process/upload-images", formData, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "multipart/form-data"
+//         }
+//       });
+
+//       // 👉 DEBUG: Xem dữ liệu trả về từ API upload
+//       console.log("Ảnh trả về từ step", i, res.data);
+
+//       // Cập nhật mảng URL ảnh đúng cách
+//       let urls = Array.isArray(res.data)
+//         ? res.data.map(img => typeof img === 'string' ? img : img.url).filter(Boolean)
+//         : [];
+
+//       imageUrlsByStep[i] = urls;
+//     } else {
+//       imageUrlsByStep[i] = [];
+//     }
+//   }
+
+//   return imageUrlsByStep;
+// };
+
+const uploadImagesAndGetUrls = async () => {
+  const imageUrlsByStep = [];
+  const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+  if (!token) {
+    toast.error("Missing access token!");
+    return [];
+  }
+
+  for (let i = 0; i < steps.length; i++) {
+    const step = steps[i];
+    if (step.images && step.images.length > 0) {
+      const formData = new FormData();
+      step.images.forEach((img) => formData.append("files", img));
+
+      const res = await instance.post("/api/process/upload-images", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
+      console.log("Ảnh trả về từ step", i, res.data);
+
+      // ✅ Sửa đúng tại đây:
+      imageUrlsByStep[i] = res.data.map(file => file.urlFile).filter(Boolean);
+    } else {
+      imageUrlsByStep[i] = [];
+    }
+  }
+
+  return imageUrlsByStep;
+};
+
+  // Gửi thông tin process + step + url ảnh đến API
+  const handleSave = async () => {
+    if (!serviceId) {
+      toast.error("Missing serviceId");
+      return;
+    }
+
+    try {
+      const imageUrlsByStep = await uploadImagesAndGetUrls();
+
+      const requestBody = {
+        serviceId,
+        processTittle: processTitle,
+        description: processDescription,
+        numberOfSteps: steps.length,
+        processSteps: steps.map((step, i) => ({
+          stepNumber: i + 1,
+          stepTitle: step.title,
+          stepDescription: step.description,
+          images: imageUrlsByStep[i]
+        }))
+      };
+      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+      const res = await instance.post("/api/process/create", requestBody, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      toast.success("Process created successfully!");
+      console.log("✅ Dữ liệu đã gửi thành công:");
+      console.log(JSON.stringify(requestBody, null, 2));
+      // navigate("/somewhere");
+    } catch (err) {
+      // console.error("❌ Failed to create process", err);
+      // toast.error("Failed to create process");
+      console.error("❌ Failed to create process:", err);
+      console.error("➡️ Response from server:", err.response?.data);
+      toast.error("Failed to create process");
+    }
+  };
+
+  if (loading) return <p>Loading service info...</p>;
+  if (!service) return <p>Service not found.</p>;
   return (
     <div className="pt-16 progress-management">
       <div className="px-2 mx-auto div max-w-7xl">
@@ -108,7 +279,7 @@ const CreateProcessStep = () => {
                   <div className="second-header flex gap-2">
                     <span className="font-semibold">For service - </span>
                     <span className="ml-auto text-blue-600 cursor-pointer hover:underline">
-                      Support Coursera online of FPT
+                      {service.serviceName}
                     </span>
                   </div>
                 </div>
@@ -116,64 +287,18 @@ const CreateProcessStep = () => {
 
               <div className="basic-info-section flex flex-col items-start rounded-[10px] gap-6 w-full p-4">
                 <div className="basic-title">Basic Information for process</div>
-                <input className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none" type="text" placeholder="Write title for this process" />
+                <input className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none"
+                  type="text"
+                  placeholder="Write title for this process"
+                  value={processTitle}
+                  onChange={(e) => setProcessTitle(e.target.value)} />
                 <textarea
                   className="text-description-basic w-full p-4 rounded-[10px] border outline-none" rows={5}
                   placeholder="Write short description for this process"
+                  value={processDescription}
+                  onChange={(e) => setProcessDescription(e.target.value)}
                 ></textarea>
               </div>
-
-              {/* <div className="progress-list-section space-y-6 mt-7">
-                <div className="progress-step-container flex flex-row gap-[50px]">
-                  <div className="step-num-section">
-                    <div className="flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full">
-                      1
-                    </div>
-                  </div>
-                  <div className="step-form-section flex flex-col gap-6 p-4 w-full bg-white rounded shadow">
-                    <input className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none" type="text" placeholder="Write title for process step" />
-                    <textarea
-                      className="text-description-basic w-full p-4 rounded-[10px] border outline-none" rows={5}
-                      placeholder="Write descriptio detail for process step"
-                    ></textarea>
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex items-center justify-center w-24 h-24 text-gray-400 border-2 border-dashed rounded cursor-pointer">
-                        Drop file here to upload
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="progress-step-container flex flex-row gap-[50px]">
-                  <div className="step-num-section">
-                    <div className="flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full">
-                      2
-                    </div>
-                  </div>
-                  <div className="step-form-section p-4 flex flex-col gap-6 w-full bg-white rounded shadow">
-                    <input className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none" type="text" placeholder="Write title for process step" />
-                    <textarea
-                      className="text-description-basic w-full p-4 rounded-[10px] border outline-none" rows={5}
-                      placeholder="Write descriptio detail for process step"
-                    ></textarea>
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex items-center justify-center w-24 h-24 text-gray-400 border-2 border-dashed rounded cursor-pointer">
-                        Drop file here to upload
-                      </div>
-                    </div>
-                    <button className="px-4 py-2 mt-4 text-red-700 bg-red-100 rounded hover:bg-red-200 max-w-[108px]">
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="add-new-step flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full mt-5 cursor-pointer">
-                <img
-                  src={addStepIcon}
-                  alt="Customer Avatar"
-                  className="w-[32px] h-[32px] rounded-full"
-                />
-              </div> */}
               <div className="progress-list-section space-y-6 mt-7">
 
                 {steps.map((step, index) => (
@@ -203,51 +328,50 @@ const CreateProcessStep = () => {
 
                       <div className="flex flex-col gap-4">
                         <div className="flex flex-col gap-2">
-                            {/* Upload button */}
-                            <input
-                                id={`file-upload-${index}`}
-                                type="file"
-                                multiple
-                                accept="image/*"
-                                ref={(el) => (fileInputRefs.current[index] = el)}
-                                onChange={(e) => handleImageChange(index, e.target.files)}
-                                className="hidden"
-                            />
-                            <div className="flex items-center gap-2">
-                              <label
-                                htmlFor={`file-upload-${index}`}
-                                className="inline-block px-4 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 w-fit"
+                          {/* Upload button */}
+                          <input
+                            id={`file-upload-${index}`}
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            ref={(el) => (fileInputRefs.current[index] = el)}
+                            onChange={(e) => handleImageChange(index, e.target.files)}
+                            className="hidden"
+                          />
+                          <div className="flex items-center gap-2">
+                            <label
+                              htmlFor={`file-upload-${index}`}
+                              className="inline-block px-4 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 w-fit"
                             >
-                                Upload Images
+                              Upload Images
                             </label>
 
                             <span className="text-sm text-gray-600">
-                                {step.images.length} files selected
+                              {step.images.length} files selected
                             </span>
-                            </div>
+                          </div>
 
-                            {step.images.length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                    {step.images.map((img, i) => (
-                                        <div key={i} className="relative w-24 h-24">
-                                            <img
-                                                src={URL.createObjectURL(img)}
-                                                alt={`Step ${index + 1} - Image ${i + 1}`}
-                                                className="w-24 h-24 object-cover rounded border"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
-                                                onClick={() => handleDeleteImage(index, i)}
-                                            >
-                                                ×
-                                            </button>
-                                        </div>
-                                    ))}
+                          {step.images.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {step.images.map((img, i) => (
+                                <div key={i} className="relative w-24 h-24">
+                                  <img
+                                    src={URL.createObjectURL(img)}
+                                    alt={`Step ${index + 1} - Image ${i + 1}`}
+                                    className="w-24 h-24 object-cover rounded border"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                                    onClick={() => handleDeleteImage(index, i)}
+                                  >
+                                    ×
+                                  </button>
                                 </div>
-                            )}
+                              ))}
+                            </div>
+                          )}
                         </div>
-
                       </div>
 
                       <button
@@ -266,12 +390,13 @@ const CreateProcessStep = () => {
                 >
                   +
                 </div>
-                <div className="w-full flex justify-end">
-                  <button className="w-fit bg-blue-500 hover:bg-blue-600 px-3 py-2 text-white cursor-pointer">
-                    Save
-                  </button>
-                </div>
               </div>
+
+            </div>
+            <div className="w-full flex justify-end">
+              <button className="w-auto bg-blue-500 hover:bg-blue-600 rounded-md px-8 py-3 text-white cursor-pointer mb-4" onClick={handleSave}>
+                Save
+              </button>
             </div>
           </div>
         </div>
