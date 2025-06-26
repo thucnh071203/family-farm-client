@@ -45,7 +45,7 @@ const AccountSencorDetail = ({ account }) => {
           </svg>
           <Link to={'/Dashboard'}>HOME</Link>
         </div>
-        <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">/ Account Censor</span>
+        <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]"><Link to="/Dashboard/ListCensor">/Account Censor</Link></span>
       </div>
 
       <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-4">
