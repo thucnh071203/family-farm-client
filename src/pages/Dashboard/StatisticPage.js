@@ -1,11 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 // import Sidebar from "../../components/DashboardCom/Sidebar";
+import axios from "axios";
 import Sidebar from "../../components/Statistic/MostUser";
 import MostUser from "../../components/Statistic/MostUser";
 import UserGrowthChart from "../../components/Statistic/UserGrowthChart";
 import MapChart from "../../components/Statistic/MapChart";
 
 const StatisticPage = () => {
+  const [counts, setCounts] = useState({
+    Farmer: 0,
+    Expert: 0,
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchRoleCounts = async () => {
+      try {
+        const response = await axios.get(
+          "https://localhost:7280/api/statistic/count-by-role"
+        );
+
+        const roleData = response.data.data;
+
+        setCounts({
+          Farmer: roleData.FARMER || 0,
+          Expert: roleData.EXPERT || 0,
+        });
+      } catch (err) {
+        console.error("Failed to fetch role counts:", err);
+        setError("Không thể tải dữ liệu");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRoleCounts();
+  }, []);
+
+  if (loading) {
+    return <p className="text-gray-600">Đang tải dữ liệu...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
+
   return (
     <div className="flex">
       {/* Nội dung bên phải */}
@@ -15,15 +56,21 @@ const StatisticPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <div className="bg-white rounded-xl shadow p-6 h-28 flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Total Users</p>
-              <h2 className="text-xl font-bold text-blue-700">1,234</h2>
+              <p className="text-sm text-gray-500">Total Farmer</p>
+              <h2 className="text-xl font-bold text-blue-700">
+                {" "}
+                {counts.Farmer.toLocaleString()}
+              </h2>
             </div>
             <div className="text-3xl text-blue-500">👤</div>
           </div>
           <div className="bg-white rounded-xl shadow p-6 h-28 flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500">Total Booking</p>
-              <h2 className="text-xl font-bold text-blue-700">567</h2>
+              <p className="text-sm text-gray-500">Total Expert</p>
+              <h2 className="text-xl font-bold text-blue-700">
+                {" "}
+                {counts.Expert.toLocaleString()}
+              </h2>
             </div>
             <div className="text-3xl text-green-500">📅</div>
           </div>

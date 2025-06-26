@@ -63,7 +63,7 @@ const PostCatePage = () => {
       <div className="text-sm text-gray-400">HOME / Category post</div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold text-sky-500">CATEGORY POST</h1>
-        <Link to="/DashboardPage/PostCatePage/CreatePostCate">
+        <Link to="/CreatePostCate">
           <button className="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 text-sm">
             New Post Category
           </button>
@@ -127,7 +127,7 @@ const PostCatePage = () => {
                     </button>
 
                     <Link
-                      to={`/DashboardPage/PostCatePage/UpdatePostCate/${reaction.categoryId}`}
+                      to={`/UpdatePostCate/${reaction.categoryId}`}
                     >
                       <button className="text-blue-500 hover:text-blue-700 text-lg">
                         <img src={edit} alt="" />
@@ -135,7 +135,7 @@ const PostCatePage = () => {
                     </Link>
 
                     <Link
-                      to={`/DashboardPage/PostCatePage/DetailPostCate/${reaction.categoryId}`}
+                      to={`/DetailPostCate/${reaction.categoryId}`}
                     >
                       <button className="text-blue-400 hover:text-blue-700 text-lg">
                         <img src={eye} alt="" />

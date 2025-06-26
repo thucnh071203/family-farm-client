@@ -76,8 +76,9 @@ const DetailPostCate = () => {
 
         <div className="mt-6">
           <button
-            onClick={() => navigate("/DashboardPage/PostCatePage")}
-            className="bg-blue-400 text-white px-6 py-2 rounded hover:bg-blue-600"
+            onClick={() => navigate("/PostCatePage")}
+            type="button"
+            className="text-red-500 font-semibold"
           >
             Back
           </button>

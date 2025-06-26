@@ -48,7 +48,7 @@ const UpdatePostCate = () => {
         }
       );
       setTimeout(() => {
-        navigate("/DashboardPage/PostCatePage");
+        navigate("/PostCatePage");
       }, 1000);
     } catch (err) {
       console.error("Cập nhật thất bại:", err);
@@ -98,6 +98,15 @@ const UpdatePostCate = () => {
             required
           />
         </div>
+
+        <button
+          onClick={() => navigate("/PostCatePage")}
+          type="button"
+          className="text-red-500 font-semibold mr-6"
+        >
+          Back
+        </button>
+
         <button
           type="submit"
           className="bg-blue-400 text-white px-10 py-2 rounded hover:bg-blue-600"

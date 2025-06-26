@@ -15,8 +15,8 @@ const DashboardPage = () => {
       </div> */}
 
       <div className="flex-1">
-        {/* <CreatePostCate /> */}
-        <ListAccountSensor />
+        <CreatePostCate />
+        {/* <ListAccountSensor /> */}
       </div>
     </div>
   );

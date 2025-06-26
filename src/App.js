@@ -138,21 +138,21 @@ const AppContent = () => {
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
             <Route
-              path="/DashboardPage/PostCatePage"
+              path="/PostCatePage"
               element={<PostCatePage />}
             />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
             <Route
-              path="/DashboardPage/PostCatePage/CreatePostCate"
+              path="/CreatePostCate"
               element={<CreatePostCate />}
             />
             <Route
-              path="/DashboardPage/PostCatePage/UpdatePostCate/:id"
+              path="/UpdatePostCate/:id"
               element={<UpdatePostCate />}
             />
             <Route
-              path="/DashboardPage/PostCatePage/DetailPostCate/:id"
+              path="/DetailPostCate/:id"
               element={<DetailPostCate />}
             />
           </>
