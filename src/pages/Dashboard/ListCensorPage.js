@@ -5,26 +5,24 @@ import CreatePostCate from "../../pages/Dashboard/CreatePostCate";
 import ListAccountSensor from "../../components/AccountManage/ListAccountSensor";
 import AccountSencorDetail from "../../components/AccountManage/AccountSencorDetail";
 import ListAccount from "../../components/AccountManage/ListAccount";
-import StatisticPage from "./StatisticPage";
 
-const DashboardPage = () => {
+const ListCensorPage = () => {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar bên trái */}
       <SidebarDashboard />
 
       {/* <div className="flex-1 ml-64">
-        <StatisticPage />
-      </div> */}
+            <StatisticPage />
+          </div> */}
 
       <div className="flex-1 ">
         {/* <CreatePostCate /> */}
-        {/* <ListAccountSensor /> */}
+        <ListAccountSensor />
         {/* <ListAccount /> */}
-        <StatisticPage />
       </div>
     </div>
   );
 };
 
-export default DashboardPage;
+export default ListCensorPage;
