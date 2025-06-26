@@ -1,5 +1,5 @@
 import SidebarDashboard from "../../components/Dashboard/SidebarDashboard";
-import ReportDetail from "../../components/ReportManagement/ReportDeatil";
+import ReportDetail from "../../components/ReportManagement/ReportDetail";
 
 const ReportDetailPage = () => {
     return (

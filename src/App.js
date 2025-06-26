@@ -159,7 +159,7 @@ const AppContent = () => {
             <Route path="/PaymentManagement" element={<PaymentManagementPage />} />
             <Route path="/PostManagement" element={<PostManagementPage />} />
             <Route path="/ReportManagement" element={<ReportManagementPage />} />
-            <Route path="/ReportDetail" element={<ReportDetailPage />} />
+            <Route path="/ReportDetail/:reportId" element={<ReportDetailPage />} />
 
             <Route
               path="/Dashboard/PostCatePage"
