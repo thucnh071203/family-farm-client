@@ -1,10 +1,12 @@
-
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import Cropper from "react-easy-crop";
+import instance from "../../Axios/axiosConfig";
+import { useUser } from '../../context/UserContext';
+import { toast } from "react-toastify";
 
-const ProfileAvatar = ({ avatarImage, initialProfileImage, fullName }) => {
-
-  const [profileImage, setProfileImage] = useState(initialProfileImage);
+const ProfileAvatar = ({ initialProfileImage, fullName }) => { // Bỏ avatarImage
+  const { user, updateUser } = useUser();
+  const [profileImage, setProfileImage] = useState(user?.avatar || initialProfileImage);
   const [showCropper, setShowCropper] = useState(false);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -13,12 +15,40 @@ const ProfileAvatar = ({ avatarImage, initialProfileImage, fullName }) => {
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const profileInputRef = useRef(null);
 
-  console.log("prop từ comp cha: " + profileImage)
-
   useEffect(() => {
-    setProfileImage(initialProfileImage)
-  }, [initialProfileImage])
-  
+    setProfileImage(user?.avatar || initialProfileImage);
+  }, [user, initialProfileImage]);
+
+  const handleCropSave = async () => {
+    try {
+      const { blobUrl, file } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      setProfileImage(blobUrl);
+
+      const formData = new FormData();
+      formData.append("NewAvatar", file);
+
+      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+      const response = await instance.put("/api/account/change-avatar", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        const newAvatar = response.data.data;
+        setProfileImage(newAvatar);
+        updateUser({ avatar: newAvatar }); // Cập nhật context
+        setShowCropper(false);
+        toast.success(response.data.message);
+      }
+    } catch (e) {
+      console.error("Error updating avatar:", e);
+      toast.error(`Failed to update avatar: ${e.message || "Please try again."}`);
+      setProfileImage(user?.avatar || initialProfileImage);
+    }
+  };
+
   const handleProfileImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -64,19 +94,10 @@ const ProfileAvatar = ({ avatarImage, initialProfileImage, fullName }) => {
 
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
-        resolve(URL.createObjectURL(blob));
+        const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+        resolve({ blobUrl: URL.createObjectURL(blob), file });
       }, "image/jpeg");
     });
-  };
-
-  const handleCropSave = async () => {
-    try {
-      const croppedImage = await getCroppedImg(imageToCrop, croppedAreaPixels);
-      setProfileImage(croppedImage);
-      setShowCropper(false);
-    } catch (e) {
-      console.error("Error cropping image:", e);
-    }
   };
 
   const handleCropCancel = () => {
@@ -90,7 +111,7 @@ const ProfileAvatar = ({ avatarImage, initialProfileImage, fullName }) => {
         <div className="relative">
           <img
             src={
-              avatarImage && avatarImage.trim() !== "" ? avatarImage :
+              profileImage || // Sử dụng profileImage thay vì avatarImage
               "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png"
             }
             alt="Avatar"
@@ -112,7 +133,7 @@ const ProfileAvatar = ({ avatarImage, initialProfileImage, fullName }) => {
           />
         </div>
         <h1 className="mt-2 text-3xl font-bold text-center">
-          {fullName || "Phuong Nam"}
+          {fullName}
         </h1>
       </div>
 

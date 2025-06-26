@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import "./notificationstyle.css";
 import cancelIcon from "../../assets/images/cancel_vector.png";
@@ -7,143 +7,20 @@ import readIcon from "../../assets/images/letter_vector.png";
 import lineShape from "../../assets/images/border_line.png";
 import formatTime from "../../utils/formatTime";
 import instance from "../../Axios/axiosConfig";
+import { useNotification } from "../../context/NotificationContext";
+
 
 const NotificationList = ({ onToggle, isVisible }) => {
-    const [notifications, setNotifications] = useState([]);
-    const [unreadCount, setUnreadCount] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [hubConnection, setHubConnection] = useState(null);
 
-    const fetchNotifications = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-            const response = await instance.get("/api/notification/get-by-user");
-
-            if (response.data.success) {
-                setNotifications(response.data.notifications || []);
-                setUnreadCount(response.data.unreadCount || 0);
-            } else {
-                setError(response.data.message || "Cannot load notification!");
-            }
-        } catch (err) {
-            setError("Lỗi khi tải thông báo từ máy chủ!");
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const markAsRead = async (notifiStatusId) => {
-        try {
-            const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-            const response = await instance.put(
-                `/api/notification/mark-as-read/${notifiStatusId}`
-            );
-
-            if (response.status === 200) {
-                setNotifications((prevNotifications) =>
-                    prevNotifications.map((noti) =>
-                        noti.status.notifiStatusId === notifiStatusId
-                            ? { ...noti, status: { ...noti.status, isRead: true } }
-                            : noti
-                    )
-                );
-                setUnreadCount((prevCount) => Math.max(prevCount - 1, 0));
-            } else {
-                console.error("Failed to mark notification as read:", response.data);
-            }
-        } catch (err) {
-            console.error("Error marking notification as read:", err);
-        }
-    };
-
-    const markAllAsRead = async () => {
-        try {
-            const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-            const response = await instance.put(
-                "/api/notification/mark-all-as-read"
-            );
-
-            if (response.status === 200) {
-                setNotifications((prevNotifications) =>
-                    prevNotifications.map((noti) => ({
-                        ...noti,
-                        status: { ...noti.status, isRead: true },
-                    }))
-                );
-                setUnreadCount(0);
-            } else {
-                console.error("Failed to mark all notifications as read:", response.data.message);
-            }
-        } catch (err) {
-            console.error("Error marking all notifications as read:", err);
-        }
-    };
-
-    useEffect(() => {
-        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-        if (!token) {
-            console.error("No access token found!");
-            return;
-        }
-
-        const connection = new HubConnectionBuilder()
-            .withUrl(`https://localhost:7280/notificationHub?access_token=${token}`, {
-                logger: LogLevel.Information
-            })
-            .withAutomaticReconnect()
-            .build();
-
-        setHubConnection(connection);
-
-        connection
-            .start()
-            .then(() => {
-                console.log("SignalR Connected!");
-                connection.on("ReceiveNotification", (notification) => {
-                    console.log("Received notification:", JSON.stringify(notification, null, 2));
-                    if (!notification.notifiId || !notification.content || !notification.status) {
-                        console.error("Invalid notification data:", notification);
-                        return;
-                    }
-                    setNotifications((prevNotifications) => {
-                        if (prevNotifications.some((noti) => noti.notifiId === notification.notifiId)) {
-                            return prevNotifications;
-                        }
-                        return [notification, ...prevNotifications];
-                    });
-                    setUnreadCount((prevCount) => prevCount + (notification.status.isRead ? 0 : 1));
-                });
-                connection.onreconnected(() => {
-                    console.log("SignalR Reconnected!");
-                    fetchNotifications();
-                });
-            })
-            .catch((err) => {
-                console.error("SignalR Connection Error:", err);
-                console.error("Error details:", JSON.stringify(err, null, 2));
-            });
-
-        return () => {
-            if (connection) {
-                connection.stop();
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        fetchNotifications();
-    }, []);
-
-    useEffect(() => {
-        const handleClose = () => onToggle();
-        window.addEventListener("closeNotification", handleClose);
-        return () => window.removeEventListener("closeNotification", handleClose);
-    }, [onToggle]);
-
+    const {
+        notifications,
+        unreadCount,
+        loading,
+        error,
+        markAsRead,
+        markAllAsRead,
+    } = useNotification();
+    
     return (
         <div className="relative">
             <div

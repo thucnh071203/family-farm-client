@@ -5,7 +5,7 @@ const useAuth = (navigate, location) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const publicRoutes = ["/Login", "/Register", "/ConfirmOtp", "/ForgotPassword"];
+  const publicRoutes = ["/Login", "/Register", "/ConfirmOtp", "/ForgotPassword", "/ConfirmOtp", "/ResetPassword"];
 
   const refreshToken = async () => {
     try {

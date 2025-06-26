@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
 import { SignalRProvider } from "./context/SignalRContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import useAuth from "./hooks/useAuth";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -60,8 +61,20 @@ import ChangePasswordPage from "./pages/Profile/ChangePasswordPage";
 import SetPasswordPage from "./pages/Profile/SetPasswordPage";
 import ForgotPasswordPage from "./pages/AuthenPage/ForgotPasswordPage";
 import ConfirmOtpPage from "./pages/AuthenPage/ConfirmOtpPage";
+import ResetPasswordPage from "./pages/AuthenPage/ResetPasswordPage";
 import Register from "./components/Authen/Register";
-
+import CensorDetailPage from "./pages/Dashboard/CensorDetailPage";
+import { UserProvider } from "./context/UserContext";
+import PaymentManagementPage from "./pages/Dashboard/PaymentManagementPage";
+import PostManagementPage from "./pages/Dashboard/PostManagementPage";
+import ReportManagementPage from "./pages/Dashboard/ReportManagementPage";
+import ReportDetailPage from "./pages/Dashboard/ReportDetailPage";
+import AccountDetailPage from "./pages/Dashboard/AccountDetailPage";
+import ListCensorPage from "./pages/Dashboard/ListCensorPage";
+import ListAccountPage from "./pages/Dashboard/ListAccountPage";
+import CreatePostCatePage from "./pages/Dashboard/CreatePostCatePage";
+import UpdatePostCatePage from "./pages/Dashboard/UpdatePostCatePage";
+import DetailPostCatePage from "./pages/Dashboard/DetailPostCatePage";
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,7 +90,23 @@ const AppContent = () => {
     );
   }
 
-  const isPublicRoute = ["/Login", "/Register"].includes(location.pathname);
+  console.log("Current path:", location.pathname);
+
+  const isPublicRoute = [
+    "/Login",
+    "/Register",
+    "/ForgotPassword",
+    "/ConfirmOtp",
+    "/ResetPassword",
+  ].includes(location.pathname);
+
+  const skipAuthRoutes = [
+    "/Login",
+    "/Register",
+    "/ForgotPassword",
+    "/ConfirmOtp",
+    "/ResetPassword",
+  ];
 
   return (
     <>
@@ -124,26 +153,50 @@ const AppContent = () => {
               path="/ProgressListFarmer"
               element={<ProcessListFarmerPage />}
             />
-            <Route path="/CreateStepPage" element={<CreateStepPage />} />
+            <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
             <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
             <Route path="/EditGroup/:groupId" element={<EditGroupPage />} />
 
             <Route path="/Trash" element={<RecycleBin />} />
-            <Route path="/ChangePassword" element={<ChangePasswordPage />}/>
-            <Route path="/SetPassword" element={<SetPasswordPage />}/>
-            <Route path="/ForgotPassword" element={<ForgotPasswordPage />}/>
-            <Route path="/ConfirmOtp" element={<ConfirmOtpPage />}/>
+            <Route path="/ChangePassword" element={<ChangePasswordPage />} />
+            <Route path="/SetPassword" element={<SetPasswordPage />} />
+            <Route path="/ForgotPassword" element={<ForgotPasswordPage />} />
+            <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
+            <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
             <Route
+<<<<<<< uyenvm/FE2
               path="/PostCatePage"
               element={<PostCatePage />}
+=======
+              path="/PaymentManagement"
+              element={<PaymentManagementPage />}
+>>>>>>> main
             />
+            <Route path="/PostManagement" element={<PostManagementPage />} />
+            <Route path="/ReportManagement" element={<ReportManagementPage />} />
+            <Route path="/ReportDetail/:reportId" element={<ReportDetailPage />} />
+            <Route path="/Dashboard/PostCatePage" element={<PostCatePage />} />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
+            <Route path="/Dashboard/ListCensor" element={<ListCensorPage />} />
             <Route
+              path="/Dashboard/ListAccount"
+              element={<ListAccountPage />}
+            />
+            <Route
+              path="/Dashboard/CensorDetail/:accId"
+              element={<CensorDetailPage />}
+            />
+            <Route
+              path="/Dashboard/AccountDetail/:accId"
+              element={<AccountDetailPage />}
+            />
+            <Route
+<<<<<<< uyenvm/FE2
               path="/CreatePostCate"
               element={<CreatePostCate />}
             />
@@ -154,6 +207,18 @@ const AppContent = () => {
             <Route
               path="/DetailPostCate/:id"
               element={<DetailPostCate />}
+=======
+              path="/Dashboard/PostCatePage/CreatePostCate"
+              element={<CreatePostCatePage />}
+            />
+            <Route
+              path="/Dashboard/PostCatePage/UpdatePostCate/:id"
+              element={<UpdatePostCatePage />}
+            />
+            <Route
+              path="/Dashboard/PostCatePage/DetailPostCate/:id"
+              element={<DetailPostCatePage />}
+>>>>>>> main
             />
           </>
         ) : (
@@ -181,9 +246,13 @@ function App() {
         transition={Bounce}
       />
       <Router>
-        <SignalRProvider>
-          <AppContent />
-        </SignalRProvider>
+        <UserProvider>
+          <SignalRProvider>
+            <NotificationProvider>
+              <AppContent />
+            </NotificationProvider>
+          </SignalRProvider>
+        </UserProvider>
       </Router>
     </div>
   );
