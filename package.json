@@ -23,6 +23,7 @@
     "quill": "^2.0.3",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.3.0",
+    "react-data-table-component": "^7.7.0",
     "react-dom": "^18.3.1",
     "react-easy-crop": "^5.4.1",
     "react-hot-toast": "^2.5.2",
@@ -33,6 +34,7 @@
     "react-router-dom": "^7.6.0",
     "react-scripts": "5.0.1",
     "react-toastify": "^11.0.5",
+    "styled-components": "^6.1.19",
     "sweetalert2": "^11.22.0",
     "web-vitals": "^2.1.4"
   },

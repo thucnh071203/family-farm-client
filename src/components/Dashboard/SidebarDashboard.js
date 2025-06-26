@@ -15,7 +15,7 @@ const SidebarDashboard = () => {
   };
 
   return (
-    <div className="w-80 h-screen bg-white shadow-md p-4 px-6 flex flex-col text-left">
+    <div className="w-96 h-screen bg-white shadow-md p-4 px-6 flex flex-col text-left">
       <div>
         <div className="font-bold mb-6 flex items-center gap-4">
           <img src={logo} alt="logo"></img>
