@@ -33,17 +33,19 @@ body {
   margin-left: 20px;
 }
 
-.ReactQuill .ql-toolbar .ql-snow{
+.ReactQuill .ql-toolbar .ql-snow {
   padding: 0px !important;
 }
-  
-.Toastify__toast-container{
+
+.Toastify__toast-container {
   text-align: left;
 }
+
 #root {
   height: 100%;
   overflow: auto;
 }
+
 .chat-container {
   overflow-y: auto;
   max-height: 100%;
@@ -58,6 +60,16 @@ body {
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.swal2-confirm {
+  background-color: #3085d6 !important;
+  color: #fff !important;
+}
+
+.swal2-cancel {
+  background-color: #d33 !important;
+  color: #fff !important;
 }
 
 @media (prefers-reduced-motion: no-preference) {
