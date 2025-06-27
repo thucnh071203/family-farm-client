@@ -82,28 +82,20 @@ const StatisticPage = () => {
             <div className="text-3xl text-purple-500">📝</div>
           </div>
         </div>
-
-        {/* Chart + Map */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* <div className="bg-white rounded-xl shadow p-4 h-[300px] lg:col-span-2">
-            <div className="text-gray-400 italic text-center mt-24">
-              MapChart Placeholder
+          {/* Cột bên trái */}
+          <div className="flex flex-col gap-6">
+            <div className="bg-white rounded-xl shadow p-2 h-max w-max">
+              <UserGrowthChart />
             </div>
-          </div> */}
-          <div className="bg-white rounded-xl shadow p-2 h-max w-max">
-            <UserGrowthChart />
+            <div className="bg-white rounded-xl shadow p-4 h-[400px]">
+              <MostUser />
+            </div>
           </div>
-          <div className="bg-white rounded-xl shadow p-4 h-[250px]">
-            <MostUser />
-          </div>
-        </div>
 
-        {/* Bottom Sections */}
-        <div className="grid grid-cols-1 md:grid-cols-2 w-full">
-          <div className="bg-white rounded-xl shadow p-4 h-[400px] w">
-            <div className="text-gray-400 italic text-center">
-              <MapChart />
-            </div>
+          {/* Cột bên phải */}
+          <div className="bg-white rounded-xl shadow p-4 h-[800px]">
+            <MapChart />
           </div>
         </div>
       </div>

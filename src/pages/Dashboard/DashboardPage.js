@@ -17,17 +17,13 @@ const DashboardPage = () => {
         <StatisticPage />
       </div> */}
 
-<<<<<<< uyenvm/FE2
-      <div className="flex-1">
-        <CreatePostCate />
-        {/* <ListAccountSensor /> */}
-=======
+
       <div className="flex-1 ">
         {/* <CreatePostCate /> */}
         {/* <ListAccountSensor /> */}
         {/* <ListAccount /> */}
         <StatisticPage />
->>>>>>> main
+
       </div>
     </div>
   );

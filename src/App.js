@@ -167,19 +167,10 @@ const AppContent = () => {
             <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
             <Route path="/ReactionPage" element={<ReactionPage />} />
-            <Route
-<<<<<<< uyenvm/FE2
-              path="/PostCatePage"
-              element={<PostCatePage />}
-=======
-              path="/PaymentManagement"
-              element={<PaymentManagementPage />}
->>>>>>> main
-            />
+            <Route path="/PostCatePage" element={<PostCatePage />} />
             <Route path="/PostManagement" element={<PostManagementPage />} />
             <Route path="/ReportManagement" element={<ReportManagementPage />} />
             <Route path="/ReportDetail/:reportId" element={<ReportDetailPage />} />
-            <Route path="/Dashboard/PostCatePage" element={<PostCatePage />} />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
             <Route path="/Dashboard/ListCensor" element={<ListCensorPage />} />
@@ -196,29 +187,18 @@ const AppContent = () => {
               element={<AccountDetailPage />}
             />
             <Route
-<<<<<<< uyenvm/FE2
+
               path="/CreatePostCate"
-              element={<CreatePostCate />}
-            />
-            <Route
-              path="/UpdatePostCate/:id"
-              element={<UpdatePostCate />}
-            />
-            <Route
-              path="/DetailPostCate/:id"
-              element={<DetailPostCate />}
-=======
-              path="/Dashboard/PostCatePage/CreatePostCate"
               element={<CreatePostCatePage />}
             />
             <Route
-              path="/Dashboard/PostCatePage/UpdatePostCate/:id"
+              path="/UpdatePostCate/:id"
               element={<UpdatePostCatePage />}
             />
             <Route
-              path="/Dashboard/PostCatePage/DetailPostCate/:id"
+              path="/DetailPostCate/:id"
               element={<DetailPostCatePage />}
->>>>>>> main
+
             />
           </>
         ) : (
