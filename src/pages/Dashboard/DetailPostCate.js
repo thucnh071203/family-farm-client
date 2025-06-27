@@ -76,9 +76,11 @@ const DetailPostCate = () => {
 
         <div className="mt-6">
           <button
+
             onClick={() => navigate("/PostCatePage")}
             type="button"
             className="text-red-500 font-semibold"
+
           >
             Back
           </button>

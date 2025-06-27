@@ -130,17 +130,22 @@ const PostCatePage = () => {
                           <img src={trash} alt="" />
                         </button>
 
+
+
                         <Link
                           to={`/UpdatePostCate/${reaction.categoryId}`}
                         >
+
                           <button className="text-blue-500 hover:text-blue-700 text-lg">
                             <img src={edit} alt="" />
                           </button>
                         </Link>
 
+
                         <Link
                           to={`/DetailPostCate/${reaction.categoryId}`}
                         >
+
                           <button className="text-blue-400 hover:text-blue-700 text-lg">
                             <img src={eye} alt="" />
                           </button>
@@ -152,6 +157,7 @@ const PostCatePage = () => {
               </table>
             </div>
           )}
+
         </div>
       </div>
     </div>

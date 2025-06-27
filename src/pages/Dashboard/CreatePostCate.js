@@ -29,7 +29,7 @@ const CreatePostCate = () => {
       setCategoryName("");
       setCategoryDescription("");
       setTimeout(() => {
-        navigate("/Dashboard/PostCatePage");
+        navigate("/PostCatePage");
       }, 1000);
     } catch (err) {
       console.error(err);
