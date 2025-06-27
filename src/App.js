@@ -75,6 +75,7 @@ import ListAccountPage from "./pages/Dashboard/ListAccountPage";
 import CreatePostCatePage from "./pages/Dashboard/CreatePostCatePage";
 import UpdatePostCatePage from "./pages/Dashboard/UpdatePostCatePage";
 import DetailPostCatePage from "./pages/Dashboard/DetailPostCatePage";
+import HomeProcessFarmer from "./pages/ProcessPage/HomeProcessFarmer";
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -153,6 +154,7 @@ const AppContent = () => {
               path="/ProgressListFarmer"
               element={<ProcessListFarmerPage />}
             />
+            <Route path="/HomeProcessFarmer" element={<HomeProcessFarmer/>} />
             <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
