@@ -45,9 +45,8 @@ import ChatPage from "./pages/Chat/ChatPage";
 
 import StatisticPage from "./pages/Dashboard/StatisticPage";
 import DashboardPage from "./pages/Dashboard/DashboardPage";
-import ReactionPage from "./pages/Dashboard/ReactionPage";
+import ListReaction from "./components/ReactionManagement/ListReaction";
 import PostCatePage from "./pages/Dashboard/PostCatePage";
-import CreateReactionPage from "./pages/Dashboard/CreateReactionPage";
 import CreatePostCate from "./pages/Dashboard/CreatePostCate";
 import UpdatePostCate from "./pages/Dashboard/UpdatePostCate";
 import DetailPostCate from "./pages/Dashboard/DetailPostCate";
@@ -75,6 +74,9 @@ import ListAccountPage from "./pages/Dashboard/ListAccountPage";
 import CreatePostCatePage from "./pages/Dashboard/CreatePostCatePage";
 import UpdatePostCatePage from "./pages/Dashboard/UpdatePostCatePage";
 import DetailPostCatePage from "./pages/Dashboard/DetailPostCatePage";
+import ReactionPage from "./pages/Dashboard/ReactionPage";
+import CreateReactionPage from "./pages/Dashboard/CreateReactionPage";
+import UpdateReactionPage from "./pages/Dashboard/UpdateReactionPage";
 import HomeProcessFarmer from "./pages/ProcessPage/HomeProcessFarmer";
 const AppContent = () => {
   const navigate = useNavigate();
@@ -168,7 +170,9 @@ const AppContent = () => {
             <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
             <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
-            <Route path="/ReactionPage" element={<ReactionPage />} />
+            <Route path="/ReactionManagement" element={<ReactionPage />} />
+            <Route path="/CreateReaction" element={<CreateReactionPage />} />
+            <Route path="/UpdateReaction/:id" element={<UpdateReactionPage />} />
             <Route
               path="/PostCatePage"
               element={<PostCatePage />}
