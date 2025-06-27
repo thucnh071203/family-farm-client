@@ -9,7 +9,7 @@ export default function ProgressListOfFarmer() {
     return (
         <div class="progress-managment pt-36">
             <div class="progress-managment-container flex flex-col lg:flex-row justify-center items-center lg:items-start gap-[23px] px-2">
-                <MenuProgressFarmer/>
+                <MenuProgressFarmer inPage="process"/>
                 <div class="list-progress-section w-full xl:w-[831px] max-w-[831px]">
                     <div class="status-nav-container w-full">
                         <div class="status-progress-nav w-full">

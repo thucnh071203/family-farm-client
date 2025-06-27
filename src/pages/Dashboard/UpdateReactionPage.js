@@ -1,7 +1,7 @@
 import SidebarDashboard from "../../components/Dashboard/SidebarDashboard";
-import CreateReactionFrom from "../../components/ReactionManagement/CreateReactionForm";
+import UpdateReactionFrom from "../../components/ReactionManagement/UpdateReactionFrom";
 
-const CreateReactionPage = () => {
+const UpdateReactionPage = () => {
 
     return (
         <div className="flex min-h-screen">
@@ -24,10 +24,10 @@ const CreateReactionPage = () => {
                 </div>
 
                 {/* Render ListPost component with filter prop */}
-                <CreateReactionFrom />
+                <UpdateReactionFrom />
             </div>
         </div>
     );
 };
 
-export default CreateReactionPage;
+export default UpdateReactionPage;
