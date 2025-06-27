@@ -76,8 +76,8 @@ import UpdatePostCatePage from "./pages/Dashboard/UpdatePostCatePage";
 import DetailPostCatePage from "./pages/Dashboard/DetailPostCatePage";
 import ReactionPage from "./pages/Dashboard/ReactionPage";
 import CreateReactionPage from "./pages/Dashboard/CreateReactionPage";
-import UpdateReactionFrom from "./components/ReactionManagement/UpdateReactionFrom";
 import UpdateReactionPage from "./pages/Dashboard/UpdateReactionPage";
+import HomeProcessFarmer from "./pages/ProcessPage/HomeProcessFarmer";
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -156,6 +156,7 @@ const AppContent = () => {
               path="/ProgressListFarmer"
               element={<ProcessListFarmerPage />}
             />
+            <Route path="/HomeProcessFarmer" element={<HomeProcessFarmer/>} />
             <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
@@ -172,6 +173,10 @@ const AppContent = () => {
             <Route path="/ReactionManagement" element={<ReactionPage />} />
             <Route path="/CreateReaction" element={<CreateReactionPage />} />
             <Route path="/UpdateReaction/:id" element={<UpdateReactionPage />} />
+            <Route
+              path="/PostCatePage"
+              element={<PostCatePage />}
+            />
             <Route
               path="/PaymentManagement"
               element={<PaymentManagementPage />}
@@ -196,16 +201,16 @@ const AppContent = () => {
               element={<AccountDetailPage />}
             />
             <Route
-              path="/Dashboard/PostCatePage/CreatePostCate"
-              element={<CreatePostCatePage />}
+              path="/CreatePostCate"
+              element={<CreatePostCate />}
             />
             <Route
-              path="/Dashboard/PostCatePage/UpdatePostCate/:id"
-              element={<UpdatePostCatePage />}
+              path="/UpdatePostCate/:id"
+              element={<UpdatePostCate />}
             />
             <Route
-              path="/Dashboard/PostCatePage/DetailPostCate/:id"
-              element={<DetailPostCatePage />}
+              path="/DetailPostCate/:id"
+              element={<DetailPostCate />}
             />
           </>
         ) : (

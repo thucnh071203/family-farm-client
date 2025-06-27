@@ -400,3 +400,39 @@
   padding: 8px 16px;
   border-radius: 2px;
 }
+
+/* //LIST BOOKING FARMER */
+.footer-booking-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+}
+.footer-booking-card .footer-wrapper {
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+.footer-booking-card .footer-wrapper .footer-booking-button{
+  padding: 0.5rem 2rem;
+  color: #3DB3FB;
+  background: #3db2fb56;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+.footer-booking-card .footer-wrapper .footer-booking-button:hover{
+  background: #3db2fb79;
+}
+.footer-booking-card .footer-wrapper .footer-booking-price .total-price{
+  color: #3E3F5E;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.footer-booking-card .footer-wrapper .footer-booking-price .total-price span {
+  color: #EF3E36;
+}
