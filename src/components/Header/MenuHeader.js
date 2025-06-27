@@ -87,7 +87,7 @@ const MenuHeader = ({ onToggle, isVisible }) => {
                             <p className="mt-2">Professional</p>
                         </Link>
                         <Link
-                            to="/ProgressListFarmer"
+                            to="/HomeProcessFarmer"
                             className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
                             onClick={onToggle}
                         >

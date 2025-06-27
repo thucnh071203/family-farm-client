@@ -59,6 +59,7 @@ const PostCatePage = () => {
   }, []);
 
   return (
+
     <div className="flex min-h-screen">
       <SidebarDashboard />
       <div className="flex-1">
@@ -129,35 +130,22 @@ const PostCatePage = () => {
                           <img src={trash} alt="" />
                         </button>
 
-                        {/* <<<<<<< uyenvm/FE2
-                    <Link
-                      to={`/UpdatePostCate/${reaction.categoryId}`}
-                    >
-                      <button className="text-blue-500 hover:text-blue-700 text-lg">
-                        <img src={edit} alt="" />
-                      </button>
-                    </Link>
 
-                    <Link
-                      to={`/DetailPostCate/${reaction.categoryId}`}
-                    >
-                      <button className="text-blue-400 hover:text-blue-700 text-lg">
-                        <img src={eye} alt="" />
-                      </button>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-======= */}
-                        <Link to={`/UpdatePostCate/${reaction.categoryId}`}>
+
+                        <Link
+                          to={`/UpdatePostCate/${reaction.categoryId}`}
+                        >
+
                           <button className="text-blue-500 hover:text-blue-700 text-lg">
                             <img src={edit} alt="" />
                           </button>
                         </Link>
 
-                        <Link to={`/DetailPostCate/${reaction.categoryId}`}>
+
+                        <Link
+                          to={`/DetailPostCate/${reaction.categoryId}`}
+                        >
+
                           <button className="text-blue-400 hover:text-blue-700 text-lg">
                             <img src={eye} alt="" />
                           </button>
@@ -169,7 +157,7 @@ const PostCatePage = () => {
               </table>
             </div>
           )}
-          {/* >>>>>>> main */}
+
         </div>
       </div>
     </div>
