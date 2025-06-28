@@ -303,7 +303,7 @@ export const ServiceManagement = () => {
                 </th>
                 {/* <th className="p-3">Service Id</th> */}
                 <th className="p-3">Service name</th>
-                <th className="hidden p-3 md:table-cell">Price</th>
+                <th className="hidden p-3 md:table-cell text-end">Price</th>
                 <th className="hidden p-3 md:table-cell">Status</th>
                 <th className="hidden p-3 md:table-cell">Category name</th>
                 <th className="p-3">Action</th>
