@@ -7,8 +7,11 @@ import searchIcon from "../../assets/images/material-symbols_search.svg";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { useSignalR } from "../../context/SignalRContext";
+import { useNotification } from "../../context/NotificationContext";
+
 
 const ListRequestBookingFarmer = () => {
+    const { hubConnection } = useNotification();
     const { connection } = useSignalR();
     const [listBooking, setListBooking] = useState([]);
     const [accessToken, setAccessToken] = useState("");
@@ -69,6 +72,82 @@ const ListRequestBookingFarmer = () => {
             toast.error("Cannot cancel booking service")
         }
     }
+
+    const fetchListBooking = async () => {
+        try {
+            const response = await instance.get("/api/booking-service/farmer-all-booking", {
+            headers: {
+                Authorization: `Bearer ${accessToken}`
+            }
+            });
+            if (response.status === 200) {
+            setListBooking(response.data.data);
+            }
+        } catch (error) {
+            console.error("Cannot reload booking list", error);
+        }
+    };
+
+
+    useEffect(() => {
+        if (!hubConnection) return;
+
+        // const handleBookingCancelled = (bookingId, status) => {
+        //     console.log(`Booking ${bookingId} changed status to ${status}`);
+
+        //     // Xử lý: cập nhật UI hoặc gọi lại API để lấy list mới
+        //     setListBooking(prev => prev.map(b => 
+        //         b.bookingServiceId === bookingId 
+        //             ? { ...b, bookingServiceStatus: status }
+        //             : b
+        //     ));
+
+        //     toast.info(`Booking ${bookingId} was ${status}`);
+        // };
+
+        const handleBookingCancelled = (bookingId, status) => {
+            console.log(`📩 Booking ${bookingId} changed status to ${status}`);
+
+            setListBooking(
+            prevList => {
+                console.log("📋 prevList trước khi cập nhật:", prevList);
+
+                // const updatedList = prevList.map(b =>
+                //     b.bookingServiceId === bookingId
+                //         ? { ...b, bookingServiceStatus: status }
+                //         : b
+                // );
+
+                const updatedList = prevList.map(b =>
+                    b.booking?.bookingServiceId === bookingId
+                        ? {
+                            ...b,
+                            booking: {
+                                ...b.booking,
+                                bookingServiceStatus: status
+                            }
+                        }
+                        : b
+                );
+
+                console.log("📋 updatedList sau khi cập nhật:", updatedList);
+
+                return updatedList;
+            });
+
+            // toast.info(`Booking ${bookingId} was ${status}`);
+        };
+
+        hubConnection.on("ReceiveBookingStatusChanged", handleBookingCancelled);
+        console.log("✅ Registered SignalR handler for ReceiveBookingStatusChanged");
+
+        // fetchListBooking();
+
+        return () => {
+            hubConnection.off("ReceiveBookingStatusChanged", handleBookingCancelled);
+        };
+    }, [hubConnection]);
+
 
     // GỌI SIGNAL R ĐỂ CẬP NHẬT DỮ LIỆU KO RELOAD 
     // useEffect(() => {
