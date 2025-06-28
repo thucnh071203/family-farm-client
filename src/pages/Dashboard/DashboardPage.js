@@ -23,6 +23,7 @@ const DashboardPage = () => {
         {/* <ListAccountSensor /> */}
         {/* <ListAccount /> */}
         <StatisticPage />
+
       </div>
     </div>
   );
