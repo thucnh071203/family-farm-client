@@ -215,8 +215,17 @@ export default function ServicesList() {
                                 // const service = wrapper.service;
                                 return (
                                     <div key={index} className="service-box w-[42%] md:w-[44.55%] lg:w-[315px] pb-3">
-                                        <img className="service-background" src={serviceBg} alt="service background" />
-                                        <div className="service-title w-[93%] min-h-[32px]">{service.serviceName}</div>
+                                        <img 
+                                            className="service-background" 
+                                            src={service.imageUrl && service.imageUrl.trim() !== "" ? service.imageUrl : serviceBg} 
+                                            alt="service background" 
+                                        />
+                                        {/* <div className="service-title w-[93%] min-h-[32px]">{service.serviceName}</div> */}
+                                        <div className="service-title w-[93%] min-h-[32px]">
+                                            <Link to={`/ServiceDetail/${service.serviceId}`} className="text-[rgba(0,0,0,0.75)] hover:text-[#3db3fb] hover:no-underline transition-colors duration-200 ease-in-out">
+                                                {service.serviceName}
+                                            </Link>
+                                        </div>
                                         <div className="body-service px-3">
                                             <div className="author-content">
                                                 <div className="avatar-content">

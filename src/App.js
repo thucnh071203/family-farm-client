@@ -151,7 +151,7 @@ const AppContent = () => {
             <Route path="/SavedPostPage" element={<SavedPostPage />} />
             <Route path="/CreateService" element={<CreateServicePage />} />
             <Route path="/EditService/:id" element={<EditServicePage />} />
-            <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
+            <Route path="/ServiceDetail/:id" element={<ServiceDetailPage />} />
             <Route
               path="/ProgressListFarmer"
               element={<ProcessListFarmerPage />}
