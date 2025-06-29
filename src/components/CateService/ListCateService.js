@@ -3,18 +3,15 @@ import $ from "jquery";
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
 import { Link } from "react-router-dom";
-import TableListAccount from "../AccountManage/TableListAccount";
 import TableListCateService from "./TableListCateService";
+import * as signalR from "@microsoft/signalr";
 const ListCateService = () => {
   const [allList, setAllList] = useState([]);
-  const [farmerList, setFarmerList] = useState([]);
-  const [expertList, setExpertList] = useState([]);
-  const [activeTab, setActiveTab] = useState("all");
 
   const fetchAllService = async () => {
     try {
       const res = await fetch(
-        "https://localhost:7280/api/category-service/all"
+        "https://localhost:7280/api/category-service/all-for-admin"
       );
       const data = await res.json();
       if (Array.isArray(data.data)) {
@@ -25,36 +22,28 @@ const ListCateService = () => {
     }
   };
 
-  const fetchFarmerAccounts = async () => {
-    try {
-      const res = await fetch(
-        "https://localhost:7280/api/account/list-censor/68007b0387b41211f0af1d56"
-      );
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setFarmerList(data);
-      }
-    } catch (err) {
-      console.error("Error fetching farmer:", err);
-    }
-  };
-
-  const fetchExpertAccounts = async () => {
-    try {
-      const res = await fetch(
-        "https://localhost:7280/api/account/list-censor/68007b2a87b41211f0af1d57"
-      );
-      const data = await res.json();
-      if (Array.isArray(data)) {
-        setExpertList(data);
-      }
-    } catch (err) {
-      console.error("Error fetching expert:", err);
-    }
-  };
-
   useEffect(() => {
     fetchAllService();
+
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:7280/categoryServiceHub")
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("✅ SignalR connected");
+        connection.on("CategoryUpdated", () => {
+          console.log("📢 Update received → fetching list again...");
+          fetchAllService();
+        });
+      })
+      .catch((err) => console.error("❌ SignalR error", err));
+
+    return () => {
+      connection.stop();
+    };
   }, []);
 
   return (
@@ -90,44 +79,8 @@ const ListCateService = () => {
         </Link>
       </div>
 
-      <div className="flex space-x-6 mt-2 text-sm text-black-500 font-bold text-center ">
-        <button
-          onClick={() => {
-            setActiveTab("all");
-            fetchAllService();
-          }}
-          className="w-[10%] hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]"
-        >
-          All
-        </button>
-        <button
-          onClick={() => {
-            setActiveTab("farmer");
-            fetchFarmerAccounts();
-          }}
-          className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] w-[10%]"
-        >
-          Analystics
-        </button>
-      </div>
       <div style={{ width: "90%" }}>
-        <TableListCateService
-          displayList={
-            activeTab === "all"
-              ? allList
-              : activeTab === "farmer"
-              ? farmerList
-              : expertList
-          }
-          // onDeleted={
-          //   activeTab === "all"
-          //     ? fetchAllService
-          //     : activeTab === "farmer"
-          //     ? fetchFarmerAccounts
-          //     : fetchExpertAccounts
-          // }
-          onDeleted={fetchAllService}
-        />
+        <TableListCateService displayList={allList} />
       </div>
     </div>
   );
