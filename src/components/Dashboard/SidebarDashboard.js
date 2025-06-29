@@ -69,7 +69,7 @@ const SidebarDashboard = () => {
           >
             <li>AI Checker</li>
             <li>
-              <Link to="/Dashboard/ListCensor">Account Censor</Link>
+              <Link to="/ListCensor">Account Censor</Link>
             </li>
           </ul>
           <div
@@ -103,7 +103,7 @@ const SidebarDashboard = () => {
             }`}
           >
             <li>
-              <Link to="/Dashboard/ListAccount">Account Management</Link>
+              <Link to="/ListAccount">Account Management</Link>
             </li>
             <li>
               <Link to="/ReportManagement">Report Management</Link>
@@ -146,9 +146,11 @@ const SidebarDashboard = () => {
             }`}
           >
             <li>Chatbot</li>
-            <li>Category Service</li>
             <li>
-              <Link to="/Dashboard/PostCatePage">Category Post</Link>
+              <Link to="/CateService">Category Service</Link>
+            </li>
+            <li>
+              <Link to="/PostCatePage">Category Post</Link>
             </li>
             <li>Reaction</li>
           </ul>

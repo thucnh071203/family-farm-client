@@ -3,20 +3,22 @@ import $ from "jquery";
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
 import { Link } from "react-router-dom";
-import TableListAccount from "./TableListAccount";
-
-const ListAccount = () => {
+import TableListAccount from "../AccountManage/TableListAccount";
+import TableListCateService from "./TableListCateService";
+const ListCateService = () => {
   const [allList, setAllList] = useState([]);
   const [farmerList, setFarmerList] = useState([]);
   const [expertList, setExpertList] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
 
-  const fetchAllAccounts = async () => {
+  const fetchAllService = async () => {
     try {
-      const res = await fetch("https://localhost:7280/api/account/get-all");
+      const res = await fetch(
+        "https://localhost:7280/api/category-service/all"
+      );
       const data = await res.json();
-      if (Array.isArray(data)) {
-        setAllList(data);
+      if (Array.isArray(data.data)) {
+        setAllList(data.data);
       }
     } catch (err) {
       console.error("Error fetching all:", err);
@@ -52,7 +54,7 @@ const ListAccount = () => {
   };
 
   useEffect(() => {
-    fetchAllAccounts();
+    fetchAllService();
   }, []);
 
   return (
@@ -74,17 +76,25 @@ const ListAccount = () => {
           <Link to={"/Dashboard"}>HOME</Link>
         </div>
         <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
-          <Link to="/ListAccount">/Account Management</Link>
+          <Link to="/CateService">/Category service</Link>
         </span>
       </div>
       <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-5 mt-3">
-        ACCOUNT MANAGEMENT
+        CATEGORY SERVICE
       </h1>
+      <div className="text-left mb-3">
+        <Link to="/CateService/Create">
+          <button className="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 text-sm">
+            New Service Category
+          </button>
+        </Link>
+      </div>
+
       <div className="flex space-x-6 mt-2 text-sm text-black-500 font-bold text-center ">
         <button
           onClick={() => {
             setActiveTab("all");
-            fetchAllAccounts();
+            fetchAllService();
           }}
           className="w-[10%] hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]"
         >
@@ -97,20 +107,11 @@ const ListAccount = () => {
           }}
           className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] w-[10%]"
         >
-          Farmer
-        </button>
-        <button
-          onClick={() => {
-            setActiveTab("expert");
-            fetchExpertAccounts();
-          }}
-          className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] w-[10%] "
-        >
-          Expert
+          Analystics
         </button>
       </div>
       <div style={{ width: "90%" }}>
-        <TableListAccount
+        <TableListCateService
           displayList={
             activeTab === "all"
               ? allList
@@ -118,16 +119,18 @@ const ListAccount = () => {
               ? farmerList
               : expertList
           }
-          onDeleted={
-            activeTab === "all"
-              ? fetchAllAccounts
-              : activeTab === "farmer"
-              ? fetchFarmerAccounts
-              : fetchExpertAccounts
-          }
+          // onDeleted={
+          //   activeTab === "all"
+          //     ? fetchAllService
+          //     : activeTab === "farmer"
+          //     ? fetchFarmerAccounts
+          //     : fetchExpertAccounts
+          // }
+          onDeleted={fetchAllService}
         />
       </div>
     </div>
   );
 };
-export default ListAccount;
+
+export default ListCateService;

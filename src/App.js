@@ -75,6 +75,8 @@ import ListAccountPage from "./pages/Dashboard/ListAccountPage";
 import CreatePostCatePage from "./pages/Dashboard/CreatePostCatePage";
 import UpdatePostCatePage from "./pages/Dashboard/UpdatePostCatePage";
 import DetailPostCatePage from "./pages/Dashboard/DetailPostCatePage";
+import CateServicePage from "./pages/Dashboard/CateServicePage";
+import CreateCateServicePage from "./pages/Dashboard/CreateCateServicePage";
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -183,32 +185,40 @@ const AppContent = () => {
             />
             <Route path="/ReportDetail" element={<ReportDetailPage />} />
 
-            <Route path="/Dashboard/PostCatePage" element={<PostCatePage />} />
+            <Route path="/PostCatePage" element={<PostCatePage />} />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
-            <Route path="/Dashboard/ListCensor" element={<ListCensorPage />} />
+            <Route path="/ListCensor" element={<ListCensorPage />} />
             <Route
-              path="/Dashboard/ListAccount"
+              path="/CateService"
+              element={<CateServicePage />}
+            />
+            <Route
+              path="/CateService/Create"
+              element={<CreateCateServicePage />}
+            />
+            <Route
+              path="/ListAccount"
               element={<ListAccountPage />}
             />
             <Route
-              path="/Dashboard/CensorDetail/:accId"
+              path="/CensorDetail/:accId"
               element={<CensorDetailPage />}
             />
             <Route
-              path="/Dashboard/AccountDetail/:accId"
+              path="/AccountDetail/:accId"
               element={<AccountDetailPage />}
             />
             <Route
-              path="/Dashboard/PostCatePage/CreatePostCate"
+              path="/PostCatePage/CreatePostCate"
               element={<CreatePostCatePage />}
             />
             <Route
-              path="/Dashboard/PostCatePage/UpdatePostCate/:id"
+              path="/PostCatePage/UpdatePostCate/:id"
               element={<UpdatePostCatePage />}
             />
             <Route
-              path="/Dashboard/PostCatePage/DetailPostCate/:id"
+              path="/PostCatePage/DetailPostCate/:id"
               element={<DetailPostCatePage />}
             />
           </>

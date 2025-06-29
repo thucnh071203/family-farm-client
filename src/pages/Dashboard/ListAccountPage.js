@@ -11,14 +11,7 @@ const ListAccountPage = () => {
     <div className="flex min-h-screen">
       {/* Sidebar bên trái */}
       <SidebarDashboard />
-
-      {/* <div className="flex-1 ml-64">
-                <StatisticPage />
-              </div> */}
-
       <div className="flex-1 ">
-        {/* <CreatePostCate /> */}
-        {/* <ListAccountSensor /> */}
         <ListAccount />
       </div>
     </div>
