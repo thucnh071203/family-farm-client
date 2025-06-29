@@ -29,7 +29,7 @@ const CreatePostCate = () => {
       setCategoryName("");
       setCategoryDescription("");
       setTimeout(() => {
-        navigate("/Dashboard/PostCatePage");
+        navigate("/PostCatePage");
       }, 1000);
     } catch (err) {
       console.error(err);
@@ -79,7 +79,11 @@ const CreatePostCate = () => {
           </div>
 
           <div className="flex justify-end space-x-4">
-            <button type="button" className="text-red-500 font-semibold">
+            <button
+              onClick={() => navigate("/PostCatePage")}
+              type="button"
+              className="text-red-500 font-semibold"
+            >
               Back
             </button>
             <button

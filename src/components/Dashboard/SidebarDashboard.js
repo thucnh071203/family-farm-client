@@ -15,7 +15,7 @@ const SidebarDashboard = () => {
   };
 
   return (
-    <div className="w-80 h-screen bg-white shadow-md p-4 px-6 flex flex-col text-left">
+    <div className="w-96 h-screen bg-white shadow-md p-4 px-6 flex flex-col text-left">
       <div>
         <div className="font-bold mb-6 flex items-center gap-4">
           <img src={logo} alt="logo"></img>
@@ -56,16 +56,14 @@ const SidebarDashboard = () => {
             <span>Censor</span>
             <span className="ml-auto">
               <i
-                className={`fa-solid ${
-                  openSections.censor ? "fa-angle-down" : "fa-angle-right"
-                }`}
+                className={`fa-solid ${openSections.censor ? "fa-angle-down" : "fa-angle-right"
+                  }`}
               ></i>
             </span>
           </div>
           <ul
-            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${
-              openSections.censor ? "" : "hidden"
-            }`}
+            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.censor ? "" : "hidden"
+              }`}
           >
             <li>AI Checker</li>
             <li>
@@ -91,16 +89,14 @@ const SidebarDashboard = () => {
             <span>Management</span>
             <span className="ml-auto">
               <i
-                className={`fa-solid ${
-                  openSections.management ? "fa-angle-down" : "fa-angle-right"
-                }`}
+                className={`fa-solid ${openSections.management ? "fa-angle-down" : "fa-angle-right"
+                  }`}
               ></i>
             </span>
           </div>
           <ul
-            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${
-              openSections.management ? "" : "hidden"
-            }`}
+            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.management ? "" : "hidden"
+              }`}
           >
             <li>
               <Link to="/ListAccount">Account Management</Link>
@@ -134,16 +130,14 @@ const SidebarDashboard = () => {
             <span>System Management</span>
             <span className="ml-auto">
               <i
-                className={`fa-solid ${
-                  openSections.system ? "fa-angle-down" : "fa-angle-right"
-                }`}
+                className={`fa-solid ${openSections.system ? "fa-angle-down" : "fa-angle-right"
+                  }`}
               ></i>
             </span>
           </div>
           <ul
-            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${
-              openSections.system ? "" : "hidden"
-            }`}
+            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.system ? "" : "hidden"
+              }`}
           >
             <li>Chatbot</li>
             <li>
@@ -152,7 +146,10 @@ const SidebarDashboard = () => {
             <li>
               <Link to="/PostCatePage">Category Post</Link>
             </li>
-            <li>Reaction</li>
+            <li>
+              <Link to="/ReactionManagement">Reaction</Link>
+
+            </li>
           </ul>
         </nav>
       </div>

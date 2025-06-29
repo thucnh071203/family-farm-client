@@ -20,8 +20,20 @@ export const UserGrowthChart = () => {
   const [chartData, setChartData] = useState(null);
   const [chartOptions, setChartOptions] = useState({});
 
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const getDefaultDates = () => {
+    const today = new Date();
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setMonth(today.getMonth() - 3);
+
+    return {
+      start: threeMonthsAgo.toISOString().split("T")[0], // yyyy-mm-dd
+      end: today.toISOString().split("T")[0],
+    };
+  };
+
+  const { start, end } = getDefaultDates();
+  const [fromDate, setFromDate] = useState(start);
+  const [toDate, setToDate] = useState(end);
   //   const chartInstance = useRef(null);
 
   <Bar data={chartData} options={chartOptions} />;
@@ -39,13 +51,18 @@ export const UserGrowthChart = () => {
       const result = await response.json();
       const data = result.data;
 
-      if (!data || Object.keys(data).length === 0) {
-        toast.info("Không có dữ liệu để hiển thị");
+      // if (!data || Object.keys(data).length === 0) {
+      //   toast.info("Không có dữ liệu để hiển thị");
 
-        return;
-      }
+      //   return;
+      // }
 
-      const labels = Object.keys(data);
+      // const labels = Object.keys(data);
+      // const values = Object.values(data);
+      const labels = Object.keys(data).map((dateStr) => {
+        const [day, month, year] = dateStr.split("/");
+        return `${year}-${month}-${day}`; // Chuyển về yyyy-MM-dd
+      });
       const values = Object.values(data);
 
       setChartData({
@@ -117,11 +134,13 @@ export const UserGrowthChart = () => {
         {chartData && <Bar data={chartData} options={chartOptions} />}
       </div>
 
-      <div className="flex flex-col md:flex-row items-center ml-24 gap-4">
+      <div className="flex flex-col md:flex-row items-center ml-16 gap-4">
         {/* //<div className="flex flex-col items-center gap-4 md:flex-row"> */}
 
         <div className="space-y-1">
-          <label htmlFor="fromDate">From : </label>
+          <label htmlFor="fromDate" className="block mb-1">
+            From
+          </label>
           <input
             type="date"
             id="fromDate"
@@ -130,7 +149,9 @@ export const UserGrowthChart = () => {
           />
         </div>
         <div className="space-y-1">
-          <label htmlFor="toDate">To : </label>
+          <label htmlFor="toDate" className="block mb-1">
+            To
+          </label>
           <input
             type="date"
             id="toDate"

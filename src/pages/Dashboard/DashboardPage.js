@@ -17,11 +17,13 @@ const DashboardPage = () => {
         <StatisticPage />
       </div> */}
 
+
       <div className="flex-1 ">
         {/* <CreatePostCate /> */}
         {/* <ListAccountSensor /> */}
         {/* <ListAccount /> */}
         <StatisticPage />
+
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import BookingModal from "./BookingModal";
 import serviceBg from "../../assets/images/service_thumb.png";
 import filterIcon from "../../assets/images/filter_icon_svg.svg";
 import lineService from "../../assets/images/Line 9.png";
@@ -25,6 +26,8 @@ export default function ServicesList() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
     const [filteredServices, setFilteredServices] = useState([]);
+    const [isBookingOpen, setIsBookingOpen] = useState(false);
+    const [selectedServiceId, setSelectedServiceId] = useState(null);
     const [filter, setFilter] = useState({
         name: "",
         star: "",
@@ -43,6 +46,12 @@ export default function ServicesList() {
         setFilter(filterData);
         setCurrentPage(1); // reset về trang đầu
         setShowFilterPopup(!showFilterPopup);
+    };
+
+    // Mở modal booking
+    const openBookingModal = (id) => {
+        setSelectedServiceId(id);
+        setIsBookingOpen(true);
     };
 
     useEffect(() => {
@@ -205,9 +214,18 @@ export default function ServicesList() {
                             {currentServices.map((service, index) => {
                                 // const service = wrapper.service;
                                 return (
-                                    <div key={index} className="service-box w-[42%] md:w-[44.55%] lg:w-[315px]">
-                                        <img className="service-background" src={serviceBg} alt="service background" />
-                                        <div className="service-title w-[93%] min-h-[32px]">{service.serviceName}</div>
+                                    <div key={index} className="service-box w-[42%] md:w-[44.55%] lg:w-[315px] pb-3">
+                                        <img 
+                                            className="service-background" 
+                                            src={service.imageUrl && service.imageUrl.trim() !== "" ? service.imageUrl : serviceBg} 
+                                            alt="service background" 
+                                        />
+                                        {/* <div className="service-title w-[93%] min-h-[32px]">{service.serviceName}</div> */}
+                                        <div className="service-title w-[93%] min-h-[32px]">
+                                            <Link to={`/ServiceDetail/${service.serviceId}`} className="text-[rgba(0,0,0,0.75)] hover:text-[#3db3fb] hover:no-underline transition-colors duration-200 ease-in-out">
+                                                {service.serviceName}
+                                            </Link>
+                                        </div>
                                         <div className="body-service px-3">
                                             <div className="author-content">
                                                 <div className="avatar-content">
@@ -246,8 +264,9 @@ export default function ServicesList() {
                                                 <div className="rate-num">({service.rateCount || 0})</div>
                                             </div>
                                             <div className="status-expert-container">
-                                                <div className="status-icon"></div>
-                                                <div className="status-content">Active</div>
+                                                <button className="font-bold rounded-lg cursor-pointer bg-amber-300 px-4 py-2 hover:bg-amber-500 text-white"
+                                                onClick={() => openBookingModal(service.serviceId)}
+                                                >Booking</button>
                                             </div>
                                         </div>
                                     </div>
@@ -287,6 +306,12 @@ export default function ServicesList() {
                         </div>
 
                     </div>
+                    {/* Booking modal */}
+                    <BookingModal
+                        isOpen={isBookingOpen}
+                        onClose={() => setIsBookingOpen(false)}
+                        serviceId={selectedServiceId}
+                    />
                     <div className="suggest-expert hidden md:block md:w-[306px] max-w-[306px] space-y-6">
                         <SuggestedExperts />
                         <SuggestedGroups />

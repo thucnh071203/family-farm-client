@@ -182,6 +182,7 @@ export const NotificationProvider = ({ children }) => {
         markAsRead,
         markAllAsRead,
         isAuthenticated: isAuthenticated(),
+        hubConnection // <-- Thêm dòng này để export
     };
 
     return (

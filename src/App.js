@@ -45,9 +45,8 @@ import ChatPage from "./pages/Chat/ChatPage";
 
 import StatisticPage from "./pages/Dashboard/StatisticPage";
 import DashboardPage from "./pages/Dashboard/DashboardPage";
-import ReactionPage from "./pages/Dashboard/ReactionPage";
+import ListReaction from "./components/ReactionManagement/ListReaction";
 import PostCatePage from "./pages/Dashboard/PostCatePage";
-import CreateReactionPage from "./pages/Dashboard/CreateReactionPage";
 import CreatePostCate from "./pages/Dashboard/CreatePostCate";
 import UpdatePostCate from "./pages/Dashboard/UpdatePostCate";
 import DetailPostCate from "./pages/Dashboard/DetailPostCate";
@@ -77,6 +76,11 @@ import UpdatePostCatePage from "./pages/Dashboard/UpdatePostCatePage";
 import DetailPostCatePage from "./pages/Dashboard/DetailPostCatePage";
 import CateServicePage from "./pages/Dashboard/CateServicePage";
 import CreateCateServicePage from "./pages/Dashboard/CreateCateServicePage";
+import ReactionPage from "./pages/Dashboard/ReactionPage";
+import CreateReactionPage from "./pages/Dashboard/CreateReactionPage";
+import UpdateReactionPage from "./pages/Dashboard/UpdateReactionPage";
+import HomeProcessFarmer from "./pages/ProcessPage/HomeProcessFarmer";
+
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -109,11 +113,6 @@ const AppContent = () => {
     "/ConfirmOtp",
     "/ResetPassword",
   ];
-
-  // const { isAuthenticated, isLoading } = useAuth(
-  //     skipAuthRoutes.includes(location.pathname) ? null : navigate,
-  //     location
-  // );
 
   return (
     <>
@@ -155,12 +154,13 @@ const AppContent = () => {
             <Route path="/SavedPostPage" element={<SavedPostPage />} />
             <Route path="/CreateService" element={<CreateServicePage />} />
             <Route path="/EditService/:id" element={<EditServicePage />} />
-            <Route path="/ServiceDetail" element={<ServiceDetailPage />} />
+            <Route path="/ServiceDetail/:id" element={<ServiceDetailPage />} />
             <Route
               path="/ProgressListFarmer"
               element={<ProcessListFarmerPage />}
             />
-            <Route path="/CreateStepPage" element={<CreateStepPage />} />
+            <Route path="/HomeProcessFarmer" element={<HomeProcessFarmer/>} />
+            <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
             <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
@@ -173,19 +173,26 @@ const AppContent = () => {
             <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
             <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
-            <Route path="/ReactionPage" element={<ReactionPage />} />
+
+  
+
+            <Route path="/ReactionManagement" element={<ReactionPage />} />
+            <Route path="/CreateReaction" element={<CreateReactionPage />} />
+            <Route path="/UpdateReaction/:id" element={<UpdateReactionPage />} />
+            <Route
+              path="/PostCatePage"
+              element={<PostCatePage />}
+            />
             <Route
               path="/PaymentManagement"
               element={<PaymentManagementPage />}
             />
-            <Route path="/PostManagement" element={<PostManagementPage />} />
-            <Route
-              path="/ReportManagement"
-              element={<ReportManagementPage />}
-            />
-            <Route path="/ReportDetail" element={<ReportDetailPage />} />
 
             <Route path="/PostCatePage" element={<PostCatePage />} />
+            <Route path="/PostManagement" element={<PostManagementPage />} />
+            <Route path="/ReportManagement" element={<ReportManagementPage />} />
+            <Route path="/ReportDetail/:reportId" element={<ReportDetailPage />} />
+
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
             <Route path="/ListCensor" element={<ListCensorPage />} />
@@ -210,6 +217,7 @@ const AppContent = () => {
               element={<AccountDetailPage />}
             />
             <Route
+
               path="/PostCatePage/CreatePostCate"
               element={<CreatePostCatePage />}
             />
@@ -220,6 +228,20 @@ const AppContent = () => {
             <Route
               path="/PostCatePage/DetailPostCate/:id"
               element={<DetailPostCatePage />}
+             />
+              <Route
+              path="/CreatePostCate"
+              element={<CreatePostCate />}
+            />
+            <Route
+              path="/UpdatePostCate/:id"
+              element={<UpdatePostCate />}
+            />
+            <Route
+              path="/DetailPostCate/:id"
+              element={<DetailPostCate />}
+
+
             />
           </>
         ) : (
