@@ -5,14 +5,12 @@ import "datatables.net";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import React, { useEffect, useRef } from "react";
-import edit from "../../assets/icons/edit.svg";
-import trash from "../../assets/icons/trash.svg";
-import eye from "../../assets/icons/eye.svg";
-const TableListCateService = ({ displayList, onDeleted }) => {
+
+const TableListCateService = ({ displayList }) => {
   const tableRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleDelete = (cateId, onDeleted) => {
+  const handleDelete = (cateId) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -45,69 +43,48 @@ const TableListCateService = ({ displayList, onDeleted }) => {
               "The category service has been deleted.",
               "success"
             );
-            onDeleted?.();
           }
         } catch (err) {
-          console.error("Error fetching account censor:", err.message || err);
+          // console.error("Error fetching account censor:", err.message || err);
           Swal.fire("Error!", "Something went wrong.", "error");
         }
       }
     });
   };
-  const handleDetail = async (cateId, status) => {
-    try {
-      const token = localStorage.getItem("accessToken");
 
-      const res = await fetch(
-        `https://localhost:7280/api/category-service/get-by-id/${cateId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+  const handleRestore = (cateId) => {
+    Swal.fire({
+      title: "Restore this category?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#aaa",
+      confirmButtonText: "Yes, restore it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const token = localStorage.getItem("accessToken");
+  
+          const res = await fetch(
+            `https://localhost:7280/api/category-service/restore/${cateId}`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+  
+          const data = await res.json();
+          if (data.success === true) {
+            Swal.fire("Restored!", "The category has been restored.", "success");
+          }
+        } catch (err) {
+          Swal.fire("Error!", "Something went wrong.", "error");
         }
-      );
-
-      const data = await res.json();
-      if (data === true) {
-        Swal.fire("Deleted!", "The account has been deleted.", "success");
-        onDeleted?.(); // gọi callback nếu có
       }
-    } catch (err) {
-      console.error("Error fetching account censor:", err.message || err);
-      Swal.fire("Error!", "Something went wrong.", "error");
-    }
-  };
-
-  const handleEdit = async (cateId, status) => {
-    try {
-      const token = localStorage.getItem("accessToken");
-
-      const res = await fetch(
-        `https://localhost:7280/api/account/update-censor/${cateId}/1`,
-        {
-          method: "PUT",
-          headers: {
-            // Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const data = await res.json();
-      if (data.success === true) {
-        Swal.fire(
-          "Deleted!",
-          "The category service has been deleted.",
-          "success"
-        );
-        onDeleted?.(); // gọi callback nếu có
-      }
-    } catch (err) {
-      console.error("Error fetching account censor:", err.message || err);
-      Swal.fire("Error!", "Something went wrong.", "error");
-    }
+    });
   };
 
   useEffect(() => {
@@ -146,14 +123,34 @@ const TableListCateService = ({ displayList, onDeleted }) => {
           },
           {
             title: "Action",
-            render: (data, type, row) =>
-              `
-               <button class='btn-edit hover:underline' data-id='${row.categoryService?.categoryServiceId}'>
-                  <img src='${edit}' alt="" />
-               </button>
-               <button class='btn-delete hover:underline' data-id='${row.categoryService?.categoryServiceId}'>
-                  <img src='${trash}' alt="" />
-               </button>`,
+            render: (data, type, row) => {
+              const id = row.categoryService?.categoryServiceId;
+              const isDeleted = row.categoryService?.isDeleted;
+
+              if (!id) return "";
+
+              if (isDeleted) {
+                // Đã bị xóa: hiện View + Restore
+                return `
+                  <button class='btn-restore hover:underline text-yellow-500' data-id='${id}'>
+                    <i class="fa-solid fa-rotate-left"></i>
+                  </button>
+                `;
+              } else {
+                // Chưa xóa: hiện Detail + Edit + Delete
+                return `
+                  <button class='btn-detail hover:underline pr-2 text-blue-400' data-id='${id}'>
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button class='btn-edit hover:underline pr-1 text-green-500' data-id='${id}'>
+                    <i class="fa-solid fa-pencil"></i>
+                  </button>
+                  <button class='btn-delete hover:underline text-red-400' data-id='${id}'>
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                `;
+              }
+            },
           },
         ],
         columnDefs: [
@@ -178,13 +175,24 @@ const TableListCateService = ({ displayList, onDeleted }) => {
       $(tableRef.current).on("click", ".btn-detail", function () {
         const accId = $(this).data("id");
 
-        navigate(`/CateServiceDetail/${accId}`);
+        navigate(`/CateService/Detail/${accId}`);
+      });
+      // Gắn click cho nút edit
+      $(tableRef.current).on("click", ".btn-edit", function () {
+        const accId = $(this).data("id");
+
+        navigate(`/CateService/Edit/${accId}`);
       });
 
       // Gắn click cho nút Delete
       $(tableRef.current).on("click", ".btn-delete", function () {
         const cateId = $(this).data("id");
         handleDelete(cateId);
+      });
+      // Gắn click cho nút restore
+      $(tableRef.current).on("click", ".btn-restore", function () {
+        const cateId = $(this).data("id");
+        handleRestore(cateId);
       });
     }, 100);
     // Cleanup

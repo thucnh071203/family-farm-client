@@ -39,45 +39,6 @@ const FriendRight = ({ section }) => {
     fetchFriends(); // chỉ gọi khi component load hoặc section thay đổi
   }, [section]);
 
-  // useEffect(() => {
-  //   // Dữ liệu mẫu
-  //   const mockData = [
-  //     {
-  //       accId: 1,
-  //       name: "Alice",
-  //       avatar: "https://i.pravatar.cc/150?img=1",
-  //     },
-  //     {
-  //       accId: 2,
-  //       name: "Bob",
-  //       avatar: "https://i.pravatar.cc/150?img=2",
-  //     },
-  //     {
-  //       accId: 3,
-  //       name: "Charlie",
-  //       avatar: "https://i.pravatar.cc/150?img=3",
-  //     },
-  //     {
-  //       accId: 4,
-  //       name: "Charlie",
-  //       avatar: "https://i.pravatar.cc/150?img=3",
-  //     },
-  //     {
-  //       accId: 5,
-  //       name: "Charlie",
-  //       avatar: "https://i.pravatar.cc/150?img=3",
-  //     },
-  //     {
-  //       accId: 6,
-  //       name: "Charlie",
-  //       avatar: "https://i.pravatar.cc/150?img=3",
-  //     },
-  //   ];
-
-  //   setFriendsData(mockData);
-  //   setCountFriend(mockData.length);
-  //   setIsLoading(false);
-  // }, []);
 
   const sectionTitles = {
     "requests-sent": "Sent Request list",

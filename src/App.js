@@ -80,6 +80,8 @@ import ReactionPage from "./pages/Dashboard/ReactionPage";
 import CreateReactionPage from "./pages/Dashboard/CreateReactionPage";
 import UpdateReactionPage from "./pages/Dashboard/UpdateReactionPage";
 import HomeProcessFarmer from "./pages/ProcessPage/HomeProcessFarmer";
+import DetailCateServicePage from "./pages/Dashboard/DetailCateServicePage";
+import EditCateServicePage from "./pages/Dashboard/EditCateServicePage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -159,7 +161,7 @@ const AppContent = () => {
               path="/ProgressListFarmer"
               element={<ProcessListFarmerPage />}
             />
-            <Route path="/HomeProcessFarmer" element={<HomeProcessFarmer/>} />
+            <Route path="/HomeProcessFarmer" element={<HomeProcessFarmer />} />
             <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
@@ -173,16 +175,13 @@ const AppContent = () => {
             <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
             <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
-
-  
-
             <Route path="/ReactionManagement" element={<ReactionPage />} />
             <Route path="/CreateReaction" element={<CreateReactionPage />} />
-            <Route path="/UpdateReaction/:id" element={<UpdateReactionPage />} />
             <Route
-              path="/PostCatePage"
-              element={<PostCatePage />}
+              path="/UpdateReaction/:id"
+              element={<UpdateReactionPage />}
             />
+            <Route path="/PostCatePage" element={<PostCatePage />} />
             <Route
               path="/PaymentManagement"
               element={<PaymentManagementPage />}
@@ -190,34 +189,38 @@ const AppContent = () => {
 
             <Route path="/PostCatePage" element={<PostCatePage />} />
             <Route path="/PostManagement" element={<PostManagementPage />} />
-            <Route path="/ReportManagement" element={<ReportManagementPage />} />
-            <Route path="/ReportDetail/:reportId" element={<ReportDetailPage />} />
+            <Route
+              path="/ReportManagement"
+              element={<ReportManagementPage />}
+            />
+            <Route
+              path="/ReportDetail/:reportId"
+              element={<ReportDetailPage />}
+            />
 
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
             <Route path="/ListCensor" element={<ListCensorPage />} />
-            <Route
-              path="/CateService"
-              element={<CateServicePage />}
-            />
+            <Route path="/CateService" element={<CateServicePage />} />
             <Route
               path="/CateService/Create"
               element={<CreateCateServicePage />}
             />
             <Route
-              path="/ListAccount"
-              element={<ListAccountPage />}
+              path="/CateService/Detail/:id"
+              element={<DetailCateServicePage />}
             />
             <Route
-              path="/CensorDetail/:accId"
-              element={<CensorDetailPage />}
+              path="/CateService/Edit/:id"
+              element={<EditCateServicePage />}
             />
+            <Route path="/ListAccount" element={<ListAccountPage />} />
+            <Route path="/CensorDetail/:accId" element={<CensorDetailPage />} />
             <Route
               path="/AccountDetail/:accId"
               element={<AccountDetailPage />}
             />
             <Route
-
               path="/PostCatePage/CreatePostCate"
               element={<CreatePostCatePage />}
             />
@@ -228,21 +231,10 @@ const AppContent = () => {
             <Route
               path="/PostCatePage/DetailPostCate/:id"
               element={<DetailPostCatePage />}
-             />
-              <Route
-              path="/CreatePostCate"
-              element={<CreatePostCate />}
             />
-            <Route
-              path="/UpdatePostCate/:id"
-              element={<UpdatePostCate />}
-            />
-            <Route
-              path="/DetailPostCate/:id"
-              element={<DetailPostCate />}
-
-
-            />
+            <Route path="/CreatePostCate" element={<CreatePostCate />} />
+            <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} />
+            <Route path="/DetailPostCate/:id" element={<DetailPostCate />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
