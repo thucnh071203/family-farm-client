@@ -19,6 +19,7 @@ import ServicePage from "./pages/ServicePage/ServicePage";
 import ProcessListPage from "./pages/ProcessPage/ProcessListPage";
 import ProcessListFarmerPage from "./pages/ProcessPage/ProgressListFarmerPage";
 import CreateStepPage from "./pages/ProcessPage/CreateStepPage";
+import EditStepPage from "./pages/ProcessPage/EditStepPage";
 import SavedPostPage from "./pages/SavedPostPage/SavedPostPage";
 import WaitingListPage from "./pages/WaitingPage/WaitingListPage";
 import FriendPage from "./pages/FriendPage/FriendPage";
@@ -163,6 +164,7 @@ const AppContent = () => {
             />
             <Route path="/HomeProcessFarmer" element={<HomeProcessFarmer />} />
             <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
+            <Route path="/EditStepPage/:id" element={<EditStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
             <Route path="/FilterService" element={<FilterService />} />
             <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
