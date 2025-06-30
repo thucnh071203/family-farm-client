@@ -354,7 +354,7 @@ export const ServiceManagement = () => {
                       {service.haveProcess ? (
                         <button
                           className="text-sm text-purple-600"
-                          onClick={() => navigate(`/EditProcess/${service.serviceId}`)}
+                          onClick={() => navigate(`/EditStepPage/${service.serviceId}`)}
                         >
                           <i className="fa-solid fa-gear"></i> Edit process
                         </button>
