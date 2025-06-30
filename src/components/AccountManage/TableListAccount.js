@@ -3,20 +3,58 @@ import { useNavigate } from "react-router-dom";
 import $ from "jquery";
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 
-const TableListAccount = ({ displayList, isCensor }) => {
+const TableListAccount = ({ displayList, isCensor, onDeleted }) => {
   const tableRef = useRef(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    //if (!displayList || displayList.length === 0) return;
+  const handleDelete = (accId, status) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      // <-- Sửa ở đây
+      if (result.isConfirmed) {
+        try {
+          const token = localStorage.getItem("accessToken");
 
-    // Huỷ bảng cũ nếu có
+          const res = await fetch(
+            `https://localhost:7280/api/account/update-censor/${accId}/1`,
+            {
+              method: "PUT",
+              headers: {
+                // Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          const data = await res.json();
+          if (data === true) {
+            Swal.fire("Deleted!", "The account has been deleted.", "success");
+            onDeleted?.();
+            //navigate("/Dashboard/ListAccount"); // chuyển hướng sau khi hiển thị alert
+          }
+        } catch (err) {
+          console.error("Error fetching account censor:", err.message || err);
+          Swal.fire("Error!", "Something went wrong.", "error");
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
     if ($.fn.DataTable.isDataTable(tableRef.current)) {
       $(tableRef.current).DataTable().clear().destroy();
     }
 
-    // Tạo bảng mới
     const table = $(tableRef.current).DataTable({
       data: displayList || [],
       columns: [
@@ -48,8 +86,11 @@ const TableListAccount = ({ displayList, isCensor }) => {
         {
           data: "accId",
           title: "Action",
-          render: (data) =>
-            `<button class='btn-detail text-[#3DB3FB] hover:underline' data-id='${data}'>Detail</button>`,
+          render: function (data) {
+            const detailBtn = `<button class='btn-detail text-[#3DB3FB] hover:underline' data-id='${data}'>Detail</button>`;
+            const deleteBtn = `<button class='btn-delete text-[#d65f45] hover:underline' data-id='${data}'>Delete</button>`;
+            return isCensor ? detailBtn : `${detailBtn} ${deleteBtn}`;
+          },
         },
       ],
       columnDefs: [
@@ -67,25 +108,33 @@ const TableListAccount = ({ displayList, isCensor }) => {
       destroy: true,
       searching: true,
     });
+
     $(tableRef.current).find("thead").addClass("bg-[rgba(61,179,251,0.25)]");
 
-    // Xử lý click nút detail bằng navigate()
+    // Gắn click cho nút Detail
     $(tableRef.current).on("click", ".btn-detail", function () {
       const accId = $(this).data("id");
       if (isCensor === true) {
-        navigate(`/Dashboard/CensorDetail/${accId}`);
+        navigate(`/CensorDetail/${accId}`);
       } else {
-        navigate(`/Dashboard/AccountDetail/${accId}`);
+        navigate(`/AccountDetail/${accId}`);
       }
     });
 
-    // Dọn dẹp
+    // Gắn click cho nút Delete
+    $(tableRef.current).on("click", ".btn-delete", function () {
+      const accId = $(this).data("id");
+      handleDelete(accId);
+    });
+
+    // Cleanup
     return () => {
       $(tableRef.current).off("click", ".btn-detail");
+      $(tableRef.current).off("click", ".btn-delete");
     };
   }, [displayList, navigate]);
 
-  return <table ref={tableRef} className="display w-full"></table>;
+  return <table id="table" ref={tableRef} className="display w-full"></table>;
 };
 
 export default TableListAccount;

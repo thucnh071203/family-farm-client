@@ -74,7 +74,7 @@ const ListAccount = () => {
           <Link to={"/Dashboard"}>HOME</Link>
         </div>
         <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
-          <Link to="/Dashboard/ListAccount">/Account Management</Link>
+          <Link to="/ListAccount">/Account Management</Link>
         </span>
       </div>
       <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-5 mt-3">
@@ -117,6 +117,13 @@ const ListAccount = () => {
               : activeTab === "farmer"
               ? farmerList
               : expertList
+          }
+          onDeleted={
+            activeTab === "all"
+              ? fetchAllAccounts
+              : activeTab === "farmer"
+              ? fetchFarmerAccounts
+              : fetchExpertAccounts
           }
         />
       </div>

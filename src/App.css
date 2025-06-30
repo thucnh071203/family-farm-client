@@ -1,6 +1,6 @@
 html,
 body {
-  font-family: 'Arial', sans-serif !important;
+  font-family: "Arial", sans-serif !important;
 }
 
 .rich-text-editor strong {
@@ -56,7 +56,6 @@ body {
   text-align: center;
 }
 
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -101,4 +100,21 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Hiển thị rõ các nút Swal2 mà không cần hover */
+.swal2-confirm,
+.swal2-cancel {
+  background-color: #d33 !important; /* đỏ confirm */
+  color: white !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  opacity: 1 !important;
+  border: none !important;
+  transition: none !important;
+}
+
+/* Nút Cancel có màu riêng */
+.swal2-cancel {
+  background-color: #3085d6 !important; /* xanh cancel */
 }

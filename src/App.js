@@ -75,10 +75,15 @@ import ListAccountPage from "./pages/Dashboard/ListAccountPage";
 import CreatePostCatePage from "./pages/Dashboard/CreatePostCatePage";
 import UpdatePostCatePage from "./pages/Dashboard/UpdatePostCatePage";
 import DetailPostCatePage from "./pages/Dashboard/DetailPostCatePage";
+import CateServicePage from "./pages/Dashboard/CateServicePage";
+import CreateCateServicePage from "./pages/Dashboard/CreateCateServicePage";
 import ReactionPage from "./pages/Dashboard/ReactionPage";
 import CreateReactionPage from "./pages/Dashboard/CreateReactionPage";
 import UpdateReactionPage from "./pages/Dashboard/UpdateReactionPage";
 import HomeProcessFarmer from "./pages/ProcessPage/HomeProcessFarmer";
+import DetailCateServicePage from "./pages/Dashboard/DetailCateServicePage";
+import EditCateServicePage from "./pages/Dashboard/EditCateServicePage";
+
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -157,7 +162,7 @@ const AppContent = () => {
               path="/ProgressListFarmer"
               element={<ProcessListFarmerPage />}
             />
-            <Route path="/HomeProcessFarmer" element={<HomeProcessFarmer/>} />
+            <Route path="/HomeProcessFarmer" element={<HomeProcessFarmer />} />
             <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
             <Route path="/EditStepPage/:id" element={<EditStepPage />} />
             <Route path="/Chats" element={<ChatPage />} />
@@ -172,53 +177,66 @@ const AppContent = () => {
             <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
             <Route path="/ResetPassword" element={<ResetPasswordPage />} />
 
-
-  
-
             <Route path="/ReactionManagement" element={<ReactionPage />} />
             <Route path="/CreateReaction" element={<CreateReactionPage />} />
-            <Route path="/UpdateReaction/:id" element={<UpdateReactionPage />} />
             <Route
-              path="/PostCatePage"
-              element={<PostCatePage />}
+              path="/UpdateReaction/:id"
+              element={<UpdateReactionPage />}
             />
+            <Route path="/PostCatePage" element={<PostCatePage />} />
             <Route
               path="/PaymentManagement"
               element={<PaymentManagementPage />}
             />
 
+            <Route path="/PostCatePage" element={<PostCatePage />} />
             <Route path="/PostManagement" element={<PostManagementPage />} />
-            <Route path="/ReportManagement" element={<ReportManagementPage />} />
-            <Route path="/ReportDetail/:reportId" element={<ReportDetailPage />} />
+            <Route
+              path="/ReportManagement"
+              element={<ReportManagementPage />}
+            />
+            <Route
+              path="/ReportDetail/:reportId"
+              element={<ReportDetailPage />}
+            />
+
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
-            <Route path="/Dashboard/ListCensor" element={<ListCensorPage />} />
+            <Route path="/ListCensor" element={<ListCensorPage />} />
+            <Route path="/CateService" element={<CateServicePage />} />
             <Route
-              path="/Dashboard/ListAccount"
-              element={<ListAccountPage />}
+              path="/CateService/Create"
+              element={<CreateCateServicePage />}
             />
             <Route
-              path="/Dashboard/CensorDetail/:accId"
-              element={<CensorDetailPage />}
+              path="/CateService/Detail/:id"
+              element={<DetailCateServicePage />}
             />
             <Route
-              path="/Dashboard/AccountDetail/:accId"
+              path="/CateService/Edit/:id"
+              element={<EditCateServicePage />}
+            />
+            <Route path="/ListAccount" element={<ListAccountPage />} />
+            <Route path="/CensorDetail/:accId" element={<CensorDetailPage />} />
+            <Route
+              path="/AccountDetail/:accId"
               element={<AccountDetailPage />}
             />
             <Route
-
-              path="/CreatePostCate"
-              element={<CreatePostCate />}
+              path="/PostCatePage/CreatePostCate"
+              element={<CreatePostCatePage />}
             />
             <Route
-              path="/UpdatePostCate/:id"
-              element={<UpdatePostCate />}
+              path="/PostCatePage/UpdatePostCate/:id"
+              element={<UpdatePostCatePage />}
             />
             <Route
-              path="/DetailPostCate/:id"
-              element={<DetailPostCate />}
-
+              path="/PostCatePage/DetailPostCate/:id"
+              element={<DetailPostCatePage />}
             />
+            <Route path="/CreatePostCate" element={<CreatePostCate />} />
+            <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} />
+            <Route path="/DetailPostCate/:id" element={<DetailPostCate />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
