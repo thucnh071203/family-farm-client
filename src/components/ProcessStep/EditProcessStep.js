@@ -27,6 +27,8 @@ const EditProcessStep = () => {
     const [processDescription, setProcessDescription] = useState("");
     const [deletedImageIds, setDeletedImageIds] = useState([]);
 
+    const [deletedStepIds, setDeletedStepIds] = useState([]);
+
     const [errors, setErrors] = useState({
         processTitle: "",
         processDescription: "",
@@ -124,6 +126,30 @@ const EditProcessStep = () => {
         setErrors(newErrors);
         return isValid;
     };
+
+    // Sự kiện add step form
+    const handleAddStep = () => {
+        setSteps([...steps, { title: "", description: "", images: [] }]);
+
+        // ✅ Xóa lỗi toàn cục nếu đang có
+        setErrors((prev) => ({
+        ...prev,
+        global: ""
+        }));
+    };
+
+    // Sự kiện delete step
+    const handleDeleteStep = (index) => {
+        const stepToDelete = steps[index];
+
+        if (stepToDelete?.stepId) {
+            setDeletedStepIds(prev => [...prev, stepToDelete.stepId]);
+        }
+
+        const updatedSteps = steps.filter((_, i) => i !== index);
+        setSteps(updatedSteps);
+    };
+
 
     // Xử lý sự kiện change ở step
     const handleStepChange = (index, field, value) => {
@@ -238,6 +264,7 @@ const EditProcessStep = () => {
                     stepDescription: step.description,
                     imagesWithId: imageUrlsByStep[i] // đã phân biệt ảnh cũ/mới
                 })),
+                deletedStepIds: deletedStepIds, // ✅ gửi lên backend
                 deletedImageIds: deletedImageIds // ✅ thêm vào đây
             };
 
@@ -423,9 +450,21 @@ const EditProcessStep = () => {
                                                     )}
                                                 </div>
                                             </div>
+                                            <button
+                                                className="px-4 py-2 mt-4 text-red-700 bg-red-100 rounded hover:bg-red-200 max-w-[108px]"
+                                                onClick={() => handleDeleteStep(index)}
+                                            >
+                                                Delete
+                                            </button>
                                         </div>
                                     </div>
                                 ))}
+                                <div
+                                    className="add-new-step flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full mt-5 cursor-pointer"
+                                    onClick={handleAddStep}
+                                >
+                                    +
+                                </div>
                             </div>
 
                             {errors.global && (
