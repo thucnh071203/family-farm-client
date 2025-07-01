@@ -11,8 +11,7 @@ import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import instance from "../../Axios/axiosConfig";
 import { toast, Bounce } from "react-toastify";
 import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
-import defaultAvatar from '../../assets/images/default-avatar.png';
-
+import defaultAvatar from "../../assets/images/default-avatar.png";
 
 const HomePage = () => {
   const [accountId, setAccountId] = useState("");
@@ -30,11 +29,13 @@ const HomePage = () => {
   const postContainerRef = useRef(null);
   const PAGE_SIZE = 5;
   const [suggestedFriends, setSuggestedFriends] = useState([]);
-
+  const [groupSuggestData, setGroupData] = useState([]);
   //lấy thông tin người dùng từ storage
   useEffect(() => {
-    const storedAccId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
-    const storedAvatarUrl = localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
+    const storedAccId =
+      localStorage.getItem("accId") || sessionStorage.getItem("accId");
+    const storedAvatarUrl =
+      localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
 
     if (storedAccId) {
       setAccountId(storedAccId);
@@ -66,7 +67,6 @@ const HomePage = () => {
 
         if (newPosts.length > 0) {
           setLastPostId(newPosts[newPosts.length - 1].post.postId);
-
         } else {
           setLastPostId(null);
         }
@@ -110,7 +110,7 @@ const HomePage = () => {
   const handleCommentCountChange = (postId, newCount) => {
     setPosts((prevPosts) =>
       prevPosts.map((postMapper) =>
-        postMapper.post && (postMapper.post.postId) === postId
+        postMapper.post && postMapper.post.postId === postId
           ? { ...postMapper, post: { ...postMapper.post, comments: newCount } }
           : postMapper
       )
@@ -145,16 +145,59 @@ const HomePage = () => {
     fetchSuggestedFriends();
   }, []);
 
+  const fetchGroups = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        console.error("No access token found.");
+        return;
+      }
+
+      const res = await fetch(
+        `https://localhost:7280/api/group/group-suggestion-in-group`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      // Kiểm tra dữ liệu và cập nhật state
+      if (data.success === true) {
+        setGroupData(data.data);
+      } else {
+        console.warn("Unexpected response format:", data);
+        setGroupData([]);
+      }
+    } catch (err) {
+      console.error("Error fetching groups:", err.message || err);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    fetchGroups();
+  }, []);
+
   const handleDeletePost = (postId) => {
-    setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
+    setPosts((prevPosts) =>
+      prevPosts.filter((post) => post.post.postId !== postId)
+    );
   };
 
   const handlePostCreate = (newPostData) => {
     if (newPostData.postScope === "Public") {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
     }
-
-  }
+  };
 
   return (
     <div className="HomePage bg-gray-100">
@@ -173,7 +216,10 @@ const HomePage = () => {
             ref={postContainerRef}
             className="flex flex-col gap-5 lg:order-2 order-3 w-full"
           >
-            <PostCreate profileImage={avatarUrl} onPostCreate={handlePostCreate} />
+            <PostCreate
+              profileImage={avatarUrl}
+              onPostCreate={handlePostCreate}
+            />
             {loading && skip === 0 ? (
               <div className="flex flex-col gap-5">
                 {[...Array(3)].map((_, index) => (
@@ -183,7 +229,7 @@ const HomePage = () => {
             ) : error ? (
               <div className="text-center py-4">{error}</div>
             ) : posts.length > 0 ? (
-              posts.map((postMapper, index) => (
+              posts.map((postMapper, index) =>
                 postMapper && postMapper.post && postMapper.ownerPost ? (
                   <PostCard
                     onDeletePost={handleDeletePost}
@@ -192,16 +238,25 @@ const HomePage = () => {
                       accId: postMapper.ownerPost.accId || "Unknown",
                       postId: postMapper.post.postId,
                       fullName: postMapper.ownerPost.fullName || "Unknown User",
-                      avatar: postMapper.ownerPost.avatar || "https://via.placeholder.com/40",
+                      avatar:
+                        postMapper.ownerPost.avatar ||
+                        "https://via.placeholder.com/40",
                       createAt: postMapper.post.createdAt,
                       content: postMapper.post.postContent,
-                      images: postMapper.postImages?.map((img) => img.imageUrl) || [],
-                      hashtags: postMapper.hashTags?.map((tag) => tag.hashTagContent) || [],
-                      tagFriends: postMapper.postTags?.map((tag) => ({
-                        accId: tag.accId,
-                        fullname: tag.fullname || tag.username || "Unknown", // Sử dụng username nếu fullname là null
-                      })) || [],
-                      categories: postMapper.postCategories?.map((cat) => cat.categoryName) || [],
+                      images:
+                        postMapper.postImages?.map((img) => img.imageUrl) || [],
+                      hashtags:
+                        postMapper.hashTags?.map((tag) => tag.hashTagContent) ||
+                        [],
+                      tagFriends:
+                        postMapper.postTags?.map((tag) => ({
+                          accId: tag.accId,
+                          fullname: tag.fullname || tag.username || "Unknown", // Sử dụng username nếu fullname là null
+                        })) || [],
+                      categories:
+                        postMapper.postCategories?.map(
+                          (cat) => cat.categoryName
+                        ) || [],
                       likes: postMapper.reactionCount || 0,
                       comments: postMapper.commentCount || 0,
                       shares: postMapper.shareCount || 0,
@@ -211,7 +266,7 @@ const HomePage = () => {
                     }
                   />
                 ) : null
-              ))
+              )
             ) : (
               <div className="text-center py-4">Không tìm thấy bài viết</div>
             )}
@@ -229,7 +284,8 @@ const HomePage = () => {
               friends={suggestedFriends}
               onLoadList={fetchSuggestedFriends}
             />
-            <SuggestedGroups />
+
+            <SuggestedGroups groups={groupSuggestData} />
           </section>
         </div>
       </main>
