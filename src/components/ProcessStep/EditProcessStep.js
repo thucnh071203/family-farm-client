@@ -15,17 +15,17 @@ import addStepIcon from "../../assets/images/ic_baseline-plus.svg";
 
 const EditProcessStep = () => {
     const navigate = useNavigate();
-    // const { id: processId } = useParams();
     const fileInputRefs = useRef({});
     const [accessToken, setAccessToken] = useState("");
     const [searchParams] = useSearchParams();
-      const { id: serviceId } = useParams();
+    const { id: serviceId } = useParams();
     const [service, setService] = useState(null);
     const [loading, setLoading] = useState(true);
     const [processId, setProcessId] = useState("");
 
     const [processTitle, setProcessTitle] = useState("");
     const [processDescription, setProcessDescription] = useState("");
+    const [deletedImageIds, setDeletedImageIds] = useState([]);
 
     const [errors, setErrors] = useState({
         processTitle: "",
@@ -38,79 +38,50 @@ const EditProcessStep = () => {
         { title: "", description: "", images: [] } // khởi tạo 1 bước đầu tiên (nếu muốn)
     ]);
 
-    // useEffect(() => {
-    //     const fetchProcessDetail = async () => {
-    //         try {
-    //             const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-    //             const res = await instance.get(`/api/process/get-by-id/${processId}`, {
-    //                 headers: { Authorization: `Bearer ${token}` }
-    //             });
-
-    //             const data = res.data?.data?.[0];
-    //             setService(data.process.serviceId);
-    //             setProcessTitle(data.process.processTittle);
-    //             setProcessDescription(data.process.description);
-
-    //             const mappedSteps = data.steps.map((s) => ({
-    //                 stepId: s.step.stepId,
-    //                 title: s.step.stepTitle,
-    //                 description: s.step.stepDesciption,
-    //                 images: s.images.map(img => ({ url: img.imageUrl, id: img.processStepImageId })) // ảnh đã có
-    //             }));
-
-    //             setSteps(mappedSteps);
-    //         } catch (err) {
-    //             console.error("Failed to load process:", err);
-    //             toast.error("Failed to load process data");
-    //         }
-    //     };
-
-    //     if (processId) fetchProcessDetail();
-    // }, [processId]);
-
+    // fetch dữ liệu service, process và process step
     useEffect(() => {
         const fetchData = async () => {
             try {
-            const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+                const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
 
-            // 1. Fetch service
-            const serviceRes = await instance.get(`/api/service/get-by-id/${serviceId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            setService(serviceRes.data?.data?.[0]?.service || null);
+                // 1. Fetch service
+                const serviceRes = await instance.get(`/api/service/get-by-id/${serviceId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setService(serviceRes.data?.data?.[0]?.service || null);
 
-            // 2. Fetch process
-            const processRes = await instance.get(`/api/process/get-by-id/${serviceId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-            const data = processRes.data?.data?.[0];
+                // 2. Fetch process
+                const processRes = await instance.get(`/api/process/get-by-id/${serviceId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = processRes.data?.data?.[0];
 
-            setProcessId(data.process.processId);
-            setProcessTitle(data.process.processTittle);
-            setProcessDescription(data.process.description);
+                setProcessId(data.process.processId);
+                setProcessTitle(data.process.processTittle);
+                setProcessDescription(data.process.description);
 
-            const mappedSteps = data.steps.map((s) => ({
-                stepId: s.step.stepId,
-                title: s.step.stepTitle,
-                description: s.step.stepDesciption,
-                images: s.images.map(img => ({ url: img.imageUrl, id: img.processStepImageId }))
-            }));
+                const mappedSteps = data.steps.map((s) => ({
+                    stepId: s.step.stepId,
+                    title: s.step.stepTitle,
+                    description: s.step.stepDesciption,
+                    images: s.images.map(img => ({ url: img.imageUrl, id: img.processStepImageId }))
+                }));
 
-            setSteps(mappedSteps);
+                setSteps(mappedSteps);
             } catch (err) {
-            console.error("Failed to load process or service:", err);
-            toast.error("Failed to load data");
+                console.error("Failed to load process or service:", err);
+                toast.error("Failed to load data");
             } finally {
-            setLoading(false);
+                setLoading(false);
             }
         };
 
         if (serviceId) {
             fetchData();
         }
-        }, [serviceId]);
+    }, [serviceId]);
 
-
+    // Validate input
     const validate = () => {
         const newErrors = {
             processTitle: "",
@@ -154,6 +125,7 @@ const EditProcessStep = () => {
         return isValid;
     };
 
+    // Xử lý sự kiện change ở step
     const handleStepChange = (index, field, value) => {
         const updatedSteps = [...steps];
         updatedSteps[index][field] = value;
@@ -175,6 +147,8 @@ const EditProcessStep = () => {
             };
         });
     };
+
+    // Xử lý sự change của image
     const handleImageChange = (index, files) => {
         const updatedSteps = [...steps];
         const newFiles = Array.from(files).map(file => ({ file, isNew: true }));
@@ -182,13 +156,22 @@ const EditProcessStep = () => {
         setSteps(updatedSteps);
     };
 
+    // Xóa ảnh mỗi step
     const handleDeleteImage = (stepIndex, imageIndex) => {
         const updatedSteps = [...steps];
+        const imageToDelete = updatedSteps[stepIndex].images[imageIndex];
+
+        // Nếu ảnh cũ (không phải ảnh mới), lưu id để gửi xóa backend
+        if (!imageToDelete.isNew && imageToDelete.id) {
+            setDeletedImageIds(prev => [...prev, imageToDelete.id]);
+        }
+
+        // Xóa khỏi giao diện
         updatedSteps[stepIndex].images.splice(imageIndex, 1);
         setSteps(updatedSteps);
     };
 
-
+    // Lấy URL khi up từ file
     const uploadImagesAndGetUrls = async () => {
         const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
         const result = [];
@@ -230,11 +213,12 @@ const EditProcessStep = () => {
         return result;
     };
 
+    // Sự kiện 'Save'
     const handleSave = async () => {
         if (!serviceId) {
-              toast.error("Missing serviceId");
-              return;
-            }
+            toast.error("Missing serviceId");
+            return;
+        }
 
         if (!validate()) return;
 
@@ -253,7 +237,8 @@ const EditProcessStep = () => {
                     stepTitle: step.title,
                     stepDescription: step.description,
                     imagesWithId: imageUrlsByStep[i] // đã phân biệt ảnh cũ/mới
-                }))
+                })),
+                deletedImageIds: deletedImageIds // ✅ thêm vào đây
             };
 
             console.log("📦 Payload gửi lên:", payload);
@@ -417,27 +402,6 @@ const EditProcessStep = () => {
                                                             {step.images.length} files selected
                                                         </span>
                                                     </div>
-
-                                                    {/* {step.images.length > 0 && (
-                                                        <div className="flex flex-wrap gap-2 mt-2">
-                                                            {step.images.map((img, i) => (
-                                                                <div key={i} className="relative w-24 h-24">
-                                                                    <img
-                                                                        src={URL.createObjectURL(img)}
-                                                                        alt={`Step ${index + 1} - Image ${i + 1}`}
-                                                                        className="w-24 h-24 object-cover rounded border"
-                                                                    />
-                                                                    <button
-                                                                        type="button"
-                                                                        className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
-                                                                        onClick={() => handleDeleteImage(index, i)}
-                                                                    >
-                                                                        ×
-                                                                    </button>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )} */}
 
                                                     {step.images.length > 0 && (
                                                         <div className="flex flex-wrap gap-2 mt-2">
