@@ -6,6 +6,7 @@ import GroupSidebar from "../../components/Group/GroupSidebar";
 import PostInGroupRight from "../../components/Group/PostInGroupRight";
 import YourgroupRight from "../../components/Group/YourgroupRight";
 import CreateGroupForm from "../../components/Group/CreateGroupForm";
+import SuggestionGroupRight from "../../components/Group/SuggestionGroupRight";
 const PostGroupPage = () => {
   const location = useLocation();
 
@@ -32,6 +33,11 @@ const PostGroupPage = () => {
         )}
         {section === "post-in-group" && <PostInGroupRight />}
         {section === "create-group" && <CreateGroupForm />}
+        {section === "group-suggestion-in-group" && (
+          <div className="lg:mt-[120px] mt-[63px] ml-24 md:ml-[360px] pt-10">
+            <SuggestionGroupRight />
+          </div>
+        )}
       </div>
     </div>
   );

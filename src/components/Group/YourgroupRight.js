@@ -30,9 +30,9 @@ const YourgroupRight = ({ section }) => {
       const data = await res.json();
 
       // Kiểm tra dữ liệu và cập nhật state
-      if (Array.isArray(data)) {
-        setGroupData(data);
-        console.log(data[0]);
+      if (data.success === true) {
+        setGroupData(data.data);
+        //console.log(data[0]);
       } else {
         console.warn("Unexpected response format:", data);
         setGroupData([]);
@@ -101,7 +101,13 @@ const YourgroupRight = ({ section }) => {
         <p>Loading...</p>
       ) : (
         groupsData.map((group) => {
-          return <YourGroupCard key={group.groupId} group={group} />;
+          return (
+            <YourGroupCard
+              key={group.group.groupId}
+              group={group.group}
+              member={group.numberInGroup}
+            />
+          );
         })
       )}
     </div>

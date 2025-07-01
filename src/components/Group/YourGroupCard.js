@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const YourGroupCard = ({ group }) => {
+const YourGroupCard = ({ group, member }) => {
   const navigate = useNavigate();
 
   const handleViewGroup = () => {
@@ -25,7 +25,7 @@ const YourGroupCard = ({ group }) => {
         </div>
         <div className="absolute z-10 md:top-[57%] top-[48%]">
           <p className="text-xs font-semibold text-[#5596E6] flex justify-end pt-2 pr-3">
-            Members: {group.numberMember}
+            Members: {member}
           </p>
           <p className="font-bold text-sm md:text-base text-[#393A4F] text-left pl-3 pt-3">
             {group.groupName}
