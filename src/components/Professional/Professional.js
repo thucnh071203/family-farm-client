@@ -48,9 +48,9 @@ const Professional = () => {
   const cancelBooking = async (bookingId) => {
     try {
       setActionLoading((prev) => ({ ...prev, [bookingId]: true }));
-      const response = await instance.put(`/api/booking-service/cancel-booking/${bookingId}`);
+      const response = await instance.put(`/api/booking-service/reject-booking/${bookingId}`);
       if (response.data) {
-        toast.success("Booking canceled successfully!");
+        toast.success("Booking rejected successfully!");
         // Cập nhật danh sách để loại bỏ booking đã hủy
         setBookingRequests((prev) =>
           prev.filter((req) => req.booking.bookingServiceId !== bookingId)

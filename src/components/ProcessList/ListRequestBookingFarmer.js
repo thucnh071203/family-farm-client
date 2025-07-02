@@ -238,21 +238,21 @@ const ListRequestBookingFarmer = () => {
                                                 </div>
                                             )}
 
-                                            {booking.booking.bookingServiceStatus === "Accept" && (
+                                            {booking.booking.bookingServiceStatus === "Accepted" && (
                                                 <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
-                                                    <div className="text-completed">Accept</div>
+                                                    <div className="text-completed">Accepted</div>
                                                 </div>
                                             )}
 
-                                            {booking.booking.bookingServiceStatus === "Reject" && (
+                                            {booking.booking.bookingServiceStatus === "Rejected" && (
                                                 <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
-                                                    <div className="text-uncompleted-a-need">Reject</div>
+                                                    <div className="text-uncompleted-a-need">Rejected</div>
                                                 </div>
                                             )}
 
-                                            {booking.booking.bookingServiceStatus === "Cancel" && (
+                                            {booking.booking.bookingServiceStatus === "Cancelled" && (
                                                 <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
-                                                    <div className="text-uncompleted-a-need">Cancel</div>
+                                                    <div className="text-uncompleted-a-need">Cancelled</div>
                                                 </div>
                                             )}
                                         </div>
@@ -266,7 +266,7 @@ const ListRequestBookingFarmer = () => {
                                                     </div>
                                                 )}
 
-                                                {booking.booking.bookingServiceStatus === "Accept" && (
+                                                {booking.booking.bookingServiceStatus === "Accepted" && (
                                                     <div class="footer-booking-button">
                                                         <div class="progress-button-text">Payment</div>
                                                     </div>

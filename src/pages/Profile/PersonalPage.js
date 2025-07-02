@@ -112,7 +112,7 @@ const PersonalPage = () => {
                     setPosts(response.data.data);
                 }
             } catch (error) {
-                toast.error("Cannot load list post!");
+                // toast.error("Cannot load list post!");
             }
         };
         fetchPosts();
