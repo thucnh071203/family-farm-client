@@ -83,6 +83,7 @@ import UpdateReactionPage from "./pages/Dashboard/UpdateReactionPage";
 import HomeProcessFarmer from "./pages/ProcessPage/HomeProcessFarmer";
 import DetailCateServicePage from "./pages/Dashboard/DetailCateServicePage";
 import EditCateServicePage from "./pages/Dashboard/EditCateServicePage";
+import ProfessionalPage from "./pages/Profile/ProfessionalPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -132,6 +133,7 @@ const AppContent = () => {
               <Route path=":accId" element={<PersonalPage />} />{" "}
               {/* other profile */}
             </Route>
+            <Route path="/Professional" element={<ProfessionalPage />} />
             <Route path="/Friend" element={<FriendPage />} />
             <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
             <Route path="/Statistic1" element={<Statistic1 />} />
