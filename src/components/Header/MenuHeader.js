@@ -41,6 +41,8 @@ const MenuHeader = ({ onToggle, isVisible }) => {
         }
     };
 
+    const roleId = localStorage.getItem("roleId") || sessionStorage.getItem("roleId");
+
     if (!profileData) return null;
 
     return (
@@ -78,22 +80,26 @@ const MenuHeader = ({ onToggle, isVisible }) => {
                             <img src={payment_icon} alt="Payment" className="h-5" />
                             <p className="mt-2">Payment</p>
                         </Link>
-                        <Link
-                            to="/Professional"
-                            className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
-                            onClick={onToggle}
-                        >
-                            <img src={plus_icon} alt="Professional" className="h-5" />
-                            <p className="mt-2">Professional</p>
-                        </Link>
-                        <Link
-                            to="/HomeProcessFarmer"
-                            className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
-                            onClick={onToggle}
-                        >
-                            <img src={service_black_icon} alt="Service" className="h-5" />
-                            <p className="mt-2">Your Service</p>
-                        </Link>
+                        {roleId === "68007b2a87b41211f0af1d57" && (
+                            <Link
+                                to="/Professional"
+                                className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                                onClick={onToggle}
+                            >
+                                <img src={plus_icon} alt="Professional" className="h-5" />
+                                <p className="mt-2">Professional</p>
+                            </Link>
+                        )}
+                        {roleId === "68007b0387b41211f0af1d56" && (
+                            <Link
+                                to="/HomeProcessFarmer"
+                                className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                                onClick={onToggle}
+                            >
+                                <img src={service_black_icon} alt="Service" className="h-5" />
+                                <p className="mt-2">Your Service</p>
+                            </Link>
+                        )}
                         <Link
                             to="/Trash"
                             className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"

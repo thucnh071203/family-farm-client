@@ -164,6 +164,7 @@ const LoginForm = () => {
         storage.setItem("refreshToken", loginData.refreshToken);
         storage.setItem("username", loginData.username);
         storage.setItem("accId", loginData.accId);
+        storage.setItem("roleId", loginData.roleId);
 
         // Tính thời điểm hết hạn (current time + tokenExpiryIn giây)
         const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
