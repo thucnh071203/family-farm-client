@@ -84,6 +84,7 @@ import HomeProcessFarmer from "./pages/ProcessPage/HomeProcessFarmer";
 import DetailCateServicePage from "./pages/Dashboard/DetailCateServicePage";
 import EditCateServicePage from "./pages/Dashboard/EditCateServicePage";
 import ProfessionalPage from "./pages/Profile/ProfessionalPage";
+import SearchPage from "./pages/SearchPage/SearchPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -141,6 +142,7 @@ const AppContent = () => {
             <Route path="/MapChart" element={<MapChart />} />
             <Route path="/Service" element={<ServicePage />} />
             <Route path="/Group" element={<PostGroupPage />} />
+            <Route path="/Search" element={<SearchPage />} />
             <Route path="/group/:id" element={<GroupDetailPage />} />
             <Route path="/UpdateProfile" element={<UpdateProfile />} />
             <Route path="/UserFriends" element={<UserFriends />} />
