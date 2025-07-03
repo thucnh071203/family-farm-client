@@ -13,7 +13,7 @@ const GroupDetailHeader = ({
   selectedTab,
   setSelectedTab,
   reload,
-  reloadsignlR
+  reloadsignlR,
 }) => {
   const [showPopup, setShowPopup] = useState(false);
 
@@ -24,7 +24,10 @@ const GroupDetailHeader = ({
     return url + `?v=${encodeURIComponent(updatedAt)}`;
   }
 
-  const backgroundUrl = getCacheBustedUrl(group?.groupBackground, group?.updatedAt);
+  const backgroundUrl = getCacheBustedUrl(
+    group?.groupBackground,
+    group?.updatedAt
+  );
   const avatarUrl = getCacheBustedUrl(group?.groupAvatar, group?.updatedAt);
 
   // useEffect(() => {
@@ -39,11 +42,10 @@ const GroupDetailHeader = ({
       {/* md:w-[832px] h-72 md:h-[24rem] shadow-md relative rounded-md overflow-hidden */}
       <div className="w-full h-[200px] md:w-[832px] md:h-[296px] shadow-md relative rounded-md overflow-hidden">
         {/* background */}
-        <div className="">
+        <div className="w-full h-full">
           <img
-            className="w-[-57%] h-[20%]"
+            className="w-full h-full object-cover"
             src={backgroundUrl}
-
             alt=""
           />
         </div>
@@ -56,11 +58,15 @@ const GroupDetailHeader = ({
           />
         </div>
         <div className="absolute right-8 z-10 bottom-6 flex flex-row gap-2">
-          <button className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white"
-          onClick={() => setShowPopup(true)}
-          >
-            <i class="fa-solid fa-pen px-1 text-[#3DB3FB]"></i>Change image
-          </button>
+          {userRole === "680ce8722b3eec497a30201e" && (
+            <button
+              className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white"
+              onClick={() => setShowPopup(true)}
+            >
+              <i className="fa-solid fa-pen px-1 text-[#3DB3FB]"></i>
+              Change image
+            </button>
+          )}
         </div>
       </div>
       {showPopup && (
@@ -79,22 +85,25 @@ const GroupDetailHeader = ({
 
       <div>
         <div className="p-4 text-left">
-          <div className="flex justify-between">
-            <h2 className="text-2xl font-bold mb-5">
+          <div className="md:flex md:flex-row justify-between flex-col">
+            <h2 className="text-2xl font-bold mb-5 break-words max-w-2xl">
               {group.groupName || "groupName"}
             </h2>
 
-            {['680cea9fd26b52bd2922a596', '680ce8722b3eec497a30201e'].includes(userRole) && (
-              <Link to={`/EditGroup/${group.groupId}`} className=" hover:text-[#3DB3FB]"
-              state={{ userRole: userRole, userAccId: userAccId }}
+            {["680cea9fd26b52bd2922a596", "680ce8722b3eec497a30201e"].includes(
+              userRole
+            ) && (
+              <Link
+                to={`/EditGroup/${group.groupId}`}
+                className=" hover:text-[#3DB3FB]"
+                state={{ userRole: userRole, userAccId: userAccId }}
               >
                 Setting group
               </Link>
             )}
-
           </div>
 
-          <div className="flex justify-between">
+          <div className="md:flex justify-between md:flex-row flex-col">
             <div className="mt-3">
               <p className="text-sm text-gray-500 mb-7 flex gap-10">
                 <span>
@@ -156,28 +165,29 @@ const GroupDetailHeader = ({
             </div>
           </div>
 
-          <div className="flex space-x-6 mt-2 text-sm text-black-500 font-bold text-center ">
+          <div className="md:flex md:flex-row space-x-6 mt-2 text-sm text-black-500 font-bold md:text-center flex flex-wrap w-[390px] md:w-full">
+        
             <button
               onClick={() => setSelectedTab("posts")}
-              className="w-[10%] hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]"
+              className="md:w-[10%] hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]"
             >
               Home
             </button>
             <button
               onClick={() => setSelectedTab("members")}
-              className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] w-[10%]"
+              className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] md:w-[10%]"
             >
               Member
             </button>
             <button
               onClick={() => setSelectedTab("requests")}
-              className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] w-[10%] "
+              className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] md:w-[10%] "
             >
               Add to Join
             </button>
             <button
               onClick={() => setSelectedTab("permission")}
-              className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] w-[10%] "
+              className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] md:w-[10%] "
             >
               Permissions
             </button>

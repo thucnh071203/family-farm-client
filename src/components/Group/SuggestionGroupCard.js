@@ -3,34 +3,32 @@ import axios from "axios";
 import { toast, Bounce } from "react-toastify";
 
 const SuggestionGroupCard = ({ group, member }) => {
-  const handleClick = async () => {
-    const token = localStorage.getItem("accessToken");
+  const [joinedGroups, setJoinedGroups] = useState([]);
 
+  const handleJoinGroup = async (groupId) => {
     try {
-      const response = await axios.post(
-        "https://localhost:7280/api/friend/send-friend-request",
-        // { receiverId: friend.accId },
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(
+        `https://localhost:7280/api/group-member/request-to-join/${groupId}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      // Giả sử response.data là boolean hoặc có field isSuccess
-      if (response.status === 200 && response.data === true) {
-        toast.success("You sent the request successfully!");
-
-        // Nếu có callback để reload danh sách
-        // if (onActionComplete) {
-        //   //onActionComplete();
-        // }
+      if (response.status === 200) {
+        toast.success("You sent the request successfully!", {
+          transition: Bounce,
+        });
+        setJoinedGroups((prev) => [...prev, groupId]); // ➜ Đánh dấu đã join
       } else {
-        toast.error("Failed to send request.");
+        toast.warning(
+          "You may have already sent the request or joined this group."
+        );
       }
     } catch (error) {
-      console.error("Error during friend action:", error);
-      toast.error("An error occurred while processing the action.");
+      console.error("Sent request failed", error);
+      toast.error("Failed to send request.");
     }
   };
 
@@ -61,9 +59,21 @@ const SuggestionGroupCard = ({ group, member }) => {
           </p>
         </div>
         <div className="mt-7 items-center pt-5 absolute z-10 md:top-[65%] top-[48%] right-14 left-14">
-          <button className="bg-[rgba(61,179,251,0.14)] p-2 px-3 md:p-3 text-[#5596E6] rounded-2xl font-bold">
-            Join Group
-          </button>
+          {joinedGroups.includes(group.groupId) ? (
+            <button
+              disabled
+              className="px-3 md:p-3 p-2 font-bold text-gray-400 border border-solid border-gray-200 rounded-full bg-gray-100 cursor-not-allowed"
+            >
+              Requested
+            </button>
+          ) : (
+            <button
+              onClick={() => handleJoinGroup(group.groupId)}
+              className="bg-[rgba(61,179,251,0.14)] p-2 px-3 md:p-3 text-[#5596E6] rounded-2xl font-bold"
+            >
+              Join Group
+            </button>
+          )}
         </div>
       </div>
     </div>
