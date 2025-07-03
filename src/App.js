@@ -84,6 +84,11 @@ import HomeProcessFarmer from "./pages/ProcessPage/HomeProcessFarmer";
 import DetailCateServicePage from "./pages/Dashboard/DetailCateServicePage";
 import EditCateServicePage from "./pages/Dashboard/EditCateServicePage";
 import ProfessionalPage from "./pages/Profile/ProfessionalPage";
+import FriendRequestPage from "./pages/FriendPage/FriendRequestPage";
+import SuggestionFriendPage from "./pages/FriendPage/SuggestionFriendPage";
+import SentRequestFriendPage from "./pages/FriendPage/SentRequestFriendPage";
+import YourFollowingPage from "./pages/FriendPage/YourFollowingPage";
+import YourFollowerPage from "./pages/FriendPage/YourFollowerPage";
 import SearchPage from "./pages/SearchPage/SearchPage";
 
 const AppContent = () => {
@@ -136,6 +141,13 @@ const AppContent = () => {
             </Route>
             <Route path="/Professional" element={<ProfessionalPage />} />
             <Route path="/Friend" element={<FriendPage />} />
+            <Route path="/Friend/requests-receive" element={<FriendRequestPage />} />
+            <Route path="/Friend/requests-sent" element={<SentRequestFriendPage />} />
+            <Route path="/Friend/list-following" element={<YourFollowingPage />} />
+            <Route path="/Friend/list-follower" element={<YourFollowerPage />} />
+            <Route path="/Friend/suggestion-friend" element={<SuggestionFriendPage />} />
+
+
             <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
             <Route path="/Statistic1" element={<Statistic1 />} />
             <Route path="/UserGrowthChart" element={<UserGrowthChart />} />

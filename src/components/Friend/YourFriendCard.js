@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast, Bounce } from "react-toastify";
 
-const YourFriendCard = ({ friend, onActionComplete }) => {
+const YourFriendCard = ({ friend, isListFollower }) => {
   const [status, setStatus] = useState(friend.friendStatus);
   const buttonConfig = {
     null: {
@@ -57,7 +57,7 @@ const YourFriendCard = ({ friend, onActionComplete }) => {
         );
 
         if (response.status === 200) {
-          onActionComplete();
+          // onActionComplete();
           setStatus(isExpert ? "Following" : "Pending");
           toast.success("You sent the request successfully!");
         } else {
@@ -76,7 +76,7 @@ const YourFriendCard = ({ friend, onActionComplete }) => {
 
         // Kiểm tra response.data === true
         if (response.status === 200 && response.data === true) {
-          onActionComplete();
+          //onActionComplete();
           setStatus(null); // Reset lại để hiển thị nút "Add Friend"
           toast.success("Action completed successfully!");
         } else {
@@ -118,13 +118,15 @@ const YourFriendCard = ({ friend, onActionComplete }) => {
           </p>
         </div>
         <div>
-          <button
-            onClick={handleClick}
-            className={`w-[120px] h-6 ${config.bgColor} ${config.hoverColor} rounded-[5px] font-normal mt-2 text-sm text-white p-1 flex items-center justify-center`}
-          >
-            <i className={`fa-solid ${config.icon} mr-2`}></i>
-            {config.text}
-          </button>
+          {isListFollower !== "follower" && (
+            <button
+              onClick={handleClick}
+              className={`w-[120px] h-6 ${config.bgColor} ${config.hoverColor} rounded-[5px] font-normal mt-2 text-sm text-white p-1 flex items-center justify-center`}
+            >
+              <i className={`fa-solid ${config.icon} mr-2`}></i>
+              {config.text}
+            </button>
+          )}
         </div>
       </div>
     </div>

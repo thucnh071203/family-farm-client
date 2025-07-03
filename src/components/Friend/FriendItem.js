@@ -19,7 +19,7 @@ const FriendItem = ({ friend, onLoadList }) => {
         </div>
       </div>
       <FriendActionButton
-        status={friend.status}
+        status={friend.friendStatus}
         roleId={friend.roleId}
         accId={friend.accId}
         onLoadList={onLoadList}

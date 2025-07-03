@@ -16,12 +16,12 @@ const FriendCard = ({ friend,onActionComplete}) => {
         }
       );
       if (response.ok) {
-        onActionComplete();
+        //onActionComplete();
         toast.success("DELETE FRIEND REQUEST SUCCESSFULLY!");
         console.log("Deleted successfully");
         // Có thể gọi hàm callback để xóa item khỏi danh sách UI
       } else {
-        onActionComplete();
+       // onActionComplete();
         toast.error("DELETE FRIEND REQUEST FAIL!");
         console.error("Failed to delete");
       }
@@ -44,12 +44,12 @@ const FriendCard = ({ friend,onActionComplete}) => {
         }
       );
       if (response.ok) {
-        onActionComplete();
+       // onActionComplete();
         toast.success("ACCEPT FRIEND REQUEST SUCCESSFULLY!");
         console.log("Accepted successfully");
         // Có thể gọi hàm callback để cập nhật trạng thái trong UI
       } else {
-        onActionComplete();
+       // onActionComplete();
         toast.error("ACCEPT FRIEND REQUEST FAIL!");
         console.error("Failed to accept");
       }
