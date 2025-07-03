@@ -28,7 +28,7 @@ const FriendList = ({ friends }) => {
       <div className="flex flex-col gap-3">
         {friendList.map((friend) => (
           <FriendItem 
-            key={friend.name} 
+            key={friend.accId} 
             friend={{ ...defaultFriend, ...friend }} 
           />
         ))}
