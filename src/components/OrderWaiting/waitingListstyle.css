@@ -48,6 +48,7 @@
   width: 24px;
   height: 24px;
   transition: filter 0.3s ease;
+  color: #3e3f5e;
 }
 
 .progress-management .text-wrapper-4 {
@@ -94,7 +95,7 @@
   width: fit-content;
   font-family: "Roboto-Bold", Helvetica;
   font-weight: 700;
-  color: #3db3fb;
+  color: #3e3f5e;
   letter-spacing: 0;
   line-height: normal;
   white-space: nowrap;

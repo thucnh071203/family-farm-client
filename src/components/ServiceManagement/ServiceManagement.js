@@ -255,7 +255,7 @@ export const ServiceManagement = () => {
     <div className="text-gray-800 bg-white">
       <Header />
       <div className="pt-16 mx-auto progress-management max-w-7xl">
-        <ProcessNav />
+        <ProcessNav inPage="Service"/>
         <div className="flex items-center justify-between mt-6">
           <h2 className="text-xl font-semibold">Your Services</h2>
           <button className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">

@@ -15,45 +15,21 @@ import workBlue from "../../assets/images/material-symbols_work_blue.png";
 import workGreen from "../../assets/images/material-symbols_work_blue.png";
 import workRed from "../../assets/images/material-symbols_work_blue.png";
 import deatilIcon from "../../assets/images/material-symbols_read-more.png";
+import ProgressMenu from "./ProgressMenu";
 
 export default function ProcessList() {
     return (
         <div className="pt-16 progress-management">
             <div className="px-2 mx-auto div max-w-7xl">
-                <ProcessNav />
+                <ProcessNav inPage="Process"/>
+                
                 <div className="flex flex-col w-full gap-6 mt-6 progress-container lg:mt-14 lg:flex-row lg:justify-center">
+                    {/* MENU  */}
                     <div className="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">
-                        <div className="w-full overlap-wrapper">
-                            <div className="flex flex-col w-full overlap-3">
-                                <div className="text-wrapper-7 mt-[16px] ml-[16px]">Menu</div>
-                                <div className="status-progress-container mt-[13px] flex flex-col justify-center items-center gap-6">
-                                    <div className="frame-3 w-[91.3%]">
-                                        <img className="img-2" src={avaiProcess} />
-                                        <div className="text-wrapper-8">List of available processes</div>
-                                    </div>
-                                    <div className="frame-4 w-[91.3%]">
-                                        <img className="img-2" src={unpaidOrder} />
-                                        <div className="text-wrapper-8">List of unpaid orders</div>
-                                    </div>
-                                    <div className="frame-5 w-[91.3%]">
-                                        <img className="img-2" src={waitingOrder} />
-                                        <div className="text-wrapper-8">List of orders waiting</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-4 attention-container">
-                            <div className="flex flex-row items-center gap-2 frame-18">
-                                <div className="img"><img className="mask-group" src={attentionIcon} /></div>
-                                <div className="text-wrapper-16">ATTENTION</div>
-                            </div>
-                            <div className="flex flex-row flex-wrap items-center justify-center gap-1 mt-4 frame-17">
-                                <div className="text-wrapper-19">You have</div>
-                                <div className="text-wrapper-20">3 progress</div>
-                                <div className="text-wrapper-19">need confirmation of completion</div>
-                            </div>
-                        </div>
+                        <ProgressMenu inPage="ProcessList"/>
                     </div>
+
+                    {/* CONTENT  */}
                     <div className="progress-right w-full lg:w-[66.5%] xl:w-[830px] lg:max-w-[830px]">
                         <div className="flex flex-col w-full gap-5 filter-progress-container lg:flex-row lg:justify-between lg:gap-0">
                             <div className="frame-6 flex flex-row justify-center items-center gap-3 sm:gap-[40px]">
