@@ -89,6 +89,8 @@ import SuggestionFriendPage from "./pages/FriendPage/SuggestionFriendPage";
 import SentRequestFriendPage from "./pages/FriendPage/SentRequestFriendPage";
 import YourFollowingPage from "./pages/FriendPage/YourFollowingPage";
 import YourFollowerPage from "./pages/FriendPage/YourFollowerPage";
+import SearchPage from "./pages/SearchPage/SearchPage";
+
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -152,6 +154,7 @@ const AppContent = () => {
             <Route path="/MapChart" element={<MapChart />} />
             <Route path="/Service" element={<ServicePage />} />
             <Route path="/Group" element={<PostGroupPage />} />
+            <Route path="/Search" element={<SearchPage />} />
             <Route path="/group/:id" element={<GroupDetailPage />} />
             <Route path="/UpdateProfile" element={<UpdateProfile />} />
             <Route path="/UserFriends" element={<UserFriends />} />

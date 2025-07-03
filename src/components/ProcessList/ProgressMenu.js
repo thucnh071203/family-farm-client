@@ -7,39 +7,68 @@ import unpaidOrder from "../../assets/images/material-symbols_warning.png";
 import waitingOrder from "../../assets/images/medical-icon_waiting-area.png";
 import attentionIcon from "../../assets/images/icon-park-solid_attention.png";
 
-export default function ProgressMenu() {
+export default function ProgressMenu({ inPage }) {
     return (
         <div className="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">
             <div className="w-full overlap-wrapper">
                 <div className="flex flex-col w-full overlap-3">
-                    <div className="text-wrapper-7 mt-[16px] ml-[16px]">Menu</div>
-                    <div className="status-progress-container mt-[13px] flex flex-col justify-center items-center gap-6">
-                        <div className="frame-3 w-[91.3%]">
-                            <img className="img-2" src={avaiProcess} />
-                            <div className="text-wrapper-8">List of available processes</div>
-                        </div>
-                        <div className="frame-4 w-[91.3%]">
-                            <img className="img-2" src={unpaidOrder} />
-                            <div className="text-wrapper-8">List of unpaid orders</div>
-                        </div>
-                        <div className="frame-5 w-[91.3%]">
-                            <img className="img-2" src={waitingOrder} />
-                            <div className="text-wrapper-8">List of orders waiting</div>
-                        </div>
+                    <div className="text-wrapper-7 mt-[16px] ml-[16px] font-bold">Menu</div>
+                    <div className="status-process-container mt-[13px] flex flex-col justify-center items-center gap-6">
+
+                        {inPage === "ProcessList" && (
+                            <>
+                                <Link to="/ProcessList" className="item-process highlight-item">
+                                    <img className="img-2" src={avaiProcess} alt="" />
+                                    <div className="text-wrapper-8">List of available processes</div>
+                                </Link>
+                                <Link to="" className="item-process">
+                                    <img className="img-2" src={unpaidOrder} alt="" />
+                                    <div className="text-wrapper-8">List of unpaid orders</div>
+                                </Link>
+                                <Link to="/WaitingOrderList" className="item-process">
+                                    <img className="img-2" src={waitingOrder} alt="" />
+                                    <div className="text-wrapper-8">List of orders waiting</div>
+                                </Link>
+                            </>
+                        )}
+
+                        {inPage === "Unpaid" && (
+                            <>
+                                <Link to="/ProcessList" className="item-process">
+                                    <img className="img-2" src={avaiProcess} alt="" />
+                                    <div className="text-wrapper-8">List of available processes</div>
+                                </Link>
+                                <Link to="" className="item-process highlight-item">
+                                    <img className="img-2" src={unpaidOrder} alt="" />
+                                    <div className="text-wrapper-8">List of unpaid orders</div>
+                                </Link>
+                                <Link to="/WaitingOrderList" className="item-process">
+                                    <img className="img-2" src={waitingOrder} alt="" />
+                                    <div className="text-wrapper-8">List of orders waiting</div>
+                                </Link>
+                            </>
+                        )}
+
+                        {inPage === "Waiting" && (
+                            <>
+                                <Link to="/ProcessList" className="item-process">
+                                    <img className="img-2" src={avaiProcess} alt="" />
+                                    <div className="text-wrapper-8">List of available processes</div>
+                                </Link>
+                                <Link to="" className="item-process">
+                                    <img className="img-2" src={unpaidOrder} alt="" />
+                                    <div className="text-wrapper-8">List of unpaid orders</div>
+                                </Link>
+                                <Link to="/WaitingOrderList" className="item-process highlight-item">
+                                    <img className="img-2" src={waitingOrder} alt="" />
+                                    <div className="text-wrapper-8">List of orders waiting</div>
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
-            <div className="mt-4 attention-container">
-                <div className="flex flex-row items-center gap-2 frame-18">
-                    <div className="img"><img className="mask-group" src={attentionIcon} /></div>
-                    <div className="text-wrapper-16">ATTENTION</div>
-                </div>
-                <div className="flex flex-row flex-wrap items-center justify-center gap-1 mt-4 frame-17">
-                    <div className="text-wrapper-19">You have</div>
-                    <div className="text-wrapper-20">3 progress</div>
-                    <div className="text-wrapper-19">need confirmation of completion</div>
-                </div>
-            </div>
+
         </div>
     );
 }

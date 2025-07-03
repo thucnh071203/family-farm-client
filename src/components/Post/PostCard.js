@@ -10,6 +10,7 @@ import nam_comment_icon from "../../assets/icons/nam_comment.svg";
 import nam_share_icon from "../../assets/icons/nam_share.svg";
 import { useNavigate } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
+import default_avatar from "../../assets/images/default-avatar.png"
 
 const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCommentCountChange }) => {
   const navigate = useNavigate();
@@ -20,10 +21,10 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
 
   const defaultPost = {
     accId: "",
-    fullName: "Phuong Nam",
-    avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-    createAt: "July 29 2024, 07:49 AM",
-    content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. #blog #nienmoulming #polytecode",
+    fullName: "Unknown User",
+    avatar: default_avatar,
+    createAt: "Unknown",
+    content: null,
     images: null,
     hashtags: null,
     tagFriends: null,

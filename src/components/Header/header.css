@@ -82,6 +82,63 @@ header .search-box .search-box-wrapper .search-input {
     height: 100%;
 }
 
+.search-box {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    /* Điều chỉnh theo thiết kế của bạn */
+}
+
+.search-box-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    background-color: #f1f3f4;
+    /* Màu nền của search box */
+    border-radius: 20px;
+    /* Bo góc */
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+    /* Hiệu ứng mượt mà */
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 16px;
+    padding: 4px 8px;
+    width: 100%;
+}
+
+.search-icon {
+    font-size: 18px;
+    color: #666;
+    transition: transform 0.3s ease;
+    /* Hiệu ứng di chuyển mượt mà */
+}
+
+/* Khi input được focus */
+.search-box-wrapper.focused .search-icon {
+    transform: translateX(10px);
+    /* Di chuyển icon sang phải */
+}
+
+/* Đảm bảo input không bị che khuất */
+.search-box-wrapper.focused .search-input {
+    padding-right: 30px;
+    /* Đảm bảo không gian cho icon */
+}
+
+/* Hover effect cho icon */
+.search-icon:hover {
+    color: #007bff;
+    /* Màu khi hover */
+}
+
 /* action  */
 header .action {
     grid-column: 10/13;
