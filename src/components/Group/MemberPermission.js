@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import adminImg from "../../assets/images/ri_admin-fill.svg";
 import memberImg from "../../assets/images/subway_admin.svg";
 import { toast, Bounce } from "react-toastify";
-const MemberPermission = ({ member, userRole, userAccId, reload }) => {
+const MemberPermission = ({ member, userRole, userAccId, reload, ownerId }) => {
   const [isOpen, setIsOpen] = useState(null);
   const id = 1;
 
@@ -31,9 +31,11 @@ const MemberPermission = ({ member, userRole, userAccId, reload }) => {
 
       reload(); // Gọi lại API để làm mới danh sách
       toast.success("UPDATE ROLE SUCCESSFULLY!", { transition: Bounce });
+      setIsOpen(null);
     } catch (error) {
       console.error(error);
       toast.error("FAILED TO UPDATE ROLE!", { transition: Bounce });
+      setIsOpen(null);
     }
   };
   return (
@@ -57,8 +59,11 @@ const MemberPermission = ({ member, userRole, userAccId, reload }) => {
           <p className="text-xs text-left  text-gray-500">{member.city}</p>
         </div>
       </div>
-      {member.accId !== userAccId && userRole === "680ce8722b3eec497a30201e" && (
-        <div className="relative inline-block text-left">
+      {member.accId !== userAccId &&
+        member.accId !== ownerId &&
+        (userAccId === ownerId || 
+          (userRole === "680ce8722b3eec497a30201e" &&
+            member.roleInGroupId !== "680ce8722b3eec497a30201e")) && (
           <div className="relative inline-block text-left">
             <button
               onClick={() => setIsOpen(isOpen === id ? null : id)}
@@ -79,50 +84,40 @@ const MemberPermission = ({ member, userRole, userAccId, reload }) => {
                 />
               </svg>
             </button>
-       
-              <div>
-                {isOpen === id && (
-                  <div className="absolute right-3 w-30 rounded-md shadow-lg bg-blue z-50">
-                    <div className="py-2 space-y-2">
-                      <div className="flex items-center gap-1 px-1 py-1 rounded bg-green-200 text-green-700 hover:bg-green-100">
-                        <img
-                          src={adminImg}
-                          alt="adminImg"
-                          className="w-5 h-5"
-                        />
-                        <button
-                          onClick={() =>
-                            handleEditRole("680ce8722b3eec497a30201e")
-                          }
-                          className="text-sm text-center flex-1 rounded py-1"
-                        >
-                          Administrator
-                        </button>
-                      </div>
 
-                      <div className="flex items-center gap-1 px-1 py-1 rounded bg-blue-200 text-blue-700 hover:bg-blue-100">
-                        <img
-                          src={memberImg}
-                          alt="memberImg"
-                          className="w-5 h-5"
-                        />
-                        <button
-                          onClick={() =>
-                            handleEditRole("680cebdfac700e1cb4c165b2")
-                          }
-                          className="text-sm text-center flex-1 rounded py-1"
-                        >
-                          Member
-                        </button>
-                      </div>
-                    </div>
+            {isOpen === id && (
+              <div className="absolute w-36 rounded-md shadow-lg z-50 bg-white">
+                <div className="py-2 space-y-2">
+                  <div className="flex items-center gap-1 py-1 rounded text-green-700 hover:bg-green-100 w-full pl-4">
+                    <img src={adminImg} alt="adminImg" className="w-5 h-5" />
+                    <button
+                      onClick={() => {
+                        handleEditRole("680ce8722b3eec497a30201e");
+                        setIsOpen(null); // Đóng menu sau khi chọn
+                      }}
+                      className="text-sm text-center rounded py-1"
+                    >
+                      Administrator
+                    </button>
                   </div>
-                )}
+
+                  <div className="flex items-center gap-1 py-1 rounded text-blue-700 hover:bg-blue-100 pl-4">
+                    <img src={memberImg} alt="memberImg" className="w-5 h-5" />
+                    <button
+                      onClick={() => {
+                        handleEditRole("680cebdfac700e1cb4c165b2");
+                        setIsOpen(null); // Đóng menu sau khi chọn
+                      }}
+                      className="text-sm text-center rounded py-1"
+                    >
+                      Member
+                    </button>
+                  </div>
+                </div>
               </div>
-            
+            )}
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };

@@ -1,12 +1,49 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { jwtDecode } from "jwt-decode";
+import { toast, Bounce } from "react-toastify";
 const YourGroupCard = ({ group, member }) => {
   const navigate = useNavigate();
 
   const handleViewGroup = () => {
     navigate(`/group/${group.groupId}`);
   };
+  const [leaveGroups, setLeaveGroups] = useState([]);
+  const [userAccId, setUserAccId] = useState(null);
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUserAccId(decoded.AccId);
+    }
+  }, []);
+  
+  const handleLeaveGroup = async (groupId) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      
+      const response = await fetch(
+        `https://localhost:7280/api/group-member/leave/${groupId}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("You leaved group successfully!", {
+          transition: Bounce,
+        });
+        setLeaveGroups((prev) => [...prev, groupId]); // ➜ Đánh dấu đã join
+      } else {
+        toast.warning("You may have already out of this group.");
+      }
+    } catch (error) {
+      console.error("leave group failed", error);
+      toast.error("Failed to leave group.");
+    }
+  };
+
   return (
     <div className="group w-60 md:w-[267px] h-72 md:h-[24rem] shadow-md relative rounded-md overflow-hidden">
       <img
@@ -23,25 +60,96 @@ const YourGroupCard = ({ group, member }) => {
             alt="avatar"
           />
         </div>
-        <div className="absolute z-10 md:top-[57%] top-[48%]">
-          <p className="text-xs font-semibold text-[#5596E6] flex justify-end pt-2 pr-3">
-            Members: {member}
-          </p>
-          <p className="font-bold text-sm md:text-base text-[#393A4F] text-left pl-3 pt-3">
-            {group.groupName}
-          </p>
-          <div className="mt-7 flex gap-2 justify-center">
-            <button className="hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-[#E74C3C] rounded-lg">
-              <i class="fa-solid fa-arrow-right-from-bracket px-2"></i>Leave
-            </button>
-            <button
-              onClick={handleViewGroup}
-              className="hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-[#5596E6] rounded-lg"
-            >
-              <i class="fa-solid fa-eye px-2"></i>View Group
-            </button>
+        {leaveGroups.includes(group.groupId) ? (
+          <div>
+            <div className="absolute top-[43%] md:top-[50%] left-4 z-10">
+              <img
+                className="rounded-full w-10 h-10 md:w-[60px] md:h-[60px] object-fill "
+                src={
+                  group.groupAvatar || "https://gameroom.ee/83571/minecraft.jpg"
+                }
+                alt="avatar"
+              />
+            </div>
+            <div className="absolute top-[53%] md:top-[57%] right-1 z-10">
+              <p className="text-xs font-semibold text-[#5596E6] items-end pt-1 pr-3">
+                Members: {member}
+              </p>
+            </div>
+            <div className="absolute z-10 md:top-[58%] top-[48%]">
+              <p className="font-bold text-sm md:text-base text-[#393A4F] text-left pl-5 pt-9">
+                {group.groupName}
+              </p>
+            </div>
+            <div className="mt-7 items-center pt-5 absolute z-10 md:top-[65%] top-[48%] right-14 left-14">
+              <button
+                disabled
+                className="p-2 md:p-3 bg-gray-200 text-gray-500 rounded-lg cursor-not-allowed"
+              >
+                <i className="fa-solid fa-circle-check px-2"></i>Leaved
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>
+            {userAccId === group.ownerId ? (
+              <div>
+                <div className="absolute top-[43%] md:top-[50%] left-4 z-10">
+                  <img
+                    className="rounded-full w-10 h-10 md:w-[60px] md:h-[60px] object-fill "
+                    src={
+                      group.groupAvatar ||
+                      "https://gameroom.ee/83571/minecraft.jpg"
+                    }
+                    alt="avatar"
+                  />
+                </div>
+                <div className="absolute top-[53%] md:top-[57%] right-1 z-10">
+                  <p className="text-xs font-semibold text-[#5596E6] items-end pt-1 pr-3">
+                    Members: {member}
+                  </p>
+                </div>
+                <div className="absolute z-10 md:top-[58%] top-[48%]">
+                  <p className="font-bold text-sm md:text-base text-[#393A4F] text-left pl-5 pt-9">
+                    {group.groupName}
+                  </p>
+                </div>
+                <div className="mt-7 items-center pt-5 absolute z-10 md:top-[65%] top-[48%] right-14 left-14">
+                  <button
+                    onClick={handleViewGroup}
+                    className="hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-[#5596E6] rounded-lg"
+                  >
+                    <i className="fa-solid fa-eye px-2"></i>View Group
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="absolute z-10 md:top-[57%] top-[48%]">
+                <p className="text-xs font-semibold text-[#5596E6] flex justify-end pt-2 pr-3">
+                  Members: {member}
+                </p>
+                <p className="font-bold text-sm md:text-base text-[#393A4F] text-left pl-3 pt-3">
+                  {group.groupName}
+                </p>
+                <div className="mt-7 flex gap-2 justify-center ml-2">
+                  <button
+                    onClick={() => handleLeaveGroup(group.groupId)}
+                    className="hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-[#E74C3C] rounded-lg"
+                  >
+                    <i className="fa-solid fa-arrow-right-from-bracket px-2"></i>
+                    Leave
+                  </button>
+                  <button
+                    onClick={handleViewGroup}
+                    className="hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-[#5596E6] rounded-lg"
+                  >
+                    <i className="fa-solid fa-eye px-2"></i>View Group
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

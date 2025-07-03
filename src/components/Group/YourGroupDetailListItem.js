@@ -9,7 +9,7 @@ const YourGroupDetailListItem = ({ YourGroupList }) => {
       </div>
       <div className="flex flex-col gap-3">
         {YourGroupList.map((group) => (
-          <YourGroupDetailItem key={group.groupId} group={group} />
+          <YourGroupDetailItem key={group.group.groupId} group={group.group} />
         ))}
       </div>
     </div>

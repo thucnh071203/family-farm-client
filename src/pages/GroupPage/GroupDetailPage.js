@@ -34,19 +34,22 @@ const GroupDetailPage = () => {
   //Load trang signalR
   const ReloadSignlR = useCallback(async () => {
     try {
-      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+      const token =
+        localStorage.getItem("accessToken") ||
+        sessionStorage.getItem("accessToken");
       const res = await instance.get(`/api/group/get-by-id/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       const groupDataRaw = res.data?.data ? res.data.data : res.data;
-      const groupData = Array.isArray(groupDataRaw) ? groupDataRaw[0] : groupDataRaw;
+      const groupData = Array.isArray(groupDataRaw)
+        ? groupDataRaw[0]
+        : groupDataRaw;
       setGroupDetail(groupData);
 
       // Nếu muốn load thành viên, gọi API tương tự ở đây (nếu cần)
       // const memberRes = await instance.get(...);
       // setListMemberOfGroup(memberRes.data.data);
-
     } catch (err) {
       console.error("Lỗi reload group:", err);
     }
@@ -72,7 +75,6 @@ const GroupDetailPage = () => {
       connection.off("GroupUpdated", handler);
     };
   }, [connection, groupDetail?.groupId, ReloadSignlR]);
-
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -114,8 +116,8 @@ const GroupDetailPage = () => {
       const data = await res.json();
 
       // Kiểm tra dữ liệu và cập nhật state
-      if (Array.isArray(data)) {
-        setGroupData(data);
+      if (Array.isArray(data.data)) {
+        setGroupData(data.data);
         console.log(data[0]);
       } else {
         console.warn("Unexpected response format:", data);
@@ -257,12 +259,12 @@ const GroupDetailPage = () => {
         (member) => member.accId.trim() === userAccId.trim()
       );
       setUserRole(person?.roleInGroupId);
-      setMemberStatus(person?.memberStatus)
+      setMemberStatus(person?.memberStatus);
       console.log(
         "Role of current user:",
         person?.fullName,
         person?.roleInGroupId,
-        person?.memberStatus,
+        person?.memberStatus
       );
     }
   }, [listMemberOfgroup, userAccId]);
@@ -286,7 +288,7 @@ const GroupDetailPage = () => {
     <div>
       <Header />
       <NavbarHeader />
-      <div className="flex pt-36 ml-[120px] gap-6">
+      <div className="md:flex md:flex-row md:pt-36 md:ml-[120px] gap-6 flex flex-col ml-[40px] pt-20">
         <div className="w-[342px] flex flex-col gap-6">
           <YourGroupDetailListItem YourGroupList={yourGroupsData} />
           <PopularService />
@@ -304,19 +306,18 @@ const GroupDetailPage = () => {
             reloadsignlR={ReloadSignlR}
           />
           {/* {selectedTab === "posts" && <MemberCard />} */}
-          {selectedTab === "members" && (
+          {selectedTab === "members" && groupDetail && (
             <div>
-              {listMemberOfgroup.map((member) => {
-                return (
-                  <MemberCard
-                    key={member.accId}
-                    member={member}
-                    userRole={userRole}
-                    userAccId={userAccId}
-                    reload={ReloadData}
-                  />
-                );
-              })}
+              {listMemberOfgroup.map((member) => (
+                <MemberCard
+                  key={member.accId}
+                  member={member}
+                  userRole={userRole}
+                  userAccId={userAccId}
+                  reload={ReloadData}
+                  ownerId={groupDetail.ownerId} // Không bị lỗi nữa vì groupDetail đã được kiểm tra
+                />
+              ))}
             </div>
           )}
           {selectedTab === "requests" && (
@@ -334,7 +335,7 @@ const GroupDetailPage = () => {
               })}
             </div>
           )}
-          {selectedTab === "permission" && (
+          {selectedTab === "permission" && groupDetail && (
             <div>
               {listMemberOfgroup.map((member) => {
                 return (
@@ -344,6 +345,7 @@ const GroupDetailPage = () => {
                     userRole={userRole}
                     userAccId={userAccId}
                     reload={ReloadData}
+                    ownerId={groupDetail.ownerId}
                   />
                 );
               })}

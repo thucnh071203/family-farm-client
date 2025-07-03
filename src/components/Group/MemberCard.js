@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast, Bounce } from "react-toastify";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-const MemberCard = ({ member, userRole, userAccId, reload }) => {
+const MemberCard = ({ member, userRole, userAccId, reload,ownerId }) => {
   const [farmers, setFarmers] = useState([]);
   const [experts, setExperts] = useState([]);
   const [accRole, setAccRole] = useState(null);
@@ -168,7 +168,7 @@ const MemberCard = ({ member, userRole, userAccId, reload }) => {
           {/* kiểm tra role in group */}
           {userRole && (
             <>
-              {userRole === "680ce8722b3eec497a30201e" && (
+              {userRole === "680ce8722b3eec497a30201e" && member.accId !==ownerId && member.roleInGroupId !== "680ce8722b3eec497a30201e" &&(
                 <button
                   onClick={handleRemove}
                   className="bg-blue-100 text-blue-500 px-4 py-2 text-sm rounded hover:bg-red-200"
