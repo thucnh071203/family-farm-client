@@ -9,7 +9,7 @@ const ProfessionalPage = () => {
     <div className="text-gray-800 bg-white">
       <Header />
       <div className="pt-16 mx-auto progress-management max-w-7xl">
-        <ProcessNav />
+        <ProcessNav inPage="Overview"/>
         <Professional />
       </div>
     </div>
