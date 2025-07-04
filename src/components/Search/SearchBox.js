@@ -13,7 +13,7 @@ const SearchBox = () => {
 
   const fetchSearchHistory = async () => {
     try {
-      const response = await instance.get("/api/search-history/list");
+      const response = await instance.get("/api/search-history/list-no-duplicate");
       if (response.data.success) {
         setSearchHistory(response.data.data || []);
       } else {
@@ -24,13 +24,13 @@ const SearchBox = () => {
     }
   };
 
-  const deleteSearchHistory = async (searchHistoryId) => {
+  const deleteSearchHistory = async (searchKey) => {
     try {
       isDeleting.current = true; // Đánh dấu đang xóa
-      const response = await instance.delete(`/api/search-history/delete/${searchHistoryId}`);
+      const response = await instance.delete(`/api/search-history/delete-by-search-key/${searchKey}`);
       if (response.data === true) {
         // Xóa mục khỏi danh sách lịch sử
-        setSearchHistory((prev) => prev.filter((item) => item.searchHistoryId !== searchHistoryId));
+        setSearchHistory((prev) => prev.filter((item) => item.searchKey !== searchKey));
       } else {
         console.error("Failed to delete search history");
       }
@@ -135,11 +135,11 @@ const SearchBox = () => {
               <button
                 onClick={(e) => {
                   e.stopPropagation(); // Ngăn event bubbling
-                  deleteSearchHistory(history.searchHistoryId);
+                  deleteSearchHistory(history.searchKey);
                 }}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <i class="fa-solid fa-xmark"></i>
+                <i className="fa-solid fa-xmark"></i>
               </button>
             </div>
           ))}
