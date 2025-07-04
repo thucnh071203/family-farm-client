@@ -15,6 +15,7 @@ const SearchPost = () => {
   const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState(keyword || "");
   const popupRef = useRef(null);
+  const lastFetchedKeyword = useRef(""); // Thêm ref để theo dõi từ khóa đã gọi
 
   const fetchCategories = async () => {
     try {
@@ -37,12 +38,11 @@ const SearchPost = () => {
 
   const fetchPosts = async (keywordToSearch = searchKeyword) => {
     const trimmedKeyword = keywordToSearch?.trim();
-    if (!trimmedKeyword) {
-      setPosts([]);
-      setError("Please provide a search keyword");
+    if (!trimmedKeyword || trimmedKeyword === lastFetchedKeyword.current) {
       setLoading(false);
       return;
     }
+    lastFetchedKeyword.current = trimmedKeyword;
 
     try {
       setLoading(true);
@@ -82,29 +82,16 @@ const SearchPost = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
-
-  useEffect(() => {
     if (keyword && keyword !== searchKeyword) {
-      setSearchKeyword(keyword);
-      fetchPosts(keyword);
+      setSearchKeyword(keyword); // Đồng bộ searchKeyword với keyword
     }
   }, [keyword]);
 
   useEffect(() => {
     if (searchKeyword) {
-      fetchPosts();
+      fetchPosts(searchKeyword);
     }
-  }, [selectedCategories, isAndLogic]);
-
-  useEffect(() => {
-    if (searchKeyword) {
-      fetchPosts();
-    } else if (keyword) {
-      setSearchKeyword(keyword);
-      fetchPosts(keyword);
-    }
-  }, []);
+  }, [searchKeyword, selectedCategories, isAndLogic]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
