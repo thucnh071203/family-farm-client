@@ -77,68 +77,64 @@ const AccountDetail = ({ account, listPost, listService }) => {
       {activeTab === "basic" && (
         <div className="w-[80%] mt-7 bg-white">
           <div className="flex text-left items-center">
-            <div
-              className="pt-4 pb-4"
-              style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
-            >
+            <div className="pt-4 pb-4">
               <p className="w-[180px] pl-4">Full Name</p>
             </div>
 
-            <p className="pl-4 ">{account.fullName}</p>
+            <p
+              className="pl-4 p-3  text-black w-full rounded-sm"
+              style={{ border: "0.5px solid #d1d5db" }}
+            >
+              {account.fullName}
+            </p>
           </div>
           <div className="flex text-left items-center">
-            <div
-              className="pt-4 pb-4"
-              style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
-            >
+            <div className="pt-4 pb-4">
               <p className="w-[180px] pl-4">Username</p>
             </div>
-            <p className="text-left pl-4">{account.username}</p>
+            <p
+               className="pl-4 p-3  text-black w-full rounded-sm"
+               style={{ border: "0.5px solid #d1d5db" }}
+            >
+              {account.username}
+            </p>
           </div>
           <div className="flex text-left items-center">
-            <div
-              className="pt-4 pb-4"
-              style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
-            >
+            <div className="pt-4 pb-4">
               <p className="w-[180px] pl-4">Address</p>
             </div>
-            <p className="text-left pl-4 ">{account.address}</p>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm"
+              style={{ border: "0.5px solid #d1d5db" }}>{account.address}</p>
           </div>
           <div className="flex text-left items-center">
-            <div
-              className="pt-4 pb-4"
-              style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
-            >
+            <div className="pt-4 pb-4">
               <p className="w-[180px] pl-4">Phone</p>
             </div>
-            <p className="text-left pl-4 ">{account.phoneNumber}</p>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm"
+              style={{ border: "0.5px solid #d1d5db" }}>{account.phoneNumber}</p>
           </div>
           <div className="flex text-left items-center">
-            <div
-              className="pt-4 pb-4"
-              style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
-            >
+            <div className="pt-4 pb-4">
               <p className="w-[180px] pl-4">Email</p>
             </div>
-            <p className="text-left pl-4 ">{account.email}</p>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm"
+              style={{ border: "0.5px solid #d1d5db" }}>{account.email}</p>
           </div>
           <div className="flex text-left items-center">
-            <div
-              className="pt-4 pb-4"
-              style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
-            >
+            <div className="pt-4 pb-4">
               <p className="w-[180px] pl-4">Gender</p>
             </div>
-            <p className="text-left pl-4 ">{account.gender}</p>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm"
+              style={{ border: "0.5px solid #d1d5db" }}>{account.gender}</p>
           </div>
           <div className="flex text-left items-center">
-            <div
-              className="pt-4 pb-4"
-              style={{ borderRight: "1px solid rgba(128, 128, 128, 0.5)" }}
-            >
+            <div className="pt-4 pb-4">
               <p className="w-[180px] pl-4">Birthday</p>
             </div>
-            <p className="text-left pl-4 ">{new Date(account.birthday).toLocaleDateString("vi-VN")}</p>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm"
+              style={{ border: "0.5px solid #d1d5db" }}>
+              {new Date(account.birthday).toLocaleDateString("vi-VN")}
+            </p>
           </div>
         </div>
       )}

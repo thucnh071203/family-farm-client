@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, Bounce } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 
-const FriendActionButton = ({ status, roleId, accId, onLoadList }) => {
+const UnfriendButton = ({ status, roleId, accId, onLoadList }) => {
   const [roleIdOfUser, setRoleId] = useState(null);
-  const [isCompleted, setIsCompleted] = useState(false);
-
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
       const decoded = jwtDecode(token);
-      setRoleId(decoded.RoleId);
+      console.log(decoded);
+
+      // Lấy RoleId
+      const roleIdFromToken = decoded.RoleId;
+      console.log("RoleId:", roleIdFromToken);
+
+      // Cập nhật state roleId
+      setRoleId(roleIdFromToken);
+
+      // Hoặc lấy role string
+      const roleString =
+        decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      console.log("Role string:", roleString);
+    } else {
+      console.log("No token found");
     }
   }, []);
 
@@ -26,36 +38,13 @@ const FriendActionButton = ({ status, roleId, accId, onLoadList }) => {
         }
       );
       if (response.status === 200) {
+        // Gọi callback để reload danh sách
         if (onLoadList) onLoadList();
-        setIsCompleted(true);
         toast.success("You sent the request successfully!");
       }
     } catch (error) {
       console.error("Add friend failed", error);
       toast.error("Failed to send request.");
-    }
-  };
-
-  const handleUnfriend = async () => {
-    const token = localStorage.getItem("accessToken");
-    try {
-      const response = await axios.delete(
-        `https://localhost:7280/api/friend/unfriend/${accId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (response.status === 200 && response.data === true) {
-        if (onLoadList) onLoadList();
-        setIsCompleted(true);
-        toast.success("Action completed successfully!");
-      } else {
-        toast.error("Failed to process the action.");
-      }
-    } catch (error) {
-      console.error("Error during unfriend:", error);
-      toast.error("An error occurred while processing the action.");
     }
   };
 
@@ -84,7 +73,7 @@ const FriendActionButton = ({ status, roleId, accId, onLoadList }) => {
       bgColor: "bg-red-600",
       hoverColor: "hover:bg-red-700",
     },
-    Following: {
+    following: {
       text: "Unfollow",
       icon: "fa-user-minus",
       bgColor: "bg-red-600",
@@ -96,40 +85,32 @@ const FriendActionButton = ({ status, roleId, accId, onLoadList }) => {
       bgColor: "bg-[#3DB3FB]",
       hoverColor: "hover:bg-blue-700",
     },
-    completed: {
-      text: "Completed",
-      icon: "fa-check",
-      bgColor: "bg-gray-400",
-      hoverColor: "",
-    },
   };
 
-  // Chọn config phù hợp
+  // Select config based on status and roleId
+  // const config =
+  //   status === null && roleId === "expert"
+  //     ? buttonConfig.expert
+  //     : buttonConfig[status] || buttonConfig.null;
+
   let config;
 
-  if (isCompleted) {
-    config = buttonConfig.completed;
-  } else if (status === null) {
-    config = roleId === roleIdOfUser ? buttonConfig.null : buttonConfig.expert;
+  if (status === null) {
+    if (roleId === roleIdOfUser) {
+      // Cùng role → Add friend
+      config = buttonConfig.null;
+    } else {
+      // Khác role → Follow
+      config = buttonConfig.expert;
+    }
   } else {
     config = buttonConfig[status] || buttonConfig.null;
   }
 
   return (
     <button
-      onClick={
-        isCompleted
-          ? undefined
-          : status === "Friend" || status === "Following"
-          ? handleUnfriend
-          : handleAddFriend
-      }
-      disabled={isCompleted}
-      className={`p-1 ${config.bgColor} ${
-        config.hoverColor
-      } text-white text-sm font-bold rounded-md w-28 transition ${
-        isCompleted ? "cursor-not-allowed" : ""
-      }`}
+      onClick={handleAddFriend}
+      className={`p-1 ${config.bgColor} ${config.hoverColor} text-white text-sm font-bold rounded-md w-28 transition`}
     >
       <i className={`fa-solid ${config.icon} mr-2`}></i>
       {config.text}
@@ -137,4 +118,4 @@ const FriendActionButton = ({ status, roleId, accId, onLoadList }) => {
   );
 };
 
-export default FriendActionButton;
+export default UnfriendButton;

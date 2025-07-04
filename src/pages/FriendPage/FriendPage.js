@@ -6,7 +6,7 @@ import NavbarHeader from "../../components/Header/NavbarHeader";
 import { jwtDecode } from "jwt-decode";
 
 const FriendPage = () => {
-  const [section, setSection] = useState("list-friend");
+
   const [roleId, setRoleId] = useState(null);
 
   useEffect(() => {
@@ -38,8 +38,8 @@ const FriendPage = () => {
       <Header />
       <NavbarHeader />
       <div className="flex ">
-        <FriendSidebar setSection={setSection} roleId={roleId} />
-        <FriendRight section={section} />
+        <FriendSidebar  roleId={roleId} />
+        <FriendRight />
       </div>
     </div>
   );

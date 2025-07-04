@@ -29,7 +29,7 @@ const PersonalPage = () => {
     const storeData = localStorage.getItem("profileData") || sessionStorage.getItem("profileData");
     const myProfile = storeData ? JSON.parse(storeData) : null;
     const isOwner = !accId || accId === myProfile?.accId;
-
+    const [listFriends, setListFriends] = useState([]);
     useEffect(() => {
         const fetchProfile = async () => {
             try {
@@ -141,6 +141,34 @@ const PersonalPage = () => {
         setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
     }
 
+    const fetchSuggestedFriends = async () => {
+        try {
+        const token = localStorage.getItem("accessToken");
+        const response = await fetch(
+            `https://localhost:7280/api/friend/list-friend`,
+            {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            }
+        );
+        const json = await response.json();
+        if (json.count !== 0) {
+            setListFriends(json.data);
+        } else {
+            setListFriends([]);
+        }
+        } catch (error) {
+        console.error(error);
+        }
+    };
+
+  useEffect(() => {
+    fetchSuggestedFriends();
+  }, []);
+
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
@@ -161,7 +189,8 @@ const PersonalPage = () => {
                     <div className="flex flex-col gap-5 pt-20 lg:flex-row">
                         <aside className="flex flex-col w-full gap-5 lg:w-1/3">
                             <BasicInfo info={basicInfo} />
-                            <FriendList />
+                            <FriendList friends={listFriends}
+                                onLoadList={fetchSuggestedFriends}/>
                             <PhotoGallery />
                         </aside>
                         <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">

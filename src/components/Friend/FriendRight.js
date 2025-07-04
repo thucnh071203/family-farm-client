@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import FriendCard from "./FriendCard";
 import YourFriendCard from "./YourFriendCard";
-
-const FriendRight = ({ section }) => {
+import { HubConnectionBuilder } from "@microsoft/signalr";
+const FriendRight = () => {
   const [friendsData, setFriendsData] = useState([]);
   const [count, setCountFriend] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -12,7 +12,7 @@ const FriendRight = ({ section }) => {
       setIsLoading(true);
       const token = localStorage.getItem("accessToken");
 
-      const res = await fetch(`https://localhost:7280/api/friend/${section}`, {
+      const res = await fetch(`https://localhost:7280/api/friend/list-friend`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -37,8 +37,30 @@ const FriendRight = ({ section }) => {
 
   useEffect(() => {
     fetchFriends(); // chỉ gọi khi component load hoặc section thay đổi
-  }, [section]);
+  }, []);
 
+  useEffect(() => {
+    const connection = new HubConnectionBuilder()
+      .withUrl("https://localhost:7280/friendHub")
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("✅ SignalR connected");
+
+        connection.on("FriendUpdate", () => {
+          console.log("✅ FriendUpdate event received"); // <== KHÔNG in được dòng này là do .on(...) chưa đăng ký
+          fetchFriends();
+        });
+      })
+      .catch((err) => console.error("SignalR connection error:", err));
+
+    return () => {
+      connection.stop();
+    };
+  }, []);
 
   const sectionTitles = {
     "requests-sent": "Sent Request list",
@@ -64,7 +86,7 @@ const FriendRight = ({ section }) => {
     <div className="w-full lg:mt-[120px] mt-[63px]">
       <div>
         <p className="font-bold text-lg flex items-start mt-8 mx-10 md:mx-20">
-          {sectionTitles[section] || "Default title"}
+          Your friends
         </p>
         {friendsData && friendsData.length > 0 && (
           <div>
@@ -81,10 +103,7 @@ const FriendRight = ({ section }) => {
               </div>
               <div className="flex gap-1">
                 <p className="font-bold ">{friendsData.length}</p>
-                <p className="text-[#999999] font-bold">
-                  {" "}
-                  {countListTitles[section] || "Default title"}
-                </p>
+                <p className="text-[#999999] font-bold"> FRIENDS</p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-y-6 gap-x-6 place-items-center md:mx-20 md:w-[954px]">
@@ -97,19 +116,7 @@ const FriendRight = ({ section }) => {
                 <p>Loading...</p>
               ) : (
                 friendsData.map((friend) => {
-                  if (section === "requests-receive") {
-                    return (
-                      <FriendCard
-                        key={friend.accId}
-                        friend={friend}
-                        onActionComplete={fetchFriends}
-                      />
-                    );
-                  } else {
-                    return (
-                      <YourFriendCard key={friend.accId} friend={friend} onActionComplete={fetchFriends}/>
-                    );
-                  }
+                  return <YourFriendCard key={friend.accId} friend={friend} />;
                 })
               )}
             </div>
