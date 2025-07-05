@@ -6,6 +6,7 @@ const FriendRight = () => {
   const [friendsData, setFriendsData] = useState([]);
   const [count, setCountFriend] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const fetchFriends = async () => {
     try {
@@ -62,25 +63,9 @@ const FriendRight = () => {
     };
   }, []);
 
-  const sectionTitles = {
-    "requests-sent": "Sent Request list",
-    "requests-receive": "Request list",
-    "list-follower": "Follower list",
-    "list-following": "Following list",
-    "list-friend": "Your friends",
-    "suggestion-friend": "Friend suggestion",
-    // ... các section khác
-  };
-
-  const countListTitles = {
-    "requests-sent": "REQUESTS",
-    "requests-receive": "SENT REQUESTS",
-    "list-follower": "FOLLOWER",
-    "list-following": "FOLLOWING",
-    "list-friend": "FRIENDS",
-    "suggestion-friend": "FRIENDS SUGGESTON",
-    // ... các section khác
-  };
+  const filteredFriends = (friendsData || []).filter((friend) =>
+    friend.username.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
 
   return (
     <div className="w-full lg:mt-[120px] mt-[63px]">
@@ -88,16 +73,18 @@ const FriendRight = () => {
         <p className="font-bold text-lg flex items-start mt-8 mx-10 md:mx-20">
           Your friends
         </p>
-        {friendsData && friendsData.length > 0 && (
+        {friendsData && friendsData.length > 0 ? (
           <div>
             <div className="flex gap-6 items-center mt-6 mb-10 mx-10 md:mx-20">
               <div className="flex justify-center items-center">
-                <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1]border-solid outline outline-[0.5px] outline-gray-200">
+                <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1] border-solid outline outline-[0.5px] outline-gray-200">
                   <i className="fa-solid fa-magnifying-glass flex h-full justify-center items-center shrink-0 px-2 text-[#999999]"></i>
                   <input
                     type="text"
                     placeholder="Search"
                     className="flex-1 outline-none border-none h-full"
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
                   />
                 </div>
               </div>
@@ -114,13 +101,17 @@ const FriendRight = () => {
         > */}
               {isLoading ? (
                 <p>Loading...</p>
+              ) : filteredFriends.length > 0 ? (
+                filteredFriends.map((friend) => (
+                  <YourFriendCard key={friend.accId} friend={friend} />
+                ))
               ) : (
-                friendsData.map((friend) => {
-                  return <YourFriendCard key={friend.accId} friend={friend} />;
-                })
+                <p className="text-gray-500">No data found.</p>
               )}
             </div>
           </div>
+        ) : (
+          <div>No data to display....</div>
         )}
       </div>
     </div>

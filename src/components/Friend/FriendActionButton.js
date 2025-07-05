@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 
-const FriendActionButton = ({ status, roleId, accId, onLoadList }) => {
+const FriendActionButton = ({ status, roleId, accId }) => {
   const [roleIdOfUser, setRoleId] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -26,7 +26,6 @@ const FriendActionButton = ({ status, roleId, accId, onLoadList }) => {
         }
       );
       if (response.status === 200) {
-        if (onLoadList) onLoadList();
         setIsCompleted(true);
         toast.success("You sent the request successfully!");
       }
@@ -47,7 +46,6 @@ const FriendActionButton = ({ status, roleId, accId, onLoadList }) => {
       );
 
       if (response.status === 200 && response.data === true) {
-        if (onLoadList) onLoadList();
         setIsCompleted(true);
         toast.success("Action completed successfully!");
       } else {

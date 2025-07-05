@@ -12,10 +12,10 @@ const SuggestedFriends = ({ friends, onLoadList }) => {
   ];
   const friendList = friends || defaultFriends;
 
-  
   const defaultFriend = {
     name: "Mai Xuan",
-    avatar: "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png",
+    avatar:
+      "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png",
     status: null,
   };
 
@@ -24,14 +24,18 @@ const SuggestedFriends = ({ friends, onLoadList }) => {
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold mb-3">Suggested Friends</h2>
       </div>
+
       <div className="flex flex-col gap-3">
-        {friendList.map((friend) => (
-          <FriendItem 
-            key={friend.accId} 
-            friend={{ ...defaultFriend, ...friend }} 
-            onLoadList={onLoadList}
-          />
-        ))}
+        {friendList.length > 0 ? (
+          friendList.map((friend) => (
+            <FriendItem
+              key={friend.accId}
+              friend={{ ...defaultFriend, ...friend }}
+            />
+          ))
+        ) : (
+          <p className="text-gray-400 text-sm">No data to display...</p>
+        )}
       </div>
     </div>
   );

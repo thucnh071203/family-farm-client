@@ -59,7 +59,9 @@ const CateServiceDetail = () => {
           <Link to="/CateService">/Category service</Link>
         </span>
       </div>
-
+      <h1 className="text-2xl font-bold text-blue-400 mb-6 text-left">
+        CATEGORY SERVICE
+      </h1>
       <div className="bg-white rounded-xl shadow p-6 max-w">
         <h2 className="text-red-600 font-semibold mb-8 text-left">
           Detail Category Service

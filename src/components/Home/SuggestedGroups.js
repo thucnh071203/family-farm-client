@@ -50,45 +50,52 @@ const SuggestedGroups = ({ groups }) => {
     <div className="bg-white p-5 rounded-lg border shadow-md">
       <h2 className="text-lg font-bold mb-3 text-left">Suggested Groups</h2>
       <div className="flex flex-col gap-3">
-        {groups.map((group, index) => (
-          <div
-            key={index}
-            className="relative rounded-lg border border-solid border-gray-200"
-          >
+        {groups.length > 0 ? (
+          groups.map((group, index) => (
             <div
-              className="w-full h-24 rounded-md bg-no-repeat bg-center bg-cover"
-              style={{ backgroundImage: `url(${group.group.groupBackground})` }}
-            ></div>
-            <p className="absolute text-sm text-gray-500 right-0 top-16 p-1 px-3 text-white font-bold bg-blue-400 rounded-l-full">
-              Members: {group.numberInGroup}
-            </p>
-            <div className="absolute top-16 flex items-end gap-3 m-4">
-              <img
-                src={group.group.groupAvatar}
-                alt={`${group.group.groupName} avatar`}
-                className="w-10 h-10 rounded-full"
-              />
-              <p className="font-bold">{group.group.groupName}</p>
-            </div>
+              key={index}
+              className="relative rounded-lg border border-solid border-gray-200"
+            >
+              <div
+                className="w-full h-24 rounded-md bg-no-repeat bg-center bg-cover"
+                style={{
+                  backgroundImage: `url(${group.group.groupBackground})`,
+                }}
+              ></div>
+              <p className="absolute text-sm text-gray-500 right-0 top-16 p-1 px-3 text-white font-bold bg-blue-400 rounded-l-full">
+                Members: {group.numberInGroup}
+              </p>
+              <div className="absolute top-16 flex items-end gap-3 m-4">
+                <img
+                  src={group.group.groupAvatar}
+                  alt={`${group.group.groupName} avatar`}
+                  className="w-10 h-10 rounded-full"
+                />
+                <p className="font-bold">{group.group.groupName}</p>
+              </div>
 
-            {/*Nút join hoặc đã gửi yêu cầu */}
-            {joinedGroups.includes(group.group.groupId) ? (
-              <button
-                disabled
-                className="w-40 m-4 mt-10 p-2 text-sm font-bold text-gray-400 border border-solid border-gray-200 rounded-full bg-gray-100 cursor-not-allowed"
-              >
-                Requested
-              </button>
-            ) : (
-              <button
-                onClick={() => handleJoinGroup(group.group.groupId)}
-                className="w-40 m-4 mt-10 p-2 text-sm font-bold text-blue-400 border border-solid border-blue-200 rounded-full hover:bg-blue-200 transition"
-              >
-                Join Group
-              </button>
-            )}
-          </div>
-        ))}
+              {joinedGroups.includes(group.group.groupId) ? (
+                <button
+                  disabled
+                  className="w-40 m-4 mt-10 p-2 text-sm font-bold text-gray-400 border border-solid border-gray-200 rounded-full bg-gray-100 cursor-not-allowed"
+                >
+                  Requested
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleJoinGroup(group.group.groupId)}
+                  className="w-40 m-4 mt-10 p-2 text-sm font-bold text-blue-400 border border-solid border-blue-200 rounded-full hover:bg-blue-200 transition"
+                >
+                  Join Group
+                </button>
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-400 text-sm text-center mt-2">
+            No groups to display.
+          </p>
+        )}
       </div>
     </div>
   );

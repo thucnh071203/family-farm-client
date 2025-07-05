@@ -282,7 +282,7 @@ const HomePage = () => {
           <section className="flex flex-col gap-5 lg:order-3 order-2">
             <SuggestedFriends
               friends={suggestedFriends}
-              onLoadList={fetchSuggestedFriends}
+              
             />
 
             <SuggestedGroups groups={groupSuggestData} />

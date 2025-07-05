@@ -13,6 +13,7 @@ const SuggestionFriendPage = () => {
   const [friendsData, setFriendsData] = useState([]);
   const [count, setCountFriend] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchKeyword, setSearchKeyword] = useState("");
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -92,7 +93,9 @@ const SuggestionFriendPage = () => {
       connection.stop();
     };
   }, []);
-
+  const filteredFriends = (friendsData || []).filter((friend) =>
+    friend.username.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
   return (
     <div>
       <Header />
@@ -102,9 +105,9 @@ const SuggestionFriendPage = () => {
         <div className="w-full lg:mt-[120px] mt-[63px]">
           <div>
             <p className="font-bold text-lg flex items-start mt-8 mx-10 md:mx-20">
-              Sent Request list
+              Friend suggestion
             </p>
-            {friendsData && friendsData.length > 0 && (
+            {friendsData && friendsData.length > 0 ? (
               <div>
                 <div className="flex gap-6 items-center mt-6 mb-10 mx-10 md:mx-20">
                   <div className="flex justify-center items-center">
@@ -114,12 +117,16 @@ const SuggestionFriendPage = () => {
                         type="text"
                         placeholder="Search"
                         className="flex-1 outline-none border-none h-full"
+                        value={searchKeyword}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
                       />
                     </div>
                   </div>
                   <div className="flex gap-1">
                     <p className="font-bold ">{friendsData.length}</p>
-                    <p className="text-[#999999] font-bold"> REQUESTS</p>
+                    <p className="text-[#999999] font-bold">
+                      FRIENDS SUGGESTION
+                    </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-y-6 gap-x-6 place-items-center md:mx-20 md:w-[954px]">
@@ -130,16 +137,17 @@ const SuggestionFriendPage = () => {
         > */}
                   {isLoading ? (
                     <p>Loading...</p>
+                  ) : filteredFriends.length > 0 ? (
+                    filteredFriends.map((friend) => (
+                      <YourFriendCard key={friend.accId} friend={friend} />
+                    ))
                   ) : (
-                    friendsData.map((friend) => {
-                      return (
-                        <YourFriendCard key={friend.accId} friend={friend}
-                        />
-                      );
-                    })
+                    <p className="text-gray-500">No data found.</p>
                   )}
                 </div>
               </div>
+            ) : (
+              <div>No data to display....</div>
             )}
           </div>
         </div>
