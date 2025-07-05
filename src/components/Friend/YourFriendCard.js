@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast, Bounce } from "react-toastify";
-
+import { useNavigate } from "react-router-dom";
 const YourFriendCard = ({ friend, isListFollower }) => {
+  const navigate = useNavigate();
   const [status, setStatus] = useState(friend.friendStatus);
+  const handleClickToProfile = (accId) => {
+    navigate(`/PersonalPage/${accId}`);
+  };
   const buttonConfig = {
     null: {
       text: "Add friend",
@@ -103,12 +107,14 @@ const YourFriendCard = ({ friend, isListFollower }) => {
       <div className="items-center flex flex-col gap-1">
         <div className="rounded-[50px]">
           <img
+            onClick={() => handleClickToProfile(friend.accId)}
             className="rounded-full w-[60px] h-[60px] object-fill"
             src={
               friend.avatar ||
               "https://i.pinimg.com/originals/d0/28/68/d0286806706a508645e8763c6b3f8cea.jpg"
             }
             alt="avatar"
+            style={{ cursor: "pointer" }}
           />
         </div>
         <div className="flex items-center flex-col gap-1">

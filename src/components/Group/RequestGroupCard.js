@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { toast, Bounce } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const RequestGroupCard = ({
   request,
   userRole,
   reload,
   setListRequestToJoin,
 }) => {
+  const navigate = useNavigate();
+  const handleClickToProfile = (accId) => {
+    navigate(`/PersonalPage/${accId}`)
+  }
   const handleRespond = async (status) => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -45,7 +50,7 @@ const RequestGroupCard = ({
   return (
     <div className="bg-gray-50 p-3 rounded flex justify-between items-center mb-3">
       <div className="flex items-center gap-3">
-        <img
+        <img  onClick={() => handleClickToProfile(request.accId)} style={{ cursor: "pointer" }}
           src={
             request.accountAvatar ||
             "https://th.bing.com/th/id/OIP.EKontM__37mRqxwRkIqX8wHaEK?rs=1&pid=ImgDetMain"

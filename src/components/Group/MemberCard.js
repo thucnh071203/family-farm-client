@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import { toast, Bounce } from "react-toastify";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 const MemberCard = ({ member, userRole, userAccId, reload,ownerId }) => {
   const [farmers, setFarmers] = useState([]);
   const [experts, setExperts] = useState([]);
   const [accRole, setAccRole] = useState(null);
   const [friendRequestSent, setFriendRequestSent] = useState(false);
-
+  const navigate = useNavigate();
+  const handleClickToProfile = (accId) => {
+    navigate(`/PersonalPage/${accId}`)
+  }
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -113,13 +117,14 @@ const MemberCard = ({ member, userRole, userAccId, reload,ownerId }) => {
   return (
     <div className="bg-gray-50 p-3 rounded flex justify-between items-center mb-3">
       <div className="flex items-center gap-3">
-        <img
+        <img  onClick={() => handleClickToProfile(member.accId)}
           src={
             member.avatar ||
             "https://th.bing.com/th/id/OIP.EKontM__37mRqxwRkIqX8wHaEK?rs=1&pid=ImgDetMain"
           }
           className="w-10 h-10 rounded-full"
           alt="avatar"
+          style={{ cursor: "pointer" }}
         />
         <div>
           <p className="font-bold text-left">{member.fullName}</p>

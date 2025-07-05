@@ -11,6 +11,7 @@ const FriendRequestPage = () => {
   const [friendsData, setFriendsData] = useState([]);
   const [count, setCountFriend] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchKeyword, setSearchKeyword] = useState("");
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -90,7 +91,9 @@ const FriendRequestPage = () => {
       connection.stop();
     };
   }, []);
-
+  const filteredFriends = (friendsData || []).filter((friend) =>
+    friend.username.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
   return (
     <div>
       <Header />
@@ -100,9 +103,9 @@ const FriendRequestPage = () => {
         <div className="w-full lg:mt-[120px] mt-[63px]">
           <div>
             <p className="font-bold text-lg flex items-start mt-8 mx-10 md:mx-20">
-              Sent Request list
+              Request list
             </p>
-            {friendsData && friendsData.length > 0 && (
+            {friendsData && friendsData.length > 0 ? (
               <div>
                 <div className="flex gap-6 items-center mt-6 mb-10 mx-10 md:mx-20">
                   <div className="flex justify-center items-center">
@@ -112,6 +115,8 @@ const FriendRequestPage = () => {
                         type="text"
                         placeholder="Search"
                         className="flex-1 outline-none border-none h-full"
+                        value={searchKeyword}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
                       />
                     </div>
                   </div>
@@ -121,22 +126,19 @@ const FriendRequestPage = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-y-6 gap-x-6 place-items-center md:mx-20 md:w-[954px]">
-                 
                   {isLoading ? (
                     <p>Loading...</p>
+                  ) : filteredFriends.length > 0 ? (
+                    filteredFriends.map((friend) => (
+                      <FriendCard key={friend.accId} friend={friend} />
+                    ))
                   ) : (
-                    friendsData.map((friend) => {
-                      return (
-                        <FriendCard
-                          key={friend.accId}
-                          friend={friend}
-                          // onActionComplete={fetchFriends}
-                        />
-                      );
-                    })
+                    <p className="text-gray-500">No data found.</p>
                   )}
                 </div>
               </div>
+            ) : (
+              <div>No data to display....</div>
             )}
           </div>
         </div>
