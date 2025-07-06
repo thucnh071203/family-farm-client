@@ -90,6 +90,10 @@ import SentRequestFriendPage from "./pages/FriendPage/SentRequestFriendPage";
 import YourFollowingPage from "./pages/FriendPage/YourFollowingPage";
 import YourFollowerPage from "./pages/FriendPage/YourFollowerPage";
 import SearchPage from "./pages/SearchPage/SearchPage";
+import CallbackPage from "./pages/CallbackPage/PaymentCallback";
+import PaymentResultPage from "./pages/CallbackPage/PaymentResult";
+import PaymentSuccess from "./pages/PaymentPage/PaymentSuccessfulPage";
+import PaymentFailed from "./pages/PaymentPage/PaymentFailedPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -253,6 +257,10 @@ const AppContent = () => {
             <Route path="/CreatePostCate" element={<CreatePostCate />} />
             <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} />
             <Route path="/DetailPostCate/:id" element={<DetailPostCate />} />
+            <Route path="/payment-callback" element={<CallbackPage />} />
+            <Route path="/PaymentResult" element={<PaymentResultPage />} />
+            <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
+            <Route path="/PaymentFailed" element={<PaymentFailed />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
