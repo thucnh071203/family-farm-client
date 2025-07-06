@@ -27,7 +27,7 @@ const ListRequestBookingFarmer = () => {
 
     useEffect(() => {
         if (!accessToken) return;
-        
+
         const fetchListBooking = async () => {
             try {
                 const response = await instance.get("/api/booking-service/farmer-all-booking",
@@ -54,14 +54,14 @@ const ListRequestBookingFarmer = () => {
             toast.error("Token is missing, cannot cancel");
             return;
         }
-        
+
         try {
             const response = await instance.put(`/api/booking-service/cancel-booking/${bookingId}`,
-                {},{
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                })
+                {}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
 
             if (response.status === 200) {
                 toast.success("Cancel booking service successfully")
@@ -73,67 +73,28 @@ const ListRequestBookingFarmer = () => {
         }
     }
 
-    const fetchListBooking = async () => {
-        try {
-            const response = await instance.get("/api/booking-service/farmer-all-booking", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
-            });
-            if (response.status === 200) {
-            setListBooking(response.data.data);
-            }
-        } catch (error) {
-            console.error("Cannot reload booking list", error);
-        }
-    };
-
-
     useEffect(() => {
         if (!hubConnection) return;
-
-        // const handleBookingCancelled = (bookingId, status) => {
-        //     console.log(`Booking ${bookingId} changed status to ${status}`);
-
-        //     // Xử lý: cập nhật UI hoặc gọi lại API để lấy list mới
-        //     setListBooking(prev => prev.map(b => 
-        //         b.bookingServiceId === bookingId 
-        //             ? { ...b, bookingServiceStatus: status }
-        //             : b
-        //     ));
-
-        //     toast.info(`Booking ${bookingId} was ${status}`);
-        // };
-
         const handleBookingCancelled = (bookingId, status) => {
-            console.log(`📩 Booking ${bookingId} changed status to ${status}`);
 
             setListBooking(
-            prevList => {
-                console.log("📋 prevList trước khi cập nhật:", prevList);
-
-                // const updatedList = prevList.map(b =>
-                //     b.bookingServiceId === bookingId
-                //         ? { ...b, bookingServiceStatus: status }
-                //         : b
-                // );
-
-                const updatedList = prevList.map(b =>
-                    b.booking?.bookingServiceId === bookingId
-                        ? {
-                            ...b,
-                            booking: {
-                                ...b.booking,
-                                bookingServiceStatus: status
+                prevList => {
+                    const updatedList = prevList.map(b =>
+                        b.booking?.bookingServiceId === bookingId
+                            ? {
+                                ...b,
+                                booking: {
+                                    ...b.booking,
+                                    bookingServiceStatus: status
+                                }
                             }
-                        }
-                        : b
-                );
+                            : b
+                    );
 
-                console.log("📋 updatedList sau khi cập nhật:", updatedList);
+                    console.log("📋 updatedList sau khi cập nhật:", updatedList);
 
-                return updatedList;
-            });
+                    return updatedList;
+                });
 
             // toast.info(`Booking ${bookingId} was ${status}`);
         };
@@ -141,39 +102,10 @@ const ListRequestBookingFarmer = () => {
         hubConnection.on("ReceiveBookingStatusChanged", handleBookingCancelled);
         console.log("✅ Registered SignalR handler for ReceiveBookingStatusChanged");
 
-        // fetchListBooking();
-
         return () => {
             hubConnection.off("ReceiveBookingStatusChanged", handleBookingCancelled);
         };
     }, [hubConnection]);
-
-
-    // GỌI SIGNAL R ĐỂ CẬP NHẬT DỮ LIỆU KO RELOAD 
-    // useEffect(() => {
-    //     if (connection) {
-    //         connection.on("ReceiveBookingStatusChanged", (bookingId, newStatus) => {
-    //             console.log("📩 Booking status updated via SignalR:", bookingId, newStatus);
-    //             setListBooking(prev =>
-    //                 prev.map(booking =>
-    //                     booking.booking.bookingServiceId === bookingId
-    //                         ? {
-    //                             ...booking,
-    //                             booking: {
-    //                                 ...booking.booking,
-    //                                 bookingServiceStatus: newStatus
-    //                             }
-    //                         }
-    //                         : booking
-    //                 )
-    //             );
-    //         });
-
-    //         return () => {
-    //             connection.off("ReceiveBookingStatusChanged");
-    //         };
-    //     }
-    // }, [connection]);
 
     return (
         <div className="ListRequestBookingFarmer">
@@ -250,7 +182,7 @@ const ListRequestBookingFarmer = () => {
                                                 </div>
                                             )}
 
-                                            {booking.booking.bookingServiceStatus === "Cancelled" && (
+                                            {booking.booking.bookingServiceStatus === "Cancel" && (
                                                 <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
                                                     <div className="text-uncompleted-a-need">Cancelled</div>
                                                 </div>
