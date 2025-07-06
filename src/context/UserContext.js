@@ -18,7 +18,7 @@ export const UserProvider = ({ children }) => {
 
         const token = storage.getItem("accessToken");
         if (token) {
-          const response = await instance.get("/api/account/profile", {
+          const response = await instance.get("/api/account/own-profile", {
             headers: { Authorization: `Bearer ${token}` },
           });
           console.log("Test profile: ", response)

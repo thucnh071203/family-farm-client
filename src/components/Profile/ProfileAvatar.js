@@ -8,7 +8,7 @@ const ProfileAvatar = ({ initialProfileImage, fullName, isOwner }) => {
   // Bỏ avatarImage
   const { user, updateUser } = useUser();
   const [profileImage, setProfileImage] = useState(
-    user?.avatar || initialProfileImage
+    isOwner ? (user?.avatar || initialProfileImage) : initialProfileImage
   );
   const [showCropper, setShowCropper] = useState(false);
   const [imageToCrop, setImageToCrop] = useState(null);
@@ -19,8 +19,13 @@ const ProfileAvatar = ({ initialProfileImage, fullName, isOwner }) => {
   const profileInputRef = useRef(null);
 
   useEffect(() => {
-    setProfileImage(user?.avatar || initialProfileImage);
-  }, [user, initialProfileImage]);
+    // Chỉ sync từ UserContext khi là owner
+    if (isOwner) {
+      setProfileImage(user?.avatar || initialProfileImage);
+    } else {
+      setProfileImage(initialProfileImage);
+    }
+  }, [user?.avatar, initialProfileImage, isOwner]);
 
   const handleCropSave = async () => {
     try {

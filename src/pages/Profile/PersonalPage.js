@@ -15,17 +15,18 @@ import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+
 const PersonalPage = () => {
   const { user } = useUser();
   const [avatar, setAvatar] = useState("");
-  const [fullName, setFullName] = useState(user?.fullName || "Unknown");
+  const [fullName, setFullName] = useState("Unknown");
   const [background, setBackground] = useState("");
   const [basicInfo, setBasicInfo] = useState({});
   const [accessToken, setAccessToken] = useState("");
   const [posts, setPosts] = useState([]);
 
   const { accId } = useParams();
-  const defaultBackground = "...";
+  const defaultBackground = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c";
   const storeData =
     localStorage.getItem("profileData") ||
     sessionStorage.getItem("profileData");
@@ -33,19 +34,37 @@ const PersonalPage = () => {
   const isOwner = !accId || accId === myProfile?.accId;
   const [listFriends, setListFriends] = useState([]);
   const [listCheckRelationShip, setlistCheckRelationShip] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Lấy thông tin người dùng từ storage
+  useEffect(() => {
+    const storedAccId =
+      localStorage.getItem("accId") || sessionStorage.getItem("accId");
+    const storedAccesstoken =
+      localStorage.getItem("accessToken") ||
+      sessionStorage.getItem("accessToken");
+
+    if (storedAccId) {
+      setAccessToken(storedAccesstoken);
+    }
+  }, []);
+
+  // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        setLoading(true);
         let response;
         if (isOwner) {
           response = await instance.get("/api/account/own-profile", {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
           if (response.status === 200) {
+            
             const data = response.data.data;
-            setFullName(data.fullName || "Unknown");
-            setAvatar(data.avatar);
-            setBackground(data.background || defaultBackground);
+            setFullName(data.fullName || data.firstName || "Unknown User");
+            setAvatar(data.avatar || data.profileImage || "default-avatar-url");
+            setBackground(data.background || data.coverImage || defaultBackground);
 
             const basicInfoMapping = {
               gender: data.gender || "Updating",
@@ -83,28 +102,38 @@ const PersonalPage = () => {
         }
       } catch (error) {
         console.error("Lỗi lấy profile:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchProfile();
+    if (accessToken) {
+      fetchProfile();
+    }
   }, [accId, isOwner, accessToken]);
 
-  //lấy thông tin người dùng từ storage
+  // Sync background từ UserContext khi thay đổi (chỉ cho owner)
   useEffect(() => {
-    const storedAccId =
-      localStorage.getItem("accId") || sessionStorage.getItem("accId");
-    const storedAccesstoken =
-      localStorage.getItem("accessToken") ||
-      sessionStorage.getItem("accessToken");
-
-    if (storedAccId) {
-      setAccessToken(storedAccesstoken);
+    if (isOwner && user?.background) {
+      setBackground(user.background);
     }
-  }, []);
+  }, [user?.background, isOwner]);
 
-  //Goi api lay list post trong trang can nhan
-  // const [posts, setPosts] = useState([]);
+  // Sync avatar từ UserContext khi thay đổi (chỉ cho owner)
+  useEffect(() => {
+    if (isOwner && user?.avatar) {
+      setAvatar(user.avatar);
+    }
+  }, [user?.avatar, isOwner]);
 
+  // Sync fullName từ UserContext khi thay đổi (chỉ cho owner)
+  useEffect(() => {
+    if (isOwner && user?.fullName) {
+      setFullName(user.fullName);
+    }
+  }, [user?.fullName, isOwner]);
+
+  // Gọi api lấy list post trong trang cá nhân
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -125,10 +154,13 @@ const PersonalPage = () => {
         // toast.error("Cannot load list post!");
       }
     };
-    fetchPosts();
-  }, [isOwner, accId, accessToken, user?.avatar]);
 
-  //CAC METHOD LIEN QUAN KHAC
+    if (accessToken) {
+      fetchPosts();
+    }
+  }, [isOwner, accId, accessToken]);
+
+  // Các method liên quan khác
   const handleCommentCountChange = (postId, newCount) => {
     setPosts((prevPosts) =>
       prevPosts.map((postMapper) =>
@@ -156,7 +188,8 @@ const PersonalPage = () => {
       prevPosts.filter((post) => post.post.postId !== postId)
     );
   };
-  // get list friend
+
+  // Get list friend
   const fetchFriends = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -175,7 +208,6 @@ const PersonalPage = () => {
       const json = await response.json();
       if (json.data && json.data.length > 0) {
         setListFriends(json.data);
-        //console.log(isOwner + "aaaaaaaaaaaaaaaaaa");
       } else {
         setListFriends([]);
       }
@@ -190,6 +222,7 @@ const PersonalPage = () => {
       fetchFriends();
     }
   }, [accId, isOwner, accessToken]);
+
   const fetchlistCheckRelationShip = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -225,8 +258,11 @@ const PersonalPage = () => {
   };
 
   useEffect(() => {
-    fetchlistCheckRelationShip(); // chỉ gọi khi component load hoặc section thay đổi
-  }, []);
+    if (accessToken) {
+      fetchlistCheckRelationShip();
+    }
+  }, [accessToken]);
+
   const matchedAccount =
     !isOwner &&
     Array.isArray(listCheckRelationShip) &&
@@ -239,8 +275,7 @@ const PersonalPage = () => {
       <div className="flex-grow">
         <div className="container mx-auto max-w-7xl">
           <div className="relative">
-       
-            <CoverBackground coverImage={background} />
+            <CoverBackground backgroundImage={background} isOwner={isOwner} />
 
             {matchedAccount && (
               <div className="absolute right-4 bottom-4">
@@ -254,7 +289,7 @@ const PersonalPage = () => {
 
             <ProfileAvatar
               initialProfileImage={avatar}
-              fullName={fullName || user?.fullName}
+              fullName={fullName}
               isOwner={isOwner}
             />
           </div>
@@ -281,7 +316,7 @@ const PersonalPage = () => {
               ) : (
                 posts.map((postMapper, index) => (
                   <PostCard
-                    isDeleted="true"
+                    isDeleted={postMapper.post.isDeleted || false}
                     onRestore={handleRestorePost}
                     onHardDelete={handleHardDeletePost}
                     onDeletePost={handleDeletePost}
@@ -293,8 +328,7 @@ const PersonalPage = () => {
                         ? postMapper.ownerPost.fullName || postMapper.post.accId
                         : "Unknown User",
                       avatar: postMapper.ownerPost
-                        ? postMapper.ownerPost.avatar ||
-                          "https://via.placeholder.com/40"
+                        ? postMapper.ownerPost.avatar
                         : "https://via.placeholder.com/40",
                       createAt: postMapper.post.createdAt,
                       content: postMapper.post.postContent,
@@ -306,14 +340,14 @@ const PersonalPage = () => {
                         : [],
                       tagFriends: postMapper.postTags
                         ? postMapper.postTags.map((tag) => ({
-                            accId: tag.accId,
-                            fullname: tag.fullname || "Unknown",
-                          }))
+                          accId: tag.accId,
+                          fullname: tag.fullname || "Unknown",
+                        }))
                         : [],
                       categories: postMapper.postCategories
                         ? postMapper.postCategories.map(
-                            (cat) => cat.categoryName
-                          )
+                          (cat) => cat.categoryName
+                        )
                         : [],
                       likes: postMapper.reactionCount || 0,
                       comments: postMapper.commentCount || 0,

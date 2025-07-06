@@ -91,6 +91,11 @@ import YourFollowingPage from "./pages/FriendPage/YourFollowingPage";
 import YourFollowerPage from "./pages/FriendPage/YourFollowerPage";
 import SearchPage from "./pages/SearchPage/SearchPage";
 import UserFriendOfOther from "./pages/Profile/UserFriendOfOther";
+import CallbackPage from "./pages/CallbackPage/PaymentCallback";
+import PaymentResultPage from "./pages/CallbackPage/PaymentResult";
+import PaymentSuccess from "./pages/PaymentPage/PaymentSuccessfulPage";
+import PaymentFailed from "./pages/PaymentPage/PaymentFailedPage";
+
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -171,7 +176,7 @@ const AppContent = () => {
             <Route path="/Group" element={<PostGroupPage />} />
             <Route path="/Search" element={<SearchPage />} />
             <Route path="/group/:id" element={<GroupDetailPage />} />
-            <Route path="/UpdateProfile" element={<UpdateProfile />} />
+            <Route path="/UpdateProfile" element={<UpdateProfile />} />S
             <Route path="/UserFriends" element={<UserFriends />} />
             <Route path="/UserFriends/:accId" element={<UserFriendOfOther />} />
             <Route path="/ProcessList" element={<ProcessListPage />} />
@@ -269,6 +274,10 @@ const AppContent = () => {
             <Route path="/CreatePostCate" element={<CreatePostCate />} />
             <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} />
             <Route path="/DetailPostCate/:id" element={<DetailPostCate />} />
+            <Route path="/payment-callback" element={<CallbackPage />} />
+            <Route path="/PaymentResult" element={<PaymentResultPage />} />
+            <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
+            <Route path="/PaymentFailed" element={<PaymentFailed />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
