@@ -8,7 +8,7 @@ import "../../styles/styleguilde.css";
 
 const SavedPostPage = () => {
   return (
-    <div className="ProgressListPage">
+    <div>
       <Header/>
       <NavbarHeader/>
       {/* <Link to="/Register">Register</Link> */}

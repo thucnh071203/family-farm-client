@@ -12,8 +12,7 @@ const FriendItem = ({ friend, isOwner, isProfile }) => {
         <img
           onClick={() => handleClickToProfile(friend.accId)}
           src={
-            friend.avatar ||
-            "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png"
+            friend.avatar
           }
           alt={`Friend ${friend.username}`}
           className="w-9 h-9 rounded-full"

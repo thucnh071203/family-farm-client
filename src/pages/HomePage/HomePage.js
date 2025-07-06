@@ -239,8 +239,7 @@ const HomePage = () => {
                       postId: postMapper.post.postId,
                       fullName: postMapper.ownerPost.fullName || "Unknown User",
                       avatar:
-                        postMapper.ownerPost.avatar ||
-                        "https://via.placeholder.com/40",
+                        postMapper.ownerPost.avatar,
                       createAt: postMapper.post.createdAt,
                       content: postMapper.post.postContent,
                       images:
