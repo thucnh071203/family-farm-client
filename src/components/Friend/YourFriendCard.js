@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { toast, Bounce } from "react-toastify";
-
-const YourFriendCard = ({ friend, onActionComplete }) => {
+import { useNavigate } from "react-router-dom";
+const YourFriendCard = ({ friend, isListFollower }) => {
+  const navigate = useNavigate();
   const [status, setStatus] = useState(friend.friendStatus);
+  const handleClickToProfile = (accId) => {
+    navigate(`/PersonalPage/${accId}`);
+  };
   const buttonConfig = {
     null: {
       text: "Add friend",
@@ -57,7 +61,7 @@ const YourFriendCard = ({ friend, onActionComplete }) => {
         );
 
         if (response.status === 200) {
-          onActionComplete();
+          // onActionComplete();
           setStatus(isExpert ? "Following" : "Pending");
           toast.success("You sent the request successfully!");
         } else {
@@ -76,7 +80,7 @@ const YourFriendCard = ({ friend, onActionComplete }) => {
 
         // Kiểm tra response.data === true
         if (response.status === 200 && response.data === true) {
-          onActionComplete();
+          //onActionComplete();
           setStatus(null); // Reset lại để hiển thị nút "Add Friend"
           toast.success("Action completed successfully!");
         } else {
@@ -103,12 +107,14 @@ const YourFriendCard = ({ friend, onActionComplete }) => {
       <div className="items-center flex flex-col gap-1">
         <div className="rounded-[50px]">
           <img
+            onClick={() => handleClickToProfile(friend.accId)}
             className="rounded-full w-[60px] h-[60px] object-fill"
             src={
               friend.avatar ||
               "https://i.pinimg.com/originals/d0/28/68/d0286806706a508645e8763c6b3f8cea.jpg"
             }
             alt="avatar"
+            style={{ cursor: "pointer" }}
           />
         </div>
         <div className="flex items-center flex-col gap-1">
@@ -118,13 +124,15 @@ const YourFriendCard = ({ friend, onActionComplete }) => {
           </p>
         </div>
         <div>
-          <button
-            onClick={handleClick}
-            className={`w-[120px] h-6 ${config.bgColor} ${config.hoverColor} rounded-[5px] font-normal mt-2 text-sm text-white p-1 flex items-center justify-center`}
-          >
-            <i className={`fa-solid ${config.icon} mr-2`}></i>
-            {config.text}
-          </button>
+          {isListFollower !== "follower" && (
+            <button
+              onClick={handleClick}
+              className={`w-[120px] h-6 ${config.bgColor} ${config.hoverColor} rounded-[5px] font-normal mt-2 text-sm text-white p-1 flex items-center justify-center`}
+            >
+              <i className={`fa-solid ${config.icon} mr-2`}></i>
+              {config.text}
+            </button>
+          )}
         </div>
       </div>
     </div>

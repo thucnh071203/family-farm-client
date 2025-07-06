@@ -3,9 +3,9 @@ import PostCard from "../Post/PostCard";
 import { useLocation } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 
-const SearchPost = ({ keyword }) => {
+const SearchPost = () => {
   const { state } = useLocation();
-  const { categoryIds = [] } = state || {};
+  const { keyword = "", categoryIds = [] } = state || {};
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState(categoryIds);
@@ -13,8 +13,9 @@ const SearchPost = ({ keyword }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState(keyword);
+  const [searchKeyword, setSearchKeyword] = useState(keyword || "");
   const popupRef = useRef(null);
+  const lastFetchedKeyword = useRef(""); // Thêm ref để theo dõi từ khóa đã gọi
 
   const fetchCategories = async () => {
     try {
@@ -31,27 +32,29 @@ const SearchPost = ({ keyword }) => {
       }
     } catch (err) {
       setError("Failed to fetch categories");
+      console.error("Error fetching categories:", err);
     }
   };
 
   const fetchPosts = async (keywordToSearch = searchKeyword) => {
+    const trimmedKeyword = keywordToSearch?.trim();
+    if (!trimmedKeyword || trimmedKeyword === lastFetchedKeyword.current) {
+      setLoading(false);
+      return;
+    }
+    lastFetchedKeyword.current = trimmedKeyword;
+
     try {
       setLoading(true);
-      setError(null); // Reset error trước khi fetch
-      
-      // Trim và validate keyword
-      const trimmedKeyword = keywordToSearch?.trim();
-      
+      setError(null);
+
       const params = {
-        keyword: trimmedKeyword || undefined,
+        keyword: trimmedKeyword,
         categoryIds: selectedCategories.length > 0 ? selectedCategories : undefined,
         isAndLogic,
       };
 
       console.log("Fetch params:", params);
-      console.log("Keyword from prop:", keyword);
-      console.log("Search keyword state:", searchKeyword);
-      console.log("Keyword to search:", keywordToSearch);
 
       const response = await instance.get("/api/post/search", {
         params,
@@ -62,7 +65,7 @@ const SearchPost = ({ keyword }) => {
 
       if (response.data.success) {
         setPosts(response.data.data || []);
-        console.log("List search: ", response.data.data);
+        console.log("List search:", response.data.data);
       } else {
         setError(response.data.message || "No posts found");
         setPosts([]);
@@ -77,34 +80,18 @@ const SearchPost = ({ keyword }) => {
     }
   };
 
-  // Fetch categories only once on mount
   useEffect(() => {
     fetchCategories();
-  }, []);
-
-  // Update searchKeyword when keyword prop changes và fetch ngay lập tức
-  useEffect(() => {
-    console.log("Keyword prop changed:", keyword);
-    if (keyword !== undefined && keyword !== searchKeyword) {
-      setSearchKeyword(keyword);
-      // Fetch posts ngay lập tức với keyword mới
-      fetchPosts(keyword);
+    if (keyword && keyword !== searchKeyword) {
+      setSearchKeyword(keyword); // Đồng bộ searchKeyword với keyword
     }
   }, [keyword]);
 
-  // Fetch posts when selectedCategories or isAndLogic changes
   useEffect(() => {
-    if (searchKeyword !== undefined) {
-      fetchPosts();
+    if (searchKeyword) {
+      fetchPosts(searchKeyword);
     }
-  }, [selectedCategories, isAndLogic]);
-
-  // Initial fetch when component mounts và có searchKeyword
-  useEffect(() => {
-    if (searchKeyword !== undefined) {
-      fetchPosts();
-    }
-  }, []); // Chỉ chạy 1 lần khi mount
+  }, [searchKeyword, selectedCategories, isAndLogic]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -133,29 +120,17 @@ const SearchPost = ({ keyword }) => {
 
   const handleSearch = () => {
     fetchPosts();
-    setIsCategoryPopupOpen(false); // Close popup after search
+    setIsCategoryPopupOpen(false);
   };
 
   const toggleCategoryPopup = () => {
     setIsCategoryPopupOpen(!isCategoryPopupOpen);
   };
 
-  // Get selected category names
   const selectedCategoryNames = selectedCategories
     .map((id) => categories.find((cat) => cat.id === id)?.name)
-    .filter(Boolean);
-
-  const logicText = isAndLogic ? "and" : "or";
-  let displayText = "";
-  if (selectedCategoryNames.length === 1) {
-    displayText = selectedCategoryNames[0];
-  } else if (selectedCategoryNames.length === 2) {
-    displayText = `${selectedCategoryNames[0]} ${logicText} ${selectedCategoryNames[1]}`;
-  } else if (selectedCategoryNames.length > 2) {
-    const allExceptLast = selectedCategoryNames.slice(0, -1).join(", ");
-    const last = selectedCategoryNames[selectedCategoryNames.length - 1];
-    displayText = `${allExceptLast} ${logicText} ${last}`;
-  }
+    .filter(Boolean)
+    .join(", ");
 
   return (
     <div className="w-full flex flex-col items-center pt-12 lg:mt-[120px] mt-[63px]">
@@ -178,15 +153,13 @@ const SearchPost = ({ keyword }) => {
             >
               <h3 className="font-bold mb-2">Filter Posts</h3>
               <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 px-4 py-2">
-                  <input
-                    type="checkbox"
-                    checked={isAndLogic}
-                    onChange={handleLogicToggle}
-                    className="h-4 w-4"
-                  />
-                  <span>Match all selected categories</span>
-                </label>
+                <input
+                  type="text"
+                  placeholder="Enter new keyword..."
+                  className="search-input p-2 border rounded w-full"
+                  value={searchKeyword}
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                />
                 <h4 className="font-semibold mt-2">Select Categories</h4>
                 {categories.map((category) => (
                   <label
@@ -202,16 +175,25 @@ const SearchPost = ({ keyword }) => {
                     <span>{category.name}</span>
                   </label>
                 ))}
+                <label className="flex items-center gap-2 px-4 py-2">
+                  <input
+                    type="checkbox"
+                    checked={isAndLogic}
+                    onChange={handleLogicToggle}
+                    className="h-4 w-4"
+                  />
+                  <span>Match all selected categories</span>
+                </label>
               </div>
               <div className="mt-4 flex gap-2">
                 <button
-                  className="p-3 bg-blue-500 text-white rounded-md flex-1"
+                  className="px-3 py-1 bg-blue-500 text-white rounded-full flex-1"
                   onClick={handleSearch}
                 >
-                  Search
+                  Search Again
                 </button>
                 <button
-                  className="p-3 bg-gray-200 text-gray-800 rounded-md flex-1"
+                  className="px-3 py-1 bg-gray-200 text-gray-800 rounded-full flex-1"
                   onClick={toggleCategoryPopup}
                 >
                   Close
@@ -255,10 +237,10 @@ const SearchPost = ({ keyword }) => {
         ) : (
           <div>
             No posts found for "{searchKeyword}"
-            {displayText && (
+            {selectedCategoryNames && (
               <>
                 {" in "}
-                {displayText || "no categories"}
+                {selectedCategoryNames || "no categories"}
               </>
             )}
           </div>

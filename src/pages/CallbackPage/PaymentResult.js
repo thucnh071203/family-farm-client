@@ -15,9 +15,6 @@ const PaymentResult = () => {
         if (response.data.success) {
           // navigate("/HomeProcessFarmer");
           // navigate("/PaymentSuccess");
-          console.log("Payment checkID");
-          console.log(response.data.bookingId);
-          console.log(response.data.subProcessId);
           navigate("/PaymentSuccess", {
             state: {
               bookingId: response.data.bookingId,
@@ -29,6 +26,7 @@ const PaymentResult = () => {
         }
       } catch (error) {
         console.error("Lỗi khi xác minh thanh toán:", error);
+        console.log("Server response:", error.response?.data);
         navigate("/PaymentFailed");
       }
     };

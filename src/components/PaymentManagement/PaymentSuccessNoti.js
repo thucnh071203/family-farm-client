@@ -1,8 +1,113 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
 
 export default function PaymentSuccessNoti() {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const { bookingId, subProcessId } = location.state || {};
+    const [data, setData] = useState(null);
+    const [booking, setBooking] = useState(null);
+    const [paymentId, setPaymentId] = useState("");
+    const [price, setPrice] = useState(null);
+
+    // useEffect(() => {
+    //     const fetchPaymentOrBooking = async () => {
+    //     try {
+    //         let res;
+
+    //         if (subProcessId && subProcessId.trim() !== "") {
+    //         // Gọi API theo subprocess
+    //         // res = await instance.get(`/api/payment/get-by-subProcessId/${subProcessId}`);
+    //         } else {
+    //         // Gọi API theo bookingId
+    //         // res = await instance.get(`/api/booking-service/get-by-id/${bookingId}`, {
+    //         //     headers: {
+    //         //     Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+    //         //     }
+    //         // });
+    //         // Nếu không có subprocessId → gọi theo bookingId
+    //             const [bookingRes, paymentRes] = await Promise.all([
+    //                 instance.get(`/api/booking-service/get-by-id/${bookingId}`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    //                 },
+    //                 }),
+    //                 instance.get(`/api/payment/get-by-bookingId/${bookingId}`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    //                 },
+    //                 }),
+    //             ]);
+
+    //             const bookingData = bookingRes.data?.data;
+    //             const paymentData = paymentRes.data?.data?.[0];
+
+    //             setBooking(bookingData);
+    //             setData(paymentData);
+    //             setPaymentId(paymentData?.paymentId || "N/A");
+    //             setPrice(bookingData?.price); // đảm bảo bookingData không bị null
+
+    //             // setBooking(bookingRes.data?.data);
+    //             // const paymentData = paymentRes.data?.data?.[0];
+    //             // console.log(paymentData)
+    //             // setPaymentId(paymentData?.paymentId || "N/A");
+    //         }
+
+    //         setData(res.data);
+    //     } catch (err) {
+    //         console.error("Error fetching data:", err);
+    //         navigate("/PaymentFailed");
+    //     }
+    //     };
+
+    //     fetchPaymentOrBooking();
+    // }, [bookingId, subProcessId, navigate]);
+
+    useEffect(() => {
+        const fetchPaymentOrBooking = async () => {
+            try {
+            if (subProcessId && subProcessId.trim() !== "") {
+                // Gọi API theo subprocess
+                const res = await instance.get(`/api/payment/get-by-subProcessId/${subProcessId}`);
+                const paymentData = res.data?.data?.[0];
+                setData(paymentData);
+                setPaymentId(paymentData?.paymentId || "N/A");
+                setPrice(paymentData?.amount); // nếu bạn có amount trong payment
+            } else {
+                // Gọi API theo bookingId
+                const [bookingRes, paymentRes] = await Promise.all([
+                instance.get(`/api/booking-service/get-by-id/${bookingId}`, {
+                    headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                }),
+                instance.get(`/api/payment/get-by-bookingId/${bookingId}`, {
+                    headers: {
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                }),
+                ]);
+
+                const bookingData = bookingRes.data; 
+                const paymentData = paymentRes.data?.data?.[0];
+
+                setBooking(bookingData);
+                setData(paymentData);
+                setPaymentId(paymentData?.paymentId || "N/A");
+                setPrice(bookingData?.price); // đảm bảo bookingData không bị null
+            }
+            } catch (err) {
+            console.error("Error fetching data:", err);
+            navigate("/PaymentFailed");
+            }
+        };
+
+        fetchPaymentOrBooking();
+        }, [bookingId, subProcessId, navigate]);
+
+    if (!data) return <p>Loading...</p>;
     
     return (
         <div className="payment-successfully pt-[184px]">
@@ -36,20 +141,23 @@ export default function PaymentSuccessNoti() {
                             <div className="bookingId-container">
                                 <span className="font-roboto font-bold text-[#3e3f5e] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
                                     Booking ID:
-                                </span>{' '}
+                                </span>
                                 <span className="font-roboto font-normal text-[#3e3f5e] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
-                                    685e40209e0142f48130a07b
+                                    {/* {booking?.bookingServiceId} */}
+                                    {booking?.bookingServiceId || data?.bookingServiceId || "N/A"}
                                 </span>
                             </div>
 
                             <div className="total-container text-start">
                                 <span className="font-roboto font-bold text-[#3e3f5e] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
                                     Total:
-                                </span>{' '}
+                                </span>
                                 <span>
                                     <span className="font-roboto font-normal text-[#3e3f5e] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
-                                        200.000
-                                    </span>{' '}
+                                        {/* {booking?.price?.toLocaleString()} */}
+                                        {/* {(booking?.price || data?.amount || 0).toLocaleString()} */}
+                                        {price?.toLocaleString()}
+                                    </span>
                                     <span className="font-roboto font-bold text-[#ef3e36] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
                                         VND
                                     </span>
@@ -62,20 +170,22 @@ export default function PaymentSuccessNoti() {
                         <div className="paymentId-container">
                             <span className="font-roboto font-bold text-[#3e3f5e] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
                                 Payment ID:
-                            </span>{' '}
+                            </span>
                             <span className="font-roboto font-normal text-[#3e3f5e] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
-                                685e40209e0142f48130a07b
+                                {/* {paymentId} */}
+                                {paymentId || data?.paymentId || "N/A"}
                             </span>
                         </div>
 
                         <div className="price-of-service text-start">
                             <span className="font-roboto font-bold text-[#3e3f5e] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
                                 Price of Service:
-                            </span>{' '}
+                            </span>
                             <span>
                                 <span className="font-roboto font-normal text-[#3e3f5e] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
-                                    200.000
-                                </span>{' '}
+                                    {/* {booking?.price?.toLocaleString()} */}
+                                    {price?.toLocaleString()}
+                                </span>
                                 <span className="font-roboto font-bold text-[#ef3e36] text-[18px] tracking-[0.72px] leading-none whitespace-nowrap">
                                     VND
                                 </span>

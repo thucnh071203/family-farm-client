@@ -17,20 +17,26 @@ const SuggestedExperts = ({ friends, onLoadList }) => {
       "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png",
     status: null,
   };
-
+ 
   return (
     <div className="bg-white p-5 rounded-lg shadow-md">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold mb-3">Suggested Experts</h2>
       </div>
       <div className="flex flex-col gap-3">
-        {(Array.isArray(friendList) ? friendList : []).map((friend) => (
-          <FriendItem
-            key={friend.accId || friend.name}
-            friend={{ ...defaultFriend, ...friend }}
-            onLoadList={onLoadList}
-          />
-        ))}
+        {Array.isArray(friendList) && friendList.length > 0 ? (
+          friendList.map((friend) => (
+            <FriendItem
+              key={friend.accId || friend.name}
+              friend={{ ...defaultFriend, ...friend }}
+              onLoadList={onLoadList}
+            />
+          ))
+        ) : (
+          <p className="text-gray-400 text-sm text-center mt-2">
+            No friends to display.
+          </p>
+        )}
       </div>
     </div>
   );
