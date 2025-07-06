@@ -27,7 +27,7 @@ const ListRequestBookingFarmer = () => {
 
     useEffect(() => {
         if (!accessToken) return;
-        
+
         const fetchListBooking = async () => {
             try {
                 const response = await instance.get("/api/booking-service/farmer-all-booking",
@@ -54,14 +54,14 @@ const ListRequestBookingFarmer = () => {
             toast.error("Token is missing, cannot cancel");
             return;
         }
-        
+
         try {
             const response = await instance.put(`/api/booking-service/cancel-booking/${bookingId}`,
-                {},{
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                })
+                {}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            })
 
             if (response.status === 200) {
                 toast.success("Cancel booking service successfully")
@@ -76,12 +76,13 @@ const ListRequestBookingFarmer = () => {
     const fetchListBooking = async () => {
         try {
             const response = await instance.get("/api/booking-service/farmer-all-booking", {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
             });
             if (response.status === 200) {
-            setListBooking(response.data.data);
+                setListBooking(response.data.data);
+                console.log(response.data.data)
             }
         } catch (error) {
             console.error("Cannot reload booking list", error);
@@ -109,31 +110,31 @@ const ListRequestBookingFarmer = () => {
             console.log(`📩 Booking ${bookingId} changed status to ${status}`);
 
             setListBooking(
-            prevList => {
-                console.log("📋 prevList trước khi cập nhật:", prevList);
+                prevList => {
+                    console.log("📋 prevList trước khi cập nhật:", prevList);
 
-                // const updatedList = prevList.map(b =>
-                //     b.bookingServiceId === bookingId
-                //         ? { ...b, bookingServiceStatus: status }
-                //         : b
-                // );
+                    // const updatedList = prevList.map(b =>
+                    //     b.bookingServiceId === bookingId
+                    //         ? { ...b, bookingServiceStatus: status }
+                    //         : b
+                    // );
 
-                const updatedList = prevList.map(b =>
-                    b.booking?.bookingServiceId === bookingId
-                        ? {
-                            ...b,
-                            booking: {
-                                ...b.booking,
-                                bookingServiceStatus: status
+                    const updatedList = prevList.map(b =>
+                        b.booking?.bookingServiceId === bookingId
+                            ? {
+                                ...b,
+                                booking: {
+                                    ...b.booking,
+                                    bookingServiceStatus: status
+                                }
                             }
-                        }
-                        : b
-                );
+                            : b
+                    );
 
-                console.log("📋 updatedList sau khi cập nhật:", updatedList);
+                    console.log("📋 updatedList sau khi cập nhật:", updatedList);
 
-                return updatedList;
-            });
+                    return updatedList;
+                });
 
             // toast.info(`Booking ${bookingId} was ${status}`);
         };
