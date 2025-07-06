@@ -175,6 +175,37 @@ const ListRequestBookingFarmer = () => {
     //     }
     // }, [connection]);
 
+    // Sự kiện bấm thanh toán
+    const handlePayment = async (bookingId, price) => {
+        if (!accessToken) {
+            toast.error("Token missing");
+            return;
+        }
+
+        try {
+            const res = await instance.post("/api/payment/create-payment", {
+                bookingServiceId: bookingId,
+                SubprocessId: null,
+                amount: price
+            }, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+
+            const paymentUrl = res.data?.paymentUrl;
+            if (paymentUrl) {
+                window.location.href = paymentUrl; // Chuyển trang đến VNPay
+            } else {
+                toast.error("Không lấy được link thanh toán");
+            }
+        } catch (err) {
+            console.error("Payment error", err);
+            toast.error("Có lỗi xảy ra khi thanh toán");
+        }
+    };
+
+
     return (
         <div className="ListRequestBookingFarmer">
             <div class="progress-managment pt-36">
@@ -266,9 +297,14 @@ const ListRequestBookingFarmer = () => {
                                                     </div>
                                                 )}
 
-                                                {booking.booking.bookingServiceStatus === "Accepted" && (
+                                                {/* {booking.booking.bookingServiceStatus === "Accepted" && (
                                                     <div class="footer-booking-button">
                                                         <div class="progress-button-text">Payment</div>
+                                                    </div>
+                                                )} */}
+                                                {booking.booking.bookingServiceStatus === "Accepted" && (
+                                                    <div className="footer-booking-button" onClick={() => handlePayment(booking.booking.bookingServiceId, booking.booking.price)}>
+                                                        <div className="progress-button-text">Payment</div>
                                                     </div>
                                                 )}
 
