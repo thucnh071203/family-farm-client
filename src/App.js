@@ -156,7 +156,7 @@ const AppContent = () => {
             <Route path="/Group" element={<PostGroupPage />} />
             <Route path="/Search" element={<SearchPage />} />
             <Route path="/group/:id" element={<GroupDetailPage />} />
-            <Route path="/UpdateProfile" element={<UpdateProfile />} />
+            <Route path="/UpdateProfile" element={<UpdateProfile />} />S
             <Route path="/UserFriends" element={<UserFriends />} />
             <Route path="/ProcessList" element={<ProcessListPage />} />
             <Route path="/ProcessResult" element={<ProcessResultPage />} />

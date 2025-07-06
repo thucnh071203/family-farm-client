@@ -3,6 +3,7 @@ import formatTime from "../../utils/formatTime";
 import CategoryReactionList from "../Reaction/CategoryReactionList";
 import ReactionList from "../Reaction/ReactionList"; // Import ReactionList
 import useReactions from "../../hooks/useReactions";
+import { toast } from "react-toastify";
 
 const CommentItem = ({
     comment,
@@ -28,35 +29,50 @@ const CommentItem = ({
     } = useReactions({ entityType: "Comment", entityId: comment.CommentId });
 
     const [showReactionList, setShowReactionList] = useState(false); // State for ReactionList visibility
+    const MAX_COMMENT_LENGTH = 1000;
 
     return (
         <div key={comment.CommentId} className="flex items-start gap-2 relative">
             <img
-                src={comment.avatar || "https://via.placeholder.com/40"}
+                src={comment.avatar}
                 alt={comment.fullName || "User"}
                 className="w-8 h-8 rounded-full"
             />
             <div className="flex-1">
                 {editingCommentId === comment.CommentId ? (
                     <div className="bg-gray-100 p-3 rounded-lg">
-                        <input
-                            type="text"
+                        <textarea
                             value={editContent}
                             onChange={(e) => setEditContent(e.target.value)}
-                            className="w-full p-2 text-sm border border-gray-300 rounded-md"
+                            className="w-full p-2 text-sm border border-gray-300 rounded-md resize-none"
+                            rows={3}
+                            maxLength={MAX_COMMENT_LENGTH}
                         />
+                        <div className="text-right text-xs text-gray-500 mt-1">
+                            {editContent.length}/{MAX_COMMENT_LENGTH} ký tự
+                        </div>
                         <div className="flex gap-2 mt-2">
                             <button
-                                onClick={() => handleUpdateComment(comment.CommentId)}
+                                onClick={() => {
+                                    if (!editContent.trim()) {
+                                        toast.info("Content cannot be empty!");
+                                        return;
+                                    }
+                                    if (editContent.length > MAX_COMMENT_LENGTH) {
+                                        toast.info(`Content must not exceed ${MAX_COMMENT_LENGTH} characters`);
+                                        return;
+                                    }
+                                    handleUpdateComment(comment.CommentId);
+                                }}
                                 className="text-sm text-white bg-blue-500 px-3 py-1 rounded-md"
                             >
-                                Lưu
+                                Save
                             </button>
                             <button
                                 onClick={() => setEditingCommentId(null)}
                                 className="text-sm text-gray-500"
                             >
-                                Hủy
+                                Cancel
                             </button>
                         </div>
                     </div>
@@ -85,20 +101,20 @@ const CommentItem = ({
                                                 onClick={() => handleEditComment(comment)}
                                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                             >
-                                                Sửa
+                                                <i class="fa-solid fa-pen"></i> Edit
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteComment(comment.CommentId)}
                                                 className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                                             >
-                                                Xóa
+                                               <i class="fa-solid fa-trash"></i> Delete
                                             </button>
                                         </div>
                                     )}
                                 </div>
                             )}
                         </div>
-                        <p className="text-sm text-gray-700 mt-1">{comment.Content}</p>
+                        <p className="text-sm text-gray-700 mt-1 break-all">{comment.Content}</p>
                     </div>
                 )}
                 <div className="flex items-center gap-3 mt-2 comment-actions">
@@ -128,7 +144,7 @@ const CommentItem = ({
                                 </>
                             )}
                         </button>
-                        
+
                         {/* Reaction count button */}
                         {likeCount > 0 && (
                             <button

@@ -12,6 +12,7 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
   const [hoveredCommentId, setHoveredCommentId] = useState(null);
   const [userId, setUserId] = useState(null);
   const [menuOpenCommentId, setMenuOpenCommentId] = useState(null);
+  const MAX_COMMENT_LENGTH = 1000;
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -30,22 +31,16 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
             CreateAt: item.comment.createAt,
             IsDeleted: item.comment.isDeleted,
             fullName: item.account?.fullName || "Unknown User",
-            avatar: item.account?.avatar || "https://via.placeholder.com/40",
+            avatar: item.account?.avatar,
             likes: item.reactionsOfComment?.length || 0,
             reactionType: null,
           }));
           setComments(formattedComments);
           // Không cập nhật commentCount từ API vì đã có initialCommentCount
-        } else {
-          throw new Error(response.data.message || "Cannot load comments!");
         }
       } catch (error) {
         console.error("Failed to fetch comments:", error);
-        toast.error(error.message || "Cannot load comments!", {
-          position: "top-right",
-          autoClose: 3000,
-          transition: Bounce,
-        });
+        toast.error(error.message || "Cannot load comments!");
         setComments([]);
       }
     };
@@ -55,11 +50,7 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
     if (accId) {
       setUserId(accId);
     } else {
-      toast.error("Please log in!", {
-        position: "top-right",
-        autoClose: 3000,
-        transition: Bounce,
-      });
+      toast.error("Please log in!");
     }
 
     if (postId) {
@@ -73,6 +64,10 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
+    if (newComment.length > MAX_COMMENT_LENGTH) {
+      toast.error(`Bình luận không được vượt quá ${MAX_COMMENT_LENGTH} ký tự`);
+      return;
+    }
 
     try {
       const response = await instance.post("/api/comment/create", {
@@ -93,23 +88,17 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
           CreateAt: newCommentData.createAt,
           IsDeleted: newCommentData.isDeleted,
           fullName: profile.data.fullName || "Unknown User",
-          avatar: profile.data.avatar || "https://via.placeholder.com/40",
+          avatar: profile.data.avatar,
           likes: 0,
           reactionType: null,
         };
         setComments([...comments, formattedNewComment]);
         setNewComment("");
         onCommentCountChange(commentCount + 1);
-      } else {
-        throw new Error(response.data.message || "Cannot create comment");
       }
     } catch (error) {
       console.error("Failed to create comment:", error);
-      toast.error(error.message || "Cannot create comment", {
-        position: "top-right",
-        autoClose: 3000,
-        transition: Bounce,
-      });
+      toast.error(error.message || "Cannot create comment");
     }
   };
 
@@ -142,11 +131,7 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
       }
     } catch (error) {
       console.error("Failed to update comment:", error);
-      toast.error(error.message || "Cannot update comment", {
-        position: "top-right",
-        autoClose: 3000,
-        transition: Bounce,
-      });
+      toast.error(error.message || "Cannot update comment");
     }
   };
 
@@ -164,11 +149,7 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
       }
     } catch (error) {
       console.error("Failed to delete comment:", error);
-      toast.error(error.message || "Cannot delete comment", {
-        position: "top-right",
-        autoClose: 3000,
-        transition: Bounce,
-      });
+      toast.error(error.message || "Cannot delete comment");
     }
   };
 
@@ -208,21 +189,28 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
       </div>
       <form
         onSubmit={handleSubmitComment}
-        className="mt-4 flex items-center gap-2 comment-input"
+        className="mt-4 flex flex-col gap-1 comment-input"
       >
-        <input
-          type="text"
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Viết bình luận..."
-          className="flex-1 p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <button
-          type="submit"
-          className="p-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600"
-        >
-          Gửi
-        </button>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write a comment..."
+            className="flex-1 p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            maxLength={MAX_COMMENT_LENGTH}
+          />
+          <button
+            type="submit"
+            className="p-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
+            disabled={!newComment.trim()}
+          >
+            Send
+          </button>
+        </div>
+        <div className="text-right text-xs text-gray-500">
+          {newComment.length}/{MAX_COMMENT_LENGTH} ký tự
+        </div>
       </form>
     </div>
   );
