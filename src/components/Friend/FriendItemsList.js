@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import FriendItem from "./FriendItem";
 
-const FriendList = ({ friends, isOwner, isProfile }) => {
+const FriendList = ({ friends, isOwner, isProfile, accId }) => {
   const defaultFriends = [
     { name: "Dang Khoa", city: "Can Tho", status: null, roleId: "expert" },
     { name: "Huu Thuc", city: "Can Tho", status: "pending" },
@@ -24,9 +24,16 @@ const FriendList = ({ friends, isOwner, isProfile }) => {
         <h2 className="text-lg font-bold mb-3">
           Friends ({friendList.length})
         </h2>
-        <Link className="text-blue-800" to="/UserFriends">
+        {isOwner === true ? (
+          <Link className="text-blue-800" to="/UserFriends">
           See all
         </Link>
+        ):(
+          <Link className="text-blue-800" to={`/UserFriends/${accId}`}>
+          See all
+        </Link>
+        )}
+        
       </div>
       <div className="flex flex-col gap-3">
         {friendList.slice(0, 5).map((friend) => (

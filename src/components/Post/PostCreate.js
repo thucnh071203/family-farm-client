@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PostCreatePopup from "./PostCreatePopup";
 import { useUser } from "../../context/UserContext";
 
-const PostCreate = ({ onPostCreate, profileImage }) => {
+const PostCreate = ({ onPostCreate, profileImage, groupId }) => {
   const [showPopup, setShowPopup] = useState(false);
 const { user } = useUser();
 
@@ -33,7 +33,7 @@ const { user } = useUser();
           className="flex-grow p-2 border border-gray-300 rounded-full"
         />
       </div>
-      {showPopup && <PostCreatePopup onCreatedPost={handlePostCreated}  onClose={() => setShowPopup(false)} />}
+      {showPopup && <PostCreatePopup onCreatedPost={handlePostCreated}  onClose={() => setShowPopup(false)} groupId={groupId}/>}
     </div>
   );
 };

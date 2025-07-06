@@ -1,21 +1,84 @@
 import Header from "../../components/Header/Header";
+import NavbarHeader from "../../components/Header/NavbarHeader";
 import CoverBackground from "../../components/Profile/CoverBackground";
 import ProfileAvatar from "../../components/Profile/ProfileAvatar";
-import BasicInfo from "../../components/Profile/BasicInfo";
-import FriendList from "../../components/Friend/FriendItemsList";
-import PhotoGallery from "../../components/Profile/PhotoGallery";
-import PostCard from "../../components/Post/PostCard";
-import PostCreate from "../../components/Post/PostCreate";
-import PostFilters from "../../components/Post/PostFilters";
-import NavbarHeader from "../../components/Header/NavbarHeader";
 import FriendActionButton from "../../components/Friend/FriendActionButton";
-import { useState, useEffect } from "react";
+import YourFriendCard from "../../components/Friend/YourFriendCard";
 import { Link, useParams } from "react-router-dom";
-import instance from "../../Axios/axiosConfig";
-import { toast } from "react-toastify";
+import { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
-import { HubConnectionBuilder } from "@microsoft/signalr";
-const PersonalPage = () => {
+import instance from "../../Axios/axiosConfig";
+
+const UserFriendOfOther = () => {
+  const friends = [
+    {
+      username: "Dang Khoa",
+      city: "Ho Chi Minh",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      mutualFriend: 5,
+    },
+    {
+      username: "Huu Thuc",
+      city: "Ha Noi",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      mutualFriend: 2,
+    },
+    { username: "Minh Uyen", city: "Da Nang", avatar: null, mutualFriend: 3 },
+    {
+      username: "Dang Khoa",
+      city: "Ho Chi Minh",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      mutualFriend: 5,
+    },
+    { username: "Minh Uyen", city: "Da Nang", avatar: null, mutualFriend: 3 },
+    {
+      username: "Mai Xuan",
+      city: "Can Tho",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      mutualFriend: 0,
+    },
+    { username: "Minh Uyen", city: "Da Nang", avatar: null, mutualFriend: 3 },
+    {
+      username: "Dang Khoa",
+      city: "Ho Chi Minh",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      mutualFriend: 5,
+    },
+    {
+      username: "Mai Xuan",
+      city: "Can Tho",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      mutualFriend: 0,
+    },
+    {
+      username: "Huu Thuc",
+      city: "Ha Noi",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      mutualFriend: 2,
+    },
+    {
+      username: "Mai Xuan",
+      city: "Can Tho",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      mutualFriend: 0,
+    },
+    {
+      username: "Huu Thuc",
+      city: "Ha Noi",
+      avatar:
+        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
+      mutualFriend: 2,
+    },
+  ];
+
   const { user } = useUser();
   const [avatar, setAvatar] = useState("");
   const [fullName, setFullName] = useState(user?.fullName || "Unknown");
@@ -102,60 +165,6 @@ const PersonalPage = () => {
     }
   }, []);
 
-  //Goi api lay list post trong trang can nhan
-  // const [posts, setPosts] = useState([]);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        let response;
-        if (isOwner) {
-          response = await instance.get("/api/post/self-view", {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          });
-        } else {
-          response = await instance.get(`/api/post/another-view/${accId}`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          });
-        }
-        if (response.status === 200) {
-          setPosts(response.data.data);
-        }
-      } catch (error) {
-        // toast.error("Cannot load list post!");
-      }
-    };
-    fetchPosts();
-  }, [isOwner, accId, accessToken, user?.avatar]);
-
-  //CAC METHOD LIEN QUAN KHAC
-  const handleCommentCountChange = (postId, newCount) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((postMapper) =>
-        postMapper.post && postMapper.post.postId === postId
-          ? { ...postMapper, post: { ...postMapper.post, comments: newCount } }
-          : postMapper
-      )
-    );
-  };
-
-  const handleDeletePost = (postId) => {
-    setPosts((prevPosts) =>
-      prevPosts.filter((post) => post.post.postId !== postId)
-    );
-  };
-
-  const handleRestorePost = (postId) => {
-    setPosts((prevPosts) =>
-      prevPosts.filter((post) => post.post.postId !== postId)
-    );
-  };
-
-  const handleHardDeletePost = (postId) => {
-    setPosts((prevPosts) =>
-      prevPosts.filter((post) => post.post.postId !== postId)
-    );
-  };
   // get list friend
   const fetchFriends = async () => {
     try {
@@ -233,99 +242,55 @@ const PersonalPage = () => {
     listCheckRelationShip.find((a) => a.accId === accId);
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <NavbarHeader />
-      <div className="flex-grow">
-        <div className="container mx-auto max-w-7xl">
-          <div className="relative">
-       
-            <CoverBackground coverImage={background} />
+    <div>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <NavbarHeader />
+        <div className="flex-grow">
+          <div className="container mx-auto max-w-7xl">
+            <div className="relative">
+              <CoverBackground />
+              {matchedAccount && (
+                <div className="absolute right-4 bottom-4">
+                  <FriendActionButton
+                    status={matchedAccount.friendStatus}
+                    roleId={matchedAccount.roleId}
+                    accId={matchedAccount.accId}
+                  />
+                </div>
+              )}
 
-            {matchedAccount && (
-              <div className="absolute right-4 bottom-4">
-                <FriendActionButton
-                  status={matchedAccount.friendStatus}
-                  roleId={matchedAccount.roleId}
-                  accId={matchedAccount.accId}
-                />
-              </div>
-            )}
-
-            <ProfileAvatar
-              initialProfileImage={avatar}
-              fullName={fullName || user?.fullName}
-              isOwner={isOwner}
-            />
-          </div>
-          <div className="flex flex-col gap-5 pt-20 lg:flex-row">
-            <aside className="flex flex-col w-full gap-5 lg:w-1/3">
-              <BasicInfo info={basicInfo} />
-              <FriendList
-                friends={listFriends}
+              <ProfileAvatar
+                initialProfileImage={avatar}
+                fullName={fullName || user?.fullName}
                 isOwner={isOwner}
-                isProfile={true}
-                accId = {accId}
               />
-              <PhotoGallery />
-            </aside>
-            <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
-              {isOwner && <PostCreate />}
-
-              <PostFilters />
-
-              {!posts || posts.length <= 0 ? (
-                <p className="font-normal text-gray-300 text-lg">
-                  You have no posts in the trash!
-                </p>
-              ) : (
-                posts.map((postMapper, index) => (
-                  <PostCard
-                    isDeleted="true"
-                    onRestore={handleRestorePost}
-                    onHardDelete={handleHardDeletePost}
-                    onDeletePost={handleDeletePost}
-                    key={`${postMapper.post.postId}-${index}`}
-                    post={{
-                      accId: postMapper.ownerPost.accId,
-                      postId: postMapper.post.postId,
-                      fullName: postMapper.ownerPost
-                        ? postMapper.ownerPost.fullName || postMapper.post.accId
-                        : "Unknown User",
-                      avatar: postMapper.ownerPost
-                        ? postMapper.ownerPost.avatar ||
-                          "https://via.placeholder.com/40"
-                        : "https://via.placeholder.com/40",
-                      createAt: postMapper.post.createdAt,
-                      content: postMapper.post.postContent,
-                      images: postMapper.postImages
-                        ? postMapper.postImages.map((img) => img.imageUrl)
-                        : [],
-                      hashtags: postMapper.hashTags
-                        ? postMapper.hashTags.map((tag) => tag.hashTagContent)
-                        : [],
-                      tagFriends: postMapper.postTags
-                        ? postMapper.postTags.map((tag) => ({
-                            accId: tag.accId,
-                            fullname: tag.fullname || "Unknown",
-                          }))
-                        : [],
-                      categories: postMapper.postCategories
-                        ? postMapper.postCategories.map(
-                            (cat) => cat.categoryName
-                          )
-                        : [],
-                      likes: postMapper.reactionCount || 0,
-                      comments: postMapper.commentCount || 0,
-                      shares: postMapper.shareCount || 0,
-                    }}
-                    onCommentCountChange={(newCount) =>
-                      handleCommentCountChange(postMapper.post.postId, newCount)
-                    }
+            </div>
+            <div className="flex-row gap-5 pt-10 text-left">
+              <div className="p-3">
+                <Link to="/PersonalPage">Profile /</Link>
+                <Link className="text-blue-500" to="">
+                  {" "}
+                  Friends{" "}
+                </Link>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {listFriends.length > 0 ? (
+                listFriends.map((friend) => (
+                  <YourFriendCard
+                    key={friend.accId}
+                    friend={friend}
+                    isOwner={isOwner}
+                    isProfile={true}
                   />
                 ))
+              ) : (
+                <p className="text-gray-500 col-span-full text-center">
+                  No data to display...
+                </p>
               )}
-            </section>
+            </div>
           </div>
         </div>
       </div>
@@ -333,4 +298,4 @@ const PersonalPage = () => {
   );
 };
 
-export default PersonalPage;
+export default UserFriendOfOther;

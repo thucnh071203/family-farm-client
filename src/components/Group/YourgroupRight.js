@@ -45,51 +45,6 @@ const YourgroupRight = ({ section }) => {
   };
 
   useEffect(() => {
-    // Dữ liệu mẫu
-    // const mockData = [
-    //   {
-    //     id: 1,
-    //     background: "https://gameroom.ee/83571/minecraft.jpg",
-    //     avatar: "https://gameroom.ee/83571/minecraft.jpg",
-    //     numberMember: "100",
-    //     groupName: "The Family Farm for agriculture around the world",
-    //   },
-    //   {
-    //     id: 2,
-    //     background: "https://gameroom.ee/83571/minecraft.jpg",
-    //     avatar: "https://gameroom.ee/83571/minecraft.jpg",
-    //     numberMember: "100",
-    //     groupName: "The Family Farm for agriculture around the world",
-    //   },
-    //   {
-    //     id: 3,
-    //     background: "https://gameroom.ee/83571/minecraft.jpg",
-    //     avatar: "https://gameroom.ee/83571/minecraft.jpg",
-    //     numberMember: "100",
-    //     groupName: "The Family Farm for agriculture around the world",
-    //   },
-    //   {
-    //     id: 4,
-    //     background: "https://gameroom.ee/83571/minecraft.jpg",
-    //     avatar: "https://gameroom.ee/83571/minecraft.jpg",
-    //     numberMember: "100",
-    //     groupName: "The Family Farm for agriculture around the world",
-    //   },
-    //   {
-    //     id: 5,
-    //     background: "https://gameroom.ee/83571/minecraft.jpg",
-    //     avatar: "https://gameroom.ee/83571/minecraft.jpg",
-    //     numberMember: "100",
-    //     groupName: "The Family Farm for agriculture around the world",
-    //   },
-    //   {
-    //     id: 6,
-    //     background: "https://gameroom.ee/83571/minecraft.jpg",
-    //     avatar: "https://gameroom.ee/83571/minecraft.jpg",
-    //     numberMember: "100",
-    //     groupName: "The Family Farm for agriculture around the world",
-    //   },
-    // ];
     fetchGroups();
     // setGroupData(mockData);
     setIsLoading(false);
@@ -99,16 +54,16 @@ const YourgroupRight = ({ section }) => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-y-6 gap-x-16 md:mx-20 ">
       {isLoading ? (
         <p>Loading...</p>
+      ) : Array.isArray(groupsData) && groupsData.length > 0 ? (
+        groupsData.map((group) => (
+          <YourGroupCard
+            key={group.group.groupId}
+            group={group.group}
+            member={group.numberInGroup}
+          />
+        ))
       ) : (
-        groupsData.map((group) => {
-          return (
-            <YourGroupCard
-              key={group.group.groupId}
-              group={group.group}
-              member={group.numberInGroup}
-            />
-          );
-        })
+        <p>No data to display</p>
       )}
     </div>
   );

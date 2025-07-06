@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Header from "../../components/Header/Header";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import YourGroupDetailListItem from "../../components/Group/YourGroupDetailListItem";
@@ -11,7 +11,12 @@ import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import instance from "../../Axios/axiosConfig";
 import { useSignalR } from "../../context/SignalRContext";
-
+import PostCreate from "../../components/Post/PostCreate";
+import { toast, Bounce } from "react-toastify";
+import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
+import defaultAvatar from "../../assets/images/default-avatar.png";
+import useInfiniteScroll from "../../hooks/useInfiniteScroll";
+import PostInGroupCard from "../../components/Group/PostInGroupCard";
 const GroupDetailPage = () => {
   const { id } = useParams(); // lấy groupId từ URL
   const [groupDetail, setGroupDetail] = useState(null);
@@ -26,10 +31,14 @@ const GroupDetailPage = () => {
   const [listRequestToJoin, setListRequestToJoin] = useState([]);
 
   // select home, member,...
-  const [selectedTab, setSelectedTab] = useState("members");
+  const [selectedTab, setSelectedTab] = useState("posts");
 
   //List your group đã join
   const [yourGroupsData, setGroupData] = useState([]);
+
+  // xử lí list post and create post
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [posts, setPosts] = useState([]);
 
   //Load trang signalR
   const ReloadSignlR = useCallback(async () => {
@@ -283,6 +292,121 @@ const GroupDetailPage = () => {
     fetchListRequestToJoinData();
     fetchListMemberData();
   };
+  // xử lí list post and create post
+  const [accountId, setAccountId] = useState("");
+
+  //DÙNG CHO INFINITE SCROLL
+
+  const [lastPostId, setLastPostId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const [error, setError] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
+  const postContainerRef = useRef(null);
+  const PAGE_SIZE = 5;
+
+  //lấy thông tin người dùng từ storage
+  useEffect(() => {
+    const storedAccId =
+      localStorage.getItem("accId") || sessionStorage.getItem("accId");
+    const storedAvatarUrl =
+      localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
+
+    if (storedAccId) {
+      setAccountId(storedAccId);
+      setAvatarUrl(storedAvatarUrl || defaultAvatar);
+    }
+  }, []);
+
+  const fetchPosts = async ({ lastPostId, reset = false }) => {
+    setLoading(true);
+    if (lastPostId) setLoadingMore(true);
+    setError(null);
+
+    try {
+      const response = await instance.get(
+        "/api/post/get-post-in-group-detail",
+        {
+          params: {
+            lastPostId: lastPostId,
+            pageSize: PAGE_SIZE,
+            groupId: id,
+          },
+        }
+      );
+
+      console.log("API posts response:", response.data.data); // Debug
+
+      if (response.data.success) {
+        const newPosts = response.data.data || [];
+        setPosts((prevPosts) =>
+          reset ? newPosts : [...prevPosts, ...newPosts]
+        );
+        setHasMore(response.data.hasMore);
+
+        if (newPosts.length > 0) {
+          setLastPostId(newPosts[newPosts.length - 1].post.postId);
+        } else {
+          setLastPostId(null);
+        }
+      } else {
+        setError(response.data.message || "Tải bài post thất bại!");
+        // toast.error(response.data.message || "Tải bài post thất bại!", {
+        //   position: "top-right",
+        //   autoClose: 3000,
+        //   transition: Bounce,
+        // });
+      }
+    } catch (error) {
+      setError("Failed to load posts!");
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  //GỌI LẦN ĐẦU
+
+  useEffect(() => {
+    setSkip(0);
+    setLastPostId(null);
+    fetchPosts({ lastPostId: null, reset: true });
+  }, [id]);
+
+  const { skip, setSkip } = useInfiniteScroll({
+    fetchData: () => fetchPosts({ lastPostId }),
+    containerRef: window, //thay đổi thành window do scroll nguyên trang
+    direction: "down",
+    threshold: 50,
+    hasMore,
+    loading,
+    loadingMore,
+    comments: posts.length,
+    data: PAGE_SIZE,
+    take: posts.length,
+  });
+
+  const handleCommentCountChange = (postId, newCount) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((postMapper) =>
+        postMapper.post && postMapper.post.postId === postId
+          ? { ...postMapper, post: { ...postMapper.post, comments: newCount } }
+          : postMapper
+      )
+    );
+  };
+  const handleDeletePost = (postId) => {
+    setPosts((prevPosts) =>
+      prevPosts.filter((post) => post.post.postId !== postId)
+    );
+  };
+
+  const handlePostCreate = (newPostData) => {
+    if (newPostData.post.postScope === "Public") {
+      setPosts((prevPosts) => [newPostData, ...prevPosts]);
+    }
+  };
 
   return (
     <div>
@@ -349,6 +473,87 @@ const GroupDetailPage = () => {
                   />
                 );
               })}
+            </div>
+          )}
+          {selectedTab === "posts" && groupDetail && (
+            <div className="w-full">
+              <PostCreate
+                profileImage={avatarUrl}
+                onPostCreate={handlePostCreate}
+                groupId={id}
+              />
+              <div className="w-full flex flex-col items-center pt-3">
+                <div className="w-full max-w-3xl flex flex-col gap-4">
+                  {loading && skip === 0 ? (
+                    <div className="flex flex-col gap-5">
+                      {[...Array(3)].map((_, index) => (
+                        <PostCardSkeleton key={index} />
+                      ))}
+                    </div>
+                  ) : error ? (
+                    <div className="text-center py-4">{error}</div>
+                  ) : posts.length > 0 ? (
+                    posts.map((postMapper, index) =>
+                      postMapper && postMapper.post && postMapper.ownerPost ? (
+                        <PostInGroupCard
+                          onDeletePost={handleDeletePost}
+                          key={`${postMapper.post.postId}-${index}`}
+                          post={{
+                            accId: postMapper.ownerPost.accId || "Unknown",
+                            postId: postMapper.post.postId,
+                            fullName:
+                              postMapper.ownerPost.fullName || "Unknown User",
+                            avatar:
+                              postMapper.ownerPost.avatar ||
+                              "https://via.placeholder.com/40",
+                            createAt: postMapper.post.createdAt,
+                            content: postMapper.post.postContent,
+                            images:
+                              postMapper.postImages?.map(
+                                (img) => img.imageUrl
+                              ) || [],
+                            hashtags:
+                              postMapper.hashTags?.map(
+                                (tag) => tag.hashTagContent
+                              ) || [],
+                            tagFriends:
+                              postMapper.postTags?.map((tag) => ({
+                                accId: tag.accId,
+                                fullname:
+                                  tag.fullname || tag.username || "Unknown", // Sử dụng username nếu fullname là null
+                              })) || [],
+                            categories:
+                              postMapper.postCategories?.map(
+                                (cat) => cat.categoryName
+                              ) || [],
+                            likes: postMapper.reactionCount || 0,
+                            comments: postMapper.commentCount || 0,
+                            shares: postMapper.shareCount || 0,
+                          }}
+                          groupData={postMapper.group}
+                          onCommentCountChange={(newCount) =>
+                            handleCommentCountChange(
+                              postMapper.post.postId,
+                              newCount
+                            )
+                          }
+                        />
+                      ) : null
+                    )
+                  ) : (
+                    <div className="text-center py-4">
+                      Không tìm thấy bài viết
+                    </div>
+                  )}
+                  {loadingMore && (
+                    <div className="flex flex-col gap-5 py-4">
+                      {[...Array(2)].map((_, index) => (
+                        <PostCardSkeleton key={`more-${index}`} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           )}
         </div>
