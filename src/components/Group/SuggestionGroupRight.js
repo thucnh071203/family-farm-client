@@ -35,7 +35,6 @@ const SuggestionGroupRight = () => {
       // Kiểm tra dữ liệu và cập nhật state
       if (data.success === true) {
         setGroupData(data.data);
-        
       } else {
         console.warn("Unexpected response format:", data);
         setGroupData([]);
@@ -49,23 +48,24 @@ const SuggestionGroupRight = () => {
 
   useEffect(() => {
     fetchGroups();
-    setIsLoading(false);
   }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-y-6 gap-x-16 md:mx-20 ">
       {isLoading ? (
         <p>Loading...</p>
+      ) : groupsData.length === 0 ? (
+        <p className="text-center text-gray-500 col-span-3 h-10">
+          No group suggestions available
+        </p>
       ) : (
-        groupsData.map((group) => {
-          return (
-            <SuggestionGroupCard
-              key={group.group.groupId}
-              group={group.group}
-              member={group.numberInGroup}
-            />
-          );
-        })
+        groupsData.map((group) => (
+          <SuggestionGroupCard
+            key={group.group.groupId}
+            group={group.group}
+            member={group.numberInGroup}
+          />
+        ))
       )}
     </div>
   );

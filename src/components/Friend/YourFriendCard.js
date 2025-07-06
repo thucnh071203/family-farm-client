@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast, Bounce } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-const YourFriendCard = ({ friend, isListFollower }) => {
+const YourFriendCard = ({ friend, isListFollower, isOwner, isProfile }) => {
   const navigate = useNavigate();
   const [status, setStatus] = useState(friend.friendStatus);
   const handleClickToProfile = (accId) => {
@@ -124,14 +124,18 @@ const YourFriendCard = ({ friend, isListFollower }) => {
           </p>
         </div>
         <div>
-          {isListFollower !== "follower" && (
-            <button
-              onClick={handleClick}
-              className={`w-[120px] h-6 ${config.bgColor} ${config.hoverColor} rounded-[5px] font-normal mt-2 text-sm text-white p-1 flex items-center justify-center`}
-            >
-              <i className={`fa-solid ${config.icon} mr-2`}></i>
-              {config.text}
-            </button>
+          {(isOwner === true || isProfile !== true) && (
+            <div>
+              {isListFollower !== "follower" && (
+                <button
+                  onClick={handleClick}
+                  className={`w-[120px] h-6 ${config.bgColor} ${config.hoverColor} rounded-[5px] font-normal mt-2 text-sm text-white p-1 flex items-center justify-center`}
+                >
+                  <i className={`fa-solid ${config.icon} mr-2`}></i>
+                  {config.text}
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>

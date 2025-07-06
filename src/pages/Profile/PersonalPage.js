@@ -300,6 +300,7 @@ const PersonalPage = () => {
                 friends={listFriends}
                 isOwner={isOwner}
                 isProfile={true}
+                accId = {accId}
               />
               <PhotoGallery />
             </aside>

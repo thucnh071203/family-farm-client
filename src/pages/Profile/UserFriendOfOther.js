@@ -8,7 +8,8 @@ import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
 import instance from "../../Axios/axiosConfig";
-const UserFriends = () => {
+
+const UserFriendOfOther = () => {
   const friends = [
     {
       username: "Dang Khoa",
@@ -198,7 +199,6 @@ const UserFriends = () => {
       fetchFriends();
     }
   }, [accId, isOwner, accessToken]);
-
   const fetchlistCheckRelationShip = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -278,7 +278,12 @@ const UserFriends = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {listFriends.length > 0 ? (
                 listFriends.map((friend) => (
-                  <YourFriendCard key={friend.accId} friend={friend} />
+                  <YourFriendCard
+                    key={friend.accId}
+                    friend={friend}
+                    isOwner={isOwner}
+                    isProfile={true}
+                  />
                 ))
               ) : (
                 <p className="text-gray-500 col-span-full text-center">
@@ -293,4 +298,4 @@ const UserFriends = () => {
   );
 };
 
-export default UserFriends;
+export default UserFriendOfOther;
