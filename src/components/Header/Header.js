@@ -8,6 +8,7 @@ import defaultAvatar from '../../assets/images/default-avatar.png';
 import MenuHeader from './MenuHeader';
 import { useUser } from '../../context/UserContext';
 import { useNotification } from '../../context/NotificationContext';
+import SearchBox from '../Search/SearchBox';
 
 const Header = () => {
     const { user } = useUser();
@@ -88,13 +89,8 @@ const Header = () => {
                 <h3 className="font-bold name-page">Family Farm</h3>
             </div>
 
-            <div className="search-box">
-                <div className="search-box-wrapper">
-                    <i className="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" placeholder="Search" className="search-input" />
-                </div>
-            </div>
-
+            <SearchBox />
+            
             <div className="action">
                 <>
                     <NotificationList

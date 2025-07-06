@@ -1,12 +1,15 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import Cropper from "react-easy-crop";
 import instance from "../../Axios/axiosConfig";
-import { useUser } from '../../context/UserContext';
+import { useUser } from "../../context/UserContext";
 import { toast } from "react-toastify";
 
-const ProfileAvatar = ({ initialProfileImage, fullName }) => { // Bỏ avatarImage
+const ProfileAvatar = ({ initialProfileImage, fullName, isOwner }) => {
+  // Bỏ avatarImage
   const { user, updateUser } = useUser();
-  const [profileImage, setProfileImage] = useState(user?.avatar || initialProfileImage);
+  const [profileImage, setProfileImage] = useState(
+    user?.avatar || initialProfileImage
+  );
   const [showCropper, setShowCropper] = useState(false);
   const [imageToCrop, setImageToCrop] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -21,19 +24,28 @@ const ProfileAvatar = ({ initialProfileImage, fullName }) => { // Bỏ avatarIma
 
   const handleCropSave = async () => {
     try {
-      const { blobUrl, file } = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      const { blobUrl, file } = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels
+      );
       setProfileImage(blobUrl);
 
       const formData = new FormData();
       formData.append("NewAvatar", file);
 
-      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-      const response = await instance.put("/api/account/change-avatar", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const token =
+        localStorage.getItem("accessToken") ||
+        sessionStorage.getItem("accessToken");
+      const response = await instance.put(
+        "/api/account/change-avatar",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.data.success) {
         const newAvatar = response.data.data;
@@ -44,7 +56,9 @@ const ProfileAvatar = ({ initialProfileImage, fullName }) => { // Bỏ avatarIma
       }
     } catch (e) {
       console.error("Error updating avatar:", e);
-      toast.error(`Failed to update avatar: ${e.message || "Please try again."}`);
+      toast.error(
+        `Failed to update avatar: ${e.message || "Please try again."}`
+      );
       setProfileImage(user?.avatar || initialProfileImage);
     }
   };
@@ -118,12 +132,15 @@ const ProfileAvatar = ({ initialProfileImage, fullName }) => { // Bỏ avatarIma
             className="w-28 h-28 rounded-full border-4 border-white cursor-pointer"
             onClick={() => setShowProfilePopup(true)}
           />
-          <button
-            onClick={() => profileInputRef.current.click()}
-            className="absolute top-20 right-0 text-[18px] text-white bg-black rounded-full p-1"
-          >
-            <i className="fa-solid fa-camera"></i>
-          </button>
+          {isOwner === true && (
+            <button
+              onClick={() => profileInputRef.current.click()}
+              className="absolute top-20 right-0 text-[18px] text-white bg-black rounded-full p-1"
+            >
+              <i className="fa-solid fa-camera"></i>
+            </button>
+          )}
+
           <input
             type="file"
             accept="image/*"
@@ -132,9 +149,7 @@ const ProfileAvatar = ({ initialProfileImage, fullName }) => { // Bỏ avatarIma
             className="hidden"
           />
         </div>
-        <h1 className="mt-2 text-3xl font-bold text-center">
-          {fullName}
-        </h1>
+        <h1 className="mt-2 text-3xl font-bold text-center">{fullName}</h1>
       </div>
 
       {showCropper && (
@@ -201,12 +216,14 @@ const ProfileAvatar = ({ initialProfileImage, fullName }) => { // Bỏ avatarIma
                 className="w-full h-full object-contain rounded-md"
               />
             </div>
-            <button
-              onClick={() => profileInputRef.current.click()}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md"
-            >
-              Change Avatar
-            </button>
+            {isOwner === true && (
+              <button
+                onClick={() => profileInputRef.current.click()}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md"
+              >
+                Change Avatar
+              </button>
+            )}
           </div>
         </div>
       )}

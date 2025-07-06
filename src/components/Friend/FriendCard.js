@@ -1,7 +1,11 @@
 import React from "react";
 import { toast, Bounce } from "react-toastify";
-
-const FriendCard = ({ friend,onActionComplete}) => {
+import { useNavigate } from "react-router-dom";
+const FriendCard = ({ friend, onActionComplete }) => {
+  const navigate = useNavigate();
+  const handleClickToProfile = (accId) => {
+    navigate(`/PersonalPage/${accId}`);
+  };
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -16,12 +20,12 @@ const FriendCard = ({ friend,onActionComplete}) => {
         }
       );
       if (response.ok) {
-        onActionComplete();
+        //onActionComplete();
         toast.success("DELETE FRIEND REQUEST SUCCESSFULLY!");
         console.log("Deleted successfully");
         // Có thể gọi hàm callback để xóa item khỏi danh sách UI
       } else {
-        onActionComplete();
+        // onActionComplete();
         toast.error("DELETE FRIEND REQUEST FAIL!");
         console.error("Failed to delete");
       }
@@ -44,12 +48,12 @@ const FriendCard = ({ friend,onActionComplete}) => {
         }
       );
       if (response.ok) {
-        onActionComplete();
+        // onActionComplete();
         toast.success("ACCEPT FRIEND REQUEST SUCCESSFULLY!");
         console.log("Accepted successfully");
         // Có thể gọi hàm callback để cập nhật trạng thái trong UI
       } else {
-        onActionComplete();
+        // onActionComplete();
         toast.error("ACCEPT FRIEND REQUEST FAIL!");
         console.error("Failed to accept");
       }
@@ -73,12 +77,14 @@ const FriendCard = ({ friend,onActionComplete}) => {
       <div className="items-center flex flex-col gap-1">
         <div className="rounded-[50px]">
           <img
+            onClick={() => handleClickToProfile(friend.accId)}
             className="rounded-full w-[60px] h-[60px] object-fill"
             src={
               friend.avatar ||
               "https://i.pinimg.com/originals/d0/28/68/d0286806706a508645e8763c6b3f8cea.jpg"
             }
             alt="avatar"
+            style={{ cursor: "pointer" }}
           />
         </div>
         <div className="flex items-center flex-col gap-1">
