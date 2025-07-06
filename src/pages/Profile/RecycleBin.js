@@ -153,15 +153,6 @@ const RecycleBin = () => {
                     <div className="flex flex-col gap-5 pt-20 lg:flex-row">
                         <aside className="flex flex-col w-full gap-5 lg:w-1/3">
                             <BasicInfo info={basicInfo} />
-
-                            {isOwner && (
-                                <>
-                                    <Link to="/Trash" className="text-start font-normal text-sky-300">Recycle Bin</Link>
-                                    <Link to="/SetPassword" className="text-start font-normal text-sky-300">Set Password of your Account</Link>
-                                    <Link to="/ChangePassword" className="text-start font-normal text-sky-300">Change Password of your Account</Link>
-                                </>
-                            )}
-
                             <FriendList />
                             <PhotoGallery />
                         </aside>
@@ -182,7 +173,7 @@ const RecycleBin = () => {
                                             accId: postMapper.ownerPost.accId,
                                             postId: postMapper.post.postId,
                                             fullName: postMapper.ownerPost ? postMapper.ownerPost.fullName || postMapper.post.accId : "Unknown User",
-                                            avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar || "https://via.placeholder.com/40" : "https://via.placeholder.com/40",
+                                            avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar : "https://via.placeholder.com/40",
                                             createAt: postMapper.post.createdAt,
                                             content: postMapper.post.postContent,
                                             images: postMapper.postImages ? postMapper.postImages.map((img) => img.imageUrl) : [],
