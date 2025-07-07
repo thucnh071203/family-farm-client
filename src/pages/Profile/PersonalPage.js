@@ -327,9 +327,9 @@ const PersonalPage = () => {
                       fullName: postMapper.ownerPost
                         ? postMapper.ownerPost.fullName || postMapper.post.accId
                         : "Unknown User",
-                      avatar: postMapper.ownerPost
-                        ? postMapper.ownerPost.avatar
-                        : "https://via.placeholder.com/40",
+                      avatar: isOwner && user?.avatar
+                        ? user.avatar
+                        : postMapper.ownerPost?.avatar,
                       createAt: postMapper.post.createdAt,
                       content: postMapper.post.postContent,
                       images: postMapper.postImages

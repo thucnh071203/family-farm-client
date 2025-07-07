@@ -11,6 +11,7 @@ import nam_share_icon from "../../assets/icons/nam_share.svg";
 import { useNavigate } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import default_avatar from "../../assets/images/default-avatar.png"
+import SharePostPopup from "./SharePostPopup";
 
 const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCommentCountChange }) => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
   const [commentCount, setCommentCount] = useState(postData.comments);
   const [isLikeHovered, setIsLikeHovered] = useState(false);
   const [showReactionList, setShowReactionList] = useState(false);
+  const [showSharePopup, setShowSharePopup] = useState(false);
 
   const {
     likeCount,
@@ -278,11 +280,24 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
           >
             <i className="mr-2 fas fa-comment w-5 h-5"></i>Comment
           </button>
-          <button className="flex-1 p-2 text-center bg-gray-100 rounded-sm hover:bg-gray-200 items-center h-9">
+          <button
+            onClick={() => setShowSharePopup(true)}
+            className="flex-1 p-2 text-center bg-gray-100 rounded-sm hover:bg-gray-200 items-center h-9"
+          >
             <i className="mr-2 fa-solid fa-share w-5 h-5"></i>Share
           </button>
         </div>
       </div>
+      {showSharePopup && (
+        <SharePostPopup
+          post={postData}
+          onClose={() => setShowSharePopup(false)}
+          onSharedPost={(sharedPost) => {
+            // Handle sau khi share thành công
+            console.log('Post shared:', sharedPost);
+          }}
+        />
+      )}
       {showComments && (
         <CommentSection
           postId={postData.postId}
