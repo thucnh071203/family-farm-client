@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { toast, Bounce } from "react-toastify";
+import Swal from "sweetalert2";
+
 const YourGroupDetailItem = ({ group }) => {
   const navigate = useNavigate();
 
@@ -19,30 +21,45 @@ const YourGroupDetailItem = ({ group }) => {
   }, []);
 
   const handleLeaveGroup = async (groupId) => {
-    try {
-      const token = localStorage.getItem("accessToken");
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to leave this group?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3DB3FB",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, leave group",
+      cancelButtonText: "Cancel",
+    });
 
-      const response = await fetch(
-        `https://localhost:7280/api/group-member/leave/${groupId}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
+    if (confirmResult.isConfirmed) {
+      try {
+        const token = localStorage.getItem("accessToken");
+
+        const response = await fetch(
+          `https://localhost:7280/api/group-member/leave/${groupId}`,
+          {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (response.status === 200) {
+          toast.success("You left the group successfully!", {
+            transition: Bounce,
+          });
+          setLeaveGroups((prev) => [...prev, groupId]);
+          navigate("/group", { replace: true });
+        } else {
+          toast.warning("You may have already left this group.");
         }
-      );
-
-      if (response.status === 200) {
-        toast.success("You leaved group successfully!", {
-          transition: Bounce,
-        });
-        setLeaveGroups((prev) => [...prev, groupId]); // ➜ Đánh dấu đã join
-      } else {
-        toast.warning("You may have already out of this group.");
+      } catch (error) {
+        console.error("Leave group failed", error);
+        toast.error("Failed to leave group.");
       }
-    } catch (error) {
-      console.error("leave group failed", error);
-      toast.error("Failed to leave group.");
     }
   };
+
   return (
     <div className="flex justify-between items-center text-left">
       <div className="flex items-center gap-2">
@@ -53,12 +70,14 @@ const YourGroupDetailItem = ({ group }) => {
         />
         <div className="flex flex-col gap-1 items-start">
           <span className="ml-2">{group.groupName}</span>
-          <button
-            onClick={handleViewGroup}
-            className="hover:bg-[rgba(61,179,251,0.14)] p-1 text-[#5596E6] rounded-lg text-sm"
-          >
-            <i class="fa-solid fa-eye px-1"></i>View Group
-          </button>
+          {!leaveGroups.includes(group.groupId) && (
+            <button
+              onClick={handleViewGroup}
+              className="hover:bg-[rgba(61,179,251,0.14)] p-1 text-[#5596E6] rounded-lg text-sm"
+            >
+              <i class="fa-solid fa-eye px-1"></i>View Group
+            </button>
+          )}
         </div>
       </div>
       {userAccId !== group.ownerId && (
