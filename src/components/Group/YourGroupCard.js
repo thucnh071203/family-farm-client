@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { toast, Bounce } from "react-toastify";
+import Swal from "sweetalert2";
+
 const YourGroupCard = ({ group, member }) => {
   const navigate = useNavigate();
 
@@ -19,30 +21,44 @@ const YourGroupCard = ({ group, member }) => {
   }, []);
   
   const handleLeaveGroup = async (groupId) => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      
-      const response = await fetch(
-        `https://localhost:7280/api/group-member/leave/${groupId}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
+    const confirmResult = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to leave this group?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3DB3FB",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, leave group",
+      cancelButtonText: "Cancel",
+    });
+  
+    if (confirmResult.isConfirmed) {
+      try {
+        const token = localStorage.getItem("accessToken");
+  
+        const response = await fetch(
+          `https://localhost:7280/api/group-member/leave/${groupId}`,
+          {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+  
+        if (response.status === 200) {
+          toast.success("You left the group successfully!", {
+            transition: Bounce,
+          });
+          setLeaveGroups((prev) => [...prev, groupId]);
+        } else {
+          toast.warning("You may have already left this group.");
         }
-      );
-
-      if (response.status === 200) {
-        toast.success("You leaved group successfully!", {
-          transition: Bounce,
-        });
-        setLeaveGroups((prev) => [...prev, groupId]); // ➜ Đánh dấu đã join
-      } else {
-        toast.warning("You may have already out of this group.");
+      } catch (error) {
+        console.error("Leave group failed", error);
+        toast.error("Failed to leave group.");
       }
-    } catch (error) {
-      console.error("leave group failed", error);
-      toast.error("Failed to leave group.");
     }
   };
+  
 
   return (
     <div className="group w-60 md:w-[267px] h-72 md:h-[24rem] shadow-md relative rounded-md overflow-hidden">

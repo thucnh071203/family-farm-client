@@ -26,6 +26,8 @@ const GroupDetailPage = () => {
   const [userAccId, setUserAccId] = useState(null);
   const [groupReload, setGroupReload] = useState(null);
   const { connection } = useSignalR();
+  // handle search
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   // get list request join group
   const [listRequestToJoin, setListRequestToJoin] = useState([]);
@@ -294,7 +296,8 @@ const GroupDetailPage = () => {
   };
   // xử lí list post and create post
   const [accountId, setAccountId] = useState("");
-
+  const [isSearching, setIsSearching] = useState(false);
+  const [postCount, setPostCount] = useState(0);
   //DÙNG CHO INFINITE SCROLL
 
   const [lastPostId, setLastPostId] = useState(null);
@@ -369,11 +372,52 @@ const GroupDetailPage = () => {
   //GỌI LẦN ĐẦU
 
   useEffect(() => {
-    setSkip(0);
-    setLastPostId(null);
-    fetchPosts({ lastPostId: null, reset: true });
+    if (!id) return;
+  
+    let cancelled = false;
+  
+    const loadPosts = async () => {
+      //  Reset tất cả state liên quan đến scroll và post
+      setSkip(0);
+      setLastPostId(null);
+      setHasMore(true);
+      setPosts([]);  // Clear bài viết cũ
+      setError(null);
+      setSearchKeyword(""); //  Optional: nếu muốn clear luôn thanh tìm kiếm
+  
+      if (isSearching) return;
+  
+      try {
+        const response = await instance.get("/api/post/get-post-in-group-detail", {
+          params: {
+            lastPostId: null,
+            pageSize: PAGE_SIZE,
+            groupId: id,
+          },
+        });
+  
+        if (!cancelled && response.data.success) {
+          const newPosts = response.data.data || [];
+          setPosts(newPosts);
+          setHasMore(response.data.hasMore);
+  
+          if (newPosts.length > 0) {
+            setLastPostId(newPosts.at(-1).post.postId);
+          }
+        }
+      } catch (error) {
+        if (!cancelled) setError("Tải bài post thất bại!");
+      }
+    };
+  
+    loadPosts();
+  
+    // Ngăn gọi setState nếu đã chuyển sang group khác
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
-
+  
   const { skip, setSkip } = useInfiniteScroll({
     fetchData: () => fetchPosts({ lastPostId }),
     containerRef: window, //thay đổi thành window do scroll nguyên trang
@@ -386,6 +430,7 @@ const GroupDetailPage = () => {
     data: PAGE_SIZE,
     take: posts.length,
   });
+
 
   const handleCommentCountChange = (postId, newCount) => {
     setPosts((prevPosts) =>
@@ -407,6 +452,83 @@ const GroupDetailPage = () => {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
     }
   };
+  // filter when search
+
+  const fetchPostCount = async (groupId) => {
+    try {
+      const response = await instance.get("/api/post/count-post-in-group", {
+        params: {
+          groupId: groupId,
+        },
+      });
+  
+      if (response.data.success) {
+        return response.data.data; // số lượng post public
+      } else {
+        console.warn("Failed to fetch post count:", response.data.message);
+        return 0;
+      }
+    } catch (error) {
+      console.error("Error fetching post count:", error);
+      return 0;
+    }
+  };
+  useEffect(() => {
+    if (id) {
+      fetchPostCount(id).then((count) => {
+        setPostCount(count);
+      });
+    }
+  }, [id]);  
+  const fetchFilteredPostsFromServer = async (keyword) => {
+    try {
+      setLoading(true);
+      const response = await instance.get(
+        `/api/post/search-posts-in-group-dto/${id}`,
+        {
+          params: {
+            keyword: keyword,
+          },
+        }
+      );
+  
+      if (response.data.success) {
+        setPosts(response.data.data || []);
+        setHasMore(false); // không còn infinite scroll khi đang search
+      }
+    } catch (error) {
+      console.error("Search failed", error);
+      setError("Failed to search posts");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (searchKeyword.trim()) {
+      setIsSearching(true);
+      fetchFilteredPostsFromServer(searchKeyword);
+    } else {
+      setIsSearching(false);
+      setPosts([]); // reset lại
+      setLastPostId(null);
+      fetchPosts({ lastPostId: null, reset: true }); // gọi lại infinite scroll từ đầu
+    }
+  }, [searchKeyword]);
+    
+  
+
+
+  const filteredMembers = listMemberOfgroup.filter((member) =>
+    member.fullName?.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
+
+  const filteredRequests = listRequestToJoin.filter((request) =>
+    request.fullName?.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
+
+  const filteredPermissionList = listMemberOfgroup.filter((member) =>
+    member.fullName?.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
 
   return (
     <div>
@@ -428,26 +550,33 @@ const GroupDetailPage = () => {
             setSelectedTab={setSelectedTab}
             reload={ReloadData}
             reloadsignlR={ReloadSignlR}
+            searchKeyword={searchKeyword}
+            setSearchKeyword={setSearchKeyword}
+            countPosts={postCount}
           />
           {/* {selectedTab === "posts" && <MemberCard />} */}
           {selectedTab === "members" && groupDetail && (
             <div>
-              {listMemberOfgroup.map((member) => (
-                <MemberCard
-                  key={member.accId}
-                  member={member}
-                  userRole={userRole}
-                  userAccId={userAccId}
-                  reload={ReloadData}
-                  ownerId={groupDetail.ownerId} // Không bị lỗi nữa vì groupDetail đã được kiểm tra
-                />
-              ))}
+              {filteredMembers.length > 0 ? (
+                filteredMembers.map((member) => (
+                  <MemberCard
+                    key={member.accId}
+                    member={member}
+                    userRole={userRole}
+                    userAccId={userAccId}
+                    reload={ReloadData}
+                    ownerId={groupDetail.ownerId}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-4 text-gray-500">Not found</div>
+              )}
             </div>
           )}
           {selectedTab === "requests" && (
             <div>
-              {listRequestToJoin.map((request) => {
-                return (
+              {filteredRequests.length > 0 ? (
+                filteredRequests.map((request) => (
                   <RequestGroupCard
                     key={request.groupMemberId + request.memberStatus}
                     request={request}
@@ -455,14 +584,19 @@ const GroupDetailPage = () => {
                     reload={ReloadData}
                     setListRequestToJoin={setListRequestToJoin}
                   />
-                );
-              })}
+                ))
+              ) : (
+                <div className="text-center py-4 text-gray-500">
+                  No data to display
+                </div>
+              )}
             </div>
           )}
+
           {selectedTab === "permission" && groupDetail && (
             <div>
-              {listMemberOfgroup.map((member) => {
-                return (
+              {filteredPermissionList.length > 0 ? (
+                filteredPermissionList.map((member) => (
                   <MemberPermission
                     key={member.groupMemberId}
                     member={member}
@@ -471,10 +605,15 @@ const GroupDetailPage = () => {
                     reload={ReloadData}
                     ownerId={groupDetail.ownerId}
                   />
-                );
-              })}
+                ))
+              ) : (
+                <div className="text-center py-4 text-gray-500">
+                  No data to display
+                </div>
+              )}
             </div>
           )}
+
           {selectedTab === "posts" && groupDetail && (
             <div className="w-full">
               <PostCreate
@@ -542,7 +681,7 @@ const GroupDetailPage = () => {
                     )
                   ) : (
                     <div className="text-center py-4">
-                      Không tìm thấy bài viết
+                      Not found any post
                     </div>
                   )}
                   {loadingMore && (
