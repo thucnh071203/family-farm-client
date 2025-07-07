@@ -164,8 +164,9 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
       <div className="flex flex-col items-start mt-3 text-sm">
         <p className="mb-2 text-[#7D7E9E] font-light">{postData.content}</p>
         <p className="mb-2 font-bold">
+          <span>HashTags: </span>
           {hashTags.map((tag, index) => (
-            <span key={index} className="mr-2">#{tag}</span>
+             <span key={index} className="mr-2">#{tag}</span>
           ))}
         </p>
         <div className="flex items-center gap-2 mb-2">

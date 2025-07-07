@@ -8,7 +8,10 @@ export const SignalRProvider = ({ children }) => {
     const currentUserId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
 
     useEffect(() => {
-        if (!currentUserId) return;
+        if (!currentUserId) {
+            console.warn("No currentUserId, SignalR connection will not be established");
+            return;
+        }
 
         const newConnection = new HubConnectionBuilder()
             .withUrl(`${process.env.REACT_APP_API_BASE_URL}/chatHub?accId=${currentUserId}`, {
@@ -20,44 +23,29 @@ export const SignalRProvider = ({ children }) => {
 
         setConnection(newConnection);
 
+        newConnection
+            .start()
+            .then(() => {
+                console.log("SignalR Connected");
+            })
+            .catch((err) => {
+                console.error("SignalR Connection Error:", err);
+            });
+
+        newConnection.onreconnecting((err) => {
+            console.warn("SignalR Reconnecting:", err);
+        });
+
+        newConnection.onreconnected(() => {
+            console.log("SignalR Reconnected");
+        });
+
         return () => {
             if (newConnection) {
                 newConnection.stop().catch((err) => console.error("Error stopping SignalR:", err));
             }
         };
     }, [currentUserId]);
-
-    useEffect(() => {
-        if (connection) {
-            if (connection.state === "Disconnected") {
-                console.log("Starting SignalR connection...");
-                connection
-                    .start()
-                    .then(() => {
-                        console.log("SignalR Connected");
-                    })
-                    .catch((err) => {
-                        console.error("SignalR Connection Error:", err);
-                    });
-            }
-
-            // Handle reconnection events
-            connection.onreconnecting((err) => {
-                console.warn("SignalR Reconnecting:", err);
-            });
-
-            connection.onreconnected(() => {
-                console.log("SignalR Reconnected");
-            });
-
-            return () => {
-                connection.off("ReceiveMessage");
-                connection.off("MessageSeen");
-                connection.off("ChatRecalled");
-                connection.off("ChatHistoryDeleted");
-            };
-        }
-    }, [connection]);
 
     return (
         <SignalRContext.Provider value={{ connection, currentUserId }}>

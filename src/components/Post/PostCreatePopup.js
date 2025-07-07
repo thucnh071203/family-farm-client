@@ -26,10 +26,17 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
   const [content, setContent] = useState("");
   const [taggedFriends, setTaggedFriends] = useState([]);
   const [status, setStatus] = useState("Public");
-
+  const [statusDropdown, setStatusDropdown] = useState(false);
   //danh sách lấy từ db
   const [listCategories, setListCategory] = useState([]);
   const [listFriends, setListFriends] = useState([]);
+
+  const toggleStatusDropdown = () => setStatusDropdown(!statusDropdown);
+  const closeStatusDropdown = () => setStatusDropdown(false);
+  const handleSelectStatus = (value) => {
+    setStatus(value);
+    setStatusDropdown(false);
+  };
 
   //xử lý khi submit form
   const handleSubmit = async (e) => {
@@ -39,6 +46,14 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
 
     //Gán dữ liệu vào form data
     formData.append("PostContent", content);
+
+    // Xử lý hashtags - trích xuất từ content
+    const hashtags = content.match(/#\w+/g) || [];
+    const cleanedHashtags = hashtags.map(tag => tag.replace('#', '')); // Loại bỏ dấu #
+    cleanedHashtags.forEach((hashtag) =>
+      formData.append("Hashtags", hashtag)
+    );
+
     categories.forEach((cat) =>
       formData.append("ListCategoryOfPost", cat.categoryId)
     );
@@ -52,8 +67,10 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
     formData.append("isInGroup", groupId ? "true" : "false");
 
     if (groupId) {
-      formData.append("groupId", groupId);
+      formData.append("GroupId", groupId);
     }
+
+
 
     try {
       const response = await instance.post("/api/post/create", formData, {
@@ -63,14 +80,17 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
         },
       });
 
-      console.log(response.data.data);
+      console.log("Response data:", response.data.data);
+      console.log("Hashtags sent:", cleanedHashtags);
 
       if (response.status === 200) {
-        toast.success("Post successfully!");
+        toast.success("Post created successfully!");
         onCreatedPost(response.data.data);
+        onClose(); // Đóng popup sau khi tạo post thành công
       }
     } catch (err) {
       console.error("Lỗi khi gửi bài viết:", err);
+      toast.error("Failed to create post!");
     }
   };
 
@@ -153,11 +173,25 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
     setImagesFile((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const addCategory = (category) => {
-    // Tránh thêm trùng ID
-    if (!categories.find((c) => c.categoryId === category.categoryId)) {
-      setCategories([...categories, category]); // ✅ Lưu object
+  // Hàm toggle category (thêm/xóa category)
+  const toggleCategory = (category) => {
+    const existingCategory = categories.find((c) => c.categoryId === category.categoryId);
+    if (existingCategory) {
+      // Nếu đã có thì xóa
+      setCategories(categories.filter((c) => c.categoryId !== category.categoryId));
+    } else {
+      // Nếu chưa có thì thêm
+      setCategories([...categories, category]);
     }
+  };
+
+  // Hàm kiểm tra xem category có được chọn hay không
+  const isCategorySelected = (category) => {
+    return categories.some((c) => c.categoryId === category.categoryId);
+  };
+
+  // Hàm đóng category dropdown
+  const closeCategoryDropdown = () => {
     setCategoryDropdown(false);
   };
 
@@ -321,29 +355,42 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
           <hr />
           <div className="my-4">
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              <div className="relative inline-flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg">
-                <img src={public_status_icon} alt="Photo/Video" />
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="pr-6 bg-transparent outline-none appearance-none"
+              <div className="relative inline-block w-full lg:w-auto">
+                <div
+                  onClick={toggleStatusDropdown}
+                  className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer"
                 >
-                  <option value="Public">Public</option>
-                  <option value="Private">Private</option>
-                </select>
-                <div className="absolute pointer-events-none right-2">
-                  <i className="text-blue-500 fa-solid fa-caret-down"></i>
+                  <img src={public_status_icon} alt="status icon" />
+                  {status}
+                  <i className="fa-solid fa-caret-down ml-auto"></i>
                 </div>
+
+                {statusDropdown && (
+                  <div className="absolute z-10 mt-2 w-full bg-white border rounded-lg shadow-lg">
+                    <div
+                      className={`p-3 cursor-pointer hover:bg-gray-100 ${status === "Public" ? "bg-blue-50 text-blue-600" : "text-gray-700"}`}
+                      onClick={() => handleSelectStatus("Public")}
+                    >
+                      Public
+                    </div>
+                    <div
+                      className={`p-3 cursor-pointer hover:bg-gray-100 ${status === "Private" ? "bg-blue-50 text-blue-600" : "text-gray-700"}`}
+                      onClick={() => handleSelectStatus("Private")}
+                    >
+                      Private
+                    </div>
+                  </div>
+                )}
               </div>
               <div
                 onClick={handlePhotoVideo}
-                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg"
+                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer"
               >
                 <img src={camera_icon} alt="Photo/Video" /> Photo/Video
               </div>
               <div
                 onClick={handleTagFriends}
-                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg"
+                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer"
               >
                 <img src={tag_icon} alt="Photo/Video" />
                 Tag friends
@@ -354,24 +401,55 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                   onClick={() => setCategoryDropdown(!categoryDropdown)}
                   className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer"
                 >
-                  <img src={post_category_icon} alt="Photo/Video" /> Categories{" "}
+                  <img src={post_category_icon} alt="Photo/Video" />
+                  Categories
                   <i className="fa-solid fa-caret-down"></i>
                 </div>
 
                 {categoryDropdown && (
-                  <div className="absolute z-10 mt-2 w-full text-left bg-white border rounded-lg">
-                    {listCategories.map((cat) => (
-                      <div
-                        key={cat.categoryId}
-                        onClick={() => {
-                          addCategory(cat);
-                          setCategoryDropdown(false); // Đóng dropdown sau khi chọn
-                        }}
-                        className="p-2 text-black rounded cursor-pointer hover:bg-gray-100"
+                  <div className="absolute z-10 mt-2 w-64 bg-white border rounded-lg shadow-lg">
+                    {/* Header của dropdown */}
+                    <div className="flex items-center justify-between p-3 border-b">
+                      <span className="font-semibold text-gray-700">Select Categories</span>
+                      <button
+                        type="button"
+                        onClick={closeCategoryDropdown}
+                        className="text-gray-500 hover:text-gray-700"
                       >
-                        {cat.categoryName}
-                      </div>
-                    ))}
+                        <i className="fa-solid fa-times"></i>
+                      </button>
+                    </div>
+
+                    {/* Danh sách categories */}
+                    <div className="max-h-64 overflow-y-auto">
+                      {listCategories.map((cat) => (
+                        <div
+                          key={cat.categoryId}
+                          onClick={() => toggleCategory(cat)}
+                          className={`p-3 cursor-pointer hover:bg-gray-100 flex items-center gap-2 ${isCategorySelected(cat) ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                            }`}
+                        >
+                          <div className={`w-4 h-4 border-2 rounded flex items-center justify-center ${isCategorySelected(cat) ? 'bg-blue-500 border-blue-500' : 'border-gray-300'
+                            }`}>
+                            {isCategorySelected(cat) && (
+                              <i className="fa-solid fa-check text-white text-xs"></i>
+                            )}
+                          </div>
+                          <span>{cat.categoryName}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Footer với nút Done */}
+                    <div className="p-3 border-t">
+                      <button
+                        type="button"
+                        onClick={closeCategoryDropdown}
+                        className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                      >
+                        Done
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -384,9 +462,8 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                 <img
                   src={image}
                   alt="Post"
-                  className={`w-full h-24 rounded-lg object-cover ${
-                    index === 5 && images.length > 6 ? "brightness-50" : ""
-                  }`}
+                  className={`w-full h-24 rounded-lg object-cover ${index === 5 && images.length > 6 ? "brightness-50" : ""
+                    }`}
                 />
                 {index === 5 && images.length > 6 && (
                   <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-white">
