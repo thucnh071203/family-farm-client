@@ -17,7 +17,7 @@ import deatilIcon from "../../assets/images/material-symbols_read-more.png";
 import ProgressMenu from "../ProcessList/ProgressMenu";
 import instance from "../../Axios/axiosConfig";
 
-export default function WaitingList() {
+export default function UnpaidList() {
     const { hubConnection } = useNotification();
     const { connection } = useSignalR();
     const [listBooking, setListBooking] = useState([]);
@@ -32,13 +32,13 @@ export default function WaitingList() {
         }
     }, []);
 
-    //LAY DS PAID BOOKING
+    //LAY DS UNPAID BOOKING
     useEffect(() => {
         if (!accessToken) return;
 
         const fetchListBooking = async () => {
             try {
-                const response = await instance.get("/api/booking-service/expert/booking-paid",
+                const response = await instance.get("/api/booking-service/expert/booking-unpaid",
                     {},
                     {
                         headers: {
@@ -63,13 +63,13 @@ export default function WaitingList() {
                 <ProcessNav inPage="Process" />
                 <div className="flex flex-col w-full gap-6 mt-6 progress-container lg:mt-14 lg:flex-row lg:justify-center">
                     <div className="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">
-                        <ProgressMenu inPage="Waiting" />
+                        <ProgressMenu inPage="Unpaid" />
                     </div>
 
                     <div className="progress-right w-full lg:w-[66.5%] xl:w-[830px] lg:max-w-[830px]">
                         <div className="flex flex-col w-full gap-5 header-waiting-container lg:flex-row lg:justify-between lg:gap-0">
                             <div className="frame-6 flex flex-row justify-center items-center gap-3 sm:gap-[40px]">
-                                <div className="text-wrapper-title">List of booking waiting</div>
+                                <div className="text-wrapper-title">List of unpaid booking</div>
                             </div>
                             <div className="frame-10">
                                 <img className="img-2" src={searchIcon} alt="" />
@@ -113,18 +113,14 @@ export default function WaitingList() {
                                                     </div>
                                                 </div>
 
-                                                <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
-                                                    <div className="text-completed">Paid</div>
+                                                <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                    <div className="text-uncompleted-a-need">Unpaid</div>
                                                 </div>
 
                                             </div>
 
                                             <div class="footer-booking-card">
                                                 <div className="footer-wrapper">
-
-                                                    <div class="footer-booking-button">
-                                                        <div class="progress-button-text">Create Process</div>
-                                                    </div>
 
                                                     <div class="footer-booking-price">
                                                         <div class="total-price">
