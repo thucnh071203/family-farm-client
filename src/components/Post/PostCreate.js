@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PostCreatePopup from "./PostCreatePopup";
 import { useUser } from "../../context/UserContext";
 
-const PostCreate = ({ onPostCreate, profileImage }) => {
+const PostCreate = ({ onPostCreate, profileImage, groupId }) => {
   const [showPopup, setShowPopup] = useState(false);
 const { user } = useUser();
 
@@ -21,8 +21,7 @@ const { user } = useUser();
       </button>
       <div className="flex items-center gap-3">
         <img
-            src={user?.avatar || 
-            "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png"
+            src={user?.avatar
           }
           alt="Avatar"
           className="w-10 h-10 rounded-full"
@@ -33,7 +32,7 @@ const { user } = useUser();
           className="flex-grow p-2 border border-gray-300 rounded-full"
         />
       </div>
-      {showPopup && <PostCreatePopup onCreatedPost={handlePostCreated}  onClose={() => setShowPopup(false)} />}
+      {showPopup && <PostCreatePopup onCreatedPost={handlePostCreated}  onClose={() => setShowPopup(false)} groupId={groupId}/>}
     </div>
   );
 };

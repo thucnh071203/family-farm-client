@@ -91,6 +91,12 @@ import YourFollowingPage from "./pages/FriendPage/YourFollowingPage";
 import YourFollowerPage from "./pages/FriendPage/YourFollowerPage";
 import SearchPage from "./pages/SearchPage/SearchPage";
 import UnpaidBookingPage from "./pages/WaitingPage/UnpaidBookingPage";
+import UserFriendOfOther from "./pages/Profile/UserFriendOfOther";
+import CallbackPage from "./pages/CallbackPage/PaymentCallback";
+import PaymentResultPage from "./pages/CallbackPage/PaymentResult";
+import PaymentSuccess from "./pages/PaymentPage/PaymentSuccessfulPage";
+import PaymentFailed from "./pages/PaymentPage/PaymentFailedPage";
+
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -142,12 +148,26 @@ const AppContent = () => {
             </Route>
             <Route path="/Professional" element={<ProfessionalPage />} />
             <Route path="/Friend" element={<FriendPage />} />
-            <Route path="/Friend/requests-receive" element={<FriendRequestPage />} />
-            <Route path="/Friend/requests-sent" element={<SentRequestFriendPage />} />
-            <Route path="/Friend/list-following" element={<YourFollowingPage />} />
-            <Route path="/Friend/list-follower" element={<YourFollowerPage />} />
-            <Route path="/Friend/suggestion-friend" element={<SuggestionFriendPage />} />
-
+            <Route
+              path="/Friend/requests-receive"
+              element={<FriendRequestPage />}
+            />
+            <Route
+              path="/Friend/requests-sent"
+              element={<SentRequestFriendPage />}
+            />
+            <Route
+              path="/Friend/list-following"
+              element={<YourFollowingPage />}
+            />
+            <Route
+              path="/Friend/list-follower"
+              element={<YourFollowerPage />}
+            />
+            <Route
+              path="/Friend/suggestion-friend"
+              element={<SuggestionFriendPage />}
+            />
 
             <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
             <Route path="/Statistic1" element={<Statistic1 />} />
@@ -157,8 +177,9 @@ const AppContent = () => {
             <Route path="/Group" element={<PostGroupPage />} />
             <Route path="/Search" element={<SearchPage />} />
             <Route path="/group/:id" element={<GroupDetailPage />} />
-            <Route path="/UpdateProfile" element={<UpdateProfile />} />
+            <Route path="/UpdateProfile" element={<UpdateProfile />} />S
             <Route path="/UserFriends" element={<UserFriends />} />
+            <Route path="/UserFriends/:accId" element={<UserFriendOfOther />} />
             <Route path="/ProcessList" element={<ProcessListPage />} />
             <Route path="/ProcessResult" element={<ProcessResultPage />} />
             <Route path="/WaitingOrderList" element={<WaitingListPage />} />
@@ -255,6 +276,10 @@ const AppContent = () => {
             <Route path="/CreatePostCate" element={<CreatePostCate />} />
             <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} />
             <Route path="/DetailPostCate/:id" element={<DetailPostCate />} />
+            <Route path="/payment-callback" element={<CallbackPage />} />
+            <Route path="/PaymentResult" element={<PaymentResultPage />} />
+            <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
+            <Route path="/PaymentFailed" element={<PaymentFailed />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login

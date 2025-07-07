@@ -20,7 +20,8 @@ const RecycleBin = () => {
     const [fullName, setFullName] = useState("Unknown");
     const [background, setBackground] = useState("");
     const [basicInfo, setBasicInfo] = useState({});
-
+// get list friend
+    const [listFriends, setListFriends] = useState([]);
     //Biến lấy accId từ param khi xem profile người khác
     const { accId } = useParams();
     const defaultBackground = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
@@ -133,6 +134,42 @@ const RecycleBin = () => {
         setPosts((prevPosts) => prevPosts.filter((post) => post.post.postId !== postId));
     }
 
+    // get list friend
+  const fetchFriends = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const url = isOwner
+        ? `https://localhost:7280/api/friend/list-friend`
+        : `https://localhost:7280/api/friend/list-friend-other/${accId}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+      if (json.data && json.data.length > 0) {
+        setListFriends(json.data);
+        //console.log(isOwner + "aaaaaaaaaaaaaaaaaa");
+      } else {
+        setListFriends([]);
+      }
+    } catch (error) {
+      console.error("Error fetching friends:", error);
+      setListFriends([]);
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchFriends();
+    }
+  }, [accId, isOwner, accessToken]);
+
+
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
@@ -153,16 +190,12 @@ const RecycleBin = () => {
                     <div className="flex flex-col gap-5 pt-20 lg:flex-row">
                         <aside className="flex flex-col w-full gap-5 lg:w-1/3">
                             <BasicInfo info={basicInfo} />
-
-                            {isOwner && (
-                                <>
-                                    <Link to="/Trash" className="text-start font-normal text-sky-300">Recycle Bin</Link>
-                                    <Link to="/SetPassword" className="text-start font-normal text-sky-300">Set Password of your Account</Link>
-                                    <Link to="/ChangePassword" className="text-start font-normal text-sky-300">Change Password of your Account</Link>
-                                </>
-                            )}
-
-                            <FriendList />
+                            <FriendList
+                            friends={listFriends}
+                            isOwner={isOwner}
+                            isProfile={true}
+                            accId = {accId}
+                            />
                             <PhotoGallery />
                         </aside>
                         <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
@@ -182,7 +215,7 @@ const RecycleBin = () => {
                                             accId: postMapper.ownerPost.accId,
                                             postId: postMapper.post.postId,
                                             fullName: postMapper.ownerPost ? postMapper.ownerPost.fullName || postMapper.post.accId : "Unknown User",
-                                            avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar || "https://via.placeholder.com/40" : "https://via.placeholder.com/40",
+                                            avatar: postMapper.ownerPost ? postMapper.ownerPost.avatar : "https://via.placeholder.com/40",
                                             createAt: postMapper.post.createdAt,
                                             content: postMapper.post.postContent,
                                             images: postMapper.postImages ? postMapper.postImages.map((img) => img.imageUrl) : [],

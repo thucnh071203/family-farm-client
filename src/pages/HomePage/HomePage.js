@@ -194,9 +194,10 @@ const HomePage = () => {
   };
 
   const handlePostCreate = (newPostData) => {
-    if (newPostData.postScope === "Public") {
+    if (newPostData.post.postScope === "Public") {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
     }
+   
   };
 
   return (
@@ -239,8 +240,7 @@ const HomePage = () => {
                       postId: postMapper.post.postId,
                       fullName: postMapper.ownerPost.fullName || "Unknown User",
                       avatar:
-                        postMapper.ownerPost.avatar ||
-                        "https://via.placeholder.com/40",
+                        postMapper.ownerPost.avatar,
                       createAt: postMapper.post.createdAt,
                       content: postMapper.post.postContent,
                       images:
@@ -280,10 +280,7 @@ const HomePage = () => {
           </section>
           {/* Right */}
           <section className="flex flex-col gap-5 lg:order-3 order-2">
-            <SuggestedFriends
-              friends={suggestedFriends}
-              
-            />
+            <SuggestedFriends friends={suggestedFriends} />
 
             <SuggestedGroups groups={groupSuggestData} />
           </section>

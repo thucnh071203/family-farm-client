@@ -14,6 +14,9 @@ const GroupDetailHeader = ({
   setSelectedTab,
   reload,
   reloadsignlR,
+  searchKeyword,
+  setSearchKeyword,
+  countPosts
 }) => {
   const [showPopup, setShowPopup] = useState(false);
 
@@ -117,77 +120,66 @@ const GroupDetailHeader = ({
                 </span>
                 <span>
                   {" "}
-                  <span className="font-bold text-black"> Posts: </span> 998
+                  <span className="font-bold text-black"> Posts: </span> {countPosts}
                 </span>
               </p>
             </div>
             <div>
-              <form class="max-w-md ">
-                <label
-                  for="default-search"
-                  class="mb-1 text-sm font-medium text-gray-900 sr-only dark:text-white"
-                >
-                  Search
-                </label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg
-                      class="w-4 h-4 text-gray-500 dark:text-gray-400"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                      />
-                    </svg>
-                  </div>
+              <div className="flex justify-center items-center">
+                <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1] border-solid outline outline-[0.5px] outline-gray-200">
+                  <i className="fa-solid fa-magnifying-glass flex h-full justify-center items-center shrink-0 px-2 text-[#999999]"></i>
                   <input
-                    type="search"
-                    id="default-search"
-                    class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="Search..."
-                    required
+                    type="text"
+                    placeholder="Search"
+                    className="flex-1 outline-none border-none h-full"
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
                   />
-                  <button
-                    type="submit"
-                    class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  >
-                    Search
-                  </button>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
 
           <div className="md:flex md:flex-row space-x-6 mt-2 text-sm text-black-500 font-bold md:text-center flex flex-wrap w-[390px] md:w-full">
-        
             <button
               onClick={() => setSelectedTab("posts")}
-              className="md:w-[10%] hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]"
+              className={`md:w-[10%] ${
+                selectedTab === "posts"
+                  ? "shadow-[0_2px_0_0_#3DB3FB] text-[#3DB3FB]"
+                  : "text-black"
+              } hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]`}
             >
               Home
             </button>
+
             <button
               onClick={() => setSelectedTab("members")}
-              className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] md:w-[10%]"
+              className={`md:w-[10%] ${
+                selectedTab === "members"
+                  ? "shadow-[0_2px_0_0_#3DB3FB] text-[#3DB3FB]"
+                  : "text-black"
+              } hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]`}
             >
               Member
             </button>
             <button
               onClick={() => setSelectedTab("requests")}
-              className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] md:w-[10%] "
+              className={`md:w-[10%] ${
+                selectedTab === "requests"
+                  ? "shadow-[0_2px_0_0_#3DB3FB] text-[#3DB3FB]"
+                  : "text-black"
+              } hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]`}
             >
               Add to Join
             </button>
+
             <button
               onClick={() => setSelectedTab("permission")}
-              className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] md:w-[10%] "
+              className={`md:w-[10%] ${
+                selectedTab === "permission"
+                  ? "shadow-[0_2px_0_0_#3DB3FB] text-[#3DB3FB]"
+                  : "text-black"
+              } hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]`}
             >
               Permissions
             </button>
