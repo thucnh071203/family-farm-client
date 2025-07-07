@@ -90,6 +90,7 @@ import SentRequestFriendPage from "./pages/FriendPage/SentRequestFriendPage";
 import YourFollowingPage from "./pages/FriendPage/YourFollowingPage";
 import YourFollowerPage from "./pages/FriendPage/YourFollowerPage";
 import SearchPage from "./pages/SearchPage/SearchPage";
+import UnpaidBookingPage from "./pages/WaitingPage/UnpaidBookingPage";
 import UserFriendOfOther from "./pages/Profile/UserFriendOfOther";
 import CallbackPage from "./pages/CallbackPage/PaymentCallback";
 import PaymentResultPage from "./pages/CallbackPage/PaymentResult";
@@ -182,6 +183,7 @@ const AppContent = () => {
             <Route path="/ProcessList" element={<ProcessListPage />} />
             <Route path="/ProcessResult" element={<ProcessResultPage />} />
             <Route path="/WaitingOrderList" element={<WaitingListPage />} />
+            <Route path="/UnpaidBooking" element={<UnpaidBookingPage/>} />
             <Route path="/GroupPage" element={<GroupPage />} />
             <Route
               path="/JoinRequestsListPage"
