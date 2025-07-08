@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
   const [withWhom, setWithWhom] = useState("");
   const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // Thêm state loading
 
   const [categoryDropdown, setCategoryDropdown] = useState(false);
   const withWhomInputRef = useRef(null);
@@ -41,6 +42,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
   //xử lý khi submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Bật loading khi bắt đầu submit
 
     const formData = new FormData();
 
@@ -70,8 +72,6 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
       formData.append("GroupId", groupId);
     }
 
-
-
     try {
       const response = await instance.post("/api/post/create", formData, {
         headers: {
@@ -91,6 +91,8 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
     } catch (err) {
       console.error("Lỗi khi gửi bài viết:", err);
       toast.error("Failed to create post!");
+    } finally {
+      setIsLoading(false); // Tắt loading khi hoàn thành (thành công hoặc lỗi)
     }
   };
 
@@ -237,6 +239,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
               onClose();
             }}
             className="btn-close-create-post"
+            disabled={isLoading} // Disable khi đang loading
           >
             <i className="fa-solid fa-times"></i>
           </button>
@@ -254,6 +257,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write something about you..."
               className="flex-grow p-2 outline-none"
+              disabled={isLoading} // Disable khi đang loading
             />
           </div>
 
@@ -285,6 +289,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                     type="button"
                     onClick={() => removeCategory(category)}
                     className="ml-2 text-red-500 hover:text-red-700"
+                    disabled={isLoading} // Disable khi đang loading
                   >
                     <i className="fa-solid fa-times"></i>
                   </button>
@@ -306,6 +311,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                     type="button"
                     onClick={() => removeFriend(friend)}
                     className="ml-2 bg-gray-200 hover:bg-gray-300 text-white rounded-r flex items-center justify-center px-[8px] p-[5px]"
+                    disabled={isLoading} // Disable khi đang loading
                   >
                     <i className="fa-solid fa-times text-xs text-[#33B1FF]"></i>
                   </button>
@@ -323,12 +329,14 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
               onChange={(e) => setWithWhom(e.target.value)}
               placeholder="Who are you with?"
               className="w-full py-2 pl-10 pr-8 border border-gray-300 rounded-lg"
+              disabled={isLoading} // Disable khi đang loading
             />
             {withWhom && (
               <button
                 type="button"
                 onClick={() => setWithWhom("")}
                 className="absolute text-gray-500 right-2 top-2 hover:text-gray-700"
+                disabled={isLoading} // Disable khi đang loading
               >
                 <i className="fa-solid fa-times"></i>
               </button>
@@ -339,12 +347,12 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                   <div
                     key={friend.accId}
                     onClick={() => {
-                      if (!taggedFriends.includes(friend)) {
+                      if (!isLoading && !taggedFriends.includes(friend)) {
                         setTaggedFriends([...taggedFriends, friend]);
                       }
                       setWithWhom("");
                     }}
-                    className="p-2 cursor-pointer hover:bg-gray-100"
+                    className={`p-2 cursor-pointer hover:bg-gray-100 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {friend.fullName}
                   </div>
@@ -357,15 +365,15 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               <div className="relative inline-block w-full lg:w-auto">
                 <div
-                  onClick={toggleStatusDropdown}
-                  className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer"
+                  onClick={!isLoading ? toggleStatusDropdown : undefined}
+                  className={`flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <img src={public_status_icon} alt="status icon" />
                   {status}
                   <i className="fa-solid fa-caret-down ml-auto"></i>
                 </div>
 
-                {statusDropdown && (
+                {statusDropdown && !isLoading && (
                   <div className="absolute z-10 mt-2 w-full bg-white border rounded-lg shadow-lg">
                     <div
                       className={`p-3 cursor-pointer hover:bg-gray-100 ${status === "Public" ? "bg-blue-50 text-blue-600" : "text-gray-700"}`}
@@ -383,14 +391,14 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                 )}
               </div>
               <div
-                onClick={handlePhotoVideo}
-                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer"
+                onClick={!isLoading ? handlePhotoVideo : undefined}
+                className={`flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <img src={camera_icon} alt="Photo/Video" /> Photo/Video
               </div>
               <div
-                onClick={handleTagFriends}
-                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer"
+                onClick={!isLoading ? handleTagFriends : undefined}
+                className={`flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <img src={tag_icon} alt="Photo/Video" />
                 Tag friends
@@ -398,15 +406,15 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
 
               <div className="relative inline-block">
                 <div
-                  onClick={() => setCategoryDropdown(!categoryDropdown)}
-                  className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer"
+                  onClick={!isLoading ? () => setCategoryDropdown(!categoryDropdown) : undefined}
+                  className={`flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <img src={post_category_icon} alt="Photo/Video" />
                   Categories
                   <i className="fa-solid fa-caret-down"></i>
                 </div>
 
-                {categoryDropdown && (
+                {categoryDropdown && !isLoading && (
                   <div className="absolute z-10 mt-2 w-64 bg-white border rounded-lg shadow-lg">
                     {/* Header của dropdown */}
                     <div className="flex items-center justify-between p-3 border-b">
@@ -474,6 +482,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                   type="button"
                   onClick={() => removeImage(index)}
                   className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-gray-500 hover:text-gray-70"
+                  disabled={isLoading} // Disable khi đang loading
                 >
                   <i className="fa-solid fa-times"></i>
                 </button>
@@ -485,13 +494,29 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
               onChange={handleFileChange}
               multiple
               className="hidden"
+              disabled={isLoading} // Disable khi đang loading
             />
           </div>
           <button
             type="submit"
-            className="w-full py-3 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+            className={`w-full py-3 text-white rounded-lg transition-colors duration-200 ${
+              isLoading 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-blue-500 hover:bg-blue-600'
+            }`}
+            disabled={isLoading}
           >
-            PUBLISH
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                PUBLISHING...
+              </div>
+            ) : (
+              'PUBLISH'
+            )}
           </button>
         </form>
       </div>

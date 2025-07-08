@@ -45,8 +45,8 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
   }, []);
 
   const postData = { ...defaultPost, ...post };
-  const hashTags = postData.hashtags || ["blog", "nienmoulming", "polytecode"];
-  const categories = postData.categories || ["Pants", "Diseases"];
+  const hashTags = postData.hashtags || [];
+  const categories = postData.categories || [];
   const tagFriends = postData.tagFriends || [];
 
   const [showComments, setShowComments] = useState(false);
@@ -163,12 +163,14 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
       </div>
       <div className="flex flex-col items-start mt-3 text-sm">
         <p className="mb-2 text-[#7D7E9E] font-light">{postData.content}</p>
-        <p className="mb-2 font-bold">
-          <span>HashTags: </span>
-          {hashTags.map((tag, index) => (
-             <span key={index} className="mr-2">#{tag}</span>
-          ))}
-        </p>
+        {hashTags.length > 0 && (
+          <p className="mb-2 font-bold">
+            <span>HashTags: </span>
+            {hashTags.map((tag, index) => (
+              <span key={index} className="mr-2">#{tag}</span>
+            ))}
+          </p>
+        )}
         <div className="flex items-center gap-2 mb-2">
           {categories.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 font-bold">
