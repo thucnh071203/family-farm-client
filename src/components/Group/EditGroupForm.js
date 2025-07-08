@@ -16,7 +16,6 @@ export default function EditGroupForm({ userRole, userAccId }) {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [accessToken, setAccessToken] = useState("");
 
-
   const { groupId } = useParams();
   const [ownerId, setOwnerId] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -26,44 +25,6 @@ export default function EditGroupForm({ userRole, userAccId }) {
   const [avatarFile, setAvatarFile] = useState(null);
   const [bgFile, setBgFile] = useState(null);
   const [errors, setErrors] = useState({});
-
-    // 👇 Chỉ xử lý khi groupName thay đổi
-    useEffect(() => {
-        if (groupName.trim()) {
-            setErrors(prev => ({ ...prev, groupName: "" }));
-        }
-    }, [groupName]);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const isFormValid = validate();
-
-        if (!isFormValid) return;
-
-        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-
-        const formData = new FormData();
-        formData.append("GroupName", groupName);
-        formData.append("PrivacyType", privacyType);
-        if (avatarFile) formData.append("GroupAvatar", avatarFile);
-        if (bgFile) formData.append("GroupBackground", bgFile);
-
-        try {
-            await instance.put(`/api/group/update/${groupId}`, formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            });
-            toast.success("GROUP UPDATED SUCCESSFULLY!");
-            // navigate("/Group", { state: { section: "all-group-user" } });
-            navigate(`/group/${groupId}`);
-        } catch (error) {
-            console.error("Update failed:", error);
-            toast.error("Failed to update group!");
-        }
-    };
-
 
   // Khai bao xoa group
   const [deleteShowPopup, setDeleteShowPopup] = useState(false);
@@ -114,13 +75,23 @@ export default function EditGroupForm({ userRole, userAccId }) {
 
     if (!groupName.trim()) newErrors.groupName = "Group name is required.";
 
-    if (!privacyType || !["Public", "Private"].includes(privacyType)) {
+    if (
+      !privacyType ||
+      !["Public", "Private"].includes(privacyType)
+    ) {
       newErrors.privacyType = "Please select a valid privacy type.";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  // 👇 Chỉ xử lý khi groupName thay đổi
+  useEffect(() => {
+    if (groupName.trim()) {
+      setErrors((prev) => ({ ...prev, groupName: "" }));
+    }
+  }, [groupName]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -145,7 +116,7 @@ export default function EditGroupForm({ userRole, userAccId }) {
           "Content-Type": "multipart/form-data",
         },
       });
-      toast.success("Group updated successfully!");
+      toast.success("GROUP UPDATED SUCCESSFULLY!");
       // navigate("/Group", { state: { section: "all-group-user" } });
       navigate(`/group/${groupId}`);
     } catch (error) {
@@ -167,10 +138,10 @@ export default function EditGroupForm({ userRole, userAccId }) {
           Authorization: `Bearer ${token}`,
         },
       });
-      
-       toast.success("GROUP DELETED SUCCESSFULLY!");
-            setDeleteShowPopup(false);
-            setSelectedGroupId(null);
+
+      toast.success("GROUP DELETED SUCCESSFULLY!");
+      setDeleteShowPopup(false);
+      setSelectedGroupId(null);
 
       // 👉 Sau khi xóa xong, điều hướng về trang danh sách nhóm
       navigate("/Group", { state: { section: "all-group-user" } });
@@ -201,34 +172,6 @@ export default function EditGroupForm({ userRole, userAccId }) {
             </div>
           </div>
         </div>
-
-        {/* <div className="image-upload-container mt-7 relative flex flex-col gap-4">
-                    <div className="relative img-bg-container">
-                        <input className="hidden" type="file" id="background-group-img" accept="image/*" onChange={handleBgChange} />
-                        <label htmlFor="background-group-img"
-                            className="flex items-center justify-center gap-4 w-full h-[296px] rounded-[10px] bg-[#f5f5f5] border-[2px] border-solid border-[rgba(62,63,94,0.25)] cursor-pointer">
-                            <i className="fa-solid fa-upload text-[var(--variable-collection-black)]"></i>
-                            <p className="upload-bg-img-text">Upload Background</p>
-                        </label>
-                        {bgImage && (
-                            <img src={bgImage} alt="bg"
-                                className="absolute top-0 left-0 w-full h-full object-cover rounded-[10px] border-[2px] border-solid border-[rgba(62,63,94,0.25)] z-0 pointer-events-none" />
-                        )}
-                    </div>
-
-                    <div className="absolute top-[50%] left-[5%] img-avt-container">
-                        <input className="hidden" type="file" id="avatar-group-img" accept="image/*" onChange={handleAvatarChange} />
-                        <label htmlFor="avatar-group-img"
-                            className="flex items-center justify-center gap-2 rounded-full w-[130px] h-[130px] bg-[#ffffff] border-[3px] border-solid border-[rgba(62,63,94,0.25)] cursor-pointer">
-                            <i className="upload-avt-icon fa-solid fa-upload text-[var(--variable-collection-black)]"></i>
-                            <p className="upload-avt-img-text">Upload Avatar</p>
-                        </label>
-                        {avatarImage && (
-                            <img src={avatarImage} alt="avatar"
-                                className="absolute top-0 left-0 w-[130px] h-[130px] object-cover rounded-full border-[3px] border-solid border-[rgba(62,63,94,0.25)] z-10 pointer-events-none" />
-                        )}
-                    </div>
-                </div> */}
 
         <div className="group-name-container w-fit mt-4">
           <input
@@ -271,13 +214,7 @@ export default function EditGroupForm({ userRole, userAccId }) {
           >
             <div className="create-btn-text w-fit text-white">Save Changes</div>
           </button>
-          {/* <button
-                        className="create-button lg:w-[220px] p-[10px] flex items-center justify-center gap-[10px] bg-red-600 rounded-sm hover:bg-red-700 cursor-pointer"
-                        type="button"
-                        onClick={() => handleDeleteClick(groupId)}
-                    >
-                        <div className="create-btn-text w-fit text-white">Delete</div>
-                    </button> */}
+
           {ownerId === userAccId && (
             <button
               className="create-button lg:w-[220px] p-[10px] flex items-center justify-center gap-[10px] bg-red-600 rounded-sm hover:bg-red-700 cursor-pointer"
