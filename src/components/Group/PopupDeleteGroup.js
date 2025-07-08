@@ -20,6 +20,11 @@ export default function PopupDeleteGroup({ onClose, onConfirm }) {
   }, []);
 
   const handleConfirm = () => {
+    if (!userInput.trim()) {
+      setError("Please enter the code.");
+      return;
+    }
+
     if (userInput === randomCode) {
       onConfirm();
     } else {
