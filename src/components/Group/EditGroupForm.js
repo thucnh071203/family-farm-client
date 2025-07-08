@@ -80,6 +80,13 @@ export default function EditGroupForm({ userRole, userAccId }) {
         return Object.keys(newErrors).length === 0;
     };
 
+    // 👇 Chỉ xử lý khi groupName thay đổi
+    useEffect(() => {
+        if (groupName.trim()) {
+            setErrors(prev => ({ ...prev, groupName: "" }));
+        }
+    }, [groupName]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const isFormValid = validate();
@@ -101,7 +108,7 @@ export default function EditGroupForm({ userRole, userAccId }) {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success("Group updated successfully!");
+            toast.success("GROUP UPDATED SUCCESSFULLY!");
             // navigate("/Group", { state: { section: "all-group-user" } });
             navigate(`/group/${groupId}`);
         } catch (error) {
@@ -124,7 +131,7 @@ export default function EditGroupForm({ userRole, userAccId }) {
                 },
             });
 
-            toast.success("Group deleted successfully.");
+            toast.success("GROUP DELETED SUCCESSFULLY!");
             setDeleteShowPopup(false);
             setSelectedGroupId(null);
 

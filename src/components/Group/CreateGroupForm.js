@@ -29,6 +29,8 @@ export default function CreateGroupForm() {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedMembers, setSelectedMembers] = useState([]);
 
+    const [submitted, setSubmitted] = useState(false);
+
     // Get user information
     useEffect(() => {
         const storedUsername = localStorage.getItem("username") || sessionStorage.getItem("username");
@@ -46,6 +48,7 @@ export default function CreateGroupForm() {
         image: null, // lỗi chung cho avatar hoặc background
     });
 
+    // Hàm up và thay đổi ảnh
     const handleBgChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -72,6 +75,18 @@ export default function CreateGroupForm() {
         }
     };
 
+    // Hàm xóa ảnh
+    const handleRemoveBgImage = () => {
+        setBgImage(null);
+        setBgFile(null);
+    };
+
+    const handleRemoveAvatarImage = () => {
+        setAvatarImage(null);
+        setAvatarFile(null);
+    };
+
+    // Valiadate thông thường
     const validate = () => {
         const newErrors = {};
 
@@ -85,9 +100,10 @@ export default function CreateGroupForm() {
         return Object.keys(newErrors).length === 0;
     };
 
+    // Bắt validate ảnh
     const validateImages = (avatar, background) => {
         if (!avatar || !background) {
-            setErrors((prev) => ({ ...prev, image: "Background or Avatar is required." }));
+            setErrors((prev) => ({ ...prev, image: "Background and Avatar is required." }));
             return false;
         }
 
@@ -95,8 +111,25 @@ export default function CreateGroupForm() {
         return true;
     };
 
+    // validate ảnh mỗi khi submitted thay đổi
+    useEffect(() => {
+        if (submitted) {
+            validateImages(avatarFile, bgFile);
+        }
+    }, [submitted, avatarFile, bgFile]);
+
+    // 👇 Chỉ xử lý khi groupName thay đổi
+    useEffect(() => {
+        if (groupName.trim()) {
+            setErrors(prev => ({ ...prev, groupName: "" }));
+        }
+    }, [groupName]);
+
+
     const handleCreateGroup = async (e) => {
         e.preventDefault();
+        setSubmitted(true); // đánh dấu là đã nhấn submit
+
         const isFormValid = validate();
         const isImageValid = validateImages(avatarFile, bgFile);
 
@@ -118,7 +151,7 @@ export default function CreateGroupForm() {
                 }
             });
 
-            toast.success("Group created successfully!");
+            toast.success("GROUP CREATED SUCCESSFULLY!");
 
             // 2. Gọi API lấy group mới nhất
             const latestGroupRes = await instance.get("/api/group/get-lastest", {
@@ -232,71 +265,90 @@ export default function CreateGroupForm() {
                     </div>
                 </div>
 
-                <div className="image-upload-container mt-7 relative flex flex-col gap-4">
-                    {/* Background upload */}
-                    <div className="relative img-bg-container">
-                        <input
-                            className="hidden"
-                            type="file"
-                            id="background-group-img"
-                            accept="image/*"
-                            onChange={handleBgChange}
-                        />
-                        <label
-                            htmlFor="background-group-img"
-                            className="flex items-center justify-center gap-4 w-full h-[296px] rounded-[10px] bg-[#f5f5f5] border-[2px] border-solid border-[rgba(62,63,94,0.25)] cursor-pointer"
-                        >
-                            <i className="fa-solid fa-upload text-[var(--variable-collection-black)]"></i>
-                            <p className="upload-bg-img-text">Upload Background</p>
-                        </label>
-                        {bgImage && (
-                            <img
-                                src={bgImage}
-                                alt="bg"
-                                className="absolute top-0 left-0 w-full h-full object-cover rounded-[10px] border-[2px] border-solid border-[rgba(62,63,94,0.25)] z-0 pointer-events-none"
+                    <div className="image-upload-container mt-7 relative flex flex-col gap-4">
+                        {/* Background upload */}
+                        <div className="relative img-bg-container">
+                            <input
+                                className="hidden"
+                                type="file"
+                                id="background-group-img"
+                                accept="image/*"
+                                onChange={handleBgChange}
                             />
-                        )}
-                        {/* {errors.bgFile && <p className="text-red-500 text-sm mt-1">{errors.bgFile}</p>} */}
-                    </div>
+                            <label
+                                htmlFor="background-group-img"
+                                className="flex items-center justify-center gap-4 w-full h-[296px] rounded-[10px] bg-[#f5f5f5] border-[2px] border-solid border-[rgba(62,63,94,0.25)] cursor-pointer"
+                            >
+                                <i className="fa-solid fa-upload text-[var(--variable-collection-black)]"></i>
+                                <p className="upload-bg-img-text">Upload Background</p>
+                            </label>
+                            {bgImage && (
+                                <>
+                                    <img
+                                        src={bgImage}
+                                        alt="bg"
+                                        className="absolute top-0 left-0 w-full h-full object-cover rounded-[10px] border-[2px] border-solid border-[rgba(62,63,94,0.25)] z-0 pointer-events-none"
+                                    />
+                                    <button
+                                        onClick={handleRemoveBgImage}
+                                        type="button"
+                                        className="absolute w-6 h-6 top-2 right-2 bg-white rounded-full shadow p-1 z-10 hover:bg-gray-100"
+                                    >
+                                        <i className="fa-solid fa-xmark text-red-500 ml-[1px]"></i>
+                                    </button>
+                                </>
+                            )}
+                            {/* {errors.bgFile && <p className="text-red-500 text-sm mt-1">{errors.bgFile}</p>} */}
+                        </div>
 
-                    {/* Avatar upload */}
-                    <div className="absolute top-[50%] left-[5%] img-avt-container">
-                        <input
-                            className="hidden"
-                            type="file"
-                            id="avatar-group-img"
-                            accept="image/*"
-                            onChange={handleAvatarChange}
-                        />
-                        <label
-                            htmlFor="avatar-group-img"
-                            className="flex items-center justify-center gap-2 rounded-full w-[130px] h-[130px] bg-[#ffffff] border-[3px] border-solid border-[rgba(62,63,94,0.25)] cursor-pointer"
-                        >
-                            <i className="upload-avt-icon fa-solid fa-upload text-[var(--variable-collection-black)]"></i>
-                            <p className="upload-avt-img-text">Upload Avatar</p>
-                        </label>
-                        {avatarImage && (
-                            <img
-                                src={avatarImage}
-                                alt="avatar"
-                                className="absolute top-0 left-0 w-[130px] h-[130px] object-cover rounded-full border-[3px] border-solid border-[rgba(62,63,94,0.25)] z-10 pointer-events-none"
+                        {/* Avatar upload */}
+                        <div className="absolute top-[50%] left-[5%] img-avt-container">
+                            <input
+                                className="hidden"
+                                type="file"
+                                id="avatar-group-img"
+                                accept="image/*"
+                                onChange={handleAvatarChange}
                             />
-                        )}
-                    </div>
-                </div>
-                {errors.image && (
-                    <p className="text-red-500 text-start text-sm mt-2">{errors.image}</p>
-                )}
+                            <label
+                                htmlFor="avatar-group-img"
+                                className="flex items-center justify-center gap-2 rounded-full w-[130px] h-[130px] bg-[#ffffff] border-[3px] border-solid border-[rgba(62,63,94,0.25)] cursor-pointer"
+                            >
+                                <i className="upload-avt-icon fa-solid fa-upload text-[var(--variable-collection-black)]"></i>
+                                <p className="upload-avt-img-text">Upload Avatar</p>
+                            </label>
+                            {avatarImage && (
+                                <>
+                                    <img
+                                        src={avatarImage}
+                                        alt="avatar"
+                                        className="absolute top-0 left-0 w-[130px] h-[130px] object-cover rounded-full border-[3px] border-solid border-[rgba(62,63,94,0.25)] z-10 pointer-events-none"
+                                    />
+                                    <button
+                                        onClick={handleRemoveAvatarImage}
+                                        type="button"
+                                        className="absolute w-6 h-6 top-1 right-1 bg-white rounded-full shadow p-1 z-20 hover:bg-gray-100"
+                                    >
+                                        <i className="fa-solid fa-xmark text-red-500 text-[14px]"></i>
+                                    </button>
+                                </>
+                            )}
 
-                <div className="group-name-container w-fit mt-4">
-                    <input
-                        className="group-name-text px-[46px] py-[15px] bg-[#3DB3FB] bg-opacity-25 rounded-sm text-black text-[24px] font-light placeholder:font-light placeholder:text-[24px] placeholder:text-[rgba(62,63,94,0.25)] font-roboto border-none focus:outline-none focus:ring-0 focus:border-none"
-                        type="text"
-                        value={groupName}
-                        onChange={(e) => setGroupName(e.target.value)}
-                        placeholder="Type your group name" />
-                    {errors.groupName && <p className="text-red-500 text-start text-sm mt-1">{errors.groupName}</p>}
-                </div>
+                        </div>
+                    </div>
+                    {submitted && errors.image && (
+                        <p className="text-red-500 text-start text-sm mt-2">{errors.image}</p>
+                    )}
+
+                    <div className="group-name-container w-fit mt-4">
+                        <input
+                            className="group-name-text px-[46px] py-[15px] bg-[#3DB3FB] bg-opacity-25 rounded-sm text-black text-[24px] font-light placeholder:font-light placeholder:text-[24px] placeholder:text-[rgba(62,63,94,0.25)] font-roboto border-none focus:outline-none focus:ring-0 focus:border-none"
+                            type="text"
+                            value={groupName}
+                            onChange={(e) => setGroupName(e.target.value)}
+                            placeholder="Type your group name" />
+                        {errors.groupName && <p className="text-red-500 text-start text-sm mt-1">{errors.groupName}</p>}
+                    </div>
 
                 <div className="type-privacy-container flex flex-row gap-6 mt-[54px]">
                     <div className="title-privacy h-10 flex flex-row items-center gap-2">

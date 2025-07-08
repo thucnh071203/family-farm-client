@@ -29,6 +29,7 @@ const UpdateProfileForm = ({ profileData }) => {
     email: '',
     phone: '',
     province: '', // Thay cho city
+    district: '',
     ward: '', // Thay cho address
     country: '',
     certificate: '',
@@ -206,6 +207,7 @@ const UpdateProfileForm = ({ profileData }) => {
       email: '',
       phone: '',
       province: '',
+      district: '',
       ward: '',
       country: '',
       certificate: '',
@@ -218,6 +220,7 @@ const UpdateProfileForm = ({ profileData }) => {
       email: formData.email.trim(),
       phone: formData.phone.trim(),
       province: formData.province.trim(),
+      district: formData.district.trim(),
       ward: formData.ward.trim(),
       country: formData.country.trim(),
     };
@@ -244,15 +247,26 @@ const UpdateProfileForm = ({ profileData }) => {
     }
 
     // Nếu là expert thì phải có file
+    // if (
+    //   userRole === '68007b2a87b41211f0af1d57' &&
+    //   !certificateFile && // chưa upload mới
+    //   !profileData?.certificate // và ảnh cũ cũng không có
+    // ) {
+    //   newErrors.certificate = 'Certificate is required for expert!';
+    //   isValid = false;
+    // }
+
+    console.log("Validate ảnh", profileData?.certificate);
     if (
       userRole === '68007b2a87b41211f0af1d57' &&
-      !certificateFile && // chưa upload mới
-      !profileData?.certificate // và ảnh cũ cũng không có
+      !certificateFile && // chưa chọn mới
+      // !profileData?.certificate &&// và ảnh cũ cũng không có
+      // !certificatePreview // không có cả preview từ ảnh cũ
+      (!profileData?.certificate || profileData.certificate.trim() === "")
     ) {
       newErrors.certificate = 'Certificate is required for expert!';
       isValid = false;
     }
-
 
     setErrors(newErrors);
     return isValid;
