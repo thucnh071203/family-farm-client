@@ -5,6 +5,7 @@ import WeatherWidget from "../../components/Home/WeatherWidget";
 import PopularService from "../../components/Services/PopularService";
 import PostCreate from "../../components/Post/PostCreate";
 import PostCard from "../../components/Post/PostCard";
+import SharePostCard from "../../components/Post/SharePostCard";
 import SuggestedFriends from "../../components/Home/SuggestedFriends";
 import SuggestedGroups from "../../components/Home/SuggestedGroups";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
@@ -16,21 +17,19 @@ import defaultAvatar from "../../assets/images/default-avatar.png";
 const HomePage = () => {
   const [accountId, setAccountId] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
-
-  //DÙNG CHO INFINITE SCROLL
   const [posts, setPosts] = useState([]);
-
   const [lastPostId, setLastPostId] = useState(null);
+  const [lastSharePostId, setLastSharePostId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const postContainerRef = useRef(null);
   const PAGE_SIZE = 5;
   const [suggestedFriends, setSuggestedFriends] = useState([]);
   const [groupSuggestData, setGroupData] = useState([]);
-  //lấy thông tin người dùng từ storage
+
+  // Lấy thông tin người dùng từ storage
   useEffect(() => {
     const storedAccId =
       localStorage.getItem("accId") || sessionStorage.getItem("accId");
@@ -43,15 +42,16 @@ const HomePage = () => {
     }
   }, []);
 
-  const fetchPosts = async ({ lastPostId, reset = false }) => {
+  const fetchPosts = async ({ lastPostId, lastSharePostId, reset = false }) => {
     setLoading(true);
-    if (lastPostId) setLoadingMore(true);
+    if (lastPostId || lastSharePostId) setLoadingMore(true);
     setError(null);
 
     try {
-      const response = await instance.get("/api/post/infinite", {
+      const response = await instance.get("/api/post/infinite-with-share", {
         params: {
           lastPostId: lastPostId,
+          lastSharePostId: lastSharePostId,
           pageSize: PAGE_SIZE,
         },
       });
@@ -66,9 +66,12 @@ const HomePage = () => {
         setHasMore(response.data.hasMore);
 
         if (newPosts.length > 0) {
-          setLastPostId(newPosts[newPosts.length - 1].post.postId);
+          const lastItem = newPosts[newPosts.length - 1];
+          setLastPostId(lastItem.itemType === "Post" ? lastItem.post?.postId : null);
+          setLastSharePostId(lastItem.itemType === "SharePost" ? lastItem.sharePostData?.sharePost?.sharePostId : null);
         } else {
           setLastPostId(null);
+          setLastSharePostId(null);
         }
       } else {
         setError(response.data.message || "Tải bài post thất bại!");
@@ -86,17 +89,17 @@ const HomePage = () => {
     }
   };
 
-  //GỌI LẦN ĐẦU
-
+  // Gọi lần đầu
   useEffect(() => {
     setSkip(0);
     setLastPostId(null);
-    fetchPosts({ lastPostId: null, reset: true });
+    setLastSharePostId(null);
+    fetchPosts({ lastPostId: null, lastSharePostId: null, reset: true });
   }, []);
 
   const { skip, setSkip } = useInfiniteScroll({
-    fetchData: () => fetchPosts({ lastPostId }),
-    containerRef: window, //thay đổi thành window do scroll nguyên trang
+    fetchData: () => fetchPosts({ lastPostId, lastSharePostId }),
+    containerRef: window,
     direction: "down",
     threshold: 50,
     hasMore,
@@ -109,11 +112,17 @@ const HomePage = () => {
 
   const handleCommentCountChange = (postId, newCount) => {
     setPosts((prevPosts) =>
-      prevPosts.map((postMapper) =>
-        postMapper.post && postMapper.post.postId === postId
-          ? { ...postMapper, post: { ...postMapper.post, comments: newCount } }
-          : postMapper
-      )
+      prevPosts.map((postMapper) => {
+        if (postMapper.itemType === "Post" && postMapper.post?.postId === postId) {
+          return { ...postMapper, commentCount: newCount };
+        } else if (postMapper.itemType === "SharePost" && postMapper.sharePostData?.sharePost?.sharePostId === postId) {
+          return {
+            ...postMapper,
+            sharePostData: { ...postMapper.sharePostData, commentCount: newCount },
+          };
+        }
+        return postMapper;
+      })
     );
   };
 
@@ -152,11 +161,9 @@ const HomePage = () => {
         console.error("No access token found.");
         return;
       }
-
       const res = await fetch(
         `https://localhost:7280/api/group/group-suggestion-in-group`,
         {
-          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -170,7 +177,6 @@ const HomePage = () => {
 
       const data = await res.json();
 
-      // Kiểm tra dữ liệu và cập nhật state
       if (data.success === true) {
         setGroupData(data.data);
       } else {
@@ -179,7 +185,6 @@ const HomePage = () => {
       }
     } catch (err) {
       console.error("Error fetching groups:", err.message || err);
-    } finally {
     }
   };
 
@@ -189,7 +194,10 @@ const HomePage = () => {
 
   const handleDeletePost = (postId) => {
     setPosts((prevPosts) =>
-      prevPosts.filter((post) => post.post.postId !== postId)
+      prevPosts.filter(
+        (postMapper) =>
+          postMapper.itemType === "Post" ? postMapper.post?.postId !== postId : true
+      )
     );
   };
 
@@ -197,22 +205,18 @@ const HomePage = () => {
     if (newPostData.post.postScope === "Public") {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
     }
-   
   };
 
   return (
     <div className="HomePage bg-gray-100">
       <Header />
-
       <NavbarHeader />
       <main className="max-w-7xl mx-auto lg:pt-[140px] pt-[65px]">
         <div className="gap-5 grid lg:grid-cols-[1fr_2fr_1fr] grid-cols-1">
-          {/* Left */}
           <aside className="flex flex-col gap-5 order-1">
             <WeatherWidget />
             <PopularService />
           </aside>
-          {/* Posts Section */}
           <section
             ref={postContainerRef}
             className="flex flex-col gap-5 lg:order-2 order-3 w-full"
@@ -230,43 +234,80 @@ const HomePage = () => {
             ) : error ? (
               <div className="text-center py-4">{error}</div>
             ) : posts.length > 0 ? (
-              posts.map((postMapper, index) =>
-                postMapper && postMapper.post && postMapper.ownerPost ? (
-                  <PostCard
-                    onDeletePost={handleDeletePost}
-                    key={`${postMapper.post.postId}-${index}`}
-                    post={{
-                      accId: postMapper.ownerPost.accId || "Unknown",
-                      postId: postMapper.post.postId,
-                      fullName: postMapper.ownerPost.fullName || "Unknown User",
-                      avatar:
-                        postMapper.ownerPost.avatar,
-                      createAt: postMapper.post.createdAt,
-                      content: postMapper.post.postContent,
-                      images:
-                        postMapper.postImages?.map((img) => img.imageUrl) || [],
-                      hashtags:
-                        postMapper.hashTags?.map((tag) => tag.hashTagContent) ||
-                        [],
-                      tagFriends:
-                        postMapper.postTags?.map((tag) => ({
+              posts.map((postMapper, index) => {
+                if (postMapper.itemType === "Post" && postMapper.post && postMapper.ownerPost) {
+                  return (
+                    <PostCard
+                      onDeletePost={handleDeletePost}
+                      key={`${postMapper.post.postId}-${index}`}
+                      post={{
+                        accId: postMapper.ownerPost.accId || "Unknown",
+                        postId: postMapper.post.postId,
+                        fullName: postMapper.ownerPost.fullName || "Unknown User",
+                        avatar: postMapper.ownerPost.avatar,
+                        createAt: postMapper.post.createdAt,
+                        content: postMapper.post.postContent,
+                        images: postMapper.postImages?.map((img) => img.imageUrl) || [],
+                        hashtags: postMapper.hashTags?.map((tag) => tag.hashTagContent) || [],
+                        tagFriends: postMapper.postTags?.map((tag) => ({
                           accId: tag.accId,
-                          fullname: tag.fullname || tag.username || "Unknown", // Sử dụng username nếu fullname là null
+                          fullname: tag.fullname || tag.username || "Unknown",
                         })) || [],
-                      categories:
-                        postMapper.postCategories?.map(
-                          (cat) => cat.categoryName
-                        ) || [],
-                      likes: postMapper.reactionCount || 0,
-                      comments: postMapper.commentCount || 0,
-                      shares: postMapper.shareCount || 0,
-                    }}
-                    onCommentCountChange={(newCount) =>
-                      handleCommentCountChange(postMapper.post.postId, newCount)
-                    }
-                  />
-                ) : null
-              )
+                        categories: postMapper.postCategories?.map((cat) => cat.categoryName) || [],
+                        likes: postMapper.reactionCount || 0,
+                        comments: postMapper.commentCount || 0,
+                        shares: postMapper.shareCount || 0,
+                      }}
+                      onCommentCountChange={(newCount) =>
+                        handleCommentCountChange(postMapper.post.postId, newCount)
+                      }
+                    />
+                  );
+                } else if (postMapper.itemType === "SharePost" && postMapper.sharePostData) {
+                  return (
+                    <SharePostCard
+                      key={`${postMapper.sharePostData.sharePost.sharePostId}-${index}`}
+                      post={{
+                        accId: postMapper.sharePostData.ownerSharePost.accId || "Unknown",
+                        sharePostId: postMapper.sharePostData.sharePost.sharePostId,
+                        fullName: postMapper.sharePostData.ownerSharePost.fullName || "Unknown User",
+                        avatar: postMapper.sharePostData.ownerSharePost.avatar,
+                        createAt: postMapper.sharePostData.sharePost.createdAt,
+                        content: postMapper.sharePostData.sharePost.sharePostContent,
+                        hashtags: postMapper.sharePostData.sharePost.hashTags?.map((tag) => tag.hashTagContent) || [],
+                        tagFriends: postMapper.sharePostData.sharePost.postTags?.map((tag) => ({
+                          accId: tag.accId,
+                          fullname: tag.fullname || tag.username || "Unknown",
+                        })) || [],
+                        likes: postMapper.sharePostData.reactionCount || 0,
+                        comments: postMapper.sharePostData.commentCount || 0,
+                        shares: postMapper.sharePostData.shareCount || 0,
+                        sharedPost: postMapper.sharePostData.originalPost
+                          ? {
+                              accId: postMapper.sharePostData.originalPost.ownerPost.accId || "Unknown",
+                              postId: postMapper.sharePostData.originalPost.post.postId,
+                              fullName: postMapper.sharePostData.originalPost.ownerPost.fullName || "Unknown User",
+                              avatar: postMapper.sharePostData.originalPost.ownerPost.avatar,
+                              createAt: postMapper.sharePostData.originalPost.post.createdAt,
+                              content: postMapper.sharePostData.originalPost.post.postContent,
+                              images: postMapper.sharePostData.originalPost.postImages?.map((img) => img.imageUrl) || [],
+                              hashtags: postMapper.sharePostData.originalPost.hashTags?.map((tag) => tag.hashTagContent) || [],
+                              tagFriends: postMapper.sharePostData.originalPost.postTags?.map((tag) => ({
+                                accId: tag.accId,
+                                fullname: tag.fullname || tag.username || "Unknown",
+                              })) || [],
+                              categories: postMapper.sharePostData.originalPost.postCategories?.map((cat) => cat.categoryName) || [],
+                              likes: postMapper.sharePostData.originalPost.reactionCount || 0,
+                              comments: postMapper.sharePostData.originalPost.commentCount || 0,
+                              shares: postMapper.sharePostData.originalPost.shareCount || 0,
+                            }
+                          : null,
+                      }}
+                    />
+                  );
+                }
+                return null;
+              })
             ) : (
               <div className="text-center py-4">Không tìm thấy bài viết</div>
             )}
@@ -278,10 +319,8 @@ const HomePage = () => {
               </div>
             )}
           </section>
-          {/* Right */}
           <section className="flex flex-col gap-5 lg:order-3 order-2">
             <SuggestedFriends friends={suggestedFriends} />
-
             <SuggestedGroups groups={groupSuggestData} />
           </section>
         </div>
