@@ -21,13 +21,13 @@ export default function ProgressMenu({ inPage }) {
                                     <img className="img-2" src={avaiProcess} alt="" />
                                     <div className="text-wrapper-8">List of available processes</div>
                                 </Link>
-                                <Link to="" className="item-process">
+                                <Link to="/UnpaidBooking" className="item-process">
                                     <img className="img-2" src={unpaidOrder} alt="" />
-                                    <div className="text-wrapper-8">List of unpaid orders</div>
+                                    <div className="text-wrapper-8">List of unpaid booking</div>
                                 </Link>
                                 <Link to="/WaitingOrderList" className="item-process">
                                     <img className="img-2" src={waitingOrder} alt="" />
-                                    <div className="text-wrapper-8">List of orders waiting</div>
+                                    <div className="text-wrapper-8">List of booking waiting</div>
                                 </Link>
                             </>
                         )}
@@ -38,13 +38,13 @@ export default function ProgressMenu({ inPage }) {
                                     <img className="img-2" src={avaiProcess} alt="" />
                                     <div className="text-wrapper-8">List of available processes</div>
                                 </Link>
-                                <Link to="" className="item-process highlight-item">
+                                <Link to="/UnpaidBooking" className="item-process highlight-item">
                                     <img className="img-2" src={unpaidOrder} alt="" />
-                                    <div className="text-wrapper-8">List of unpaid orders</div>
+                                    <div className="text-wrapper-8">List of unpaid booking</div>
                                 </Link>
                                 <Link to="/WaitingOrderList" className="item-process">
                                     <img className="img-2" src={waitingOrder} alt="" />
-                                    <div className="text-wrapper-8">List of orders waiting</div>
+                                    <div className="text-wrapper-8">List of booking waiting</div>
                                 </Link>
                             </>
                         )}
@@ -55,13 +55,13 @@ export default function ProgressMenu({ inPage }) {
                                     <img className="img-2" src={avaiProcess} alt="" />
                                     <div className="text-wrapper-8">List of available processes</div>
                                 </Link>
-                                <Link to="" className="item-process">
+                                <Link to="/UnpaidBooking" className="item-process">
                                     <img className="img-2" src={unpaidOrder} alt="" />
-                                    <div className="text-wrapper-8">List of unpaid orders</div>
+                                    <div className="text-wrapper-8">List of unpaid booking</div>
                                 </Link>
                                 <Link to="/WaitingOrderList" className="item-process highlight-item">
                                     <img className="img-2" src={waitingOrder} alt="" />
-                                    <div className="text-wrapper-8">List of orders waiting</div>
+                                    <div className="text-wrapper-8">List of booking waiting</div>
                                 </Link>
                             </>
                         )}

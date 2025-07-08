@@ -212,6 +212,12 @@ const ListRequestBookingFarmer = () => {
                                                 </div>
                                             )}
 
+                                            {booking.booking.bookingServiceStatus === "Paid" && (
+                                                <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
+                                                    <div className="text-completed">Paid</div>
+                                                </div>
+                                            )}
+
                                             {booking.booking.bookingServiceStatus === "Rejected" && (
                                                 <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
                                                     <div className="text-uncompleted-a-need">Rejected</div>
@@ -253,7 +259,7 @@ const ListRequestBookingFarmer = () => {
 
                                                 <div class="footer-booking-price">
                                                     <div class="total-price">
-                                                        TOTAL: <span>200.000 VND</span>
+                                                        TOTAL: <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(booking.booking.price)}</span>
                                                     </div>
                                                 </div>
                                             </div>

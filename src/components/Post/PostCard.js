@@ -11,6 +11,7 @@ import nam_share_icon from "../../assets/icons/nam_share.svg";
 import { useNavigate } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import default_avatar from "../../assets/images/default-avatar.png"
+import SharePostPopup from "./SharePostPopup";
 
 const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCommentCountChange }) => {
   const navigate = useNavigate();
@@ -44,14 +45,15 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
   }, []);
 
   const postData = { ...defaultPost, ...post };
-  const hashTags = postData.hashtags || ["blog", "nienmoulming", "polytecode"];
-  const categories = postData.categories || ["Pants", "Diseases"];
+  const hashTags = postData.hashtags || [];
+  const categories = postData.categories || [];
   const tagFriends = postData.tagFriends || [];
 
   const [showComments, setShowComments] = useState(false);
   const [commentCount, setCommentCount] = useState(postData.comments);
   const [isLikeHovered, setIsLikeHovered] = useState(false);
   const [showReactionList, setShowReactionList] = useState(false);
+  const [showSharePopup, setShowSharePopup] = useState(false);
 
   const {
     likeCount,
@@ -161,11 +163,14 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
       </div>
       <div className="flex flex-col items-start mt-3 text-sm">
         <p className="mb-2 text-[#7D7E9E] font-light">{postData.content}</p>
-        <p className="mb-2 font-bold">
-          {hashTags.map((tag, index) => (
-            <span key={index} className="mr-2">#{tag}</span>
-          ))}
-        </p>
+        {hashTags.length > 0 && (
+          <p className="mb-2 font-bold">
+            <span>HashTags: </span>
+            {hashTags.map((tag, index) => (
+              <span key={index} className="mr-2">#{tag}</span>
+            ))}
+          </p>
+        )}
         <div className="flex items-center gap-2 mb-2">
           {categories.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 font-bold">
@@ -278,11 +283,24 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
           >
             <i className="mr-2 fas fa-comment w-5 h-5"></i>Comment
           </button>
-          <button className="flex-1 p-2 text-center bg-gray-100 rounded-sm hover:bg-gray-200 items-center h-9">
+          <button
+            onClick={() => setShowSharePopup(true)}
+            className="flex-1 p-2 text-center bg-gray-100 rounded-sm hover:bg-gray-200 items-center h-9"
+          >
             <i className="mr-2 fa-solid fa-share w-5 h-5"></i>Share
           </button>
         </div>
       </div>
+      {showSharePopup && (
+        <SharePostPopup
+          post={postData}
+          onClose={() => setShowSharePopup(false)}
+          onSharedPost={(sharedPost) => {
+            // Handle sau khi share thành công
+            console.log('Post shared:', sharedPost);
+          }}
+        />
+      )}
       {showComments && (
         <CommentSection
           postId={postData.postId}

@@ -16,6 +16,7 @@ export default function EditGroupForm({ userRole, userAccId }) {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [accessToken, setAccessToken] = useState("");
 
+
   const { groupId } = useParams();
   const [ownerId, setOwnerId] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -25,6 +26,44 @@ export default function EditGroupForm({ userRole, userAccId }) {
   const [avatarFile, setAvatarFile] = useState(null);
   const [bgFile, setBgFile] = useState(null);
   const [errors, setErrors] = useState({});
+
+    // 👇 Chỉ xử lý khi groupName thay đổi
+    useEffect(() => {
+        if (groupName.trim()) {
+            setErrors(prev => ({ ...prev, groupName: "" }));
+        }
+    }, [groupName]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const isFormValid = validate();
+
+        if (!isFormValid) return;
+
+        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+        const formData = new FormData();
+        formData.append("GroupName", groupName);
+        formData.append("PrivacyType", privacyType);
+        if (avatarFile) formData.append("GroupAvatar", avatarFile);
+        if (bgFile) formData.append("GroupBackground", bgFile);
+
+        try {
+            await instance.put(`/api/group/update/${groupId}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            toast.success("GROUP UPDATED SUCCESSFULLY!");
+            // navigate("/Group", { state: { section: "all-group-user" } });
+            navigate(`/group/${groupId}`);
+        } catch (error) {
+            console.error("Update failed:", error);
+            toast.error("Failed to update group!");
+        }
+    };
+
 
   // Khai bao xoa group
   const [deleteShowPopup, setDeleteShowPopup] = useState(false);
@@ -128,10 +167,10 @@ export default function EditGroupForm({ userRole, userAccId }) {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      toast.success("Group deleted successfully.");
-      setDeleteShowPopup(false);
-      setSelectedGroupId(null);
+      
+       toast.success("GROUP DELETED SUCCESSFULLY!");
+            setDeleteShowPopup(false);
+            setSelectedGroupId(null);
 
       // 👉 Sau khi xóa xong, điều hướng về trang danh sách nhóm
       navigate("/Group", { state: { section: "all-group-user" } });

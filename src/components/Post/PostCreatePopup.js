@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
   const [withWhom, setWithWhom] = useState("");
   const [images, setImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // Thêm state loading
 
   const [categoryDropdown, setCategoryDropdown] = useState(false);
   const withWhomInputRef = useRef(null);
@@ -26,19 +27,35 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
   const [content, setContent] = useState("");
   const [taggedFriends, setTaggedFriends] = useState([]);
   const [status, setStatus] = useState("Public");
-
+  const [statusDropdown, setStatusDropdown] = useState(false);
   //danh sách lấy từ db
   const [listCategories, setListCategory] = useState([]);
   const [listFriends, setListFriends] = useState([]);
 
+  const toggleStatusDropdown = () => setStatusDropdown(!statusDropdown);
+  const closeStatusDropdown = () => setStatusDropdown(false);
+  const handleSelectStatus = (value) => {
+    setStatus(value);
+    setStatusDropdown(false);
+  };
+
   //xử lý khi submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Bật loading khi bắt đầu submit
 
     const formData = new FormData();
 
     //Gán dữ liệu vào form data
     formData.append("PostContent", content);
+
+    // Xử lý hashtags - trích xuất từ content
+    const hashtags = content.match(/#\w+/g) || [];
+    const cleanedHashtags = hashtags.map(tag => tag.replace('#', '')); // Loại bỏ dấu #
+    cleanedHashtags.forEach((hashtag) =>
+      formData.append("Hashtags", hashtag)
+    );
+
     categories.forEach((cat) =>
       formData.append("ListCategoryOfPost", cat.categoryId)
     );
@@ -52,7 +69,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
     formData.append("isInGroup", groupId ? "true" : "false");
 
     if (groupId) {
-      formData.append("groupId", groupId);
+      formData.append("GroupId", groupId);
     }
 
     try {
@@ -63,14 +80,19 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
         },
       });
 
-      console.log(response.data.data);
+      console.log("Response data:", response.data.data);
+      console.log("Hashtags sent:", cleanedHashtags);
 
       if (response.status === 200) {
-        toast.success("Post successfully!");
+        toast.success("Post created successfully!");
         onCreatedPost(response.data.data);
+        onClose(); // Đóng popup sau khi tạo post thành công
       }
     } catch (err) {
       console.error("Lỗi khi gửi bài viết:", err);
+      toast.error("Failed to create post!");
+    } finally {
+      setIsLoading(false); // Tắt loading khi hoàn thành (thành công hoặc lỗi)
     }
   };
 
@@ -153,11 +175,25 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
     setImagesFile((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const addCategory = (category) => {
-    // Tránh thêm trùng ID
-    if (!categories.find((c) => c.categoryId === category.categoryId)) {
-      setCategories([...categories, category]); // ✅ Lưu object
+  // Hàm toggle category (thêm/xóa category)
+  const toggleCategory = (category) => {
+    const existingCategory = categories.find((c) => c.categoryId === category.categoryId);
+    if (existingCategory) {
+      // Nếu đã có thì xóa
+      setCategories(categories.filter((c) => c.categoryId !== category.categoryId));
+    } else {
+      // Nếu chưa có thì thêm
+      setCategories([...categories, category]);
     }
+  };
+
+  // Hàm kiểm tra xem category có được chọn hay không
+  const isCategorySelected = (category) => {
+    return categories.some((c) => c.categoryId === category.categoryId);
+  };
+
+  // Hàm đóng category dropdown
+  const closeCategoryDropdown = () => {
     setCategoryDropdown(false);
   };
 
@@ -203,6 +239,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
               onClose();
             }}
             className="btn-close-create-post"
+            disabled={isLoading} // Disable khi đang loading
           >
             <i className="fa-solid fa-times"></i>
           </button>
@@ -220,6 +257,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write something about you..."
               className="flex-grow p-2 outline-none"
+              disabled={isLoading} // Disable khi đang loading
             />
           </div>
 
@@ -251,6 +289,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                     type="button"
                     onClick={() => removeCategory(category)}
                     className="ml-2 text-red-500 hover:text-red-700"
+                    disabled={isLoading} // Disable khi đang loading
                   >
                     <i className="fa-solid fa-times"></i>
                   </button>
@@ -272,6 +311,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                     type="button"
                     onClick={() => removeFriend(friend)}
                     className="ml-2 bg-gray-200 hover:bg-gray-300 text-white rounded-r flex items-center justify-center px-[8px] p-[5px]"
+                    disabled={isLoading} // Disable khi đang loading
                   >
                     <i className="fa-solid fa-times text-xs text-[#33B1FF]"></i>
                   </button>
@@ -289,12 +329,14 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
               onChange={(e) => setWithWhom(e.target.value)}
               placeholder="Who are you with?"
               className="w-full py-2 pl-10 pr-8 border border-gray-300 rounded-lg"
+              disabled={isLoading} // Disable khi đang loading
             />
             {withWhom && (
               <button
                 type="button"
                 onClick={() => setWithWhom("")}
                 className="absolute text-gray-500 right-2 top-2 hover:text-gray-700"
+                disabled={isLoading} // Disable khi đang loading
               >
                 <i className="fa-solid fa-times"></i>
               </button>
@@ -305,12 +347,12 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                   <div
                     key={friend.accId}
                     onClick={() => {
-                      if (!taggedFriends.includes(friend)) {
+                      if (!isLoading && !taggedFriends.includes(friend)) {
                         setTaggedFriends([...taggedFriends, friend]);
                       }
                       setWithWhom("");
                     }}
-                    className="p-2 cursor-pointer hover:bg-gray-100"
+                    className={`p-2 cursor-pointer hover:bg-gray-100 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {friend.fullName}
                   </div>
@@ -321,29 +363,42 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
           <hr />
           <div className="my-4">
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-              <div className="relative inline-flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg">
-                <img src={public_status_icon} alt="Photo/Video" />
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="pr-6 bg-transparent outline-none appearance-none"
+              <div className="relative inline-block w-full lg:w-auto">
+                <div
+                  onClick={!isLoading ? toggleStatusDropdown : undefined}
+                  className={`flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <option value="Public">Public</option>
-                  <option value="Private">Private</option>
-                </select>
-                <div className="absolute pointer-events-none right-2">
-                  <i className="text-blue-500 fa-solid fa-caret-down"></i>
+                  <img src={public_status_icon} alt="status icon" />
+                  {status}
+                  <i className="fa-solid fa-caret-down ml-auto"></i>
                 </div>
+
+                {statusDropdown && !isLoading && (
+                  <div className="absolute z-10 mt-2 w-full bg-white border rounded-lg shadow-lg">
+                    <div
+                      className={`p-3 cursor-pointer hover:bg-gray-100 ${status === "Public" ? "bg-blue-50 text-blue-600" : "text-gray-700"}`}
+                      onClick={() => handleSelectStatus("Public")}
+                    >
+                      Public
+                    </div>
+                    <div
+                      className={`p-3 cursor-pointer hover:bg-gray-100 ${status === "Private" ? "bg-blue-50 text-blue-600" : "text-gray-700"}`}
+                      onClick={() => handleSelectStatus("Private")}
+                    >
+                      Private
+                    </div>
+                  </div>
+                )}
               </div>
               <div
-                onClick={handlePhotoVideo}
-                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg"
+                onClick={!isLoading ? handlePhotoVideo : undefined}
+                className={`flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <img src={camera_icon} alt="Photo/Video" /> Photo/Video
               </div>
               <div
-                onClick={handleTagFriends}
-                className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg"
+                onClick={!isLoading ? handleTagFriends : undefined}
+                className={`flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <img src={tag_icon} alt="Photo/Video" />
                 Tag friends
@@ -351,27 +406,58 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
 
               <div className="relative inline-block">
                 <div
-                  onClick={() => setCategoryDropdown(!categoryDropdown)}
-                  className="flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer"
+                  onClick={!isLoading ? () => setCategoryDropdown(!categoryDropdown) : undefined}
+                  className={`flex items-center gap-2 px-3 py-2 text-blue-500 bg-gray-100 border border-solid rounded-lg cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <img src={post_category_icon} alt="Photo/Video" /> Categories{" "}
+                  <img src={post_category_icon} alt="Photo/Video" />
+                  Categories
                   <i className="fa-solid fa-caret-down"></i>
                 </div>
 
-                {categoryDropdown && (
-                  <div className="absolute z-10 mt-2 w-full text-left bg-white border rounded-lg">
-                    {listCategories.map((cat) => (
-                      <div
-                        key={cat.categoryId}
-                        onClick={() => {
-                          addCategory(cat);
-                          setCategoryDropdown(false); // Đóng dropdown sau khi chọn
-                        }}
-                        className="p-2 text-black rounded cursor-pointer hover:bg-gray-100"
+                {categoryDropdown && !isLoading && (
+                  <div className="absolute z-10 mt-2 w-64 bg-white border rounded-lg shadow-lg">
+                    {/* Header của dropdown */}
+                    <div className="flex items-center justify-between p-3 border-b">
+                      <span className="font-semibold text-gray-700">Select Categories</span>
+                      <button
+                        type="button"
+                        onClick={closeCategoryDropdown}
+                        className="text-gray-500 hover:text-gray-700"
                       >
-                        {cat.categoryName}
-                      </div>
-                    ))}
+                        <i className="fa-solid fa-times"></i>
+                      </button>
+                    </div>
+
+                    {/* Danh sách categories */}
+                    <div className="max-h-64 overflow-y-auto">
+                      {listCategories.map((cat) => (
+                        <div
+                          key={cat.categoryId}
+                          onClick={() => toggleCategory(cat)}
+                          className={`p-3 cursor-pointer hover:bg-gray-100 flex items-center gap-2 ${isCategorySelected(cat) ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                            }`}
+                        >
+                          <div className={`w-4 h-4 border-2 rounded flex items-center justify-center ${isCategorySelected(cat) ? 'bg-blue-500 border-blue-500' : 'border-gray-300'
+                            }`}>
+                            {isCategorySelected(cat) && (
+                              <i className="fa-solid fa-check text-white text-xs"></i>
+                            )}
+                          </div>
+                          <span>{cat.categoryName}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Footer với nút Done */}
+                    <div className="p-3 border-t">
+                      <button
+                        type="button"
+                        onClick={closeCategoryDropdown}
+                        className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+                      >
+                        Done
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -384,9 +470,8 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                 <img
                   src={image}
                   alt="Post"
-                  className={`w-full h-24 rounded-lg object-cover ${
-                    index === 5 && images.length > 6 ? "brightness-50" : ""
-                  }`}
+                  className={`w-full h-24 rounded-lg object-cover ${index === 5 && images.length > 6 ? "brightness-50" : ""
+                    }`}
                 />
                 {index === 5 && images.length > 6 && (
                   <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-white">
@@ -397,6 +482,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
                   type="button"
                   onClick={() => removeImage(index)}
                   className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-gray-500 hover:text-gray-70"
+                  disabled={isLoading} // Disable khi đang loading
                 >
                   <i className="fa-solid fa-times"></i>
                 </button>
@@ -408,13 +494,29 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
               onChange={handleFileChange}
               multiple
               className="hidden"
+              disabled={isLoading} // Disable khi đang loading
             />
           </div>
           <button
             type="submit"
-            className="w-full py-3 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+            className={`w-full py-3 text-white rounded-lg transition-colors duration-200 ${
+              isLoading 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-blue-500 hover:bg-blue-600'
+            }`}
+            disabled={isLoading}
           >
-            PUBLISH
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                PUBLISHING...
+              </div>
+            ) : (
+              'PUBLISH'
+            )}
           </button>
         </form>
       </div>

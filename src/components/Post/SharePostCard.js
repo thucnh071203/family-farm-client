@@ -2,29 +2,72 @@ import React from "react";
 import OptionsPost from "./OptionsPost";
 import PostCard from "./PostCard";
 import formatTime from "../../utils/formatTime";
+import { useNavigate } from "react-router-dom";
+import default_avatar from "../../assets/images/default-avatar.png";
 
 const SharePostCard = ({ post }) => {
-  const defaultPost = {
-    fullName: "Phuong Nam",
-    avatar: "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-    createAt: "July 29 2024, 07:49 AM",
-    content: "Lorem ipsum dolor sit amet consectetur adipisicing elit. #blog #nienmoulming #polytecode",
-    images: null,
-    hashtags: null,
-    tagFriends: null,
-    likes: 100,
-    comments: 20,
-    shares: 10,
-    sharedPost: null,
+  const navigate = useNavigate();
+  
+  console.log("SharePostCard - Full post data:", post); // Debug log
+  
+  // Xử lý dữ liệu SharePost từ API
+  const sharePostData = post.sharePostData || {};
+  const sharePost = sharePostData.sharePost || {};
+  const ownerSharePost = sharePostData.ownerSharePost || {};
+  const originalPost = sharePostData.originalPost || {};
+  
+  console.log("SharePostCard - sharePostData:", sharePostData); // Debug log
+  console.log("SharePostCard - ownerSharePost:", ownerSharePost); // Debug log
+
+  // Map dữ liệu SharePost theo cấu trúc API
+  const postData = {
+    accId: ownerSharePost.accId || "",
+    fullName: ownerSharePost.fullName || "Unknown User",
+    avatar: ownerSharePost.avatar || default_avatar,
+    createAt: sharePost.createdAt || sharePost.updatedAt || "Unknown",
+    content: sharePost.sharePostContent || null,
+    hashtags: sharePostData.hashTags?.map(tag => tag.hashTagContent) || [],
+    tagFriends: sharePostData.sharePostTags || [],
+    likes: sharePostData.reactionCount || 0,
+    comments: sharePostData.commentCount || 0,
+    shares: sharePostData.shareCount || 0,
+    sharedPost: originalPost
   };
-  const postData = { ...defaultPost, ...post };
-  const hashTags = postData.hashtags || ["blog", "nienmoulming", "polytecode"];
+
+  console.log("SharePostCard - Final postData:", postData); // Debug log
+
+  const originalPostForCard = originalPost.post ? {
+    accId: originalPost.ownerPost?.accId || "",
+    postId: originalPost.post.postId,
+    fullName: originalPost.ownerPost?.fullName || "Unknown User",
+    avatar: originalPost.ownerPost?.avatar || default_avatar,
+    createAt: originalPost.post.createdAt,
+    content: originalPost.post.postContent,
+    images: originalPost.postImages?.map((img) => img.imageUrl) || [],
+    hashtags: originalPost.hashTags?.map((tag) => tag.hashTagContent) || [],
+    tagFriends: originalPost.postTags?.map((tag) => ({
+      accId: tag.accId,
+      fullname: tag.fullname || tag.username || "Unknown",
+    })) || [],
+    categories: originalPost.postCategories?.map((cat) => cat.categoryName) || [],
+    likes: originalPost.reactionCount || 0,
+    comments: originalPost.commentCount || 0,
+    shares: originalPost.shareCount || 0,
+  } : null;
+
+  const hashTags = postData.hashtags || [];
   const tagFriends = postData.tagFriends || [];
 
-  // Hàm hiển thị tagFriends theo định dạng yêu cầu
+  // Hàm hiển thị tagFriends theo định dạng yêu cầu - giống như trong PostCard
   const renderTagFriends = () => {
     const fullNameElement = (
-      <span className="text-[#088DD0]">{postData.fullName}</span>
+      <span 
+        style={{ cursor: "pointer" }} 
+        onClick={() => handleClickToProfile(postData.accId)} 
+        className="text-[#088DD0]"
+      >
+        {postData.fullName}
+      </span>
     );
 
     if (!tagFriends.length) return fullNameElement;
@@ -33,7 +76,15 @@ const SharePostCard = ({ post }) => {
       return (
         <>
           {fullNameElement}
-          <span className="text-black"> <span className="text-gray-400 font-normal"> with </span>  {tagFriends[0]}</span>
+          <span className="text-black">
+            <span className="text-gray-400 font-normal"> with </span> 
+            <span 
+              onClick={() => handleClickToProfile(tagFriends[0].accId)} 
+              style={{ cursor: "pointer" }}
+            >
+              {tagFriends[0].fullname}
+            </span>
+          </span>
         </>
       );
     }
@@ -42,7 +93,22 @@ const SharePostCard = ({ post }) => {
       return (
         <>
           {fullNameElement}
-          <span className="text-black"> <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends[1]}</span>
+          <span className="text-black">
+            <span className="text-gray-400 font-normal"> with </span> 
+            <span 
+              onClick={() => handleClickToProfile(tagFriends[0].accId)} 
+              style={{ cursor: "pointer" }}
+            >
+              {tagFriends[0].fullname}
+            </span> 
+            and 
+            <span 
+              onClick={() => handleClickToProfile(tagFriends[1].accId)} 
+              style={{ cursor: "pointer" }}
+            >
+              {tagFriends[1].fullname}
+            </span>
+          </span>
         </>
       );
     }
@@ -50,9 +116,22 @@ const SharePostCard = ({ post }) => {
     return (
       <>
         {fullNameElement}
-        <span className="text-black"> <span className="text-gray-400 font-normal"> with </span> {tagFriends[0]} and {tagFriends.length - 1} more</span>
+        <span className="text-black">
+          <span className="text-gray-400 font-normal"> with </span> 
+          <span 
+            onClick={() => handleClickToProfile(tagFriends[0].accId)} 
+            style={{ cursor: "pointer" }}
+          >
+            {tagFriends[0].fullname}
+          </span> 
+          and {tagFriends.length - 1} more
+        </span>
       </>
     );
+  };
+
+  const handleClickToProfile = (accId) => {
+    navigate(`/PersonalPage/${accId}`);
   };
 
   return (
@@ -63,6 +142,8 @@ const SharePostCard = ({ post }) => {
             src={postData.avatar}
             alt="Avatar"
             className="w-10 h-10 rounded-full"
+            style={{ cursor: "pointer" }}
+            onClick={() => handleClickToProfile(postData.accId)}
           />
           <div>
             <h3 className="font-bold">{renderTagFriends()}</h3>
@@ -73,19 +154,22 @@ const SharePostCard = ({ post }) => {
           <OptionsPost />
         </div>
       </div>
+      
       <div className="flex flex-col items-start mt-3 text-sm">
         <p className="mb-2 text-[#7D7E9E] font-light">{postData.content}</p>
-        <p className="mb-2 font-bold">
-          {hashTags.map((tag, index) => (
-            <span key={index} className="mr-2">
-              #{tag}
-            </span>
-          ))}
-        </p>
+        {hashTags.length > 0 && (
+          <p className="mb-2 font-bold">
+            <span>HashTags: </span>
+            {hashTags.map((tag, index) => (
+              <span key={index} className="mr-2">#{tag}</span>
+            ))}
+          </p>
+        )}
       </div>
-      {postData.sharedPost && (
-        <div className=" border-gray-300">
-          <PostCard post={postData.sharedPost} />
+      
+      {originalPostForCard && (
+        <div className="border border-gray-300 rounded-lg mt-3">
+          <PostCard post={originalPostForCard} />
         </div>
       )}
     </div>
