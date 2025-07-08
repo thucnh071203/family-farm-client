@@ -17,7 +17,10 @@ import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
 import defaultAvatar from "../../assets/images/default-avatar.png";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import PostInGroupCard from "../../components/Group/PostInGroupCard";
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { useNavigate } from "react-router-dom";
 const GroupDetailPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams(); // lấy groupId từ URL
   const [groupDetail, setGroupDetail] = useState(null);
   const [listMemberOfgroup, setListmember] = useState([]);
@@ -31,7 +34,8 @@ const GroupDetailPage = () => {
 
   // get list request join group
   const [listRequestToJoin, setListRequestToJoin] = useState([]);
-
+  // cpnnect signar
+  const connectionRef = useRef(null);
   // select home, member,...
   const [selectedTab, setSelectedTab] = useState("posts");
 
@@ -285,19 +289,60 @@ const GroupDetailPage = () => {
     fetchListMemberData();
     fetchGroupDetailData();
     fetchListRequestToJoinData();
+
+    const connection = new HubConnectionBuilder()
+      .withUrl("https://localhost:7280/friendHub")
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("SignalR connected");
+
+        // Đảm bảo không đăng ký trùng
+        connection.off("GroupMemberUpdate");
+        connection.off("GroupDeleted");
+
+        // Lắng nghe các sự kiện
+        connection.on("GroupMemberUpdate", () => {
+          console.log("Received GroupMemberUpdate signal");
+          fetchListMemberData();
+          fetchListRequestToJoinData();
+        });
+
+        connection.on("GroupDeleted", (deletedGroupId) => {
+          if (deletedGroupId === id) {
+            toast.error("This group has been deleted!", { autoClose: 3000 });
+            navigate("/group", { replace: true });
+          }
+        });
+      })
+      .catch((err) => console.error("SignalR connection error: ", err));
+
+    connectionRef.current = connection;
+
+    return () => {
+      if (connectionRef.current) {
+        connectionRef.current.stop();
+      }
+    };
   }, [id]);
+
   useEffect(() => {
     fetchYourGroupsData();
   }, []);
 
-  const ReloadData = () => {
-    fetchListRequestToJoinData();
-    fetchListMemberData();
-  };
+  // const ReloadData = () => {
+  //   fetchListRequestToJoinData();
+  //   fetchListMemberData();
+  // };
   // xử lí list post and create post
   const [accountId, setAccountId] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [postCount, setPostCount] = useState(0);
+  const [initialLoading, setInitialLoading] = useState(true);
+
   //DÙNG CHO INFINITE SCROLL
 
   const [lastPostId, setLastPostId] = useState(null);
@@ -323,8 +368,10 @@ const GroupDetailPage = () => {
   }, []);
 
   const fetchPosts = async ({ lastPostId, reset = false }) => {
+    if (!hasMore && !reset) return;
+
     setLoading(true);
-    if (lastPostId) setLoadingMore(true);
+    if (lastPostId && !reset) setLoadingMore(true);
     setError(null);
 
     try {
@@ -332,34 +379,33 @@ const GroupDetailPage = () => {
         "/api/post/get-post-in-group-detail",
         {
           params: {
-            lastPostId: lastPostId,
+            lastPostId,
             pageSize: PAGE_SIZE,
             groupId: id,
           },
         }
       );
 
-      console.log("API posts response:", response.data.data); // Debug
+      const newPosts = response.data.data || [];
+      const success = response.data.success;
 
-      if (response.data.success) {
-        const newPosts = response.data.data || [];
-        setPosts((prevPosts) =>
-          reset ? newPosts : [...prevPosts, ...newPosts]
-        );
-        setHasMore(response.data.hasMore);
+      if (success) {
+        if (reset) {
+          setPosts(newPosts);
+        } else {
+          setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+        }
 
         if (newPosts.length > 0) {
           setLastPostId(newPosts[newPosts.length - 1].post.postId);
+          setHasMore(response.data.hasMore);
         } else {
-          setLastPostId(null);
+          // Nếu không có bài mới => dừng scroll
+          setHasMore(false);
+          setLastPostId(null); // ✅ reset để không trigger lại
         }
       } else {
         setError(response.data.message || "Tải bài post thất bại!");
-        // toast.error(response.data.message || "Tải bài post thất bại!", {
-        //   position: "top-right",
-        //   autoClose: 3000,
-        //   transition: Bounce,
-        // });
       }
     } catch (error) {
       setError("Failed to load posts!");
@@ -373,54 +419,59 @@ const GroupDetailPage = () => {
 
   useEffect(() => {
     if (!id) return;
-  
     let cancelled = false;
-  
+
     const loadPosts = async () => {
-      //  Reset tất cả state liên quan đến scroll và post
+      setInitialLoading(true); // ✅ Mới thêm
       setSkip(0);
       setLastPostId(null);
       setHasMore(true);
-      setPosts([]);  // Clear bài viết cũ
+      setPosts([]);
       setError(null);
-      setSearchKeyword(""); //  Optional: nếu muốn clear luôn thanh tìm kiếm
-  
+
       if (isSearching) return;
-  
+
       try {
-        const response = await instance.get("/api/post/get-post-in-group-detail", {
-          params: {
-            lastPostId: null,
-            pageSize: PAGE_SIZE,
-            groupId: id,
-          },
-        });
-  
+        const response = await instance.get(
+          "/api/post/get-post-in-group-detail",
+          {
+            params: {
+              lastPostId: null,
+              pageSize: PAGE_SIZE,
+              groupId: id,
+            },
+          }
+        );
+
         if (!cancelled && response.data.success) {
           const newPosts = response.data.data || [];
           setPosts(newPosts);
           setHasMore(response.data.hasMore);
-  
           if (newPosts.length > 0) {
             setLastPostId(newPosts.at(-1).post.postId);
           }
         }
       } catch (error) {
         if (!cancelled) setError("Tải bài post thất bại!");
+      } finally {
+        setInitialLoading(false); // ✅ Mới thêm
       }
     };
-  
+
     loadPosts();
-  
-    // Ngăn gọi setState nếu đã chuyển sang group khác
+
     return () => {
       cancelled = true;
     };
   }, [id]);
-  
+
   const { skip, setSkip } = useInfiniteScroll({
-    fetchData: () => fetchPosts({ lastPostId }),
-    containerRef: window, //thay đổi thành window do scroll nguyên trang
+    fetchData: () => {
+      if (!loading && !loadingMore && hasMore && lastPostId !== null) {
+        return fetchPosts({ lastPostId });
+      }
+    },
+    containerRef: window,
     direction: "down",
     threshold: 50,
     hasMore,
@@ -430,7 +481,6 @@ const GroupDetailPage = () => {
     data: PAGE_SIZE,
     take: posts.length,
   });
-
 
   const handleCommentCountChange = (postId, newCount) => {
     setPosts((prevPosts) =>
@@ -450,6 +500,7 @@ const GroupDetailPage = () => {
   const handlePostCreate = (newPostData) => {
     if (newPostData.post.postScope === "Public") {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
+      setPostCount((count) => count + 1);
     }
   };
   // filter when search
@@ -461,7 +512,7 @@ const GroupDetailPage = () => {
           groupId: groupId,
         },
       });
-  
+
       if (response.data.success) {
         return response.data.data; // số lượng post public
       } else {
@@ -479,7 +530,7 @@ const GroupDetailPage = () => {
         setPostCount(count);
       });
     }
-  }, [id]);  
+  }, [id]);
   const fetchFilteredPostsFromServer = async (keyword) => {
     try {
       setLoading(true);
@@ -491,7 +542,7 @@ const GroupDetailPage = () => {
           },
         }
       );
-  
+
       if (response.data.success) {
         setPosts(response.data.data || []);
         setHasMore(false); // không còn infinite scroll khi đang search
@@ -514,21 +565,47 @@ const GroupDetailPage = () => {
       fetchPosts({ lastPostId: null, reset: true }); // gọi lại infinite scroll từ đầu
     }
   }, [searchKeyword]);
-    
-  
-
 
   const filteredMembers = listMemberOfgroup.filter((member) =>
     member.fullName?.toLowerCase().includes(searchKeyword.toLowerCase())
   );
 
   const filteredRequests = listRequestToJoin.filter((request) =>
-    request.fullName?.toLowerCase().includes(searchKeyword.toLowerCase())
+    request.accountFullName?.toLowerCase().includes(searchKeyword.toLowerCase())
   );
 
   const filteredPermissionList = listMemberOfgroup.filter((member) =>
     member.fullName?.toLowerCase().includes(searchKeyword.toLowerCase())
   );
+  // trường hợp đang view group mà bị amdin xóa
+  const [memberListLoaded, setMemberListLoaded] = useState(false);
+
+  useEffect(() => {
+    if (listMemberOfgroup && userAccId) {
+      const person = listMemberOfgroup.find(
+        (member) => member.accId.trim() === userAccId.trim()
+      );
+
+      if (memberListLoaded) {
+        if (!person) {
+          toast.error("You have been removed from the group!", {
+            autoClose: 3000,
+          });
+          navigate("/group", { replace: true }); // hoặc về trang khác
+          return;
+        }
+      }
+
+      // nếu tìm được thì set role và status
+      if (person) {
+        setUserRole(person.roleInGroupId);
+        setMemberStatus(person.memberStatus);
+      }
+
+      // đánh dấu đã load xong ít nhất 1 lần
+      setMemberListLoaded(true);
+    }
+  }, [listMemberOfgroup, userAccId]);
 
   return (
     <div>
@@ -548,7 +625,7 @@ const GroupDetailPage = () => {
             countMember={listMemberOfgroup.length}
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}
-            reload={ReloadData}
+            // reload={ReloadData}
             reloadsignlR={ReloadSignlR}
             searchKeyword={searchKeyword}
             setSearchKeyword={setSearchKeyword}
@@ -564,7 +641,7 @@ const GroupDetailPage = () => {
                     member={member}
                     userRole={userRole}
                     userAccId={userAccId}
-                    reload={ReloadData}
+                    // reload={ReloadData}
                     ownerId={groupDetail.ownerId}
                   />
                 ))
@@ -578,10 +655,10 @@ const GroupDetailPage = () => {
               {filteredRequests.length > 0 ? (
                 filteredRequests.map((request) => (
                   <RequestGroupCard
-                    key={request.groupMemberId + request.memberStatus}
+                    key={request.groupMemberId}
                     request={request}
                     userRole={userRole}
-                    reload={ReloadData}
+                    // reload={ReloadData}
                     setListRequestToJoin={setListRequestToJoin}
                   />
                 ))
@@ -602,7 +679,7 @@ const GroupDetailPage = () => {
                     member={member}
                     userRole={userRole}
                     userAccId={userAccId}
-                    reload={ReloadData}
+                    // reload={ReloadData}
                     ownerId={groupDetail.ownerId}
                   />
                 ))
@@ -623,7 +700,7 @@ const GroupDetailPage = () => {
               />
               <div className="w-full flex flex-col items-center pt-3">
                 <div className="w-full max-w-3xl flex flex-col gap-4">
-                  {loading && skip === 0 ? (
+                  {initialLoading ? (
                     <div className="flex flex-col gap-5">
                       {[...Array(3)].map((_, index) => (
                         <PostCardSkeleton key={index} />
@@ -680,9 +757,7 @@ const GroupDetailPage = () => {
                       ) : null
                     )
                   ) : (
-                    <div className="text-center py-4">
-                      Not found any post
-                    </div>
+                    <div className="text-center py-4">Not found any post</div>
                   )}
                   {loadingMore && (
                     <div className="flex flex-col gap-5 py-4">

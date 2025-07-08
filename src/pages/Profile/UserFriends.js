@@ -94,7 +94,7 @@ const UserFriends = () => {
   const myProfile = storeData ? JSON.parse(storeData) : null;
   const isOwner = !accId || accId === myProfile?.accId;
   const [listFriends, setListFriends] = useState([]);
-  const [listCheckRelationShip, setlistCheckRelationShip] = useState([]);
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -199,48 +199,6 @@ const UserFriends = () => {
     }
   }, [accId, isOwner, accessToken]);
 
-  const fetchlistCheckRelationShip = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-
-      const res = await fetch(
-        `https://localhost:7280/api/friend/list-account-no-relation`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const jsonArray = await res.json();
-      console.log("API response (list-account-no-relation):", jsonArray);
-
-      // Gộp tất cả data từ các object có isSuccess === true
-      const combinedList = jsonArray
-        .filter((item) => item.isSuccess && Array.isArray(item.data))
-        .flatMap((item) => item.data); // dùng flatMap để nối tất cả mảng lại
-
-      if (combinedList.length > 0) {
-        setlistCheckRelationShip(combinedList);
-        console.log("Danh sách không có quan hệ:", combinedList);
-      } else {
-        setlistCheckRelationShip([]);
-      }
-    } catch (err) {
-      console.error("Error fetching friends:", err.message || err);
-      setlistCheckRelationShip([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchlistCheckRelationShip(); // chỉ gọi khi component load hoặc section thay đổi
-  }, []);
-  const matchedAccount =
-    !isOwner &&
-    Array.isArray(listCheckRelationShip) &&
-    listCheckRelationShip.find((a) => a.accId === accId);
-
   return (
     <div>
       <div className="min-h-screen flex flex-col">
@@ -249,8 +207,8 @@ const UserFriends = () => {
         <div className="flex-grow">
           <div className="container mx-auto max-w-7xl">
             <div className="relative">
-              <CoverBackground />
-              {matchedAccount && (
+              <CoverBackground backgroundImage={background} isOwner={isOwner}/>
+              {/* {matchedAccount && (
                 <div className="absolute right-4 bottom-4">
                   <FriendActionButton
                     status={matchedAccount.friendStatus}
@@ -258,7 +216,7 @@ const UserFriends = () => {
                     accId={matchedAccount.accId}
                   />
                 </div>
-              )}
+              )} */}
 
               <ProfileAvatar
                 initialProfileImage={avatar}

@@ -26,7 +26,8 @@ const PersonalPage = () => {
   const [posts, setPosts] = useState([]);
 
   const { accId } = useParams();
-  const defaultBackground = "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c";
+  const defaultBackground =
+    "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c";
   const storeData =
     localStorage.getItem("profileData") ||
     sessionStorage.getItem("profileData");
@@ -60,11 +61,12 @@ const PersonalPage = () => {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
           if (response.status === 200) {
-            
             const data = response.data.data;
             setFullName(data.fullName || data.firstName || "Unknown User");
             setAvatar(data.avatar || data.profileImage || "default-avatar-url");
-            setBackground(data.background || data.coverImage || defaultBackground);
+            setBackground(
+              data.background || data.coverImage || defaultBackground
+            );
 
             const basicInfoMapping = {
               gender: data.gender || "Updating",
@@ -189,6 +191,14 @@ const PersonalPage = () => {
     );
   };
 
+  const handlePostCreate = (newPostData) => {
+    if (
+      newPostData.post.postScope === "Public" ||
+      newPostData.post.postScope === "Private"
+    ) {
+      setPosts((prevPosts) => [newPostData, ...prevPosts]);
+    }
+  };
   // Get list friend
   const fetchFriends = async () => {
     try {
@@ -295,17 +305,22 @@ const PersonalPage = () => {
           </div>
           <div className="flex flex-col gap-5 pt-20 lg:flex-row">
             <aside className="flex flex-col w-full gap-5 lg:w-1/3">
-              <BasicInfo info={basicInfo} />
+              <BasicInfo info={basicInfo} isOwner={isOwner}/>
               <FriendList
                 friends={listFriends}
                 isOwner={isOwner}
                 isProfile={true}
-                accId = {accId}
+                accId={accId}
               />
               <PhotoGallery />
             </aside>
             <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
-              {isOwner && <PostCreate />}
+              {isOwner && (
+                <PostCreate
+                  profileImage={avatar}
+                  onPostCreate={handlePostCreate}
+                />
+              )}
 
               <PostFilters />
 
@@ -340,14 +355,14 @@ const PersonalPage = () => {
                         : [],
                       tagFriends: postMapper.postTags
                         ? postMapper.postTags.map((tag) => ({
-                          accId: tag.accId,
-                          fullname: tag.fullname || "Unknown",
-                        }))
+                            accId: tag.accId,
+                            fullname: tag.fullname || "Unknown",
+                          }))
                         : [],
                       categories: postMapper.postCategories
                         ? postMapper.postCategories.map(
-                          (cat) => cat.categoryName
-                        )
+                            (cat) => cat.categoryName
+                          )
                         : [],
                       likes: postMapper.reactionCount || 0,
                       comments: postMapper.commentCount || 0,

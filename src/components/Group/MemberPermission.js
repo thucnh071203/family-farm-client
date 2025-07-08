@@ -3,7 +3,7 @@ import adminImg from "../../assets/images/ri_admin-fill.svg";
 import memberImg from "../../assets/images/subway_admin.svg";
 import { toast, Bounce } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-const MemberPermission = ({ member, userRole, userAccId, reload, ownerId }) => {
+const MemberPermission = ({ member, userRole, userAccId, ownerId }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(null);
   const id = 1;
@@ -33,7 +33,7 @@ const MemberPermission = ({ member, userRole, userAccId, reload, ownerId }) => {
         throw new Error("Failed to update role");
       }
 
-      reload(); // Gọi lại API để làm mới danh sách
+     
       toast.success("UPDATE ROLE SUCCESSFULLY!", { transition: Bounce });
       setIsOpen(null);
     } catch (error) {

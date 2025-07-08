@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import YourGroupCard from "./YourGroupCard";
-
+import { HubConnectionBuilder } from "@microsoft/signalr";
 const YourgroupRight = ({ section }) => {
   const [groupsData, setGroupData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+ const connectionRef = useRef(null);
   const fetchGroups = async () => {
     try {
       setIsLoading(true);
@@ -48,6 +48,33 @@ const YourgroupRight = ({ section }) => {
     fetchGroups();
     // setGroupData(mockData);
     setIsLoading(false);
+    // Khởi tạo kết nối SignalR
+        const connection = new HubConnectionBuilder()
+          .withUrl("https://localhost:7280/friendHub") // thay bằng endpoint hub thực tế của bạn
+          .withAutomaticReconnect()
+          .build();
+    
+        connection
+          .start()
+          .then(() => {
+            console.log("SignalR connected");
+    
+            // Khi nhận tín hiệu, gọi lại fetch
+            connection.on("GroupMemberUpdate", () => {
+              console.log("Received GroupMemberUpdate signal");
+              fetchGroups();
+            });
+          })
+          .catch((err) => console.error("SignalR connection error: ", err));
+    
+        connectionRef.current = connection;
+    
+        // Cleanup khi component unmount
+        return () => {
+          if (connectionRef.current) {
+            connectionRef.current.stop();
+          }
+        };
   }, []);
 
   return (

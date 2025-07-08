@@ -36,6 +36,7 @@ const HomePage = () => {
       localStorage.getItem("accId") || sessionStorage.getItem("accId");
     const storedAvatarUrl =
       localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
+    
 
     if (storedAccId) {
       setAccountId(storedAccId);
@@ -197,7 +198,6 @@ const HomePage = () => {
     if (newPostData.post.postScope === "Public") {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
     }
-   
   };
 
   return (
@@ -239,8 +239,7 @@ const HomePage = () => {
                       accId: postMapper.ownerPost.accId || "Unknown",
                       postId: postMapper.post.postId,
                       fullName: postMapper.ownerPost.fullName || "Unknown User",
-                      avatar:
-                        postMapper.ownerPost.avatar,
+                      avatar: postMapper.ownerPost.avatar,
                       createAt: postMapper.post.createdAt,
                       content: postMapper.post.postContent,
                       images:
