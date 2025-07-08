@@ -35,6 +35,7 @@ const HomePage = () => {
       localStorage.getItem("accId") || sessionStorage.getItem("accId");
     const storedAvatarUrl =
       localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
+    
 
     if (storedAccId) {
       setAccountId(storedAccId);
@@ -234,6 +235,7 @@ const HomePage = () => {
             ) : error ? (
               <div className="text-center py-4">{error}</div>
             ) : posts.length > 0 ? (
+
               posts.map((postMapper, index) => {
                 if (postMapper.itemType === "Post" && postMapper.post && postMapper.ownerPost) {
                   return (

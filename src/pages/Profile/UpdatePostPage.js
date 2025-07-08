@@ -18,7 +18,9 @@ const UpdatePostPage = () => {
     const [fullName, setFullName] = useState("Unknown");
     const [background, setBackground] = useState("");
     const [basicInfo, setBasicInfo] = useState({});
-
+    const [accessToken, setAccessToken] = useState("");
+    // get list friend
+    const [listFriends, setListFriends] = useState([]);
     //Biến lấy accId từ param khi xem profile người khác
     const { accId } = useParams();
 
@@ -76,6 +78,50 @@ const UpdatePostPage = () => {
 
         fetchProfile(); // gọi function async
     }, [accId]);
+    //Lấy token từ session
+    useEffect(() => {
+        const storedAccId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
+        const storedAccesstoken = localStorage.getItem("accessToken");
+        if (storedAccId) {
+            setAccessToken(storedAccesstoken);
+        }
+    }, []);
+
+     // get list friend
+  const fetchFriends = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const url = isOwner
+        ? `https://localhost:7280/api/friend/list-friend`
+        : `https://localhost:7280/api/friend/list-friend-other/${accId}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+      if (json.data && json.data.length > 0) {
+        setListFriends(json.data);
+        //console.log(isOwner + "aaaaaaaaaaaaaaaaaa");
+      } else {
+        setListFriends([]);
+      }
+    } catch (error) {
+      console.error("Error fetching friends:", error);
+      setListFriends([]);
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchFriends();
+    }
+  }, [accId, isOwner, accessToken]);
+
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
@@ -84,7 +130,7 @@ const UpdatePostPage = () => {
             <div className="flex-grow">
                 <div className="container mx-auto max-w-7xl">
                     <div className="relative">
-                        <CoverBackground coverImage={background} />
+                        <CoverBackground backgroundImage={background} isOwner={isOwner} />
 
                         {!isOwner && (
                             <div className="absolute right-4 bottom-4">
@@ -96,8 +142,13 @@ const UpdatePostPage = () => {
                     </div>
                     <div className="flex flex-col gap-5 pt-20 lg:flex-row">
                         <aside className="flex flex-col w-full gap-5 lg:w-1/3">
-                            <BasicInfo info={basicInfo} />
-                            <FriendList />
+                            <BasicInfo info={basicInfo} isOwner={isOwner}/>
+                            <FriendList
+                            friends={listFriends}
+                            isOwner={isOwner}
+                            isProfile={true}
+                            accId = {accId}
+                            />
                             <PhotoGallery />
                         </aside>
                         <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">

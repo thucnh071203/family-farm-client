@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 const RequestGroupCard = ({
   request,
   userRole,
-  reload,
   setListRequestToJoin,
 }) => {
   const navigate = useNavigate();

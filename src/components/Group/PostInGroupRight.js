@@ -6,7 +6,6 @@ import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
 import defaultAvatar from "../../assets/images/default-avatar.png";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 const PostInGroupRight = () => {
-  
   const [accountId, setAccountId] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
 
@@ -37,6 +36,8 @@ const PostInGroupRight = () => {
   }, []);
 
   const fetchPosts = async ({ lastPostId, reset = false }) => {
+    if (!hasMore && !reset) return; // CHẶN LẠI
+
     setLoading(true);
     if (lastPostId) setLoadingMore(true);
     setError(null);
@@ -44,33 +45,21 @@ const PostInGroupRight = () => {
     try {
       const response = await instance.get("/api/post/get-post-in-user-groups", {
         params: {
-          lastPostId: lastPostId,
+          lastPostId,
           pageSize: PAGE_SIZE,
         },
       });
 
-      console.log("API posts response:", response.data.data); // Debug
+      const newPosts = response.data.data || [];
 
-      if (response.data.success) {
-        const newPosts = response.data.data || [];
-        setPosts((prevPosts) =>
-          reset ? newPosts : [...prevPosts, ...newPosts]
-        );
-        setHasMore(response.data.hasMore);
+      setPosts((prevPosts) => (reset ? newPosts : [...prevPosts, ...newPosts]));
 
-        if (newPosts.length > 0) {
-          setLastPostId(newPosts[newPosts.length - 1].post.postId);
-        } else {
-          setLastPostId(null);
-        }
-       
-      } else {
-        setError(response.data.message || "Tải bài post thất bại!");
-        // toast.error(response.data.message || "Tải bài post thất bại!", {
-        //   position: "top-right",
-        //   autoClose: 3000,
-        //   transition: Bounce,
-        // });
+      // Cập nhật hasMore từ backend, hoặc dựa vào độ dài kết quả
+      setHasMore(response.data.hasMore ?? newPosts.length >= PAGE_SIZE);
+
+      // Chỉ cập nhật lastPostId nếu có bài viết mới
+      if (newPosts.length > 0) {
+        setLastPostId(newPosts[newPosts.length - 1].post.postId);
       }
     } catch (error) {
       setError("Failed to load posts!");
@@ -89,8 +78,12 @@ const PostInGroupRight = () => {
   }, []);
 
   const { skip, setSkip } = useInfiniteScroll({
-    fetchData: () => fetchPosts({ lastPostId }),
-    containerRef: window, //thay đổi thành window do scroll nguyên trang
+    fetchData: () => {
+      if (!loading && !loadingMore && hasMore && lastPostId !== null) {
+        return fetchPosts({ lastPostId });
+      }
+    },
+    containerRef: window,
     direction: "down",
     threshold: 50,
     hasMore,
@@ -172,7 +165,7 @@ const PostInGroupRight = () => {
             ) : null
           )
         ) : (
-          <div className="text-center py-4">Không tìm thấy bài viết</div>
+          <div className="text-center py-4">No data to display</div>
         )}
         {loadingMore && (
           <div className="flex flex-col gap-5 py-4">
