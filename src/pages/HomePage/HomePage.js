@@ -267,42 +267,7 @@ const HomePage = () => {
                   return (
                     <SharePostCard
                       key={`${postMapper.sharePostData.sharePost.sharePostId}-${index}`}
-                      post={{
-                        accId: postMapper.sharePostData.ownerSharePost.accId || "Unknown",
-                        sharePostId: postMapper.sharePostData.sharePost.sharePostId,
-                        fullName: postMapper.sharePostData.ownerSharePost.fullName || "Unknown User",
-                        avatar: postMapper.sharePostData.ownerSharePost.avatar,
-                        createAt: postMapper.sharePostData.sharePost.createdAt,
-                        content: postMapper.sharePostData.sharePost.sharePostContent,
-                        hashtags: postMapper.sharePostData.sharePost.hashTags?.map((tag) => tag.hashTagContent) || [],
-                        tagFriends: postMapper.sharePostData.sharePost.postTags?.map((tag) => ({
-                          accId: tag.accId,
-                          fullname: tag.fullname || tag.username || "Unknown",
-                        })) || [],
-                        likes: postMapper.sharePostData.reactionCount || 0,
-                        comments: postMapper.sharePostData.commentCount || 0,
-                        shares: postMapper.sharePostData.shareCount || 0,
-                        sharedPost: postMapper.sharePostData.originalPost
-                          ? {
-                              accId: postMapper.sharePostData.originalPost.ownerPost.accId || "Unknown",
-                              postId: postMapper.sharePostData.originalPost.post.postId,
-                              fullName: postMapper.sharePostData.originalPost.ownerPost.fullName || "Unknown User",
-                              avatar: postMapper.sharePostData.originalPost.ownerPost.avatar,
-                              createAt: postMapper.sharePostData.originalPost.post.createdAt,
-                              content: postMapper.sharePostData.originalPost.post.postContent,
-                              images: postMapper.sharePostData.originalPost.postImages?.map((img) => img.imageUrl) || [],
-                              hashtags: postMapper.sharePostData.originalPost.hashTags?.map((tag) => tag.hashTagContent) || [],
-                              tagFriends: postMapper.sharePostData.originalPost.postTags?.map((tag) => ({
-                                accId: tag.accId,
-                                fullname: tag.fullname || tag.username || "Unknown",
-                              })) || [],
-                              categories: postMapper.sharePostData.originalPost.postCategories?.map((cat) => cat.categoryName) || [],
-                              likes: postMapper.sharePostData.originalPost.reactionCount || 0,
-                              comments: postMapper.sharePostData.originalPost.commentCount || 0,
-                              shares: postMapper.sharePostData.originalPost.shareCount || 0,
-                            }
-                          : null,
-                      }}
+                      post={postMapper} // Truyền toàn bộ postMapper thay vì flatten
                     />
                   );
                 }
