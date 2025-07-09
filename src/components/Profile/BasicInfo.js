@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import './profile.css';
 
-const BasicInfo = ({ info }) => {
+const BasicInfo = ({ info, isOwner}) => {
     const defaultInfo = {
         gender: "Updating",
         location: "Updating",
@@ -38,11 +38,14 @@ const BasicInfo = ({ info }) => {
                 </div>
                 <i className="fa-solid fa-briefcase w-6 text-sky-500"></i>
             </div>
-            <Link to="/UpdateProfile">
+            {isOwner === true && (
+                <Link to="/UpdateProfile">
                 <button className="w-full font-bold mt-3 p-2 bg-gray-200 rounded-md">
                     Edit Information
                 </button>
             </Link>
+            )}
+            
         </div>
     );
 };

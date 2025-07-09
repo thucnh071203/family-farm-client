@@ -367,6 +367,7 @@ const EditProcessStep = () => {
                                     {errors.processDescription && <p className="text-start text-red-500 text-sm mt-1">{errors.processDescription}</p>}
                                 </div>
                             </div>
+                            
                             <div className="progress-list-section space-y-6 mt-7">
                                 {steps.map((step, index) => (
                                     <div key={index} className="progress-step-container flex flex-row gap-[50px]">

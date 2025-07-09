@@ -3,15 +3,15 @@ import { toast, Bounce } from "react-toastify";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-const MemberCard = ({ member, userRole, userAccId, reload,ownerId }) => {
+const MemberCard = ({ member, userRole, userAccId, ownerId }) => {
   const [farmers, setFarmers] = useState([]);
   const [experts, setExperts] = useState([]);
   const [accRole, setAccRole] = useState(null);
   const [friendRequestSent, setFriendRequestSent] = useState(false);
   const navigate = useNavigate();
   const handleClickToProfile = (accId) => {
-    navigate(`/PersonalPage/${accId}`)
-  }
+    navigate(`/PersonalPage/${accId}`);
+  };
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -101,7 +101,7 @@ const MemberCard = ({ member, userRole, userAccId, reload,ownerId }) => {
       if (!response.ok) {
         throw new Error("Failed to remove friend");
       }
-      reload();
+
       toast.success("REMOVE MEMBER SUCCESSFULLY!");
       // Optionally refresh list or update UI
     } catch (error) {
@@ -117,7 +117,8 @@ const MemberCard = ({ member, userRole, userAccId, reload,ownerId }) => {
   return (
     <div className="bg-gray-50 p-3 rounded flex justify-between items-center mb-3">
       <div className="flex items-center gap-3">
-        <img  onClick={() => handleClickToProfile(member.accId)}
+        <img
+          onClick={() => handleClickToProfile(member.accId)}
           src={
             member.avatar ||
             "https://th.bing.com/th/id/OIP.EKontM__37mRqxwRkIqX8wHaEK?rs=1&pid=ImgDetMain"
@@ -173,14 +174,16 @@ const MemberCard = ({ member, userRole, userAccId, reload,ownerId }) => {
           {/* kiểm tra role in group */}
           {userRole && (
             <>
-              {userRole === "680ce8722b3eec497a30201e" && member.accId !==ownerId && member.roleInGroupId !== "680ce8722b3eec497a30201e" &&(
-                <button
-                  onClick={handleRemove}
-                  className="bg-blue-100 text-blue-500 px-4 py-2 text-sm rounded hover:bg-red-200"
-                >
-                  Remove
-                </button>
-              )}
+              {userRole === "680ce8722b3eec497a30201e" &&
+                member.accId !== ownerId &&
+                member.roleInGroupId !== "680ce8722b3eec497a30201e" && (
+                  <button
+                    onClick={handleRemove}
+                    className="bg-blue-100 text-blue-500 px-4 py-2 text-sm rounded hover:bg-red-200"
+                  >
+                    Remove
+                  </button>
+                )}
             </>
           )}
         </div>
