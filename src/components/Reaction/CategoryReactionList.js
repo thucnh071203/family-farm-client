@@ -1,7 +1,7 @@
 // src/components/Reaction/ReactionPopup.js
 import React, { useState, useEffect } from "react";
 import instance from "../../Axios/axiosConfig";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 
 const CategoryReactionList = ({ onReact }) => {
   const [reactions, setReactions] = useState([]);
@@ -23,11 +23,7 @@ const CategoryReactionList = ({ onReact }) => {
         }
       } catch (err) {
         console.error("Error fetching reactions:", err);
-        toast.error("Loading reactions failed!", {
-          position: "top-right",
-          autoClose: 3000,
-          transition: Bounce,
-        });
+        toast.error("Loading reactions failed!");
       } finally {
         setLoading(false);
       }

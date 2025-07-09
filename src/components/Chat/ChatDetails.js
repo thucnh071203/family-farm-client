@@ -3,7 +3,7 @@ import cancelIcon from "../../assets/images/cancel_vector.png";
 import headLine from "../../assets/images/head_line.png";
 import ReactQuill from "react-quill";
 import "quill/dist/quill.snow.css";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 import {
     handleSend,
     handleTyping,
@@ -42,6 +42,8 @@ const ChatDetails = ({
     const [totalMessages, setTotalMessages] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
+    const [hoveredMessageId, setHoveredMessageId] = useState(null); // Theo dõi tin nhắn đang hover
+    const [menuMessageId, setMenuMessageId] = useState(null); // Theo dõi tin nhắn hiển thị menu Recall
     const quillRef = useRef(null);
     const imageInputRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -124,10 +126,10 @@ const ChatDetails = ({
                 console.log("ChatRecalled in ChatDetails:", { receivedChatId, chatDetailId });
                 if (receivedChatId === chatId) {
                     setMessages((prevMessages) =>
-                        prevMessages.map((msg) =>
-                            msg.chatDetailId === chatDetailId ? { ...msg, isRecalled: true } : msg
+                        prevMessages.map((msg) => msg.chatDetailId === chatDetailId ? { ...msg, isRecalled: true } : msg
                         )
                     );
+                    setMenuMessageId(null); // Đóng menu sau khi thu hồi
                 }
             });
 
@@ -137,11 +139,7 @@ const ChatDetails = ({
                     setMessages([]);
                     setTotalMessages(0);
                     setHasMore(false);
-                    toast.info("Chat history has been deleted.", {
-                        position: "top-right",
-                        autoClose: 3000,
-                        transition: Bounce,
-                    });
+                    toast.info("Chat history has been deleted.");
                 }
             });
 
@@ -214,6 +212,27 @@ const ChatDetails = ({
         }
     }, [messages, skip]);
 
+    // Xử lý thu hồi tin nhắn
+    const handleRecallMessage = async (chatDetailId) => {
+        try {
+            const response = await instance.put(`/api/chat/recall-message/${chatDetailId}`);
+            if (response.status === 200) {
+                setMessages((prevMessages) =>
+                    prevMessages.map((msg) =>
+                        msg.chatDetailId === chatDetailId ? { ...msg, isRecalled: true } : msg
+                    )
+                );
+                setMenuMessageId(null); // Đóng menu sau khi thu hồi
+                toast.success("Message recalled successfully!");
+            } else {
+                toast.error("Failed to recall message.");
+            }
+        } catch (error) {
+            console.error("Error recalling message:", error.response?.data || error.message);
+            toast.error("An error occurred while recalling the message.");
+        }
+    };
+
     if (!isVisible || !currentUserId) return null;
 
     const messageGroups = [];
@@ -282,7 +301,7 @@ const ChatDetails = ({
                             className="animate-spin h-5 w-5 mx-auto text-[#344258]"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
-                            viewBox="0 24"
+                            viewBox="0 0 24 24"
                         >
                             <circle
                                 className="opacity-25"
@@ -346,7 +365,13 @@ const ChatDetails = ({
                                     <div
                                         key={`${detail.chatDetailId}-${msgIndex}`}
                                         className={`flex items-end gap-2 ${group.senderId === currentUserId ? "flex-row-reverse" : "flex-row"
-                                            } ${msgIndex > 0 ? "mt-1" : ""} w-full`}
+                                            } ${msgIndex > 0 ? "mt-1" : ""} w-full relative`}
+                                        onMouseEnter={() =>
+                                            group.senderId === currentUserId &&
+                                            !detail.isRecalled &&
+                                            setHoveredMessageId(detail.chatDetailId)
+                                        }
+                                        onMouseLeave={() => setHoveredMessageId(null)}
                                     >
                                         {group.senderId !== currentUserId &&
                                             msgIndex === group.messages.length - 1 ? (
@@ -360,13 +385,13 @@ const ChatDetails = ({
                                         )}
                                         <div
                                             className={`flex flex-col gap-1 max-w-[80%] ${group.senderId === currentUserId ? "items-end" : "items-start"
-                                                }`}
+                                                } relative`} // Thêm relative để định vị nút "..."
                                         >
                                             {detail.isRecalled ? (
                                                 <div
-                                                    className={`p-2 rounded-lg ${group.senderId === currentUserId
-                                                        ? "bg-[#3DB3FB] text-white"
-                                                        : "bg-gray-100 text-[#344258]"
+                                                    className={`p-2 rounded-full ${group.senderId === currentUserId
+                                                            ? "bg-[#3DB3FB] text-white"
+                                                            : "bg-gray-100 text-[#344258]"
                                                         } break-all w-fit overflow-hidden`}
                                                 >
                                                     <p
@@ -395,8 +420,8 @@ const ChatDetails = ({
                                                     {detail.fileUrl && detail.fileType !== "image" && (
                                                         <div
                                                             className={`p-2 rounded-lg ${group.senderId === currentUserId
-                                                                ? "bg-[#3DB3FB] text-white"
-                                                                : "bg-gray-100 text-[#344258]"
+                                                                    ? "bg-[#3DB3FB] text-white"
+                                                                    : "bg-gray-100 text-[#344258]"
                                                                 } break-all w-fit overflow-hidden`}
                                                         >
                                                             <a
@@ -410,11 +435,35 @@ const ChatDetails = ({
                                                             </a>
                                                         </div>
                                                     )}
+                                                    {group.senderId === currentUserId && hoveredMessageId === detail.chatDetailId && (
+                                                        <button
+                                                            onClick={() => setMenuMessageId(detail.chatDetailId)}
+                                                            className={`absolute top-1/2 -translate-y-1/2 ${group.senderId === currentUserId ? "left-[-30px]" : "right-2"
+                                                                } p-1 text-gray-500 hover:text-gray-700`} // Đặt nút ở bên trái
+                                                            aria-label="Message options"
+                                                        >
+                                                            <i className="fas fa-ellipsis-v"></i>
+                                                        </button>
+                                                    )}
+                                                    {group.senderId === currentUserId && menuMessageId === detail.chatDetailId && (
+                                                        <div
+                                                            className={`absolute top-[calc(50%+1.5rem)] ${group.senderId === currentUserId ? "left-[-30px]" : "right-10"
+                                                                } bg-white border border-gray-300 rounded shadow-lg z-10`} // Menu nằm bên dưới nút
+                                                        >
+                                                            <button
+                                                                onClick={() => handleRecallMessage(detail.chatDetailId)}
+                                                                className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
+                                                                aria-label="Recall message"
+                                                            >
+                                                                Recall
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                     {detail.message?.trim() && (
                                                         <div
                                                             className={`p-2 rich-text-editor rounded-lg ${group.senderId === currentUserId
-                                                                ? "bg-[#3DB3FB] text-white"
-                                                                : "bg-gray-100 text-[#344258]"
+                                                                    ? "bg-[#3DB3FB] text-white"
+                                                                    : "bg-gray-100 text-[#344258]"
                                                                 } break-all w-fit overflow-hidden`}
                                                         >
                                                             <div

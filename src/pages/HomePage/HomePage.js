@@ -10,7 +10,7 @@ import SuggestedFriends from "../../components/Home/SuggestedFriends";
 import SuggestedGroups from "../../components/Home/SuggestedGroups";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
 import instance from "../../Axios/axiosConfig";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 import PostCardSkeleton from "../../components/Post/PostCardSkeleton";
 import defaultAvatar from "../../assets/images/default-avatar.png";
 
@@ -74,12 +74,8 @@ const HomePage = () => {
           setLastSharePostId(null);
         }
       } else {
-        setError(response.data.message || "Tải bài post thất bại!");
-        toast.error(response.data.message || "Tải bài post thất bại!", {
-          position: "top-right",
-          autoClose: 3000,
-          transition: Bounce,
-        });
+        setError(response.data.message || "Failed to load posts!");
+        toast.error(response.data.message || "Failed to load posts!");
       }
     } catch (error) {
       setError("Failed to load posts!");
