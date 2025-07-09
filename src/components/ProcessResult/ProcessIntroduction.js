@@ -1,7 +1,10 @@
 import React from "react";
 import illustrationImage from "../../assets/images/cold.png"; // Replace with your image path
 
-const ProcessIntroduction = () => {
+const ProcessIntroduction = ({SubprocessData}) => {
+  //LẤY DỮ LIỆU SUBPROCESS RỒI NÈ
+  console.log(SubprocessData)
+
   return (
     <div className="w-full bg-white">
       <div className="flex flex-col gap-5">

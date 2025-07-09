@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import instance from "../../Axios/axiosConfig";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 
 const ReactionList = ({ entityType, entityId, isOpen, onClose }) => {
   const [reactions, setReactions] = useState([]);
@@ -56,11 +56,7 @@ const ReactionList = ({ entityType, entityId, isOpen, onClose }) => {
         }
       } catch (err) {
         console.error(`Error fetching ${entityType.toLowerCase()} reactions:`, err);
-        toast.error(`Loading ${entityType.toLowerCase()} reactions failed!`, {
-          position: "top-right",
-          autoClose: 3000,
-          transition: Bounce,
-        });
+        toast.error(`Loading ${entityType.toLowerCase()} reactions failed!`);
       } finally {
         setLoading(false);
       }

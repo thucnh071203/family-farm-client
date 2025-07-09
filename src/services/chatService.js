@@ -1,6 +1,6 @@
 // src/services/chatService.js
 import instance from "../Axios/axiosConfig";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 
 // Hàm gửi tin nhắn
 export const handleSend = async ({
@@ -45,18 +45,10 @@ export const handleSend = async ({
       if (fileInputRef.current) fileInputRef.current.value = "";
       scrollToBottom();
     } else {
-      toast.error(response.data.message || "Gửi tin nhắn thất bại!", {
-        position: "top-right",
-        autoClose: 3000,
-        transition: Bounce,
-      });
+      toast.error(response.data.message || "Failed to send message!");
     }
   } catch (error) {
-    // toast.error("Gửi tin nhắn thất bại! Vui lòng thử lại.", {
-    //     position: "top-right",
-    //     autoClose: 3000,
-    //     transition: Bounce,
-    // });
+    // toast.error("Failed to send message!");
     console.error("Send message error:", error.response?.data || error.message);
   }
 };
@@ -82,66 +74,6 @@ export const handleTyping = ({
     }, 1000);
   }
 };
-
-// Hàm tải tin nhắn
-// export const fetchMessages = async ({
-//     receiverId,
-//     setLoading,
-//     setLoadingMore,
-//     setError,
-//     setMessages,
-//     setTotalMessages,
-//     setHasMore,
-//     chatContainerRef,
-//     previousScrollHeightRef,
-//     currentSkip,
-//     reset = false,
-//     TAKE,
-// }) => {
-//     if (!receiverId) {
-//         setError("No receiver ID provided");
-//         return;
-//     }
-
-//     setLoading(true);
-//     if (currentSkip > 0) setLoadingMore(true);
-//     setError(null);
-//     try {
-//         const response = await instance.get(`/api/chat/get-messages/${receiverId}`, {
-//             params: { skip: currentSkip, take: TAKE },
-//         });
-
-//         if (response.data.success) {
-//             const newMessages = response.data.chatDetails || [];
-//             setTotalMessages(response.data.totalMessages || 0);
-//             setHasMore(currentSkip + newMessages.length < response.data.totalMessages);
-
-//             if (chatContainerRef.current) {
-//                 previousScrollHeightRef.current = chatContainerRef.current.scrollHeight;
-//             }
-
-//             setMessages((prevMessages) => (reset ? newMessages : [...newMessages, ...prevMessages]));
-//         } else {
-//             setError(response.data.message || "Failed to load messages");
-//             toast.error(response.data.message || "Không thể tải tin nhắn.", {
-//                 position: "top-right",
-//                 autoClose: 3000,
-//                 transition: Bounce,
-//             });
-//         }
-//     } catch (error) {
-//         setError("Failed to fetch messages");
-//         toast.error("Tải tin nhắn thất bại!", {
-//             position: "top-right",
-//             autoClose: 3000,
-//             transition: Bounce,
-//         });
-//         console.error("Fetch messages error:", error.response?.data || error.message);
-//     } finally {
-//         setLoading(false);
-//         setLoadingMore(false);
-//     }
-// };
 
 // Hàm định dạng văn bản
 export const toggleFormat = ({ quillRef, format }) => {
@@ -232,19 +164,11 @@ export const fetchData = async ({
       setSkip(skip);
     } else {
       setError(response.data.message || "Failed to load messages");
-      toast.error(response.data.message || "Không thể tải tin nhắn.", {
-        position: "top-right",
-        autoClose: 3000,
-        transition: Bounce,
-      });
+      toast.error(response.data.message || "Failed to load messages.");
     }
   } catch (error) {
     setError("Failed to fetch messages");
-    toast.error("Tải tin nhắn thất bại!", {
-      position: "top-right",
-      autoClose: 3000,
-      transition: Bounce,
-    });
+    toast.error("Failed to load messages!");
     console.error(
       "Fetch messages error:",
       error.response?.data || error.message

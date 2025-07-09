@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import instance from "../Axios/axiosConfig";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 
 const useReactions = ({ entityType, entityId }) => {
     const [likeCount, setLikeCount] = useState(0);
@@ -29,11 +29,7 @@ const useReactions = ({ entityType, entityId }) => {
                 }
             } catch (err) {
                 console.error("Error fetching reactions:", err);
-                toast.error("Không thể tải danh sách biểu cảm!", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    transition: Bounce,
-                });
+                toast.error("Failed to load emoticon list!");
             } finally {
                 setLoadingReactions(false);
             }
@@ -66,11 +62,7 @@ const useReactions = ({ entityType, entityId }) => {
                 }
             } catch (err) {
                 console.error(`Error fetching ${entityType} reaction data:`, err);
-                toast.error("Không thể tải dữ liệu phản ứng!", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    transition: Bounce,
-                });
+                toast.error("Failed to load response data!");
             }
         };
 
@@ -80,11 +72,7 @@ const useReactions = ({ entityType, entityId }) => {
     // Handle toggle reaction
     const handleReact = async (categoryReactionId) => {
         if (!accId) {
-            toast.error("Vui lòng đăng nhập để phản ứng!", {
-                position: "top-right",
-                autoClose: 3000,
-                transition: Bounce,
-            });
+            toast.error("Please login to react!");
             return;
         }
 
@@ -116,7 +104,7 @@ const useReactions = ({ entityType, entityId }) => {
                 throw new Error(
                     typeof response.data === "string"
                         ? response.data
-                        : response.data.message || "Không thể thực hiện phản ứng"
+                        : response.data.message || "Unable to perform reaction"
                 );
             }
         } catch (err) {
@@ -125,11 +113,7 @@ const useReactions = ({ entityType, entityId }) => {
                 response: err.response?.data,
                 status: err.response?.status,
             });
-            toast.error(`Không thể thực hiện phản ứng: ${err.message}`, {
-                position: "top-right",
-                autoClose: 3000,
-                transition: Bounce,
-            });
+            toast.error(`Unable to perform reaction: ${err.message}`);
         }
     };
 
@@ -140,11 +124,7 @@ const useReactions = ({ entityType, entityId }) => {
             if (likeReaction) {
                 handleReact(likeReaction.id);
             } else {
-                toast.error("Phản ứng 'Like' không tìm thấy!", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    transition: Bounce,
-                });
+                toast.error("'Like' reaction not found!");
             }
         } else {
             handleReact(reactionType);
