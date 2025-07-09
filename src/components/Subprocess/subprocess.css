@@ -1,0 +1,10 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.CreateSubprocess {
+    overflow-y: auto;
+    min-height: 100vh;
+}

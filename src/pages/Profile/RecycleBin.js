@@ -177,7 +177,7 @@ const RecycleBin = () => {
             <div className="flex-grow">
                 <div className="container mx-auto max-w-7xl">
                     <div className="relative">
-                        <CoverBackground coverImage={background} />
+                        <CoverBackground coverImage={background} isOwner={isOwner}/>
 
                         {!isOwner && (
                             <div className="absolute right-4 bottom-4">
@@ -185,11 +185,11 @@ const RecycleBin = () => {
                             </div>
                         )}
 
-                        <ProfileAvatar initialProfileImage={avatar} fullName={fullName} />
+                        <ProfileAvatar initialProfileImage={avatar} fullName={fullName} isOwner={isOwner} />
                     </div>
                     <div className="flex flex-col gap-5 pt-20 lg:flex-row">
                         <aside className="flex flex-col w-full gap-5 lg:w-1/3">
-                            <BasicInfo info={basicInfo} />
+                            <BasicInfo info={basicInfo} isOwner={isOwner}/>
                             <FriendList
                             friends={listFriends}
                             isOwner={isOwner}
