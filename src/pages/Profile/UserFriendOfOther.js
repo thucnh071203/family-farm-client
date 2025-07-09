@@ -249,7 +249,7 @@ const UserFriendOfOther = () => {
         <div className="flex-grow">
           <div className="container mx-auto max-w-7xl">
             <div className="relative">
-              <CoverBackground />
+              <CoverBackground backgroundImage={background} isOwner={isOwner}/>
               {matchedAccount && (
                 <div className="absolute right-4 bottom-4">
                   <FriendActionButton
