@@ -274,7 +274,7 @@ const EditProcessStep = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            toast.success("Process updated successfully");
+            toast.success("PROCESS UPDATED SUCCESSFULLY!");
             navigate("/ServiceManagement");
         } catch (err) {
             console.error("Update failed:", err);

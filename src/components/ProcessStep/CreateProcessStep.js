@@ -231,7 +231,7 @@ const CreateProcessStep = () => {
         }
       });
 
-      toast.success("Process created successfully!");
+      toast.success("PROCESS CREATED SUCCESSFULLY!");
       console.log("✅ Dữ liệu đã gửi thành công:");
       console.log(JSON.stringify(requestBody, null, 2));
       navigate("/ServiceManagement");
@@ -247,179 +247,179 @@ const CreateProcessStep = () => {
 
   if (loading) return <p>Loading service info...</p>;
   if (!service) return <p>Service not found.</p>;
-  return (
-    <div className="pt-16 progress-management">
-      <div className="px-2 mx-auto div max-w-7xl">
-        <ProcessNav />
+    return (
+      <div className="pt-16 progress-management">
+        <div className="px-2 mx-auto div max-w-7xl min-h-screen">
+          <ProcessNav />
 
-        <div className="flex flex-col w-full gap-6 mt-6 progress-container lg:mt-14 lg:flex-row lg:justify-center">
-          <div className="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">
-            <ProcessNav inPage="Service" />
-          </div>
+          <div className="flex flex-col w-full gap-6 mt-6 progress-container lg:mt-14 lg:flex-row lg:justify-center">
+            <div className="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">
+              <ProcessNav inPage="Service" />
+            </div>
 
-          <div className="progress-right w-full lg:w-[66.5%] xl:w-[830px] lg:max-w-[830px]">
-            <div className="create-progress-container flex-1 p-6">
-              <h1 className="mb-4 text-2xl font-bold create-container-title text-start">Create New Process</h1>
+            <div className="progress-right w-full lg:w-[66.5%] xl:w-[830px] lg:max-w-[830px]">
+              <div className="create-progress-container flex-1 p-6">
+                <h1 className="mb-4 text-2xl font-bold create-container-title text-start">Create New Process</h1>
 
-              <div className="header-section mb-6">
-                <div className="flex flex-col md:flex-row items-center gap-7  mb-2">
-                  <div className="second-header flex gap-2">
-                    <span className="font-semibold">For service - </span>
-                    <span className="ml-auto text-blue-600 cursor-pointer hover:underline">
-                      {service.serviceName}
-                    </span>
+                <div className="header-section mb-6">
+                  <div className="flex flex-col md:flex-row items-center gap-7  mb-2">
+                    <div className="second-header flex gap-2">
+                      <span className="font-semibold">For service - </span>
+                      <span className="ml-auto text-blue-600 cursor-pointer hover:underline">
+                        {service.serviceName}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="basic-info-section flex flex-col items-start rounded-[10px] gap-6 w-full p-4">
-                <div className="basic-title">Basic Information for process</div>
-                <div className="title-input w-full">
-                  <input className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none"
-                    type="text"
-                    placeholder="Write title for this process"
-                    value={processTitle}
-                    onChange={(e) => {
-                      setProcessTitle(e.target.value);
-                      if (errors.processTitle) {
-                        setErrors((prev) => ({ ...prev, processTitle: "" }));
-                      }
-                    }} />
-                  {errors.processTitle && <p className="text-start text-red-500 text-sm mt-1">{errors.processTitle}</p>}
+                <div className="basic-info-section flex flex-col items-start rounded-[10px] gap-6 w-full p-4">
+                  <div className="basic-title">Basic Information for process</div>
+                  <div className="title-input w-full">
+                    <input className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none"
+                      type="text"
+                      placeholder="Write title for this process"
+                      value={processTitle}
+                      onChange={(e) => {
+                        setProcessTitle(e.target.value);
+                        if (errors.processTitle) {
+                          setErrors((prev) => ({ ...prev, processTitle: "" }));
+                        }
+                      }} />
+                    {errors.processTitle && <p className="text-start text-red-500 text-sm mt-1">{errors.processTitle}</p>}
+                  </div>
+                  <div className="description-input w-full">
+                    <textarea
+                      className="text-description-basic w-full p-4 rounded-[10px] border outline-none" rows={5}
+                      placeholder="Write short description for this process"
+                      value={processDescription}
+                      onChange={(e) => {
+                        setProcessDescription(e.target.value);
+                        if (errors.processDescription) {
+                          setErrors((prev) => ({ ...prev, processDescription: "" }));
+                        }
+                      }}
+                    ></textarea>
+                    {errors.processDescription && <p className="text-start text-red-500 text-sm mt-1">{errors.processDescription}</p>}
+                  </div>
                 </div>
-                <div className="description-input w-full">
-                  <textarea
-                    className="text-description-basic w-full p-4 rounded-[10px] border outline-none" rows={5}
-                    placeholder="Write short description for this process"
-                    value={processDescription}
-                    onChange={(e) => {
-                      setProcessDescription(e.target.value);
-                      if (errors.processDescription) {
-                        setErrors((prev) => ({ ...prev, processDescription: "" }));
-                      }
-                    }}
-                  ></textarea>
-                  {errors.processDescription && <p className="text-start text-red-500 text-sm mt-1">{errors.processDescription}</p>}
-                </div>
-              </div>
-              <div className="progress-list-section space-y-6 mt-7">
-                {steps.map((step, index) => (
-                  <div key={index} className="progress-step-container flex flex-row gap-[50px]">
-                    <div className="step-num-section">
-                      <div className="flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full">
-                        {index + 1}
-                      </div>
-                    </div>
-
-                    <div className="step-form-section flex flex-col gap-6 p-4 w-full bg-white rounded shadow">
-                      <div className="title-step-input">
-                        <input
-                          className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none"
-                          type="text"
-                          placeholder="Write title for process step"
-                          value={step.title}
-                          onChange={(e) => handleStepChange(index, "title", e.target.value)}
-                        />
-
-                        {errors.steps?.[index]?.title && (
-                          <p className="text-start text-red-500 text-sm mt-1">{errors.steps[index].title}</p>
-                        )}
-                      </div>
-
-                      <div className="description-step-input">
-                        <textarea
-                          className="text-description-basic w-full p-4 rounded-[10px] border outline-none"
-                          rows={5}
-                          placeholder="Write description detail for process step"
-                          value={step.description}
-                          onChange={(e) => handleStepChange(index, "description", e.target.value)}
-                        ></textarea>
-
-                        {errors.steps?.[index]?.description && (
-                          <p className="text-start text-red-500 text-sm mt-1">{errors.steps[index].description}</p>
-                        )}
-                      </div>
-
-                      <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-2">
-                          {/* Upload button */}
-                          <input
-                            id={`file-upload-${index}`}
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            ref={(el) => (fileInputRefs.current[index] = el)}
-                            onChange={(e) => handleImageChange(index, e.target.files)}
-                            className="hidden"
-                          />
-                          <div className="flex items-center gap-2">
-                            <label
-                              htmlFor={`file-upload-${index}`}
-                              className="inline-block px-4 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 w-fit"
-                            >
-                              Upload Images
-                            </label>
-
-                            <span className="text-sm text-gray-600">
-                              {step.images.length} files selected
-                            </span>
-                          </div>
-
-                          {step.images.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                              {step.images.map((img, i) => (
-                                <div key={i} className="relative w-24 h-24">
-                                  <img
-                                    src={URL.createObjectURL(img)}
-                                    alt={`Step ${index + 1} - Image ${i + 1}`}
-                                    className="w-24 h-24 object-cover rounded border"
-                                  />
-                                  <button
-                                    type="button"
-                                    className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
-                                    onClick={() => handleDeleteImage(index, i)}
-                                  >
-                                    ×
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                <div className="progress-list-section space-y-6 mt-7">
+                  {steps.map((step, index) => (
+                    <div key={index} className="progress-step-container flex flex-row gap-[50px]">
+                      <div className="step-num-section">
+                        <div className="flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full">
+                          {index + 1}
                         </div>
                       </div>
 
-                      <button
-                        className="px-4 py-2 mt-4 text-red-700 bg-red-100 rounded hover:bg-red-200 max-w-[108px]"
-                        onClick={() => handleDeleteStep(index)}
-                      >
-                        Delete
-                      </button>
+                      <div className="step-form-section flex flex-col gap-6 p-4 w-full bg-white rounded shadow">
+                        <div className="title-step-input">
+                          <input
+                            className="text-title-basic w-full px-4 py-6 rounded-[10px] border outline-none"
+                            type="text"
+                            placeholder="Write title for process step"
+                            value={step.title}
+                            onChange={(e) => handleStepChange(index, "title", e.target.value)}
+                          />
+
+                          {errors.steps?.[index]?.title && (
+                            <p className="text-start text-red-500 text-sm mt-1">{errors.steps[index].title}</p>
+                          )}
+                        </div>
+
+                        <div className="description-step-input">
+                          <textarea
+                            className="text-description-basic w-full p-4 rounded-[10px] border outline-none"
+                            rows={5}
+                            placeholder="Write description detail for process step"
+                            value={step.description}
+                            onChange={(e) => handleStepChange(index, "description", e.target.value)}
+                          ></textarea>
+
+                          {errors.steps?.[index]?.description && (
+                            <p className="text-start text-red-500 text-sm mt-1">{errors.steps[index].description}</p>
+                          )}
+                        </div>
+
+                        <div className="flex flex-col gap-4">
+                          <div className="flex flex-col gap-2">
+                            {/* Upload button */}
+                            <input
+                              id={`file-upload-${index}`}
+                              type="file"
+                              multiple
+                              accept="image/*"
+                              ref={(el) => (fileInputRefs.current[index] = el)}
+                              onChange={(e) => handleImageChange(index, e.target.files)}
+                              className="hidden"
+                            />
+                            <div className="flex items-center gap-2">
+                              <label
+                                htmlFor={`file-upload-${index}`}
+                                className="inline-block px-4 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 w-fit"
+                              >
+                                Upload Images
+                              </label>
+
+                              <span className="text-sm text-gray-600">
+                                {step.images.length} files selected
+                              </span>
+                            </div>
+
+                            {step.images.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-2">
+                                {step.images.map((img, i) => (
+                                  <div key={i} className="relative w-24 h-24">
+                                    <img
+                                      src={URL.createObjectURL(img)}
+                                      alt={`Step ${index + 1} - Image ${i + 1}`}
+                                      className="w-24 h-24 object-cover rounded border"
+                                    />
+                                    <button
+                                      type="button"
+                                      className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                                      onClick={() => handleDeleteImage(index, i)}
+                                    >
+                                      ×
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <button
+                          className="px-4 py-2 mt-4 text-red-700 bg-red-100 rounded hover:bg-red-200 max-w-[108px]"
+                          onClick={() => handleDeleteStep(index)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </div>
+                  ))}
+
+                  <div
+                    className="add-new-step flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full mt-5 cursor-pointer"
+                    onClick={handleAddStep}
+                  >
+                    +
                   </div>
-                ))}
-
-                <div
-                  className="add-new-step flex items-center justify-center w-8 h-8 text-white bg-blue-500 rounded-full mt-5 cursor-pointer"
-                  onClick={handleAddStep}
-                >
-                  +
                 </div>
+
+                {errors.global && (
+                  <p className="text-red-500 text-sm mt-2">{errors.global}</p>
+                )}
+
               </div>
-
-              {errors.global && (
-                <p className="text-red-500 text-sm mt-2">{errors.global}</p>
-              )}
-
-            </div>
-            <div className="w-full flex justify-end">
-              <button className="w-auto bg-blue-500 hover:bg-blue-600 rounded-md px-8 py-3 text-white cursor-pointer mb-4" onClick={handleSave}>
-                Save
-              </button>
+              <div className="w-full flex justify-end">
+                <button className="w-auto bg-blue-500 hover:bg-blue-600 rounded-md px-8 py-3 text-white cursor-pointer mb-4" onClick={handleSave}>
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
-export default CreateProcessStep;
+    );
+  };
+  export default CreateProcessStep;
