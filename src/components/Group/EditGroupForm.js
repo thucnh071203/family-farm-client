@@ -160,34 +160,6 @@ export default function EditGroupForm({ userRole, userAccId }) {
                     </div>
                 </div>
 
-                {/* <div className="image-upload-container mt-7 relative flex flex-col gap-4">
-                    <div className="relative img-bg-container">
-                        <input className="hidden" type="file" id="background-group-img" accept="image/*" onChange={handleBgChange} />
-                        <label htmlFor="background-group-img"
-                            className="flex items-center justify-center gap-4 w-full h-[296px] rounded-[10px] bg-[#f5f5f5] border-[2px] border-solid border-[rgba(62,63,94,0.25)] cursor-pointer">
-                            <i className="fa-solid fa-upload text-[var(--variable-collection-black)]"></i>
-                            <p className="upload-bg-img-text">Upload Background</p>
-                        </label>
-                        {bgImage && (
-                            <img src={bgImage} alt="bg"
-                                className="absolute top-0 left-0 w-full h-full object-cover rounded-[10px] border-[2px] border-solid border-[rgba(62,63,94,0.25)] z-0 pointer-events-none" />
-                        )}
-                    </div>
-
-                    <div className="absolute top-[50%] left-[5%] img-avt-container">
-                        <input className="hidden" type="file" id="avatar-group-img" accept="image/*" onChange={handleAvatarChange} />
-                        <label htmlFor="avatar-group-img"
-                            className="flex items-center justify-center gap-2 rounded-full w-[130px] h-[130px] bg-[#ffffff] border-[3px] border-solid border-[rgba(62,63,94,0.25)] cursor-pointer">
-                            <i className="upload-avt-icon fa-solid fa-upload text-[var(--variable-collection-black)]"></i>
-                            <p className="upload-avt-img-text">Upload Avatar</p>
-                        </label>
-                        {avatarImage && (
-                            <img src={avatarImage} alt="avatar"
-                                className="absolute top-0 left-0 w-[130px] h-[130px] object-cover rounded-full border-[3px] border-solid border-[rgba(62,63,94,0.25)] z-10 pointer-events-none" />
-                        )}
-                    </div>
-                </div> */}
-
                 <div className="group-name-container w-fit mt-4">
                     <input
                         className="group-name-text px-[46px] py-[15px] bg-[#3DB3FB] bg-opacity-25 rounded-sm text-black text-[24px] font-light placeholder:font-light placeholder:text-[24px] placeholder:text-[rgba(62,63,94,0.25)] font-roboto border-none focus:outline-none focus:ring-0 focus:border-none"
@@ -225,13 +197,7 @@ export default function EditGroupForm({ userRole, userAccId }) {
                     >
                         <div className="create-btn-text w-fit text-white">Save Changes</div>
                     </button>
-                    {/* <button
-                        className="create-button lg:w-[220px] p-[10px] flex items-center justify-center gap-[10px] bg-red-600 rounded-sm hover:bg-red-700 cursor-pointer"
-                        type="button"
-                        onClick={() => handleDeleteClick(groupId)}
-                    >
-                        <div className="create-btn-text w-fit text-white">Delete</div>
-                    </button> */}
+
                     {ownerId === userAccId && (
                         <button
                             className="create-button lg:w-[220px] p-[10px] flex items-center justify-center gap-[10px] bg-red-600 rounded-sm hover:bg-red-700 cursor-pointer"

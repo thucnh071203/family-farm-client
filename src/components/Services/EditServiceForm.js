@@ -133,7 +133,7 @@ const EditServiceForm = () => {
                 }
             });
             // alert("✅ Service updated successfully!");
-            toast.success("Service updated successfully!");
+            toast.success("SERVICE UPDATED SUCCESSFULLY!");
             navigate("/ServiceManagement");
         } catch (err) {
             console.error("Cập nhật thất bại:", err);

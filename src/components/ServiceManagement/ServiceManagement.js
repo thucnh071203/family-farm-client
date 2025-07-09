@@ -120,7 +120,7 @@ export const ServiceManagement = () => {
           await instance.delete(`/api/service/delete/${serviceId}`);
           setServices((prev) => prev.filter((s) => s.serviceId !== serviceId));
           // Swal.fire("Deleted!", "The service has been deleted.", "success");
-          toast.success("Delete service successfully!");
+          toast.success("SERVICE DELETED SUCCESSFULLY!");
         } catch (error) {
           console.error(error);
           // Swal.fire("Error", "Failed to delete service.", "error");
