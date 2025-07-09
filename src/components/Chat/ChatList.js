@@ -2,25 +2,24 @@ import React, { useState, useEffect } from "react";
 import lineShape from "../../assets/images/border_line.png";
 import formatTime from "../../utils/formatTime";
 import instance from "../../Axios/axiosConfig";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 import default_avatar from "../../assets/images/default-avatar.png";
 import "react-toastify/dist/ReactToastify.css";
 import { useSignalR } from "../../context/SignalRContext";
+import Swal from "sweetalert2";
 
 const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [chats, setChats] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [hoveredChatId, setHoveredChatId] = useState(null);
+    const [activeDropdown, setActiveDropdown] = useState(null);
     const { connection, currentUserId } = useSignalR();
 
     useEffect(() => {
         if (!currentUserId) {
             console.warn("No currentUserId, cannot fetch chats or connect to SignalR");
-            toast.warn("Please log in to view chats", {
-                position: "top-right",
-                autoClose: 3000,
-                transition: Bounce,
-            });
+            toast.warn("Please log in to view chats");
             return;
         }
 
@@ -38,11 +37,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
                     onUnreadCountChange(response.data.unreadChatCount || 0);
                 }
             } catch (error) {
-                toast.error("Tải danh sách trò chuyện thất bại!", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    transition: Bounce,
-                });
+                toast.error("Chat list loading failed!");
                 console.error("Fetch chats error:", error);
             } finally {
                 setLoading(false);
@@ -62,11 +57,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
                 console.log("ReceiveMessage in ChatList:", { chatDetail, chatDTO });
                 if (!chatDTO || !chatDTO.chatId || !chatDTO.receiver || !chatDTO.receiver.accId) {
                     console.warn("Invalid or missing chatDTO:", { chatDetail, chatDTO });
-                    toast.warn("Received invalid message data", {
-                        position: "top-right",
-                        autoClose: 3000,
-                        transition: Bounce,
-                    });
+                    toast.warn("Received invalid message data");
                     return;
                 }
                 setChats((prevChats) => {
@@ -115,6 +106,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
                     )
                 );
             });
+            
             connection.on("ChatHistoryDeleted", (chatId) => {
                 console.log("ChatHistoryDeleted:", chatId);
                 if (!chatId) {
@@ -122,11 +114,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
                     return;
                 }
                 setChats((prevChats) => prevChats.filter((chat) => chat.chatId !== chatId));
-                toast.info("Lịch sử trò chuyện đã bị xóa.", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    transition: Bounce,
-                });
+                toast.info("Chat history has been deleted.");
             });
 
             return () => {
@@ -138,6 +126,43 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
             };
         }
     }, [connection]);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (activeDropdown && !event.target.closest('.chat-dropdown')) {
+                setActiveDropdown(null);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [activeDropdown]);
+
+    const handleDeleteChatHistory = async (chatId) => {
+        const result = await Swal.fire({
+            title: 'Xóa lịch sử trò chuyện?',
+            text: "Bạn có chắc chắn muốn xóa toàn bộ lịch sử trò chuyện này? Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await instance.delete(`/api/chat/delete-history/${chatId}`);
+                setChats((prevChats) => prevChats.filter((chat) => chat.chatId !== chatId));
+                toast.success("Delete chat history successfully!");
+            } catch (error) {
+                toast.error("Delete chat history failed!");
+                console.error("Delete chat history error:", error);
+            }
+        }
+        setActiveDropdown(null);
+    };
 
     const filteredChats = chats.filter((chat) =>
         chat && chat.receiver && chat.receiver.fullName
@@ -152,11 +177,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
     const handleChatClick = (chat) => {
         if (!chat || !chat.receiver || !chat.receiver.accId) {
             console.warn("Invalid chat in handleChatClick:", chat);
-            toast.warn("Dữ liệu cuộc trò chuyện không hợp lệ!", {
-                position: "top-right",
-                autoClose: 3000,
-                transition: Bounce,
-            });
+            toast.warn("Invalid chat data!");
             return;
         }
         onChatSelect({
@@ -192,34 +213,69 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
                 filteredChats.map((chat) => (
                     <div key={chat.chatId} className="flex flex-col items-start w-full gap-3">
                         <div
-                            onClick={() => handleChatClick(chat)}
-                            className="flex items-center w-full gap-2 cursor-pointer"
+                            className="flex items-center w-full gap-2 cursor-pointer relative"
+                            onMouseEnter={() => setHoveredChatId(chat.chatId)}
+                            onMouseLeave={() => setHoveredChatId(null)}
                             role="button"
                             aria-label={`Open chat with ${chat.receiver?.fullName || "User"}`}
                         >
-                            <img
-                                className="object-cover rounded-full w-11 h-11"
-                                src={chat.receiver?.avatar || default_avatar}
-                                alt={`${chat.receiver?.fullName || "User"} avatar`}
-                            />
-                            <div className="flex flex-col items-start justify-center flex-grow gap-1 rich-text-editor">
-                                <div className="text-[#344258] text-left text-[14px]">
-                                    <p className="font-semibold cursor-pointer hover:text-[#3DB3FB] transition-colors duration-200">
-                                        {chat.receiver?.fullName || "Unknown User"}
-                                    </p>
-                                    <div className="text-[12px] mt-1 truncate max-w-[200px] overflow-hidden whitespace-nowrap">
-                                        {chat.lastMessageAccId === currentUserId ? (
-                                            <span className="flex line-clamp-2 break-all w-fit overflow-hidden">
-                                                You: <span dangerouslySetInnerHTML={{ __html: chat.lastMessage || "" }} />
-                                            </span>
-                                        ) : (
-                                            <span dangerouslySetInnerHTML={{ __html: chat.lastMessage || "" }} />
-                                        )}
+                            <div 
+                                className="flex items-center flex-grow gap-2"
+                                onClick={() => handleChatClick(chat)}
+                            >
+                                <img
+                                    className="object-cover rounded-full w-11 h-11"
+                                    src={chat.receiver?.avatar || default_avatar}
+                                    alt={`${chat.receiver?.fullName || "User"} avatar`}
+                                />
+                                <div className="flex flex-col items-start justify-center flex-grow gap-1 rich-text-editor">
+                                    <div className="text-[#344258] text-left text-[14px]">
+                                        <p className="font-semibold cursor-pointer hover:text-[#3DB3FB] transition-colors duration-200">
+                                            {chat.receiver?.fullName || "Unknown User"}
+                                        </p>
+                                        <div className="text-[12px] mt-1 truncate max-w-[200px] overflow-hidden whitespace-nowrap">
+                                            {chat.lastMessageAccId === currentUserId ? (
+                                                <span className="flex line-clamp-2 break-all w-fit overflow-hidden">
+                                                    You: <span dangerouslySetInnerHTML={{ __html: chat.lastMessage || "" }} />
+                                                </span>
+                                            ) : (
+                                                <span dangerouslySetInnerHTML={{ __html: chat.lastMessage || "" }} />
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div className="font-semibold text-[#A2A5B9] text-right text-xs min-w-[48px] h-full flex flex-col items-end gap-2">
-                                <span>{formatTime(chat.lastMessageAt)}</span>
+                                {hoveredChatId === chat.chatId ? (
+                                    <div className="relative chat-dropdown">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setActiveDropdown(activeDropdown === chat.chatId ? null : chat.chatId);
+                                            }}
+                                            className="p-1 hover:bg-gray-200 rounded-full transition-colors"
+                                            aria-label="Chat options"
+                                        >
+                                            <i className="fas fa-ellipsis-v text-gray-500"></i>
+                                        </button>
+                                        {activeDropdown === chat.chatId && (
+                                            <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg  min-w-[150px] z-10">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteChatHistory(chat.chatId);
+                                                    }}
+                                                    className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 transition-colors text-sm"
+                                                >
+                                                    <i className="fas fa-trash mr-2"></i>
+                                                    Delete chat
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <span>{formatTime(chat.lastMessageAt)}</span>
+                                )}
                                 {chat.unreadCount > 0 ? (
                                     <div className="flex items-center justify-center w-4 h-4 text-[10px] text-white bg-red-400 rounded-full cursor-pointer shrink-0 hover:bg-red-600">
                                         {chat.unreadCount > 9 ? "9+" : chat.unreadCount}
