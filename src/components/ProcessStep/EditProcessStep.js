@@ -288,7 +288,7 @@ const EditProcessStep = () => {
     return (
         <div className="pt-16 progress-management">
             <div className="px-2 mx-auto div max-w-7xl">
-                <ProcessNav />
+                <ProcessNav inPage="Service"/>
                 <div className="flex flex-col w-full gap-6 mt-6 progress-container lg:mt-14 lg:flex-row lg:justify-center">
                     <div className="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">
                         <div className="w-full overlap-wrapper">

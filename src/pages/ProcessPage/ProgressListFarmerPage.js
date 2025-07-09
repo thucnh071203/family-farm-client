@@ -6,7 +6,7 @@ import ProcessListOfFarmer from "../../components/ProcessList/ProgressListOfFarm
 import "../../styles/globals.css";
 import "../../styles/styleguilde.css";
 
-const ProcessListPage = () => {
+const ProgressListFarmerPage = () => {
   return (
     <div className="ProgressListPageFarmer">
       <Header/>
@@ -16,4 +16,4 @@ const ProcessListPage = () => {
   );
 };
 
-export default ProcessListPage;
+export default ProgressListFarmerPage;
