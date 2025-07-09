@@ -33,7 +33,8 @@ const processData = {
     ],
 };
 
-const ProcessSteps = () => {
+const ProcessSteps = ({ProcessStepsData}) => {
+    console.log(ProcessStepsData)
     return (
         <div className="w-full">
             <img
