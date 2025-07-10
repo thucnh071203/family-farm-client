@@ -100,7 +100,7 @@ const CreateServiceForm = () => {
                 }
             });
             // alert("✅ Service created successfully!");
-            toast.success("Service created successfully!");
+            toast.success("SERVICE CREATED SUCCESSFULLY!");
             console.log("data ne", res.data);
 
             const serviceId = res.data?.data?.[0]?.service?.serviceId;
@@ -166,8 +166,8 @@ const CreateServiceForm = () => {
                             placeholder="Price"
                             className="w-full p-3 border rounded-lg"/>
                         <span className="transform font-bold text-red-500">VND</span>
-                        {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
                         </div>
+                        {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
                     </div>
                 </div>
                 <div>

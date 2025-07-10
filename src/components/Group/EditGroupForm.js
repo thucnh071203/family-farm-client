@@ -230,7 +230,7 @@ export default function EditGroupForm({ userRole, userAccId }) {
         <PopupDeleteGroup
           onClose={() => {
             setDeleteShowPopup(false);
-            setSelectedGroupId(null);
+            setSelectedGroupId(null)
           }}
           onConfirm={handleConfirmDeleteGroup}
         />

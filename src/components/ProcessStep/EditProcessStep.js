@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import MenuProcessStep from "./MenuProcessStep";
+import RecommendService from "../Services/RecommendService"
 import "./createProcessStepstyle.css";
 import ProcessNav from "../ProcessNav/ProcessNav";
 import Header from "../Header/Header";
@@ -274,7 +275,7 @@ const EditProcessStep = () => {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            toast.success("Process updated successfully");
+            toast.success("PROCESS UPDATED SUCCESSFULLY!");
             navigate("/ServiceManagement");
         } catch (err) {
             console.error("Update failed:", err);
@@ -291,40 +292,11 @@ const EditProcessStep = () => {
                 <ProcessNav inPage="Service"/>
                 <div className="flex flex-col w-full gap-6 mt-6 progress-container lg:mt-14 lg:flex-row lg:justify-center">
                     <div className="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">
-                        <div className="w-full overlap-wrapper">
-                            <div className="flex flex-col w-full overlap-3">
-                                <div className="text-wrapper-7 mt-[16px] ml-[16px]">Menu</div>
-                                <div className="status-progress-container mt-[13px] flex flex-col justify-center items-center gap-6">
-                                    <div className="frame-3 w-[91.3%]">
-                                        <img className="img-2" src={avaiProcess} />
-                                        <div className="text-wrapper-8">List of available processes</div>
-                                    </div>
-                                    <div className="frame-4 w-[91.3%]">
-                                        <img className="img-2" src={unpaidOrder} />
-                                        <div className="text-wrapper-8">List of unpaid orders</div>
-                                    </div>
-                                    <div className="frame-5 w-[91.3%]">
-                                        <img className="img-2" src={waitingOrder} />
-                                        <div className="text-wrapper-8">List of orders waiting</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-4 attention-container">
-                            <div className="flex flex-row items-center gap-2 frame-18">
-                                <div className="img"><img className="mask-group" src={attentionIcon} /></div>
-                                <div className="text-wrapper-16">ATTENTION</div>
-                            </div>
-                            <div className="flex flex-row flex-wrap items-center justify-center gap-1 mt-4 frame-17">
-                                <div className="text-wrapper-19">You have</div>
-                                <div className="text-wrapper-20">3 progress</div>
-                                <div className="text-wrapper-19">need confirmation of completion</div>
-                            </div>
-                        </div>
+                        <RecommendService/>
                     </div>
                     <div className="progress-right w-full lg:w-[66.5%] xl:w-[830px] lg:max-w-[830px]">
                         <div className="create-progress-container flex-1 p-6">
-                            <h1 className="mb-4 text-2xl font-bold create-container-title text-start">Create New Process</h1>
+                            <h1 className="mb-4 text-2xl font-bold create-container-title text-start">Edit Process</h1>
 
                             <div className="header-section mb-6">
                                 <div className="flex flex-col md:flex-row items-center gap-7  mb-2">

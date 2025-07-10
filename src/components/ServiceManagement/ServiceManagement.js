@@ -79,28 +79,6 @@ export const ServiceManagement = () => {
     fetchServicesAndCategories();
   }, []);
 
-  // const handleDeleteClick = (serviceId) => {
-  //   setSelectedServiceId(serviceId);
-  //   setDeleteShowPopup(true);
-  // };
-
-  // const handleConfirmDelete = async () => {
-  //   try {
-  //     await instance.delete(`/api/service/delete/${selectedServiceId}`);
-
-  //     // ❗ Cập nhật danh sách sau khi xóa
-  //     setServices(prev => prev.filter(service => service.serviceId !== selectedServiceId));
-
-  //     toast.success("Delete service successful");
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error("Delete failed!");
-  //   } finally {
-  //     setDeleteShowPopup(false);
-  //     setSelectedServiceId(null);
-  //   }
-  // };
-
   const handleDeleteClick = (serviceId) => {
     Swal.fire({
       title: "Are you sure?",
@@ -120,7 +98,7 @@ export const ServiceManagement = () => {
           await instance.delete(`/api/service/delete/${serviceId}`);
           setServices((prev) => prev.filter((s) => s.serviceId !== serviceId));
           // Swal.fire("Deleted!", "The service has been deleted.", "success");
-          toast.success("Delete service successfully!");
+          toast.success("SERVICE DELETED SUCCESSFULLY!");
         } catch (error) {
           console.error(error);
           // Swal.fire("Error", "Failed to delete service.", "error");
@@ -129,59 +107,6 @@ export const ServiceManagement = () => {
       }
     });
   };
-
-  // const handleToggleStatusClick = async (serviceId, currentStatus) => {
-  //   const isDisabling = currentStatus === 1;
-
-  //   const result = await Swal.fire({
-  //     title: isDisabling ? "Disable Service" : "Enable Service",
-  //     text: `Are you sure you want to ${isDisabling ? "disable" : "enable"} this service?`,
-  //     icon: "question",
-  //     showCancelButton: true,
-  //     confirmButtonText: isDisabling ? "Yes, Disable" : "Yes, Enable",
-  //     // cancelButtonText: "Cancel",
-  //     buttonsStyling: false,
-  //     customClass: {
-  //       confirmButton: isDisabling
-  //         ? "bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded  mx-3"
-  //         : "bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded  mx-3",
-  //       cancelButton: "bg-gray-400 hover:bg-gray-500 text-white font-semibold px-4 py-2 rounded",
-  //     },
-  //   });
-
-  //   if (result.isConfirmed) {
-  //     try {
-  //       const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-
-  //       const res = await instance.put(
-  //         `/api/service/change-status/${serviceId}`,
-  //         {},
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-
-  //       if (res.status === 200) {
-  //         setServices((prev) =>
-  //           prev.map((s) =>
-  //             s.serviceId === serviceId
-  //               ? { ...s, status: s.status === 1 ? 0 : 1 }
-  //               : s
-  //           )
-  //         );
-
-  //         toast.success("Status changed successfully!");
-  //       } else {
-  //         Swal.fire("Error", "Failed to update service status!", "error");
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //       toast.error("Change status failed.");
-  //     }
-  //   }
-  // };
 
   const handleToggleStatusClick = async (serviceId, currentStatus, haveProcess) => {
     const isDisabling = currentStatus === 1;
@@ -370,19 +295,6 @@ export const ServiceManagement = () => {
                   </tr>
                 ))
               )}
-              {/* {showDeletePopup && (
-                <PopupDeleteService
-                  onClose={() => setDeleteShowPopup(false)}
-                  onConfirm={handleConfirmDelete}
-                />
-              )} */}
-              {/* {showTogglePopup && (
-                <PopupToggleService
-                  isDisabling={isDisabling}
-                  onClose={() => setShowTogglePopup(false)}
-                  onConfirm={handleConfirmToggleStatus}
-                />
-              )} */}
             </tbody>
           </table>
         </div>
