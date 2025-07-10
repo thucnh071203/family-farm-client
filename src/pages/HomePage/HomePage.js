@@ -37,7 +37,7 @@ const HomePage = () => {
       localStorage.getItem("accId") || sessionStorage.getItem("accId");
     const storedAvatarUrl =
       localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
-    
+
 
     if (storedAccId) {
       setAccountId(storedAccId);
@@ -46,6 +46,8 @@ const HomePage = () => {
   }, []);
 
   const fetchPosts = async ({ lastPostId, lastSharePostId, reset = false }) => {
+    if (!hasMore && !reset) return; // Không gọi API nếu không còn dữ liệu và không phải reset
+
     setLoading(true);
     if (lastPostId || lastSharePostId) setLoadingMore(true);
     setError(null);
@@ -53,13 +55,13 @@ const HomePage = () => {
     try {
       const response = await instance.get("/api/post/infinite-with-share", {
         params: {
-          lastPostId: lastPostId,
-          lastSharePostId: lastSharePostId,
+          lastPostId: lastPostId || null,
+          lastSharePostId: lastSharePostId || null,
           pageSize: PAGE_SIZE,
         },
       });
 
-      console.log("API posts response:", response.data.data); // Debug
+      console.log("API posts response:", response.data.data);
 
       if (response.data.success) {
         const newPosts = response.data.data || [];
@@ -70,11 +72,10 @@ const HomePage = () => {
 
         if (newPosts.length > 0) {
           const lastItem = newPosts[newPosts.length - 1];
-          setLastPostId(lastItem.itemType === "Post" ? lastItem.post?.postId : null);
-          setLastSharePostId(lastItem.itemType === "SharePost" ? lastItem.sharePostData?.sharePost?.sharePostId : null);
-        } else {
-          setLastPostId(null);
-          setLastSharePostId(null);
+          setLastPostId(lastItem.itemType === "Post" ? lastItem.post?.postId : lastPostId);
+          setLastSharePostId(
+            lastItem.itemType === "SharePost" ? lastItem.sharePostData?.sharePost?.sharePostId : lastSharePostId
+          );
         }
       } else {
         setError(response.data.message || "Failed to load posts!");
@@ -87,6 +88,16 @@ const HomePage = () => {
       setLoadingMore(false);
     }
   };
+
+  const uniquePosts = Array.from(
+    new Map(
+      posts.map((postMapper) => [
+        postMapper.itemType === "Post"
+          ? postMapper.post?.postId
+          : postMapper.sharePostData?.sharePost?.sharePostId,
+        postMapper,
+      ])
+    ).values());
 
   // Gọi lần đầu
   useEffect(() => {
@@ -291,9 +302,8 @@ const HomePage = () => {
               </div>
             ) : error ? (
               <div className="text-center py-4">{error}</div>
-            ) : posts.length > 0 ? (
-
-              posts.map((postMapper, index) => {
+            ) : uniquePosts.length > 0 ? (
+              uniquePosts.map((postMapper, index) => {
                 if (postMapper.itemType === "Post" && postMapper.post && postMapper.ownerPost) {
                   return (
                     <PostCard
@@ -326,7 +336,7 @@ const HomePage = () => {
                   return (
                     <SharePostCard
                       key={`${postMapper.sharePostData.sharePost.sharePostId}-${index}`}
-                      post={postMapper} // Truyền toàn bộ postMapper thay vì flatten
+                      post={postMapper}
                     />
                   );
                 }
