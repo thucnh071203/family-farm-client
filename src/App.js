@@ -188,7 +188,7 @@ const AppContent = () => {
             <Route path="/UserPhotos/:accId" element={<ListPhotoOther />} />
             
             <Route path="/ProcessList" element={<ProcessListPage />} />
-            <Route path="/ProcessResult" element={<ProcessResultPage />} />
+            <Route path="/ProcessResult/:subprocessId" element={<ProcessResultPage />} />
             <Route path="/WaitingOrderList" element={<WaitingListPage />} />
             <Route path="/UnpaidBooking" element={<UnpaidBookingPage/>} />
             <Route path="/GroupPage" element={<GroupPage />} />

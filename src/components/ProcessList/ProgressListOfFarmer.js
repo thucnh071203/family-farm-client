@@ -45,10 +45,10 @@ export default function ProgressListOfFarmer() {
     }, [accessToken])
 
     const handleClickViewProcess = (SubprocessData, ProcessStepsData) => {
-        navigate('/ProcessResult', {
-            state: { SubprocessData, ProcessStepsData }
-        })
-    }
+        navigate(`/ProcessResult/${SubprocessData.subprocessId}`, {
+            state: { SubprocessData, ProcessStepsData },
+        });
+    };
 
     return (
         <div class="progress-managment pt-36">
@@ -150,7 +150,7 @@ export default function ProgressListOfFarmer() {
                         ) : (
                             <p className="text-center text-gray-500 mt-4">No process found.</p>
                         )}
-                        
+
                     </div>
                 </div>
             </div>

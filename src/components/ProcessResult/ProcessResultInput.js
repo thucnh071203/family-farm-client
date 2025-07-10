@@ -2,12 +2,15 @@ import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { toast } from "react-toastify";
 
-const ProcessResultInput = () => {
+const ProcessResultInput = ({ currentStep, onSubmit }) => {
     const [images, setImages] = useState([]);
     const [content, setContent] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef(null);
-
+    const resultRef = useRef(null);
+    
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
         const newImages = files.map((file) => ({
@@ -28,36 +31,71 @@ const ProcessResultInput = () => {
         });
     };
 
-    const handleSubmit = () => {
-        const resultData = {
-            StepResultId: `result${Date.now()}`, // ID tạm thời
-            StepId: "step1", // Giả định stepId, thay bằng prop hoặc context thực tế
-            StepResultImage: images.length > 0 ? JSON.stringify(images.map((img) => img.url)) : null,
-            StepResultComment: content || null,
-            CreatedAt: new Date().toISOString(),
-        };
-        console.log("ProcessStepResults:", resultData);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (!currentStep) {
+            toast.info("Please select step to enter result!");
+            return;
+        }
+
+        if (!content.trim() && images.length === 0) {
+            toast.info("Please enter comment or add image!");
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        // Tạo FormData
+        const formData = new FormData();
+        formData.append('StepId', currentStep.stepId);
+        formData.append('StepResultComment', content);
+        
+        // Thêm hình ảnh vào FormData
+        images.forEach((image, index) => {
+            formData.append('Images', image.file);
+        });
+
+        const success = await onSubmit(formData);
+        
+        if (success) {
+            // Reset form
+            setContent("");
+            setImages([]);
+            // Revoke tất cả object URLs
+            images.forEach(img => URL.revokeObjectURL(img.url));
+        }
+
+        setIsSubmitting(false);
     };
+
+    if (!currentStep) {
+        return (
+            <div className="p-5 mt-5 bg-white border border-gray-200 border-solid rounded-lg shadow-xl">
+                <p className="text-gray-500 text-center">Please select a step to enter the result</p>
+            </div>
+        );
+    }
 
     return (
         <div>
-            <Link to="" className="flex justify-end mb-2 text-blue-500 hover:underline">
-                VIEW LIST RESULT
-            </Link>
-            <form className="p-5 mt-5 bg-white border border-gray-200 border-solid rounded-lg shadow-xl">
+            <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-semibold">Step {currentStep.stepNumber}: {currentStep.stepTitle}</h3>
+                <a className="text-blue-500 hover:underline text-sm scroll-smooth">
+                    VIEW LIST RESULT
+                </a>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="p-5 mt-5 bg-white border border-gray-200 border-solid rounded-lg shadow-xl">
                 <h2 className="mb-4 text-xl font-bold text-gray-800">YOUR RESULT:</h2>
                 <div className="flex flex-col gap-4">
                     <div className="rich-text-editor">
                         <ReactQuill
                             value={content}
                             onChange={setContent}
-                            className="h-16 mb-10 bg-white flex-left ReactQuill"
+                            className="h-32 mb-8 bg-white flex-left ReactQuill"
                             placeholder="Write your result..."
                         />
-                        {/* để test nó sẽ hiển thị ra cái gì (bộc nó trong className="rich-text-editor")*/}
-                        {/* <div className="p-4 mt-2 bg-white rounded shadow">
-                            <div dangerouslySetInnerHTML={{ __html: content }} />
-                        </div> */}
                     </div>
 
                     <div className="grid grid-cols-3 gap-4">
@@ -71,14 +109,15 @@ const ProcessResultInput = () => {
                                 <button
                                     type="button"
                                     onClick={() => handleImageRemove(index)}
-                                    className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-gray-500 hover:text-gray-700"
+                                    className="absolute top-2 right-2 flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded-full hover:bg-red-600"
                                     title="Remove image"
                                 >
-                                    <i className="fa-solid fa-times"></i>
+                                    <i className="fa-solid fa-times text-xs"></i>
                                 </button>
                             </div>
                         ))}
                     </div>
+                    
                     <div className="flex justify-start">
                         <label className="cursor-pointer">
                             <input
@@ -89,18 +128,23 @@ const ProcessResultInput = () => {
                                 className="hidden"
                                 ref={fileInputRef}
                             />
-                            <span className="inline-block px-4 py-2 text-white transition bg-blue-500 rounded-lg hover:bg-blue-600">
-                                Add Image
+                            <span className="inline-block px-4 py-2 transition bg-[#3DB3FB]/25 hover:bg-[#2EA3EB] text-[#3DB3FB]">
+                                Add images
                             </span>
                         </label>
                     </div>
+                    
                     <div className="flex justify-end">
                         <button
-                            type="button"
-                            onClick={handleSubmit}
-                            className="py-3 px-10 bg-[#3DB3FB]/25 text-[#3DB3FB]"
+                            type="submit"
+                            disabled={isSubmitting}
+                            className={`py-3 px-10 rounded ${
+                                isSubmitting 
+                                    ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                                    : "bg-[#3DB3FB]/25 hover:bg-[#2EA3EB] text-[#3DB3FB]"
+                            }`}
                         >
-                            Continue
+                            {isSubmitting ? "Continuing.." : "Continue"}
                         </button>
                     </div>
                 </div>
