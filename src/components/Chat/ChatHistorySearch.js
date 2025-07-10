@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import instance from "../../Axios/axiosConfig";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 import default_avatar from "../../assets/images/default-avatar.png";
 
 const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
@@ -37,20 +37,12 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                 if (response.data.success) {
                     setMessages(response.data.chatDetails || []);
                 } else {
-                    setErrorMessages(response.data.message || "Không thể tải tin nhắn.");
-                    toast.error(response.data.message || "Không thể tải tin nhắn.", {
-                        position: "top-right",
-                        autoClose: 3000,
-                        transition: Bounce,
-                    });
+                    setErrorMessages(response.data.message || "Failed to load message.");
+                    toast.error(response.data.message || "Failed to load message.");
                 }
             } catch (error) {
-                setErrorMessages("Tải tin nhắn thất bại!");
-                toast.error("Tải tin nhắn thất bại! Vui lòng thử lại.", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    transition: Bounce,
-                });
+                setErrorMessages("Failed to load message!");
+                toast.error("Message loading failed! Please try again..");
             } finally {
                 setLoadingMessages(false);
             }
@@ -74,20 +66,12 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                 if (response.data.success) {
                     setUserProfile(response.data.data || {});
                 } else {
-                    setErrorProfile(response.data.message || "Không thể tải thông tin người dùng.");
-                    toast.error(response.data.message || "Không thể tải thông tin người dùng.", {
-                        position: "top-right",
-                        autoClose: 3000,
-                        transition: Bounce,
-                    });
+                    setErrorProfile(response.data.message || "Failed  to load user information.");
+                    toast.error(response.data.message || "Failed  to load user information.");
                 }
             } catch (error) {
-                setErrorProfile("Tải thông tin người dùng thất bại!");
-                toast.error("Tải thông tin người dùng thất bại! Vui lòng thử lại.", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    transition: Bounce,
-                });
+                setErrorProfile("Failed  to load user information!");
+                toast.error("Failed  to load user information!");
             } finally {
                 setLoadingProfile(false);
             }

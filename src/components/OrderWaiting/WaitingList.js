@@ -18,6 +18,7 @@ import ProgressMenu from "../ProcessList/ProgressMenu";
 import instance from "../../Axios/axiosConfig";
 
 export default function WaitingList() {
+    const navigate = useNavigate();
     const { hubConnection } = useNotification();
     const { connection } = useSignalR();
     const [listBooking, setListBooking] = useState([]);
@@ -57,6 +58,11 @@ export default function WaitingList() {
         fetchListBooking();
     }, [accessToken])
 
+    const handleNavigateCreate = (service, booking) => {
+        navigate('/CreateSubprocess', {
+            state: {service, booking}
+        })
+    }
     return (
         <div className="pt-16 progress-management progress-managment">
             <div className="px-2 div">
@@ -122,7 +128,7 @@ export default function WaitingList() {
                                             <div class="footer-booking-card">
                                                 <div className="footer-wrapper">
 
-                                                    <div class="footer-booking-button">
+                                                    <div class="footer-booking-button" onClick={() => handleNavigateCreate(booking.service, booking.booking)}>
                                                         <div class="progress-button-text">Create Process</div>
                                                     </div>
 

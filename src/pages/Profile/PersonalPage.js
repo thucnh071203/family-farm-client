@@ -9,8 +9,8 @@ import PostCreate from "../../components/Post/PostCreate";
 import PostFilters from "../../components/Post/PostFilters";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import FriendActionButton from "../../components/Friend/FriendActionButton";
-import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
@@ -18,6 +18,8 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 
 const PersonalPage = () => {
   const { user } = useUser();
+  const navigate = useNavigate();
+  const [roleId, setRoleId] = useState(null);
   const [avatar, setAvatar] = useState("");
   const [fullName, setFullName] = useState("Unknown");
   const [background, setBackground] = useState("");
@@ -35,7 +37,7 @@ const PersonalPage = () => {
   const myProfile = storeData ? JSON.parse(storeData) : null;
   const isOwner = !accId || accId === myProfile?.accId;
   const [listFriends, setListFriends] = useState([]);
-  const [listCheckRelationShip, setlistCheckRelationShip] = useState([]);
+  const [friendshipStatus, setFriendshipStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Lấy thông tin người dùng từ storage
@@ -65,9 +67,9 @@ const PersonalPage = () => {
             const data = response.data.data;
             setFullName(data.fullName || data.firstName || "Unknown User");
             setAvatar(data.avatar || data.profileImage || "default-avatar-url");
-            setBackground(
-              data.background || data.coverImage || defaultBackground
-            );
+            setBackground(data.background || data.coverImage || defaultBackground);
+            setRoleId(data.roleId);
+
 
             const basicInfoMapping = {
               gender: data.gender || "Updating",
@@ -228,18 +230,11 @@ const PersonalPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (accessToken) {
-      fetchFriends();
-    }
-  }, [accId, isOwner, accessToken]);
-
   const fetchlistCheckRelationShip = async () => {
     try {
       const token = localStorage.getItem("accessToken");
-
       const res = await fetch(
-        `https://localhost:7280/api/friend/list-account-no-relation`,
+        `https://localhost:7280/api/friend/check-is-friend?receiverId=${accId}`,
         {
           method: "GET",
           headers: {
@@ -248,36 +243,120 @@ const PersonalPage = () => {
           },
         }
       );
-      const jsonArray = await res.json();
-      console.log("API response (list-account-no-relation):", jsonArray);
-
-      // Gộp tất cả data từ các object có isSuccess === true
-      const combinedList = jsonArray
-        .filter((item) => item.isSuccess && Array.isArray(item.data))
-        .flatMap((item) => item.data); // dùng flatMap để nối tất cả mảng lại
-
-      if (combinedList.length > 0) {
-        setlistCheckRelationShip(combinedList);
-        console.log("Danh sách không có quan hệ:", combinedList);
+      const json = await res.json();
+      console.log("API response (check-is-friend):", json);
+      if (json.status) {
+        setFriendshipStatus(json.status);
+        console.log("Friendship status:", json.status);
       } else {
-        setlistCheckRelationShip([]);
+        setFriendshipStatus(null);
       }
     } catch (err) {
-      console.error("Error fetching friends:", err.message || err);
-      setlistCheckRelationShip([]);
+      console.error("Error checking friendship status:", err.message || err);
+      setFriendshipStatus(null);
     }
   };
 
+  // Combined effect to fetch both friends and relationship data
   useEffect(() => {
-    if (accessToken) {
-      fetchlistCheckRelationShip();
-    }
-  }, [accessToken]);
+    const fetchData = async () => {
+      if (accessToken && !isOwner) {
+        await Promise.all([fetchFriends(), fetchlistCheckRelationShip()]);
+      } else if (accessToken && isOwner) {
+        await fetchFriends();
+      }
+    };
+    fetchData();
+  }, [accId, isOwner, accessToken]);
 
-  const matchedAccount =
-    !isOwner &&
-    Array.isArray(listCheckRelationShip) &&
-    listCheckRelationShip.find((a) => a.accId === accId);
+  // Hàm xử lý bắt đầu chat
+  const handleStartChat = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      // Kiểm tra xem đã có cuộc trò chuyện chưa
+      const response = await instance.get("/api/chat/get-by-user", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      let chatId = null;
+      if (response.data.success && response.data.chats) {
+        const existingChat = response.data.chats.find(
+          (chat) => chat.receiver && chat.receiver.accId === accId
+        );
+        if (existingChat) {
+          chatId = existingChat.chatId;
+        }
+      }
+
+      // Nếu chưa có cuộc trò chuyện, gọi API tạo mới
+      if (!chatId) {
+        const startChatResponse = await instance.post(
+          `/api/chat/start-chat/${accId}`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (startChatResponse.data.success) {
+          chatId = startChatResponse.data.data.chatId;
+        } else {
+          throw new Error("Failed to start chat.");
+        }
+      }
+
+      // Điều hướng đến trang Chats với chatId
+      navigate(`/Chats`, { state: { chatId, receiverId: accId } });
+    } catch (error) {
+      console.error("Error starting chat:", error);
+      toast.error("Cannot start chat. Please try again.");
+    }
+  };
+
+  const isFriend = friendshipStatus === "Friend";
+  const matchedAccount = useMemo(() => {
+    if (isOwner || !friendshipStatus) {
+      return null;
+    }
+    return {
+      accId: accId,
+      friendStatus: friendshipStatus,
+      roleId: roleId,
+    };
+  }, [isOwner, friendshipStatus, accId]);
+
+  const renderActionButton = () => {
+    if (isOwner) return null;
+    console.log("Rendering action button - friendshipStatus:", friendshipStatus, "isFriend:", isFriend);
+    if (isFriend) {
+      return (
+        <button
+          onClick={handleStartChat}
+          className="p-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-md w-32 transition flex items-center justify-center"
+        >
+          <i className="fa-solid fa-comment mr-2"></i>
+          Start Chat
+        </button>
+      );
+    }
+
+    return (
+      <FriendActionButton
+        status={friendshipStatus}
+        roleId={roleId}
+        accId={accId}
+      />
+    )
+  };
+  console.log("accId:", accId);
+  console.log("isOwner:", isOwner);
+  console.log("friendshipStatus:", friendshipStatus);
+  console.log("isFriend:", isFriend);
+  console.log("listFriends:", listFriends);
+
+//   const matchedAccount =
+//     !isOwner &&
+//     Array.isArray(listCheckRelationShip) &&
+//     listCheckRelationShip.find((a) => a.accId === accId);
   //get list photo
   const fetchPhotos = async () => {
     try {
@@ -319,17 +398,11 @@ const PersonalPage = () => {
         <div className="container mx-auto max-w-7xl">
           <div className="relative">
             <CoverBackground backgroundImage={background} isOwner={isOwner} />
-
-            {matchedAccount && (
+            {!isOwner && (
               <div className="absolute right-4 bottom-4">
-                <FriendActionButton
-                  status={matchedAccount.friendStatus}
-                  roleId={matchedAccount.roleId}
-                  accId={matchedAccount.accId}
-                />
+                {renderActionButton()}
               </div>
             )}
-
             <ProfileAvatar
               initialProfileImage={avatar}
               fullName={fullName}
@@ -356,7 +429,6 @@ const PersonalPage = () => {
               )}
 
               <PostFilters />
-
               {!posts || posts.length <= 0 ? (
                 <p className="font-normal text-gray-300 text-lg">
                   You have no posts in the trash!

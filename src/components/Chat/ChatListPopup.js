@@ -7,7 +7,7 @@ import formatTime from "../../utils/formatTime";
 import { Link } from "react-router-dom";
 import { SignalRProvider, useSignalR } from "../../context/SignalRContext";
 import instance from "../../Axios/axiosConfig";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 
 const ChatListPopup = ({ onToggle, isVisible }) => {
     const [selectedChat, setSelectedChat] = useState(null);
@@ -26,11 +26,7 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
                     setUnreadChatCount(response.data.unreadChatCount || 0);
                 }
             } catch (error) {
-                toast.error("Tải số lượng tin nhắn chưa đọc thất bại!", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    transition: Bounce,
-                });
+                toast.error("Load unread message count failed!");
                 console.error("Fetch unread count error:", error);
             }
         };
@@ -49,11 +45,7 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
             console.log("ReceiveMessage in ChatListPopup:", { chatDetail, chatDTO });
             if (!chatDTO || !chatDTO.chatId || !chatDTO.receiver || !chatDTO.receiver.accId) {
                 console.warn("Invalid or missing chatDTO:", { chatDetail, chatDTO });
-                toast.warn("Dữ liệu tin nhắn không hợp lệ!", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    transition: Bounce,
-                });
+                toast.warn("Invalid message data!");
                 return;
             }
             // Gọi lại API để lấy unreadChatCount mới nhất thay vì tăng thủ công

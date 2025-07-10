@@ -1,32 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatDetails from "../../components/Chat/ChatDetails";
 import ChatList from "../../components/Chat/ChatList";
 import Header from "../../components/Header/Header";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import formatTime from "../../utils/formatTime";
 import ChatHistorySearch from "../../components/Chat/ChatHistorySearch";
-import { toast, Bounce } from "react-toastify";
+import { toast } from "react-toastify";
 import { SignalRProvider } from "../../context/SignalRContext";
+import { useLocation } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
 
 const ChatPage = () => {
   const [selectedChat, setSelectedChat] = useState(null);
   const [unreadChatCount, setUnreadChatCount] = useState(0);
   const currentUserId = localStorage.getItem("accId") || sessionStorage.getItem("accId");
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!currentUserId) {
+      toast.error("Please log in to view chats");
+      return;
+    }
+
+    // Kiểm tra state từ navigate để chọn chat tự động
+    const { chatId, receiverId } = location.state || {};
+    if (chatId && receiverId) {
+      const fetchChatDetails = async () => {
+        try {
+          const response = await instance.get("/api/chat/get-by-user", {
+            headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` },
+          });
+          if (response.data.success) {
+            const chat = response.data.chats.find(
+              (c) => c.chatId === chatId && c.receiver && c.receiver.accId === receiverId
+            );
+            if (chat) {
+              setSelectedChat({
+                chatId: chat.chatId,
+                receiverId: chat.receiver.accId,
+                senderName: chat.receiver.fullName || chat.receiver.username || "Unknown User",
+                senderAvatar: chat.receiver.avatar || null,
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching chat details:", error);
+          toast.error("Failed to load conversation.");
+        }
+      };
+      fetchChatDetails();
+    }
+  }, [currentUserId, location.state]);
 
   const handleChatSelect = (chat) => {
     if (!chat || !chat.chatId || !chat.receiverId) {
       console.warn("Invalid chat data:", chat);
-      toast.error("Không thể mở cuộc trò chuyện do dữ liệu không hợp lệ!", {
-        position: "top-right",
-        autoClose: 3000,
-        transition: Bounce,
-      });
+      toast.error("Cannot open chat due to invalid data!");
       return;
     }
 
     setSelectedChat({
       chatId: chat.chatId,
-      receiverId: chat.receiverId, // Sử dụng receiverId trực tiếp
+      receiverId: chat.receiverId,
       senderName: chat.senderName || "Unknown User",
       senderAvatar: chat.senderAvatar || null,
     });

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 
 const FriendActionButton = ({ status, roleId, accId }) => {
   const [roleIdOfUser, setRoleId] = useState(null);
-  const [isCompleted, setIsCompleted] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState(status);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -17,16 +17,12 @@ const FriendActionButton = ({ status, roleId, accId }) => {
 
   const handleAddFriend = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
-      const response = await axios.post(
-        "https://localhost:7280/api/friend/send-friend-request",
-        { receiverId: accId },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const response = await instance.post(
+        "/api/friend/send-friend-request",
+        { receiverId: accId }
       );
       if (response.status === 200) {
-        setIsCompleted(true);
+        setCurrentStatus("Pending");
         toast.success("You sent the request successfully!");
       }
     } catch (error) {
@@ -35,24 +31,20 @@ const FriendActionButton = ({ status, roleId, accId }) => {
     }
   };
 
-  const handleUnfriend = async () => {
-    const token = localStorage.getItem("accessToken");
+  const handleCancelOrUnfriend = async () => {
     try {
-      const response = await axios.delete(
-        `https://localhost:7280/api/friend/unfriend/${accId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const response = await instance.delete(
+        `/api/friend/unfriend/${accId}`
       );
 
       if (response.status === 200 && response.data === true) {
-        setIsCompleted(true);
+        setCurrentStatus(null);
         toast.success("Action completed successfully!");
       } else {
         toast.error("Failed to process the action.");
       }
     } catch (error) {
-      console.error("Error during unfriend:", error);
+      console.error("Error during action:", error);
       toast.error("An error occurred while processing the action.");
     }
   };
@@ -70,7 +62,7 @@ const FriendActionButton = ({ status, roleId, accId }) => {
       bgColor: "bg-blue-600",
       hoverColor: "hover:bg-blue-700",
     },
-    pending: {
+    Pending: {
       text: "Cancel",
       icon: "fa-ban",
       bgColor: "bg-orange-600",
@@ -88,46 +80,19 @@ const FriendActionButton = ({ status, roleId, accId }) => {
       bgColor: "bg-red-600",
       hoverColor: "hover:bg-red-700",
     },
-    expert: {
-      text: "Follow",
-      icon: "fa-user-plus",
-      bgColor: "bg-[#3DB3FB]",
-      hoverColor: "hover:bg-blue-700",
-    },
-    completed: {
-      text: "Completed",
-      icon: "fa-check",
-      bgColor: "bg-gray-400",
-      hoverColor: "",
-    },
   };
 
   // Chọn config phù hợp
-  let config;
-
-  if (isCompleted) {
-    config = buttonConfig.completed;
-  } else if (status === null) {
-    config = roleId === roleIdOfUser ? buttonConfig.null : buttonConfig.expert;
-  } else {
-    config = buttonConfig[status] || buttonConfig.null;
-  }
+  const config = buttonConfig[currentStatus] || buttonConfig.null;
 
   return (
     <button
       onClick={
-        isCompleted
-          ? undefined
-          : status === "Friend" || status === "Following"
-          ? handleUnfriend
+        currentStatus === "Friend" || currentStatus === "Following" || currentStatus === "Pending"
+          ? handleCancelOrUnfriend
           : handleAddFriend
       }
-      disabled={isCompleted}
-      className={`p-1 ${config.bgColor} ${
-        config.hoverColor
-      } text-white text-sm font-bold rounded-md w-28 transition ${
-        isCompleted ? "cursor-not-allowed" : ""
-      }`}
+      className={`p-1 ${config.bgColor} ${config.hoverColor} text-white text-sm font-bold rounded-md w-28 transition`}
     >
       <i className={`fa-solid ${config.icon} mr-2`}></i>
       {config.text}
