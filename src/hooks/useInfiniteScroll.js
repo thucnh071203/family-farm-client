@@ -10,8 +10,8 @@ const useInfiniteScroll = ({
     hasMore,
     loading,
     loadingMore,
-    take, // Thêm tham số take
-    data, // Thêm tham số data để theo dõi sự thay đổi
+    take,
+    data,
 }) => {
     const [skip, setSkip] = useState(0);
     const previousScrollHeightRef = useRef(null);
@@ -34,15 +34,13 @@ const useInfiniteScroll = ({
                 scrollHeight = container.scrollHeight;
                 clientHeight = container.clientHeight;
             }
-            // Cuộn lên (cho chat)
-            if (direction === "up" && scrollTop < threshold) {
-                setSkip((prevSkip) => prevSkip + take);
-                fetchData({ currentSkip: skip + take, previousScrollHeightRef });
-            }
-            // Cuộn xuống (cho bài post)
-            else if (direction === "down" && scrollHeight - scrollTop - clientHeight < threshold) {
-                setSkip((prevSkip) => prevSkip + take);
+
+            if (
+                direction === "down" &&
+                scrollHeight - scrollTop - clientHeight < threshold
+            ) {
                 fetchData({ currentSkip: skip + take });
+                setSkip((prevSkip) => prevSkip + take);
             }
         };
 
@@ -50,15 +48,13 @@ const useInfiniteScroll = ({
         return () => container.removeEventListener("scroll", handleScroll);
     }, [hasMore, loading, loadingMore, skip, fetchData, containerRef, direction, threshold, take]);
 
-    // Duy trì vị trí cuộn khi tải thêm dữ liệu (chỉ cần cho cuộn lên)
+    // Reset skip khi hasMore là false
     useEffect(() => {
-        if (direction === "up" && previousScrollHeightRef.current && containerRef.current) {
-            const newScrollHeight = containerRef.current.scrollHeight;
-            containerRef.current.scrollTop = newScrollHeight - previousScrollHeightRef.current;
+        if (!hasMore) {
+            setSkip(0); // Ngăn gọi lại fetchData
         }
-    }, [data, containerRef, direction]);
+    }, [hasMore]);
 
     return { skip, setSkip };
 };
-
 export default useInfiniteScroll;
