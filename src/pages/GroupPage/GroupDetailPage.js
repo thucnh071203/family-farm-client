@@ -29,6 +29,8 @@ const GroupDetailPage = () => {
   const [userAccId, setUserAccId] = useState(null);
   const [groupReload, setGroupReload] = useState(null);
   const { connection } = useSignalR();
+  //get service
+  const [services, setServices] = useState([]);
   // handle search
   const [searchKeyword, setSearchKeyword] = useState("");
 
@@ -606,6 +608,65 @@ const GroupDetailPage = () => {
       setMemberListLoaded(true);
     }
   }, [listMemberOfgroup, userAccId]);
+  //get service
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        // const res = await axios.get("https://localhost:7280/api/service/all");
+        const res = await instance.get("api/service/all");
+        if (res.data.success) {
+          const mappedServices = res.data.data
+            .filter((item) => item.service)
+            .map((item) => item.service);
+
+          const enrichedServices = await Promise.all(
+            mappedServices.map(async (service) => {
+              try {
+                // const providerRes = await axios.get(`https://localhost:7280/api/account/profile-another/${service.providerId}`);
+                const providerRes = await instance.get(
+                  `api/account/profile-another/${service.providerId}`
+                );
+                const provider = providerRes.data?.data;
+
+                console.log("provider", provider);
+
+                return {
+                  ...service,
+                  fullName: provider?.fullName || "",
+                  avatar: provider?.avatar || "",
+                  country: provider?.country || "",
+                  city: provider?.city || "",
+                };
+              } catch (err) {
+                console.error(
+                  "❌ Không thể lấy thông tin provider:",
+                  service.providerId,
+                  err
+                );
+                return {
+                  ...service,
+                  fullName: "",
+                  avatar: "",
+                  country: "",
+                  city: "",
+                };
+              }
+            })
+          );
+
+          //setServices(mappedServices);
+          setServices(enrichedServices);
+          console.log("✅ Services đã chuẩn hóa:", enrichedServices);
+        } else {
+          console.error("❌ Lỗi khi gọi API:", res.data.message);
+        }
+      } catch (err) {
+        console.error("❌ Lỗi mạng:", err);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   return (
     <div>
@@ -614,7 +675,7 @@ const GroupDetailPage = () => {
       <div className="md:flex md:flex-row md:pt-36 md:ml-[120px] gap-6 flex flex-col ml-[40px] pt-20">
         <div className="w-[342px] flex flex-col gap-6">
           <YourGroupDetailListItem YourGroupList={yourGroupsData} />
-          <PopularService />
+          <PopularService list={services}/>
         </div>
         <div>
           <GroupDetailHeader

@@ -20,6 +20,7 @@ const RecycleBin = () => {
     const [fullName, setFullName] = useState("Unknown");
     const [background, setBackground] = useState("");
     const [basicInfo, setBasicInfo] = useState({});
+    const [photos, setPhotos] = useState([]);
 // get list friend
     const [listFriends, setListFriends] = useState([]);
     //Biến lấy accId từ param khi xem profile người khác
@@ -169,6 +170,39 @@ const RecycleBin = () => {
     }
   }, [accId, isOwner, accessToken]);
 
+    //get list photo
+    const fetchPhotos = async () => {
+        try {
+        const token = localStorage.getItem("accessToken");
+        const url = isOwner
+            ? `https://localhost:7280/api/post/images`
+            : `https://localhost:7280/api/post/images/${accId}`;
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            },
+        });
+
+        const json = await response.json();
+        if (json.data && json.count > 0) {
+            setPhotos(json.data);
+        } else {
+            setPhotos([]);
+        }
+        } catch (error) {
+        console.error("Error fetching photos:", error);
+        setPhotos([]);
+        }
+    };
+
+    useEffect(() => {
+        if (accessToken) {
+        fetchPhotos();
+        }
+    }, [accId, isOwner, accessToken]);
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -196,7 +230,7 @@ const RecycleBin = () => {
                             isProfile={true}
                             accId = {accId}
                             />
-                            <PhotoGallery />
+                           <PhotoGallery photos={photos} isOwner={isOwner} accId={accId}/>
                         </aside>
                         <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
                             <h1 style={{ color: "#3E3F5E", fontFamily: "Roboto", fontWeight: "bold", fontSize: "24px" }} className="text-start">RECYCLE BIN</h1>

@@ -26,6 +26,8 @@ const PersonalPage = () => {
   const [basicInfo, setBasicInfo] = useState({});
   const [accessToken, setAccessToken] = useState("");
   const [posts, setPosts] = useState([]);
+  const [photos, setPhotos] = useState([]);
+
   const { accId } = useParams();
   const defaultBackground =
     "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c";
@@ -345,13 +347,49 @@ const PersonalPage = () => {
       />
     )
   };
-
   console.log("accId:", accId);
   console.log("isOwner:", isOwner);
   console.log("friendshipStatus:", friendshipStatus);
   console.log("isFriend:", isFriend);
   console.log("listFriends:", listFriends);
 
+//   const matchedAccount =
+//     !isOwner &&
+//     Array.isArray(listCheckRelationShip) &&
+//     listCheckRelationShip.find((a) => a.accId === accId);
+  //get list photo
+  const fetchPhotos = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const url = isOwner
+        ? `https://localhost:7280/api/post/images`
+        : `https://localhost:7280/api/post/images/${accId}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+      if (json.data && json.count > 0) {
+        setPhotos(json.data);
+      } else {
+        setPhotos([]);
+      }
+    } catch (error) {
+      console.error("Error fetching photos:", error);
+      setPhotos([]);
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchPhotos();
+    }
+  }, [accId, isOwner, accessToken]);
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -373,14 +411,14 @@ const PersonalPage = () => {
           </div>
           <div className="flex flex-col gap-5 pt-20 lg:flex-row">
             <aside className="flex flex-col w-full gap-5 lg:w-1/3">
-              <BasicInfo info={basicInfo} isOwner={isOwner}/>
+              <BasicInfo info={basicInfo} isOwner={isOwner} />
               <FriendList
                 friends={listFriends}
                 isOwner={isOwner}
                 isProfile={true}
                 accId={accId}
               />
-              <PhotoGallery />
+              <PhotoGallery photos={photos} isOwner={isOwner} accId={accId}/>
             </aside>
             <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
               {isOwner && (
@@ -409,9 +447,10 @@ const PersonalPage = () => {
                       fullName: postMapper.ownerPost
                         ? postMapper.ownerPost.fullName || postMapper.post.accId
                         : "Unknown User",
-                      avatar: isOwner && user?.avatar
-                        ? user.avatar
-                        : postMapper.ownerPost?.avatar,
+                      avatar:
+                        isOwner && user?.avatar
+                          ? user.avatar
+                          : postMapper.ownerPost?.avatar,
                       createAt: postMapper.post.createdAt,
                       content: postMapper.post.postContent,
                       images: postMapper.postImages
