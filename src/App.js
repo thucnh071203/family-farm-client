@@ -96,6 +96,8 @@ import CallbackPage from "./pages/CallbackPage/PaymentCallback";
 import PaymentResultPage from "./pages/CallbackPage/PaymentResult";
 import PaymentSuccess from "./pages/PaymentPage/PaymentSuccessfulPage";
 import PaymentFailed from "./pages/PaymentPage/PaymentFailedPage";
+import ListPhotoPage from "./pages/Profile/ListPhotoPage";
+import ListPhotoOther from "./pages/Profile/ListPhotoOther";
 
 
 const AppContent = () => {
@@ -180,6 +182,9 @@ const AppContent = () => {
             <Route path="/UpdateProfile" element={<UpdateProfile />} />S
             <Route path="/UserFriends" element={<UserFriends />} />
             <Route path="/UserFriends/:accId" element={<UserFriendOfOther />} />
+            <Route path="/UserPhotos" element={<ListPhotoPage />} />
+            <Route path="/UserPhotos/:accId" element={<ListPhotoOther />} />
+            
             <Route path="/ProcessList" element={<ProcessListPage />} />
             <Route path="/ProcessResult" element={<ProcessResultPage />} />
             <Route path="/WaitingOrderList" element={<WaitingListPage />} />

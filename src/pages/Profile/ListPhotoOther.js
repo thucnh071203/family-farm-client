@@ -8,84 +8,16 @@ import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
 import instance from "../../Axios/axiosConfig";
+import PhotoItem from "../../components/Profile/PhotoItem";
 
-const UserFriendOfOther = () => {
-  const friends = [
-    {
-      username: "Dang Khoa",
-      city: "Ho Chi Minh",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      mutualFriend: 5,
-    },
-    {
-      username: "Huu Thuc",
-      city: "Ha Noi",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      mutualFriend: 2,
-    },
-    { username: "Minh Uyen", city: "Da Nang", avatar: null, mutualFriend: 3 },
-    {
-      username: "Dang Khoa",
-      city: "Ho Chi Minh",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      mutualFriend: 5,
-    },
-    { username: "Minh Uyen", city: "Da Nang", avatar: null, mutualFriend: 3 },
-    {
-      username: "Mai Xuan",
-      city: "Can Tho",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      mutualFriend: 0,
-    },
-    { username: "Minh Uyen", city: "Da Nang", avatar: null, mutualFriend: 3 },
-    {
-      username: "Dang Khoa",
-      city: "Ho Chi Minh",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      mutualFriend: 5,
-    },
-    {
-      username: "Mai Xuan",
-      city: "Can Tho",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      mutualFriend: 0,
-    },
-    {
-      username: "Huu Thuc",
-      city: "Ha Noi",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      mutualFriend: 2,
-    },
-    {
-      username: "Mai Xuan",
-      city: "Can Tho",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      mutualFriend: 0,
-    },
-    {
-      username: "Huu Thuc",
-      city: "Ha Noi",
-      avatar:
-        "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/250px-Minecraft_2024_cover_art.png",
-      mutualFriend: 2,
-    },
-  ];
-
+const ListPhotoOther = () => {
   const { user } = useUser();
   const [avatar, setAvatar] = useState("");
   const [fullName, setFullName] = useState(user?.fullName || "Unknown");
   const [background, setBackground] = useState("");
   const [basicInfo, setBasicInfo] = useState({});
   const [accessToken, setAccessToken] = useState("");
-  const [posts, setPosts] = useState([]);
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   const { accId } = useParams();
   const defaultBackground = "...";
@@ -94,8 +26,9 @@ const UserFriendOfOther = () => {
     sessionStorage.getItem("profileData");
   const myProfile = storeData ? JSON.parse(storeData) : null;
   const isOwner = !accId || accId === myProfile?.accId;
-  const [listFriends, setListFriends] = useState([]);
   const [listCheckRelationShip, setlistCheckRelationShip] = useState([]);
+  const [photos, setPhotos] = useState([]);
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -164,41 +97,6 @@ const UserFriendOfOther = () => {
       setAccessToken(storedAccesstoken);
     }
   }, []);
-
-  // get list friend
-  const fetchFriends = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      const url = isOwner
-        ? `https://localhost:7280/api/friend/list-friend`
-        : `https://localhost:7280/api/friend/list-friend-other/${accId}`;
-
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const json = await response.json();
-      if (json.data && json.data.length > 0) {
-        setListFriends(json.data);
-        //console.log(isOwner + "aaaaaaaaaaaaaaaaaa");
-      } else {
-        setListFriends([]);
-      }
-    } catch (error) {
-      console.error("Error fetching friends:", error);
-      setListFriends([]);
-    }
-  };
-
-  useEffect(() => {
-    if (accessToken) {
-      fetchFriends();
-    }
-  }, [accId, isOwner, accessToken]);
   const fetchlistCheckRelationShip = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -241,6 +139,39 @@ const UserFriendOfOther = () => {
     Array.isArray(listCheckRelationShip) &&
     listCheckRelationShip.find((a) => a.accId === accId);
 
+  //get list photo
+  const fetchPhotos = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const url = isOwner
+        ? `https://localhost:7280/api/post/images`
+        : `https://localhost:7280/api/post/images/${accId}`;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const json = await response.json();
+      if (json.data && json.count > 0) {
+        setPhotos(json.data);
+      } else {
+        setPhotos([]);
+      }
+    } catch (error) {
+      console.error("Error fetching photos:", error);
+      setPhotos([]);
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken) {
+      fetchPhotos();
+    }
+  }, [accId, isOwner, accessToken]);
   return (
     <div>
       <div className="min-h-screen flex flex-col">
@@ -271,24 +202,40 @@ const UserFriendOfOther = () => {
                 <Link to={`/PersonalPage/${accId}`}>Profile /</Link>
                 <Link className="text-blue-500" to="">
                   {" "}
-                  Friends{" "}
+                  Photos{" "}
                 </Link>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {listFriends.length > 0 ? (
-                listFriends.map((friend) => (
-                  <YourFriendCard
-                    key={friend.accId}
-                    friend={friend}
-                    isOwner={isOwner}
-                    isProfile={true}
+            <div className="grid grid-cols-4 gap-3">
+              {photos.map((photo, index) => (
+                <div key={index} className="relative">
+                  <img
+                    onClick={() => setSelectedPhoto(photo)}
+                    src={photo}
+                    alt="Photos"
+                    className="w-full h-44 object-cover rounded-md"
                   />
-                ))
-              ) : (
-                <p className="text-gray-500 col-span-full text-center">
-                  No data to display...
-                </p>
+                </div>
+              ))}
+
+              {selectedPhoto && (
+                <div
+                  className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 opacity-95"
+                  onClick={() => setSelectedPhoto(null)}
+                >
+                  <div
+                    className="bg-white p-4 rounded-lg flex flex-col items-center"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="w-[400px] h-[400px]">
+                      <img
+                        src={selectedPhoto}
+                        alt="Selected"
+                        className="w-full h-full object-contain rounded-md"
+                      />
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </div>
@@ -298,4 +245,4 @@ const UserFriendOfOther = () => {
   );
 };
 
-export default UserFriendOfOther;
+export default ListPhotoOther;
