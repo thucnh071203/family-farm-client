@@ -9,8 +9,8 @@ const PhotoItem = ({ photo }) => {
 
     return (
         <img
-            src={photoData.src}
-            alt={photoData.alt}
+            src={'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg'}
+            alt={photo}
             className="w-full h-20 object-cover rounded-md"
         />
     );
