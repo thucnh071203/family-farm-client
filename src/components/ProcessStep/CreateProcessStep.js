@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import MenuProcessStep from "./MenuProcessStep";
+import RecommendService from "../Services/RecommendService"
 import "./createProcessStepstyle.css";
 import ProcessNav from "../ProcessNav/ProcessNav";
 import Header from "../Header/Header";
@@ -254,7 +255,7 @@ const CreateProcessStep = () => {
 
         <div className="flex flex-col w-full gap-6 mt-6 progress-container lg:mt-14 lg:flex-row lg:justify-center">
           <div className="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">
-            
+            <RecommendService/>
           </div>
 
             <div className="progress-right w-full lg:w-[66.5%] xl:w-[830px] lg:max-w-[830px]">
