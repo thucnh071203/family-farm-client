@@ -28,6 +28,8 @@ const HomePage = () => {
   const PAGE_SIZE = 5;
   const [suggestedFriends, setSuggestedFriends] = useState([]);
   const [groupSuggestData, setGroupData] = useState([]);
+  //get list service
+    const [services, setServices] = useState([]);
 
   // Lấy thông tin người dùng từ storage
   useEffect(() => {
@@ -35,7 +37,7 @@ const HomePage = () => {
       localStorage.getItem("accId") || sessionStorage.getItem("accId");
     const storedAvatarUrl =
       localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
-    
+
 
     if (storedAccId) {
       setAccountId(storedAccId);
@@ -44,6 +46,8 @@ const HomePage = () => {
   }, []);
 
   const fetchPosts = async ({ lastPostId, lastSharePostId, reset = false }) => {
+    if (!hasMore && !reset) return; // Không gọi API nếu không còn dữ liệu và không phải reset
+
     setLoading(true);
     if (lastPostId || lastSharePostId) setLoadingMore(true);
     setError(null);
@@ -51,13 +55,13 @@ const HomePage = () => {
     try {
       const response = await instance.get("/api/post/infinite-with-share", {
         params: {
-          lastPostId: lastPostId,
-          lastSharePostId: lastSharePostId,
+          lastPostId: lastPostId || null,
+          lastSharePostId: lastSharePostId || null,
           pageSize: PAGE_SIZE,
         },
       });
 
-      console.log("API posts response:", response.data.data); // Debug
+      console.log("API posts response:", response.data.data);
 
       if (response.data.success) {
         const newPosts = response.data.data || [];
@@ -68,11 +72,10 @@ const HomePage = () => {
 
         if (newPosts.length > 0) {
           const lastItem = newPosts[newPosts.length - 1];
-          setLastPostId(lastItem.itemType === "Post" ? lastItem.post?.postId : null);
-          setLastSharePostId(lastItem.itemType === "SharePost" ? lastItem.sharePostData?.sharePost?.sharePostId : null);
-        } else {
-          setLastPostId(null);
-          setLastSharePostId(null);
+          setLastPostId(lastItem.itemType === "Post" ? lastItem.post?.postId : lastPostId);
+          setLastSharePostId(
+            lastItem.itemType === "SharePost" ? lastItem.sharePostData?.sharePost?.sharePostId : lastSharePostId
+          );
         }
       } else {
         setError(response.data.message || "Failed to load posts!");
@@ -85,6 +88,16 @@ const HomePage = () => {
       setLoadingMore(false);
     }
   };
+
+  const uniquePosts = Array.from(
+    new Map(
+      posts.map((postMapper) => [
+        postMapper.itemType === "Post"
+          ? postMapper.post?.postId
+          : postMapper.sharePostData?.sharePost?.sharePostId,
+        postMapper,
+      ])
+    ).values());
 
   // Gọi lần đầu
   useEffect(() => {
@@ -203,6 +216,65 @@ const HomePage = () => {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
     }
   };
+//get list service
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        // const res = await axios.get("https://localhost:7280/api/service/all");
+        const res = await instance.get("api/service/all");
+        if (res.data.success) {
+          const mappedServices = res.data.data
+            .filter((item) => item.service)
+            .map((item) => item.service);
+
+          const enrichedServices = await Promise.all(
+            mappedServices.map(async (service) => {
+              try {
+                // const providerRes = await axios.get(`https://localhost:7280/api/account/profile-another/${service.providerId}`);
+                const providerRes = await instance.get(
+                  `api/account/profile-another/${service.providerId}`
+                );
+                const provider = providerRes.data?.data;
+
+                console.log("provider", provider);
+
+                return {
+                  ...service,
+                  fullName: provider?.fullName || "",
+                  avatar: provider?.avatar || "",
+                  country: provider?.country || "",
+                  city: provider?.city || "",
+                };
+              } catch (err) {
+                console.error(
+                  "❌ Không thể lấy thông tin provider:",
+                  service.providerId,
+                  err
+                );
+                return {
+                  ...service,
+                  fullName: "",
+                  avatar: "",
+                  country: "",
+                  city: "",
+                };
+              }
+            })
+          );
+
+          //setServices(mappedServices);
+          setServices(enrichedServices);
+          console.log("✅ Services đã chuẩn hóa:", enrichedServices);
+        } else {
+          console.error("❌ Lỗi khi gọi API:", res.data.message);
+        }
+      } catch (err) {
+        console.error("❌ Lỗi mạng:", err);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   return (
     <div className="HomePage bg-gray-100">
@@ -212,7 +284,7 @@ const HomePage = () => {
         <div className="gap-5 grid lg:grid-cols-[1fr_2fr_1fr] grid-cols-1">
           <aside className="flex flex-col gap-5 order-1">
             <WeatherWidget />
-            <PopularService />
+            <PopularService list={services}/>
           </aside>
           <section
             ref={postContainerRef}
@@ -230,9 +302,8 @@ const HomePage = () => {
               </div>
             ) : error ? (
               <div className="text-center py-4">{error}</div>
-            ) : posts.length > 0 ? (
-
-              posts.map((postMapper, index) => {
+            ) : uniquePosts.length > 0 ? (
+              uniquePosts.map((postMapper, index) => {
                 if (postMapper.itemType === "Post" && postMapper.post && postMapper.ownerPost) {
                   return (
                     <PostCard
@@ -265,7 +336,7 @@ const HomePage = () => {
                   return (
                     <SharePostCard
                       key={`${postMapper.sharePostData.sharePost.sharePostId}-${index}`}
-                      post={postMapper} // Truyền toàn bộ postMapper thay vì flatten
+                      post={postMapper}
                     />
                   );
                 }
