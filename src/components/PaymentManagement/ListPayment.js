@@ -1,100 +1,98 @@
-
 import $ from "jquery";
 import "datatables.net-dt/css/dataTables.dataTables.css";
 import "datatables.net";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-const ListPayment = () => {
+const ListPayment = ({ data }) => {
+    const tableRef = useRef(null);
 
-    useEffect(() => {
-        $('#paymentTable').DataTable();
-    }, []);
+    const renderTable = () => {
+        const $table = $(tableRef.current);
 
-    const paymentData = [
-        {
-            serviceName: "CEuzsMlPzuwZy4qkR...",
-            farmer: "Phuong Nam",
-            expert: "Huu Thuc",
-            status: "Not yet",
-            price: 250.0,
-            payAt: "",
-        },
-        {
-            serviceName: "CEuzsMlPzuwZy4qkR...",
-            farmer: "Phuong Nam",
-            expert: "Huu Thuc",
-            status: "Waiting",
-            price: 250.0,
-            payAt: "Aug, 21 2025",
-        },
-        {
-            serviceName: "CEuzsMlPzuwZy4qkR...",
-            farmer: "Phuong Nam",
-            expert: "Huu Thuc",
-            status: "Confirmed",
-            price: 250.0,
-            payAt: "Aug, 21 2025",
-        },
-    ];
-
-    const getStatusClass = (status) => {
-        switch (status) {
-            case "Not yet":
-                return "text-[#3E3F5E]/25";
-            case "Waiting":
-                return "text-[#EF3E36]";
-            case "Confirmed":
-                return "text-[#2BB673]";
-            default:
-                return "";
+        // Destroy old DataTable if exists
+        if ($.fn.DataTable.isDataTable($table)) {
+            $table.DataTable().destroy();
         }
+
+        // Clear tbody
+        $table.find("tbody").empty();
+
+        data.forEach((payment) => {
+            const formattedPrice = new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+                maximumFractionDigits: 0,
+            }).format(payment.price ?? 0);
+
+            const formattedDate = (() => {
+                const d = new Date(payment.payAt);
+                return isNaN(d.getTime())
+                    ? "N/A"
+                    : d.toLocaleDateString("vi-VN", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                    });
+            })();
+
+
+            const serviceName = payment.serviceName ?? "";
+            const farmerName = payment.farmerName ?? payment.farmer ?? "";
+            const expertName = payment.expertName ?? payment.expert ?? "";
+
+            $table.find("tbody").append(`
+                <tr>
+                    <td class="text-left break-all max-w-[250px]">${payment.paymentId}</td>
+                    <td class="text-left">${serviceName}</td>
+                    <td class="text-left">${farmerName}</td>
+                    <td class="text-left">${expertName}</td>
+                    <td class="text-right">${formattedPrice}</td>
+                    <td class="text-left">${formattedDate}</td>
+                    <td class="text-left">
+                        <button class="bg-[#3DB3FB]/25 text-[#3DB3FB] text-sm px-2 py-0.5 rounded font-semibold">
+                            Detail
+                        </button>
+                    </td>
+                </tr>
+            `);
+        });
+
+        // Tắt cảnh báo
+        $.fn.dataTable.ext.errMode = 'none';
+
+        // Khởi tạo lại
+        $table.DataTable({
+            retrieve: true,
+            autoWidth: false,
+        });
     };
 
+
+    useEffect(() => {
+        renderTable();
+    }, [data]);
+
     return (
-        <>
-            <div className="w-full bg-[#3DB3FB]/5">
-                {/* Data Table */}
-                <div className="bg-white p-4 rounded shadow">
-                    <table id="paymentTable" className="display w-full">
-                        <thead>
-                            <tr className="bg-[#3DB3FB]/25">
-                                <th>Service name</th>
-                                <th>Farmer</th>
-                                <th>Expert</th>
-                                <th>Status</th>
-                                <th className="align-middle">Price</th>
-                                <th>Pay At</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {paymentData.map((payment, index) => (
-                                <tr key={index} className="py-0.5">
-                                    <td className="text-left">{payment.serviceName}</td>
-                                    <td className="text-left">{payment.farmer}</td>
-                                    <td className="text-left">{payment.expert}</td>
-                                    <td className={`font-bold text-left ${getStatusClass(payment.status)}`}>{payment.status}</td>
-                                    <td className="text-right">{payment.price.toFixed(2)}</td>
-                                    <td className="text-left">{payment.payAt}</td>
-                                    <td className="text-left">
-                                        {(payment.status === "Waiting" || payment.status === "Not yet") ? (
-                                            <button className="bg-[#3DB3FB]/25 text-[#3DB3FB] text-sm px-2 py-0.5 rounded font-semibold">
-                                                Confirm
-                                            </button>
-                                        ) : (
-                                            <button className="invisible text-sm px-2 py-0.5">
-                                                Confirm
-                                            </button>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+        <div className="w-full bg-[#3DB3FB]/5">
+            <div className="bg-white p-4 rounded shadow">
+                <table ref={tableRef} id="paymentTable" className="display w-full">
+                    <thead>
+                        <tr className="bg-[#3DB3FB]/25">
+                            <th className="w-[250px]">PaymentId</th>
+                            <th className="w-[266.7px]">Service name</th>
+                            <th className="w-[203.69px]">Farmer</th>
+                            <th className="w-[208.72px]">Expert</th>
+                            <th className="w-[173.42px]">Price</th>
+                            <th className="w-[217.36px]">Pay At</th>
+                            <th className="w-[164.41px]">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
-        </>
+        </div>
     );
 };
 
 export default ListPayment;
+

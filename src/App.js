@@ -99,7 +99,7 @@ import PaymentFailed from "./pages/PaymentPage/PaymentFailedPage";
 import ListPhotoPage from "./pages/Profile/ListPhotoPage";
 import ListPhotoOther from "./pages/Profile/ListPhotoOther";
 import CreateSubprocessPage from "./pages/Subprocess/CreateSubprocessPage";
-
+import RePaymentResultPage from "./pages/CallbackPage/RePaymentResult";
 
 
 const AppContent = () => {
@@ -288,6 +288,7 @@ const AppContent = () => {
             <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
             <Route path="/PaymentFailed" element={<PaymentFailed />} />
             <Route path="/CreateSubprocess" element={<CreateSubprocessPage/>} />
+            <Route path="/RePaymentResult" element={<RePaymentResultPage />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
