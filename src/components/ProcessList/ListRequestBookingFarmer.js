@@ -8,6 +8,7 @@ import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { useSignalR } from "../../context/SignalRContext";
 import { useNotification } from "../../context/NotificationContext";
+import formatTime from "../../utils/formatTime";
 
 
 const ListRequestBookingFarmer = () => {
@@ -193,7 +194,7 @@ const ListRequestBookingFarmer = () => {
                                                 </div>
                                                 <div class="date-info">
                                                     <div class="text-progress-info-1">Booking at:</div>
-                                                    <div class="text-progress-p-1">{booking.booking.bookingServiceAt}</div>
+                                                    <div class="text-progress-p-1">{formatTime(booking.booking.bookingServiceAt)}</div>
                                                 </div>
                                                 <div class="info-1">
                                                     <div class="text-progress-info-1">Service name:</div>
