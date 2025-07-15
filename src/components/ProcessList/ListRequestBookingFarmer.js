@@ -142,10 +142,11 @@ const ListRequestBookingFarmer = () => {
         const searchLower = searchQuery.toLowerCase();
         const expertName = booking.account.fullName?.toLowerCase() || "";
         const serviceName = booking.service.serviceName?.toLowerCase() || "";
-
+        const bookingDate = formatTime(booking.booking.bookingServiceAt)?.toLowerCase() || "";
         return (
             expertName.includes(searchLower) ||
-            serviceName.includes(searchLower)
+            serviceName.includes(searchLower) ||
+            bookingDate.includes(searchLower)
         );
     });
 
@@ -180,7 +181,7 @@ const ListRequestBookingFarmer = () => {
                                     <img className="material-symbols-2 pl-4" src={searchIcon} alt="search icon" />
                                     <input
                                         type="text"
-                                        className="search-input w-[38.5%]"
+                                        className="search-input w-[38.5%] text-black"
                                         placeholder="Search based on service name, expert name, or booking date"
                                         value={searchQuery}
                                         onChange={handleSearchChange}
