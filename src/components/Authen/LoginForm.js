@@ -60,6 +60,7 @@ const LoginForm = () => {
   const handleFacebookLogin = () => {
     window.FB.login(
       function (response) {
+        console.log("Facebook response: ", response.authResponse);
         if (response.authResponse) {
           const accessToken = response.authResponse.accessToken;
 
@@ -95,6 +96,7 @@ const LoginForm = () => {
                   storage.setItem("refreshToken", loginData.refreshToken);
                   storage.setItem("username", loginData.username);
                   storage.setItem("accId", loginData.accId);
+                  storage.setItem("roleId", loginData.roleId);
                   
                   // Hạn token
                   const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
