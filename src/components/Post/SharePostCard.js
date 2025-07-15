@@ -8,7 +8,7 @@ import default_avatar from "../../assets/images/default-avatar.png";
 const SharePostCard = ({ post }) => {
   const navigate = useNavigate();
   
-  console.log("SharePostCard - Full post data:", post); // Debug log
+  //console.log("SharePostCard - Full post data:", post); // Debug log
   
   // Xử lý dữ liệu SharePost từ API
   const sharePostData = post.sharePostData || {};
@@ -16,8 +16,8 @@ const SharePostCard = ({ post }) => {
   const ownerSharePost = sharePostData.ownerSharePost || {};
   const originalPost = sharePostData.originalPost || {};
   
-  console.log("SharePostCard - sharePostData:", sharePostData); // Debug log
-  console.log("SharePostCard - ownerSharePost:", ownerSharePost); // Debug log
+  // console.log("SharePostCard - sharePostData:", sharePostData); // Debug log
+  // console.log("SharePostCard - ownerSharePost:", ownerSharePost); // Debug log
 
   // Map dữ liệu SharePost theo cấu trúc API
   const postData = {
@@ -34,7 +34,7 @@ const SharePostCard = ({ post }) => {
     sharedPost: originalPost
   };
 
-  console.log("SharePostCard - Final postData:", postData); // Debug log
+  // console.log("SharePostCard - Final postData:", postData); // Debug log
 
   const originalPostForCard = originalPost.post ? {
     accId: originalPost.ownerPost?.accId || "",

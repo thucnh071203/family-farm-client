@@ -1,8 +1,7 @@
-// NotificationContext.js - Phiên bản đã sửa
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import instance from "../Axios/axiosConfig";
-import { useUser } from './UserContext'; // Sử dụng UserContext để check auth status
+import { useUser } from './UserContext';
 
 const NotificationContext = createContext();
 
@@ -20,16 +19,20 @@ export const NotificationProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [hubConnection, setHubConnection] = useState(null);
-    const { user } = useUser(); // Lấy thông tin user từ UserContext
+    const [currentToken, setCurrentToken] = useState(null);
+    const { user } = useUser();
 
-    // Kiểm tra xem user đã đăng nhập chưa
-    const isAuthenticated = () => {
-        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+    // Kiểm tra token hiện tại
+    const getCurrentToken = useCallback(() => {
+        return localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+    }, []);
+
+    const isAuthenticated = useCallback(() => {
+        const token = getCurrentToken();
         return !!token;
-    };
+    }, [getCurrentToken]);
 
-    const fetchNotifications = async () => {
-        // Chỉ fetch khi đã đăng nhập
+    const fetchNotifications = useCallback(async () => {
         if (!isAuthenticated()) {
             console.log("User not authenticated, skipping notification fetch");
             return;
@@ -48,14 +51,13 @@ export const NotificationProvider = ({ children }) => {
             }
         } catch (err) {
             console.error("Error fetching notifications:", err);
-            // Không set error nếu user chưa đăng nhập
             if (isAuthenticated()) {
                 setError("Lỗi khi tải thông báo từ máy chủ!");
             }
         } finally {
             setLoading(false);
         }
-    };
+    }, [isAuthenticated]);
 
     const markAsRead = async (notifiStatusId) => {
         if (!isAuthenticated()) return;
@@ -101,7 +103,8 @@ export const NotificationProvider = ({ children }) => {
     };
 
     // Reset state khi user logout
-    const resetNotificationState = () => {
+    const resetNotificationState = useCallback(() => {
+        console.log("Resetting notification state");
         setNotifications([]);
         setUnreadCount(0);
         setLoading(false);
@@ -110,19 +113,52 @@ export const NotificationProvider = ({ children }) => {
             hubConnection.stop();
             setHubConnection(null);
         }
-    };
+    }, [hubConnection]);
 
-    // Setup SignalR connection - chỉ khi đã đăng nhập
+    // Effect để theo dõi token changes - SỬA CHÍNH TẠI ĐÂY
     useEffect(() => {
-        if (!isAuthenticated()) {
-            resetNotificationState();
+        const checkToken = () => {
+            const token = getCurrentToken();
+            
+            if (token !== currentToken) {
+                setCurrentToken(token);
+                
+                // Nếu không có token (logout)
+                if (!token) {
+                    resetNotificationState();
+                }
+            }
+        };
+
+        // Kiểm tra token ngay lập tức
+        checkToken();
+
+        // Thiết lập interval để kiểm tra token thay đổi
+        const tokenCheckInterval = setInterval(checkToken, 1000);
+
+        // Lắng nghe storage events (khi token thay đổi từ tab khác)
+        const handleStorageChange = (e) => {
+            if (e.key === 'accessToken' || e.key === 'sessionStorage') {
+                checkToken();
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+
+        return () => {
+            clearInterval(tokenCheckInterval);
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, [currentToken, getCurrentToken, resetNotificationState]);
+
+    // Setup SignalR connection khi có token
+    useEffect(() => {
+        if (!currentToken || !isAuthenticated()) {
             return;
         }
 
-        const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-        
         const connection = new HubConnectionBuilder()
-            .withUrl(`https://localhost:7280/notificationHub?access_token=${token}`, {
+            .withUrl(`https://localhost:7280/notificationHub?access_token=${currentToken}`, {
                 logger: LogLevel.Information
             })
             .withAutomaticReconnect()
@@ -132,8 +168,12 @@ export const NotificationProvider = ({ children }) => {
 
         connection
             .start()
-            .then(() => {
-                console.log("SignalR Connected!");
+            .then(() => {                
+                // Fetch notifications ngay sau khi connect thành công
+                setTimeout(() => {
+                    fetchNotifications();
+                }, 300);
+
                 connection.on("ReceiveNotification", (notification) => {
                     console.log("Received notification:", JSON.stringify(notification, null, 2));
                     if (!notification.notifiId || !notification.content || !notification.status) {
@@ -148,6 +188,7 @@ export const NotificationProvider = ({ children }) => {
                     });
                     setUnreadCount((prevCount) => prevCount + (notification.status.isRead ? 0 : 1));
                 });
+
                 connection.onreconnected(() => {
                     console.log("SignalR Reconnected!");
                     fetchNotifications();
@@ -158,20 +199,23 @@ export const NotificationProvider = ({ children }) => {
             });
 
         return () => {
+            console.log("Cleaning up SignalR connection");
             if (connection) {
                 connection.stop();
             }
         };
-    }, [user]); // Dependency là user thay vì empty array
+    }, [currentToken, isAuthenticated, fetchNotifications]);
 
-    // Fetch notifications khi user đăng nhập
+    // Fetch notifications khi có token mới (backup)
     useEffect(() => {
-        if (isAuthenticated()) {
-            fetchNotifications();
-        } else {
-            resetNotificationState();
+        if (currentToken && isAuthenticated()) {
+            const timeoutId = setTimeout(() => {
+                fetchNotifications();
+            }, 1000);
+
+            return () => clearTimeout(timeoutId);
         }
-    }, [user]); // Chỉ fetch khi user state thay đổi
+    }, [currentToken, isAuthenticated, fetchNotifications]);
 
     const value = {
         notifications,
@@ -182,7 +226,7 @@ export const NotificationProvider = ({ children }) => {
         markAsRead,
         markAllAsRead,
         isAuthenticated: isAuthenticated(),
-        hubConnection // <-- Thêm dòng này để export
+        hubConnection
     };
 
     return (

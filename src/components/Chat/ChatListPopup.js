@@ -22,7 +22,7 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
             try {
                 const response = await instance.get("/api/chat/get-by-user");
                 if (response.data.success) {
-                    console.log("Initial unreadChatCount:", response.data.unreadChatCount);
+                    // console.log("Initial unreadChatCount:", response.data.unreadChatCount);
                     setUnreadChatCount(response.data.unreadChatCount || 0);
                 }
             } catch (error) {
@@ -88,7 +88,6 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
         connection.on("MessageSeen", messageSeenHandler);
 
         return () => {
-            console.log("Cleaning up SignalR event handlers in ChatListPopup");
             connection.off("ReceiveMessage", receiveMessageHandler);
             connection.off("MessageSeen", messageSeenHandler);
         };
@@ -109,7 +108,7 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
     };
 
     const handleUnreadCountChange = (count) => {
-        console.log("Received unreadChatCount from ChatList:", count);
+        // console.log("Received unreadChatCount from ChatList:", count);
         setUnreadChatCount(count);
     };
 

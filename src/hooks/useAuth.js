@@ -21,7 +21,7 @@ const useAuth = (navigate, location) => {
       // Kiểm tra thời gian hết hạn của accessToken
       const expiryTime = parseInt(localStorage.getItem("tokenExpiry") || sessionStorage.getItem("tokenExpiry") || "0", 10);
       if (expiryTime && Date.now() < expiryTime) {
-        console.log("⏳ Token still valid, skipping refresh");
+        // console.log("⏳ Token still valid, skipping refresh");
         setIsAuthenticated(true);
         setIsLoading(false);
         return;

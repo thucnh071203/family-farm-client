@@ -118,7 +118,7 @@ const AppContent = () => {
     );
   }
 
-  console.log("Current path:", location.pathname);
+  // console.log("Current path:", location.pathname);
 
   const isPublicRoute = [
     "/Login",
