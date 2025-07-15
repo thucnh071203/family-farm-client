@@ -25,7 +25,6 @@ const PopularService = () => {
                 );
                 const provider = providerRes.data?.data;
 
-                console.log("provider", provider);
 
                 return {
                   ...service,
@@ -53,7 +52,7 @@ const PopularService = () => {
 
           //setServices(mappedServices);
           setServices(enrichedServices);
-          console.log("✅ Services đã chuẩn hóa:", enrichedServices);
+          // console.log("✅ Services đã chuẩn hóa:", enrichedServices);
         } else {
           console.error("❌ Lỗi khi gọi API:", res.data.message);
         }

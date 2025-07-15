@@ -27,12 +27,12 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
             setLoading(true);
             try {
                 const response = await instance.get("/api/chat/get-by-user");
-                console.log("Fetched chats:", response.data);
+                // console.log("Fetched chats:", response.data);
                 if (response.data.success) {
                     const validChats = (response.data.chats || []).filter(
                         (chat) => chat && chat.chatId && chat.receiver && chat.receiver.accId
                     );
-                    console.log("Valid chats after filtering:", validChats);
+                    // console.log("Valid chats after filtering:", validChats);
                     setChats(validChats);
                     onUnreadCountChange(response.data.unreadChatCount || 0);
                 }
@@ -118,7 +118,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
             });
 
             return () => {
-                console.log("Cleaning up SignalR event handlers in ChatList");
+                // console.log("Cleaning up SignalR event handlers in ChatList");
                 connection.off("ReceiveMessage", receiveMessageHandler);
                 connection.off("MessageSeen");
                 connection.off("ChatRecalled");
@@ -171,7 +171,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
     );
 
     useEffect(() => {
-        console.log("Filtered chats:", filteredChats);
+        // console.log("Filtered chats:", filteredChats);
     }, [filteredChats]);
 
     const handleChatClick = (chat) => {

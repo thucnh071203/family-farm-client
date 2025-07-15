@@ -88,7 +88,7 @@ const ChatDetails = ({
             try {
                 const response = await instance.put(`/api/chat/mark-messages-as-seen/${chatId}`);
                 if (response.data === "Messages marked as seen.") {
-                    console.log("Messages marked as seen for chatId:", chatId);
+                    // console.log("Messages marked as seen for chatId:", chatId);
                 } else {
                     console.warn("Failed to mark messages as seen:", response.data);
                 }
@@ -104,7 +104,7 @@ const ChatDetails = ({
     useEffect(() => {
         if (connection && connection.state === "Connected") {
             connection.on("ReceiveMessage", (chatDetail, chatDTO) => {
-                console.log("ReceiveMessage in ChatDetails:", { chatDetail, chatDTO });
+                // console.log("ReceiveMessage in ChatDetails:", { chatDetail, chatDTO });
                 if (chatDetail?.chatId === chatId) {
                     setMessages((prevMessages) => [...prevMessages, chatDetail]);
                     scrollToBottom({ messagesEndRef });
@@ -112,7 +112,7 @@ const ChatDetails = ({
             });
 
             connection.on("MessageSeen", (receivedChatId) => {
-                console.log("MessageSeen in ChatDetails:", receivedChatId);
+                // console.log("MessageSeen in ChatDetails:", receivedChatId);
                 if (receivedChatId === chatId) {
                     setMessages((prevMessages) =>
                         prevMessages.map((msg) =>

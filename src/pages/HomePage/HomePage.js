@@ -59,7 +59,7 @@ const HomePage = () => {
         },
       });
 
-      console.log("API posts response:", response.data.data);
+      // console.log("API posts response:", response.data.data);
 
       if (response.data.success) {
         const newPosts = response.data.data || [];
