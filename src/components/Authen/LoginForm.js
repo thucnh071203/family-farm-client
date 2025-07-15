@@ -38,7 +38,7 @@ const LoginForm = () => {
       script.crossOrigin = "anonymous";
       script.onload = () => {
         window.FB.init({
-          appId: "681934764486226",
+          appId: "1018117513816487",
           cookie: true,
           xfbml: true,
           version: "v17.0", // Dùng version ổn định
@@ -48,7 +48,7 @@ const LoginForm = () => {
     } else {
       // Nếu SDK đã sẵn sàng, chỉ cần init
       window.FB.init({
-        appId: "681934764486226",
+        appId: "1018117513816487",
         cookie: true,
         xfbml: true,
         version: "v17.0",
