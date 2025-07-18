@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { toast, Bounce } from "react-toastify";
 const CreateCateService = () => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
@@ -56,14 +57,17 @@ const CreateCateService = () => {
         setCategoryName("");
         setCategoryDescription("");
         setErrors({ name: "", description: "" });
+        toast.success("CREATE NEW CATEGORY SUCCESSFULLY!");
         navigate(`/CateService`);
       } else {
         const errorData = await response.json();
         setMessage(`❌ Error: ${errorData.message || "Something went wrong."}`);
+        toast.error("CREATE NEW CATEGORY FAIL!");
       }
     } catch (error) {
       console.error("API error:", error);
       setMessage("❌ Failed to connect to the server.");
+      toast.error("HAS SOME ERROR WHEN CREATE CATEGORY!");
     }
   };
 
