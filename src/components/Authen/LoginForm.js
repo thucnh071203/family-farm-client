@@ -38,7 +38,7 @@ const LoginForm = () => {
       script.crossOrigin = "anonymous";
       script.onload = () => {
         window.FB.init({
-          appId: "681934764486226",
+          appId: "1018117513816487",
           cookie: true,
           xfbml: true,
           version: "v17.0", // Dùng version ổn định
@@ -48,7 +48,7 @@ const LoginForm = () => {
     } else {
       // Nếu SDK đã sẵn sàng, chỉ cần init
       window.FB.init({
-        appId: "681934764486226",
+        appId: "1018117513816487",
         cookie: true,
         xfbml: true,
         version: "v17.0",
@@ -60,6 +60,7 @@ const LoginForm = () => {
   const handleFacebookLogin = () => {
     window.FB.login(
       function (response) {
+        console.log("Facebook response: ", response.authResponse);
         if (response.authResponse) {
           const accessToken = response.authResponse.accessToken;
 
@@ -95,6 +96,7 @@ const LoginForm = () => {
                   storage.setItem("refreshToken", loginData.refreshToken);
                   storage.setItem("username", loginData.username);
                   storage.setItem("accId", loginData.accId);
+                  storage.setItem("roleId", loginData.roleId);
                   
                   // Hạn token
                   const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;

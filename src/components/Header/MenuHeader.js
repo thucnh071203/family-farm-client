@@ -24,22 +24,22 @@ const MenuHeader = ({ onToggle, isVisible }) => {
         fetchProfile();
     }, []);
 
-    // Xử lý logout
     const handleLogout = async () => {
-        try {
-            await instance.post('/api/authen/logout');
-            sessionStorage.clear();
-            localStorage.clear();
-            navigate('/Login');
-            onToggle();
-        } catch (error) {
-            console.error('Logout failed:', error);
-            sessionStorage.clear();
-            localStorage.clear();
-            navigate('/Login');
-            onToggle();
-        }
-    };
+    try {
+        await instance.post('/api/authen/logout');
+        sessionStorage.clear();
+        localStorage.clear();
+        
+        // Force reload toàn bộ app
+        window.location.reload();
+        navigate('/Login');
+    } catch (error) {
+        console.error('Logout failed:', error);
+        sessionStorage.clear();
+        localStorage.clear();
+        window.location.reload();
+    }
+};
 
     const roleId = localStorage.getItem("roleId") || sessionStorage.getItem("roleId");
 

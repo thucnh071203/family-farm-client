@@ -141,13 +141,13 @@ const ProcessResultInput = ({ subprocessId, currentStep, onSubmit }) => {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className={`py-3 px-10 rounded ${
+                            className={`py-3 px-10 ${
                                 isSubmitting 
                                     ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
                                     : "bg-[#3DB3FB]/25 hover:bg-[#2EA3EB] text-[#3DB3FB]"
                             }`}
                         >
-                            {isSubmitting ? "Continuing.." : "Continue"}
+                            {isSubmitting ? "Submitting.." : "Continue"}
                         </button>
                     </div>
                 </div>

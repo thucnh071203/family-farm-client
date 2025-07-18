@@ -1,24 +1,71 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
 
-const PopularService = ({ list }) => {
-  const services = [
-    {
-      title: "Solve problem about agriculture",
-      price: "500.000 VND",
-      image:
-        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-    },
-    {
-      title: "NodeJS online for beginner",
-      price: "500.000 VND",
-      image:
-        "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-    },
-  ];
+const PopularService = () => {
+  const [services, setServices] = useState([]);
+  
+  //get list service
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        // const res = await axios.get("https://localhost:7280/api/service/all");
+        const res = await instance.get("api/service/all");
+        if (res.data.success) {
+          const mappedServices = res.data.data
+            .filter((item) => item.service)
+            .map((item) => item.service);
+
+          const enrichedServices = await Promise.all(
+            mappedServices.map(async (service) => {
+              try {
+                // const providerRes = await axios.get(`https://localhost:7280/api/account/profile-another/${service.providerId}`);
+                const providerRes = await instance.get(
+                  `api/account/profile-another/${service.providerId}`
+                );
+                const provider = providerRes.data?.data;
+
+
+                return {
+                  ...service,
+                  fullName: provider?.fullName || "",
+                  avatar: provider?.avatar || "",
+                  country: provider?.country || "",
+                  city: provider?.city || "",
+                };
+              } catch (err) {
+                console.error(
+                  "❌ Không thể lấy thông tin provider:",
+                  service.providerId,
+                  err
+                );
+                return {
+                  ...service,
+                  fullName: "",
+                  avatar: "",
+                  country: "",
+                  city: "",
+                };
+              }
+            })
+          );
+
+          //setServices(mappedServices);
+          setServices(enrichedServices);
+          // console.log("✅ Services đã chuẩn hóa:", enrichedServices);
+        } else {
+          console.error("❌ Lỗi khi gọi API:", res.data.message);
+        }
+      } catch (err) {
+        console.error("❌ Lỗi mạng:", err);
+      }
+    };
+
+    fetchServices();
+  }, []);
 
   return (
-    <div className="bg-white p-5 rounded-lg shadow-md ">
+    <div className="bg-white p-5 rounded-lg shadow-md border border-solid border-gray-300">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold mb-3">Popular Service</h2>
         <Link className="text-blue-800" to="/Service">
@@ -26,8 +73,8 @@ const PopularService = ({ list }) => {
         </Link>
       </div>
       <div className="flex flex-col gap-3 ">
-        {Array.isArray(list) &&
-          list.slice(0, 4).map((service, index) => (
+        {Array.isArray(services) &&
+          services.slice(0, 4).map((service, index) => (
             <div
               key={index}
               className="flex justify-between gap-1 rounded-lg relative border border-solid border-gray-200"

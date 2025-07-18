@@ -21,7 +21,6 @@ export const UserProvider = ({ children }) => {
           const response = await instance.get("/api/account/own-profile", {
             headers: { Authorization: `Bearer ${token}` },
           });
-          console.log("Test profile: ", response)
           if (response.status === 200) {
             const data = response.data.data;
             setUser(data);

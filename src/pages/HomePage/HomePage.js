@@ -28,8 +28,6 @@ const HomePage = () => {
   const PAGE_SIZE = 5;
   const [suggestedFriends, setSuggestedFriends] = useState([]);
   const [groupSuggestData, setGroupData] = useState([]);
-  //get list service
-    const [services, setServices] = useState([]);
 
   // Lấy thông tin người dùng từ storage
   useEffect(() => {
@@ -61,7 +59,7 @@ const HomePage = () => {
         },
       });
 
-      console.log("API posts response:", response.data.data);
+      // console.log("API posts response:", response.data.data);
 
       if (response.data.success) {
         const newPosts = response.data.data || [];
@@ -216,65 +214,6 @@ const HomePage = () => {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
     }
   };
-//get list service
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        // const res = await axios.get("https://localhost:7280/api/service/all");
-        const res = await instance.get("api/service/all");
-        if (res.data.success) {
-          const mappedServices = res.data.data
-            .filter((item) => item.service)
-            .map((item) => item.service);
-
-          const enrichedServices = await Promise.all(
-            mappedServices.map(async (service) => {
-              try {
-                // const providerRes = await axios.get(`https://localhost:7280/api/account/profile-another/${service.providerId}`);
-                const providerRes = await instance.get(
-                  `api/account/profile-another/${service.providerId}`
-                );
-                const provider = providerRes.data?.data;
-
-                console.log("provider", provider);
-
-                return {
-                  ...service,
-                  fullName: provider?.fullName || "",
-                  avatar: provider?.avatar || "",
-                  country: provider?.country || "",
-                  city: provider?.city || "",
-                };
-              } catch (err) {
-                console.error(
-                  "❌ Không thể lấy thông tin provider:",
-                  service.providerId,
-                  err
-                );
-                return {
-                  ...service,
-                  fullName: "",
-                  avatar: "",
-                  country: "",
-                  city: "",
-                };
-              }
-            })
-          );
-
-          //setServices(mappedServices);
-          setServices(enrichedServices);
-          console.log("✅ Services đã chuẩn hóa:", enrichedServices);
-        } else {
-          console.error("❌ Lỗi khi gọi API:", res.data.message);
-        }
-      } catch (err) {
-        console.error("❌ Lỗi mạng:", err);
-      }
-    };
-
-    fetchServices();
-  }, []);
 
   return (
     <div className="HomePage bg-gray-100">
@@ -284,7 +223,7 @@ const HomePage = () => {
         <div className="gap-5 grid lg:grid-cols-[1fr_2fr_1fr] grid-cols-1">
           <aside className="flex flex-col gap-5 order-1">
             <WeatherWidget />
-            <PopularService list={services}/>
+            <PopularService/>
           </aside>
           <section
             ref={postContainerRef}

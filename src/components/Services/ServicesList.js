@@ -20,6 +20,7 @@ import instance from "../../Axios/axiosConfig";
 import defaultAvatar from "../../assets/images/default-avatar.png";
 import { jwtDecode } from "jwt-decode";
 import SuggestedFriends from "../Home/SuggestedFriends";
+import { toast } from "react-toastify";
 
 export default function ServicesList() {
   const [groupSuggestData, setGroupData] = useState([]);
@@ -54,6 +55,11 @@ export default function ServicesList() {
 
   // Mở modal booking
   const openBookingModal = (id) => {
+    const roleId = localStorage.getItem("roleId") || sessionStorage.getItem("roleId");
+    if (roleId === "68007b2a87b41211f0af1d57") {
+      toast.error("USER DOES NOT HAVE BOOKING PERMISSION.");
+      return;
+    }
     setSelectedServiceId(id);
     setIsBookingOpen(true);
   };
@@ -88,8 +94,6 @@ export default function ServicesList() {
                 );
                 const provider = providerRes.data?.data;
 
-                console.log("provider", provider);
-
                 return {
                   ...service,
                   fullName: provider?.fullName || "",
@@ -116,7 +120,7 @@ export default function ServicesList() {
 
           //setServices(mappedServices);
           setServices(enrichedServices);
-          console.log("✅ Services đã chuẩn hóa:", enrichedServices);
+          // console.log("✅ Services đã chuẩn hóa:", enrichedServices);
         } else {
           console.error("❌ Lỗi khi gọi API:", res.data.message);
         }

@@ -100,6 +100,7 @@ import ListPhotoPage from "./pages/Profile/ListPhotoPage";
 import ListPhotoOther from "./pages/Profile/ListPhotoOther";
 import CreateSubprocessPage from "./pages/Subprocess/CreateSubprocessPage";
 import RePaymentResultPage from "./pages/CallbackPage/RePaymentResult";
+import ReviewServicePage from "./pages/ProcessPage/ReviewServicePage";
 
 
 const AppContent = () => {
@@ -117,7 +118,7 @@ const AppContent = () => {
     );
   }
 
-  console.log("Current path:", location.pathname);
+  // console.log("Current path:", location.pathname);
 
   const isPublicRoute = [
     "/Login",
@@ -289,6 +290,7 @@ const AppContent = () => {
             <Route path="/PaymentFailed" element={<PaymentFailed />} />
             <Route path="/CreateSubprocess" element={<CreateSubprocessPage/>} />
             <Route path="/RePaymentResult" element={<RePaymentResultPage />} />
+            <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login

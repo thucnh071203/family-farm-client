@@ -205,7 +205,7 @@ const PostInGroupCard = ({
 
         if (response.status === 200) {
           setIsSavedPost(response.data);
-          console.log("Post is saved?", isSavedPost); // ← Log đúng giá trị
+          // console.log("Post is saved?", isSavedPost); // ← Log đúng giá trị
         }
       } catch (error) {
         console.log("Cannot fetch api checkIsSavedPost: " + error);

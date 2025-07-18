@@ -23,7 +23,7 @@ const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isD
     setPostId(postIdParam);
     setIsOwner(isOwnerParam);
     const storedAccessToken = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-    console.log("Access Token:", storedAccessToken); // Debug accessToken
+    // console.log("Access Token:", storedAccessToken); // Debug accessToken
     setAccessToken(storedAccessToken);
   }, [postIdParam, isOwnerParam]);
 
