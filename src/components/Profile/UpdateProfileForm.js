@@ -9,6 +9,7 @@ const UpdateProfileForm = ({ profileData }) => {
   const [certificateFile, setCertificateFile] = useState(null);
   const [certificatePreview, setCertificatePreview] = useState(null); // để hiện ảnh
   const [userRole, setUserRole] = useState("");
+  const [isCertificateRemoved, setIsCertificateRemoved] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -55,9 +56,9 @@ const UpdateProfileForm = ({ profileData }) => {
       });
 
       if (res.data?.success && res.data.data) {
-        console.log("Profile another:", res.data.data);
+        // console.log("Profile another:", res.data.data);
         setUserRole(res.data.data.roleId); // 👉 set vào state
-        console.log("check role id", userRole);
+        // console.log("check role id", userRole);
       } else {
         console.error("Failed to load profile another!");
       }
@@ -161,9 +162,9 @@ const UpdateProfileForm = ({ profileData }) => {
   }, [formData.district, wards, profileData?.address]);
 
 
-  useEffect(() => {
-    console.log("✅ Current formData:", formData);
-  }, [formData]);
+  // useEffect(() => {
+  //   console.log("✅ Current formData:", formData);
+  // }, [formData]);
 
   // 👉 Handle change 
   const handleChange = (e) => {
@@ -197,8 +198,19 @@ const UpdateProfileForm = ({ profileData }) => {
     if (file) {
       setCertificateFile(file);
       setCertificatePreview(URL.createObjectURL(file));
+      setIsCertificateRemoved(false); // 👉 Reset lại nếu chọn ảnh mới
       setErrors(prev => ({ ...prev, certificate: '' })); // clear lỗi khi chọn file
     }
+  };
+
+  // Handler xóa ảnh:
+  const handleRemoveCertificate = (e) => {
+    e.stopPropagation(); // 👉 chặn sự kiện lan lên label
+    e.preventDefault();  // 👉 phòng khi button là submit
+    setCertificateFile(null);
+    setCertificatePreview(null);
+    // setErrors(prev => ({ ...prev, certificate: 'Certificate is required for expert!' }));
+    setIsCertificateRemoved(true); // 👉 Đánh dấu đã xoá ảnh
   };
 
   const validateForm = () => {
@@ -256,7 +268,7 @@ const UpdateProfileForm = ({ profileData }) => {
     //   isValid = false;
     // }
 
-    console.log("Validate ảnh", profileData?.certificate);
+    // console.log("Validate ảnh", profileData?.certificate);
     if (
       userRole === '68007b2a87b41211f0af1d57' &&
       !certificateFile && // chưa chọn mới
@@ -340,7 +352,15 @@ const UpdateProfileForm = ({ profileData }) => {
         console.log("Updated profile:", res.data);
         navigate("/PersonalPage");
       } else {
-        toast.error(res.data?.message || "Failed to update profile.");
+        const message = res.data?.messageError || "Failed to update profile.";
+
+        // 👇 Nếu trùng email hoặc phone
+        if (message.includes("Email")) {
+          setErrors(prev => ({ ...prev, email: message }));
+        }
+        if (message.includes("Phone")) {
+          setErrors(prev => ({ ...prev, phone: message }));
+        }
       }
     } catch (err) {
       console.error("Update profile failed:", err);
@@ -574,7 +594,7 @@ const UpdateProfileForm = ({ profileData }) => {
                 onChange={handleCertificateChange}
               />
 
-              <label htmlFor="certificate-upload" className="block cursor-pointer mt-2 w-full relative">
+              {/* <label htmlFor="certificate-upload" className="block cursor-pointer mt-2 w-full relative">
                 <img
                   className="relative px-3 object-cover rounded-[12px] w-full min-h-[200px] h-auto border z-50"
                   src={certificatePreview || profileData.certificate}
@@ -582,7 +602,43 @@ const UpdateProfileForm = ({ profileData }) => {
 
                 {!certificatePreview && (
                   <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-xl z-0">
-                    <i className="fa-solid fa-cloud-arrow-up"></i>Upload certificate here {/* icon FA upload */}
+                    <i className="fa-solid fa-cloud-arrow-up"></i>Upload certificate here
+                  </div>
+                )}
+              </label> */}
+
+              <label htmlFor="certificate-upload" className="block cursor-pointer mt-2 w-full relative group">
+                {/* <img
+                  className="relative px-3 object-cover rounded-[12px] w-full min-h-[200px] h-auto border z-10"
+                  src={certificatePreview || profileData.certificate}
+                  alt="Certificate preview"
+                /> */}
+                <img
+                  className="relative px-3 object-cover rounded-[12px] w-full min-h-[200px] h-auto border z-10"
+                  src={
+                    certificatePreview
+                      ? certificatePreview
+                      : !isCertificateRemoved && profileData.certificate
+                      ? profileData.certificate
+                      : ""
+                  }
+                  alt="Certificate preview"
+                />
+
+                {(certificatePreview || (!isCertificateRemoved && profileData.certificate)) && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveCertificate}
+                    className="absolute top-2 right-4 z-10 w-[30px] h-[30px] bg-white text-red-600 rounded-full pl-[1px] shadow hover:bg-red-100 transition"
+                    title="Remove certificate"
+                  >
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                )}
+
+                {!certificatePreview && (
+                  <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-xl z-0">
+                    <i className="fa-solid fa-cloud-arrow-up mr-2"></i> Upload certificate here
                   </div>
                 )}
               </label>
