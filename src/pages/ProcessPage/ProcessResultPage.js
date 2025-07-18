@@ -155,6 +155,7 @@ const ProcessResultPage = () => {
             currentStep={currentStep}
           />
           <ProcessResultInput 
+            subprocessId={SubprocessData.subprocessId}
             currentStep={currentStep}
             onSubmit={createStepResult}
           />

@@ -4,13 +4,15 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
 
-const ProcessResultInput = ({ currentStep, onSubmit }) => {
+const ProcessResultInput = ({ subprocessId, currentStep, onSubmit }) => {
     const [images, setImages] = useState([]);
     const [content, setContent] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const fileInputRef = useRef(null);
     const resultRef = useRef(null);
     
+    console.log(subprocessId)
+
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
         const newImages = files.map((file) => ({
@@ -50,6 +52,7 @@ const ProcessResultInput = ({ currentStep, onSubmit }) => {
         const formData = new FormData();
         formData.append('StepId', currentStep.stepId);
         formData.append('StepResultComment', content);
+        formData.append('SubprocessId', subprocessId);
         
         // Thêm hình ảnh vào FormData
         images.forEach((image, index) => {
