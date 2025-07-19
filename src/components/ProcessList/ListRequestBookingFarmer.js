@@ -89,9 +89,11 @@ const ListRequestBookingFarmer = () => {
                         }
                         : b
                 );
+                console.log(`SignalR update for booking ${bookingId}`);
                 return updatedList;
             });
         };
+
 
         hubConnection.on("ReceiveBookingStatusChanged", handleBookingCancelled);
         return () => {

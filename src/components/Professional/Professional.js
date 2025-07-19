@@ -5,8 +5,12 @@ import { getOwnProfile } from "../../services/accountService";
 import { useEffect, useState } from "react";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
+import { useNotification } from "../../context/NotificationContext";
 
 const Professional = () => {
+  const { hubConnection } = useNotification();
+  // const [bookingRequests, setBookingRequests] = useState([]);
+  // const { connection: signalRConnection } = useSignalR(); // giả sử hook này đã trả về connection
   const [profileData, setProfileData] = useState(null);
   const [bookingRequests, setBookingRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -23,6 +27,39 @@ const Professional = () => {
       throw error;
     }
   };
+
+  useEffect(() => {
+    if (!hubConnection) return;
+
+    const handleNewBookingRequest = (newBooking) => {
+      // ✅ Thêm vào đầu danh sách (tuỳ UI)
+      setBookingRequests((prev) => [
+        {
+          booking: {
+            bookingServiceId: newBooking.bookingServiceId,
+            bookingServiceAt: newBooking.bookingServiceAt,
+            bookingServiceStatus: newBooking.status,
+          },
+          account: {
+            fullName: newBooking.farmerName,
+            avatar: newBooking.farmerAvatar || "", // ✅ tránh null
+          },
+          service: {
+            serviceName: newBooking.serviceName,
+          }
+        },
+        ...prev
+      ]);
+
+      console.log("SignalR new booking:", newBooking);
+    };
+
+
+    hubConnection.on("ReceiveNewBookingRequest", handleNewBookingRequest);
+    return () => {
+      hubConnection.off("ReceiveNewBookingRequest", handleNewBookingRequest);
+    };
+  }, [hubConnection]);
 
   // Hàm chấp nhận booking
   const acceptBooking = async (bookingId) => {
@@ -104,7 +141,7 @@ const Professional = () => {
             "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2F638841241684706439_default-avatar.jpg?alt=media&token=8190d336-e471-4a34-bf8e-7853e969b04f"
           }
           alt="Expert Avatar"
-          className="w-full h-full object-cover rounded-full border"
+          className="w-full max-w-[223px] h-full max-h-[223px] object-cover rounded-full border"
         />
         <h2 className="mt-4 text-2xl font-semibold">
           {profileData?.fullName || "Unknown"}
@@ -125,51 +162,58 @@ const Professional = () => {
 
       <div className="w-full md:w-3/4">
         {bookingRequests.length > 0 ? (
-          bookingRequests.map((req, index) => (
-            <div key={req.booking.bookingServiceId}>
-              <div className="flex items-center justify-between py-4 border-b text-left">
-                <div className="flex items-center space-x-3">
-                  <img
-                    src={req.account.avatar || "https://i.imgur.com/hYVzLgm.png"}
-                    alt={req.account.fullName}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div className="space-y-2">
-                    <p className="font-semibold">
-                      {req.account.fullName} -{" "} in {" "}
-                      <span className="text-blue-500 underline cursor-pointer">
-                        {req.service.serviceName}
-                      </span>
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Request at{" "}
-                      {new Date(req.booking.bookingServiceAt).toLocaleString()}
-                    </p>
+          bookingRequests.map((req, index) => {
+            const fullName = req?.account?.fullName || "-";
+            const avatar = req?.account?.avatar || "https://i.imgur.com/hYVzLgm.png";
+            const serviceName = req?.service?.serviceName || "Unknown Service";
+            const bookingAt = req?.booking?.bookingServiceAt
+              ? new Date(req.booking.bookingServiceAt).toLocaleString()
+              : "Invalid Date";
+
+            return (
+              <div key={req.booking.bookingServiceId}>
+                <div className="flex items-center justify-between py-4 border-b text-left">
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src={avatar}
+                      alt={fullName}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                    <div className="space-y-2">
+                      <p className="font-semibold">
+                        {fullName} -{" "} in{" "}
+                        <span className="text-blue-500 underline cursor-pointer">
+                          {serviceName}
+                        </span>
+                      </p>
+                      <p className="text-sm text-gray-500">Request at {bookingAt}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-6">
+                    <button
+                      className="text-red-500 hover:underline flex items-center gap-2 disabled:opacity-50"
+                      onClick={() => cancelBooking(req.booking.bookingServiceId)}
+                      disabled={actionLoading[req.booking.bookingServiceId]}
+                    >
+                      <img src={reject_icon} alt="" /> <span>Reject</span>
+                    </button>
+                    <button
+                      className="text-blue-500 hover:underline flex items-center gap-2 disabled:opacity-50"
+                      onClick={() => acceptBooking(req.booking.bookingServiceId)}
+                      disabled={actionLoading[req.booking.bookingServiceId]}
+                    >
+                      <img src={accept_icon} alt="" /> <span>Accept</span>
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex space-x-6">
-                  <button
-                    className="text-red-500 hover:underline flex items-center gap-2 disabled:opacity-50"
-                    onClick={() => cancelBooking(req.booking.bookingServiceId)}
-                    disabled={actionLoading[req.booking.bookingServiceId]}
-                  >
-                    <img src={reject_icon} alt="" /> <span>Reject</span>
-                  </button>
-                  <button
-                    className="text-blue-500 hover:underline flex items-center gap-2 disabled:opacity-50"
-                    onClick={() => acceptBooking(req.booking.bookingServiceId)}
-                    disabled={actionLoading[req.booking.bookingServiceId]}
-                  >
-                    <img src={accept_icon} alt="" /> <span>Accept</span>
-                  </button>
-                </div>
+                {index < bookingRequests.length - 1 && (
+                  <hr className="border-t border-gray-300" />
+                )}
               </div>
-              {index < bookingRequests.length - 1 && (
-                <hr className="border-t border-gray-300" />
-              )}
-            </div>
-          ))
+            );
+          })
+
         ) : (
           <div>No booking requests found.</div>
         )}
