@@ -65,7 +65,19 @@ const Professional = () => {
   const acceptBooking = async (bookingId) => {
     try {
       setActionLoading((prev) => ({ ...prev, [bookingId]: true }));
-      const response = await instance.put(`/api/booking-service/accept-booking/${bookingId}`);
+      // const response = await instance.put(`/api/booking-service/accept-booking/${bookingId}`);
+      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+      const response = await instance.put(
+        `/api/booking-service/accept-booking/${bookingId}`,
+        null, // Vì PUT này không có body
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
       if (response.data) {
         toast.success("Booking accepted successfully!");
         // Cập nhật danh sách để loại bỏ booking đã chấp nhận
