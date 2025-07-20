@@ -77,9 +77,15 @@ export default function ServicesList() {
 
   useEffect(() => {
     const fetchServices = async () => {
+      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
       try {
         // const res = await axios.get("https://localhost:7280/api/service/all");
-        const res = await instance.get("api/service/all");
+        // const res = await instance.get("api/service/all");
+        const res = await instance.get("api/service/all", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
         if (res.data.success) {
           const mappedServices = res.data.data
             .filter((item) => item.service)
