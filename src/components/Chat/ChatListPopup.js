@@ -26,7 +26,7 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
                     setUnreadChatCount(response.data.unreadChatCount || 0);
                 }
             } catch (error) {
-                toast.error("Load unread message count failed!");
+                // toast.error("Load unread message count failed!");
                 console.error("Fetch unread count error:", error);
             }
         };
