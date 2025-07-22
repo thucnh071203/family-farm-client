@@ -16,6 +16,7 @@ const ListRequestBookingFarmer = () => {
     const [listBooking, setListBooking] = useState([]);
     const [accessToken, setAccessToken] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+    const navigate = useNavigate();
 
     // Lấy thông tin người dùng từ storage
     useEffect(() => {
@@ -150,6 +151,10 @@ const ListRequestBookingFarmer = () => {
         );
     });
 
+    const handldeReview = (serviceId) => {
+        navigate(`/ReviewService/${serviceId}`)
+    }
+
     return (
         <div className="ListRequestBookingFarmer">
             <div className="progress-managment pt-36">
@@ -223,6 +228,19 @@ const ListRequestBookingFarmer = () => {
                                                     <div className="text-completed">Accepted</div>
                                                 </div>
                                             )}
+
+                                            {booking.booking.bookingServiceStatus === "On Process" && (
+                                                <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
+                                                    <div className="text-completed">On Process</div>
+                                                </div>
+                                            )}
+
+                                            {booking.booking.bookingServiceStatus === "Completed" && (
+                                                <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
+                                                    <div className="text-completed">Completed</div>
+                                                </div>
+                                            )}
+
                                             {booking.booking.bookingServiceStatus === "Paid" && (
                                                 <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
                                                     <div className="text-completed">Paid</div>
@@ -258,14 +276,24 @@ const ListRequestBookingFarmer = () => {
                                                         <div className="progress-button-text">Payment</div>
                                                     </div>
                                                 )}
-                                                {booking.booking.bookingServiceStatus === "Paid" && (
+
+                                                {booking.booking.bookingServiceStatus === "Completed" && (
                                                     <div
                                                         className="footer-booking-button"
-                                                        onClick={() => handlePayment(booking.booking.bookingServiceId, booking.booking.price)}
+                                                        onClick={() => handldeReview(booking.booking.serviceId)}
+                                                    >
+                                                        <div className="progress-button-text">Review</div>
+                                                    </div>
+                                                )}
+                                                {booking.booking.bookingServiceStatus === "On Process" && (
+                                                    <div
+                                                        className="footer-booking-button"
+                                                        // onClick={() => handlePayment(booking.booking.bookingServiceId, booking.booking.price)}
                                                     >
                                                         <div className="progress-button-text">Go to process</div>
                                                     </div>
                                                 )}
+                                                
                                                 <div className="footer-booking-price">
                                                     <div className="total-price">
                                                         TOTAL:{" "}
