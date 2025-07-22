@@ -1,7 +1,40 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { Dialog } from "@headlessui/react";
 import { Link } from "react-router-dom";
+import FileReview from "./FileReview";
 const AccountSencorDetail = ({ account }) => {
+  const [open, setOpen] = useState(false);
+  const [fileInfo, setFileInfo] = useState({ url: "", mime: "" });
+
+  const getMimeTypeFromUrl = (url) => {
+    if (!url) return "";
+    const cleanUrl = url.split("?")[0]; // Bỏ query string
+    const ext = cleanUrl.split(".").pop().toLowerCase();
+
+    switch (ext) {
+      case "jpg":
+      case "jpeg":
+        return "image/jpeg";
+      case "png":
+        return "image/png";
+      case "pdf":
+        return "application/pdf";
+      case "doc":
+        return "application/msword";
+      case "docx":
+        return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      default:
+        return "unknown";
+    }
+  };
+
+  const openCertificate = () => {
+    const mime = getMimeTypeFromUrl(account.certificate);
+    setFileInfo({ url: account.certificate, mime });
+    setOpen(true);
+  };
+
   const navigate = useNavigate();
   const updateCensor = async (status) => {
     try {
@@ -12,7 +45,7 @@ const AccountSencorDetail = ({ account }) => {
         {
           method: "PUT",
           headers: {
-            //Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
@@ -162,9 +195,53 @@ const AccountSencorDetail = ({ account }) => {
           >
             <p className="w-[180px] pl-4 ">Certificate</p>
           </div>
-          <p className="text-left pl-4 ">huuthuc</p>
+          {/* <p className="text-left pl-4 ">{account.certificate}</p> */}
+          {account.certificate ? (
+            <button
+              onClick={openCertificate}
+              className="pl-4 text-blue-600 underline"
+            >
+              View certificate
+            </button>
+          ) : (
+            <p className="pl-4">None</p>
+          )}
         </div>
       </div>
+
+      {open && (
+        <Dialog
+          open={open}
+          onClose={() => setOpen(false)}
+          className="relative z-50"
+        >
+          {/* backdrop */}
+          {/* <div className="fixed inset-0 bg-black/40" aria-hidden="true" /> */}
+
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <Dialog.Panel className="w-full max-w-4xl bg-white rounded-lg p-4">
+              {/* <div className="flex justify-between items-center mb-2">
+                <Dialog.Title className="text-lg font-semibold">
+                  Certificate Preview
+                </Dialog.Title>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="text-xl font-bold text-red-500"
+                >
+                  ×
+                </button>
+              </div> */}
+
+              {/* hiển thị file */}
+              <FileReview
+                url={fileInfo.url}
+                mime={fileInfo.mime}
+                onClose={() => setOpen(false)}
+              />
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { toast, Bounce } from "react-toastify";
 const EditCateService = () => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
@@ -31,9 +32,11 @@ const EditCateService = () => {
       if (data.success === true && data.data.length > 0) {
         const service = data.data[0].categoryService;
         setCateService(service); // chỉ set object, không set input ở đây
+       toast.success("EDIT CATEGORY SUCCESSFULLY!");
       }
     } catch (err) {
       console.error("Error fetching category service:", err.message || err);
+      toast.error("HAS SOME ERROR WHEN EDIT CATEGORY!");
     }
   };
 

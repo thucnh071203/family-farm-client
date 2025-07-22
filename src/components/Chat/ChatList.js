@@ -37,7 +37,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
                     onUnreadCountChange(response.data.unreadChatCount || 0);
                 }
             } catch (error) {
-                toast.error("Chat list loading failed!");
+                // toast.error("Chat list loading failed!");
                 console.error("Fetch chats error:", error);
             } finally {
                 setLoading(false);
