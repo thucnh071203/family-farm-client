@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FriendActionButton from "../Friend/FriendActionButton";
 import serviceBg from "../../assets/images/service_thumb.png";
+import { toast } from "react-toastify";
+import BookingModal from "./BookingModal";
 
 const expert = {
     name: "Phuong Nam",
@@ -10,6 +12,7 @@ const expert = {
 
 const ServiceDetailCard = ({ data, summary }) => {
     const {
+        serviceId,
         serviceName,
         serviceDescription,
         price,
@@ -22,6 +25,9 @@ const ServiceDetailCard = ({ data, summary }) => {
         avatar,
         categoryName
     } = data || {};
+
+    const [selectedServiceId, setSelectedServiceId] = useState(null);
+    const [isBookingOpen, setIsBookingOpen] = useState(false);
 
     // Xử lý dữ liệu tóm tắt đánh giá
     const defaultSummary = {
@@ -51,6 +57,16 @@ const ServiceDetailCard = ({ data, summary }) => {
         return stars;
     };
 
+    // Mở modal booking
+    const openBookingModal = (serviceId) => {
+        const roleId = localStorage.getItem("roleId") || sessionStorage.getItem("roleId");
+        if (roleId === "68007b2a87b41211f0af1d57") {
+            toast.error("USER DOES NOT HAVE BOOKING PERMISSION.");
+            return;
+        }
+        setSelectedServiceId(serviceId);
+        setIsBookingOpen(true);
+    };
 
     return (
         <div className="p-6 bg-white rounded shadow-md border border-solid border-gray-300">
@@ -115,9 +131,20 @@ const ServiceDetailCard = ({ data, summary }) => {
                         className="w-full mx-auto rounded-lg h-[200px] object-cover"
                         alt="Service"
                     />
-                    <button className="p-3 px-8 text-white bg-[#3DB3FB] rounded-full">Đặt dịch vụ</button>
+                    <button className="p-3 px-8 text-white bg-[#3DB3FB] hover:bg-blue-700 rounded-full"
+                    onClick={(e) => {
+                            e.stopPropagation();     // Ngăn sự kiện nổi bọt lên Link
+                            e.preventDefault();      // Ngăn hành vi mặc định của thẻ <a>
+                            openBookingModal(serviceId);
+                          }}
+                    >Đặt dịch vụ</button>
                 </div>
             </div>
+            <BookingModal
+                isOpen={isBookingOpen}
+                onClose={() => setIsBookingOpen(false)}
+                serviceId={selectedServiceId}
+            />
         </div>
     );
 };

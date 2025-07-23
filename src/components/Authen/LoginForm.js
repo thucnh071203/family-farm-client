@@ -20,6 +20,9 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
   const [errors, setErrors] = useState({ username: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false); // ← State kiểm soát hiển thị mật khẩu
+  const [isSubmitted, setIsSubmitted] = useState(false); // ← dùng để kiểm soát việc hiện lỗi
+
   const navigate = useNavigate();
 
   const { initiateGoogleLogin, loading, error } = useGoogleAuth();
@@ -147,8 +150,43 @@ const LoginForm = () => {
     );
   };
 
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
 
+    if (newPassword.length < 8) {
+      setErrors((prev) => ({
+        ...prev,
+        password: "Password must be at least 8 characters",
+      }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        password: "",
+      }));
+    }
+  };
+
+  
   const handleLogin = async () => {
+    setIsSubmitted(true); // đánh dấu đã bấm login
+
+    const newErrors = {};
+
+    if (!username.trim()) {
+      newErrors.username = "Username is required";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    setErrors(newErrors);
+
+    // ✅ Nếu có lỗi thì return ngay — KHÔNG gọi toast hoặc API
+    if (Object.keys(newErrors).length > 0) return;
 
     try {
       const loginResponse = await instance.post('/api/authen/login', {
@@ -220,7 +258,13 @@ const LoginForm = () => {
                 type="text"
                 placeholder="Enter your username, email or phone"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                // onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (isSubmitted && e.target.value.trim()) {
+                    setErrors((prev) => ({ ...prev, username: "" }));
+                  }
+                }}
               />
             </div>
           </div>
@@ -239,12 +283,29 @@ const LoginForm = () => {
               <img className="mdi-clock" src={mdiClock} alt="Clock Icon" />
               <input
                 className="input-text"
-                type="password"
+                // type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setPassword(value);
+
+                  if (isSubmitted) {
+                    if (value.length >= 8) {
+                      // Chỉ xóa lỗi nếu đã nhập hợp lệ
+                      setErrors((prev) => ({ ...prev, password: "" }));
+                    }
+                    // KHÔNG else → để giữ nguyên lỗi cũ nếu chưa đủ
+                  }
+                }}
               />
-              <img className="mdi-eye" src={iconEye} alt="Eye Icon" />
+              <img
+                className="mdi-eye cursor-pointer"
+                src={iconEye}
+                alt="Toggle Password Visibility"
+                onClick={() => setShowPassword((prev) => !prev)} // ← Toggle
+              />
             </div>
           </div>
           {errors.password && (
@@ -268,7 +329,12 @@ const LoginForm = () => {
         </div>
 
         <div className="w-full frame-2">
-          <div className="div-wrapper" onClick={handleLogin}>
+          <div className="div-wrapper" 
+            onClick={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+          >
             <button type="button"
               className="text-wrapper-2">
               Login

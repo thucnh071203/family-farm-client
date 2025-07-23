@@ -370,95 +370,15 @@ export default function ServicesList() {
 
             <div className="service-container w-[91.8%] lg:w-[650px] mx-auto">
               {/* Hiển thị list service */}
-              {/* {currentServices.map((service, index) => {
-                return (
-                  <div
-                    key={index}
-                    className="service-box w-[42%] md:w-[44.55%] lg:w-[315px] pb-3"
-                  >
-                    <img
-                      className="service-background"
-                      src={
-                        service.imageUrl && service.imageUrl.trim() !== ""
-                          ? service.imageUrl
-                          : serviceBg
-                      }
-                      alt="service background"
-                    />
-                    <div className="service-title w-[93%] min-h-[32px]">
-                      <Link
-                        to={`/ServiceDetail/${service.serviceId}`}
-                        className="text-[rgba(0,0,0,0.75)] hover:text-[#3db3fb] hover:no-underline transition-colors duration-200 ease-in-out"
-                      >
-                        {service.serviceName}
-                      </Link>
-                    </div>
-                    <div className="body-service px-3">
-                      <div className="author-content">
-                        <div className="avatar-content">
-                          <img
-                            className="w-[45px] h-[45px] rounded-full"
-                            src={
-                              service.avatar && service.avatar.trim() !== ""
-                                ? service.avatar
-                                : defaultAvatar
-                            }
-                            alt="avatar"
-                          />
-                        </div>
-                        <div className="author-info">
-                          <div className="author-name">{service.fullName}</div>
-                          <div className="author-role">Expert</div>
-                        </div>
-                      </div>
-                      <div className="price-content">
-                        <div className="icon-cart">
-                          <img src={cart} alt="cart" />
-                        </div>
-                        <span className="price-num">{service.price}</span>
-                        <span className="price-deno">VND</span>
-                      </div>
-                    </div>
-                    <div className="footer-service">
-                      <div className="rate-cotent">
-                        <div className="flex flex-row star-rates">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <img
-                              key={star}
-                              className="star-icon"
-                              src={
-                                star <= Math.round(service.averageRate || 0)
-                                  ? yellowStar
-                                  : grayStar
-                              }
-                              alt="star"
-                            />
-                          ))}
-                        </div>
-                        <div className="rate-num">
-                          ({service.rateCount || 0})
-                        </div>
-                      </div>
-                      <div className="status-expert-container">
-                        <button
-                          className="font-bold rounded-lg cursor-pointer bg-amber-300 px-4 py-2 hover:bg-amber-500 text-white"
-                          onClick={() => openBookingModal(service.serviceId)}
-                        >
-                          Booking
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })} */}
               {currentServices.length === 0 ? (
                 <div className="text-center text-gray-500 mt-6 text-lg">
                   No service found
                 </div>
               ) : (
                 currentServices.map((service, index) => (
-                  <div
+                  <Link
                     key={index}
+                    to={`/ServiceDetail/${service.serviceId}`}
                     className="service-box w-[42%] md:w-[44.55%] lg:w-[315px] pb-3"
                   >
                     <img
@@ -471,12 +391,13 @@ export default function ServicesList() {
                       alt="service background"
                     />
                     <div className="service-title w-[93%] min-h-[32px]">
-                      <Link
+                      {/* <Link
                         to={`/ServiceDetail/${service.serviceId}`}
                         className="text-[rgba(0,0,0,0.75)] hover:text-[#3db3fb] hover:no-underline transition-colors duration-200 ease-in-out"
                       >
                         {service.serviceName}
-                      </Link>
+                      </Link> */}
+                      <p className="text-[rgba(0,0,0,0.75)] hover:text-[#3db3fb] hover:no-underline transition-colors duration-200 ease-in-out">{service.serviceName}</p>
                     </div>
                     <div className="body-service px-3">
                       <div className="author-content">
@@ -527,13 +448,18 @@ export default function ServicesList() {
                       <div className="status-expert-container">
                         <button
                           className="font-bold rounded-lg cursor-pointer bg-amber-300 px-4 py-2 hover:bg-amber-500 text-white"
-                          onClick={() => openBookingModal(service.serviceId)}
+                          // onClick={() => openBookingModal(service.serviceId)}
+                          onClick={(e) => {
+                            e.stopPropagation();     // Ngăn sự kiện nổi bọt lên Link
+                            e.preventDefault();      // Ngăn hành vi mặc định của thẻ <a>
+                            openBookingModal(service.serviceId);
+                          }}
                         >
                           Booking
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))
               )}
 
