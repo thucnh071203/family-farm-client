@@ -40,17 +40,18 @@ export default function ProcessList() {
                     setSuprocesses(response.data.subprocesses);
                 }
             } catch (error) {
-                toast.error("Cannot get list sub process")
+                // toast.error("Cannot get list sub process")
+                console.log(error)
             }
         }
         fetchListProcess();
     }, [accessToken])
 
     const handleClickViewProcess = (SubprocessData, ProcessStepsData) => {
-        navigate('/ProcessResult', {
-            state: {SubprocessData, ProcessStepsData}
-        })
-    }
+        navigate(`/ProcessResult/${SubprocessData.subprocessId}`, {
+            state: { SubprocessData, ProcessStepsData },
+        });
+    };
     return (
         <div className="pt-16 progress-management progress-managment">
             <div className="px-2 mx-auto div max-w-7xl">

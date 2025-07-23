@@ -16,6 +16,7 @@ const ListRequestBookingFarmer = () => {
     const [listBooking, setListBooking] = useState([]);
     const [accessToken, setAccessToken] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
+    const navigate = useNavigate();
 
     // Lấy thông tin người dùng từ storage
     useEffect(() => {
@@ -36,6 +37,9 @@ const ListRequestBookingFarmer = () => {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 });
+
+                console.log(response.data.data);
+
                 if (response.status === 200) {
                     setListBooking(response.data.data);
                 }
@@ -152,6 +156,12 @@ const ListRequestBookingFarmer = () => {
         );
     });
 
+    const handldeReview = (serviceId, bookingServiceId) => {
+        navigate(`/ReviewService/${serviceId}`,{
+            state: { bookingServiceId }
+        })
+    }
+
     return (
         <div className="ListRequestBookingFarmer">
             <div className="progress-managment pt-36">
@@ -225,6 +235,19 @@ const ListRequestBookingFarmer = () => {
                                                     <div className="text-completed">Accepted</div>
                                                 </div>
                                             )}
+
+                                            {booking.booking.bookingServiceStatus === "On Process" && (
+                                                <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
+                                                    <div className="text-completed">On Process</div>
+                                                </div>
+                                            )}
+
+                                            {booking.booking.bookingServiceStatus === "Completed" && !booking.booking.isCompletedFinal && (
+                                                <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
+                                                    <div className="text-completed">Completed</div>
+                                                </div>
+                                            )}
+
                                             {booking.booking.bookingServiceStatus === "Paid" && (
                                                 <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
                                                     <div className="text-completed">Paid</div>
@@ -238,6 +261,12 @@ const ListRequestBookingFarmer = () => {
                                             {booking.booking.bookingServiceStatus === "Cancel" && (
                                                 <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
                                                     <div className="text-uncompleted-a-need">Cancelled</div>
+                                                </div>
+                                            )}
+
+                                            {booking.booking.bookingServiceStatus === "Completed" && booking.booking.isCompletedFinal && (
+                                                <div style={{background: "rgba(61, 179, 251, 0.25)"}} className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                    <div style={{color: "#3DB3FB"}} className="text-uncompleted-a-need">Finish</div>
                                                 </div>
                                             )}
                                         </div>
@@ -260,14 +289,25 @@ const ListRequestBookingFarmer = () => {
                                                         <div className="progress-button-text">Payment</div>
                                                     </div>
                                                 )}
-                                                {booking.booking.bookingServiceStatus === "Paid" && (
+
+                                                {booking.booking.bookingServiceStatus === "Completed" && !booking.booking.isCompletedFinal && (
                                                     <div
                                                         className="footer-booking-button"
-                                                        onClick={() => handlePayment(booking.booking.bookingServiceId, booking.booking.price)}
+                                                        onClick={() => handldeReview(booking.booking.serviceId, booking.booking.bookingServiceId)}
+                                                    >
+                                                        <div className="progress-button-text">Review</div>
+                                                    </div>
+                                                )}
+
+                                                {booking.booking.bookingServiceStatus === "On Process" && (
+                                                    <div
+                                                        className="footer-booking-button"
+                                                        // onClick={() => handlePayment(booking.booking.bookingServiceId, booking.booking.price)}
                                                     >
                                                         <div className="progress-button-text">Go to process</div>
                                                     </div>
                                                 )}
+                                                
                                                 <div className="footer-booking-price">
                                                     <div className="total-price">
                                                         TOTAL:{" "}

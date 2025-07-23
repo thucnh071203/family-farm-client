@@ -44,9 +44,9 @@ export default function ProgressListOfFarmer() {
         fetchListProcess();
     }, [accessToken])
 
-    const handleClickViewProcess = (SubprocessData, ProcessStepsData) => {
+    const handleClickViewProcess = (SubprocessData, ProcessStepsData, isEdit) => {
         navigate(`/ProcessResult/${SubprocessData.subprocessId}`, {
-            state: { SubprocessData, ProcessStepsData },
+            state: { SubprocessData, ProcessStepsData, isEdit },
         });
     };
 
@@ -109,9 +109,9 @@ export default function ProgressListOfFarmer() {
                                             </div>
                                         </div>
 
-                                        {item.subProcess.subProcessStatus === "Created" && (
-                                            <div class="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
-                                                <div class="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
+                                        {item.subProcess.subProcessStatus === "Not Started" && (
+                                            <div style={{ background: "rgba(62, 63, 94, 0.25)", color: "#3E3F5E" }} class="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                <div style={{ color: "#3E3F5E" }} class="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
                                             </div>
                                         )}
 
@@ -139,10 +139,19 @@ export default function ProgressListOfFarmer() {
                                         )}
                                     </div>
                                     <div class="footer-progress-section">
-                                        <div class="footer-progress-button"
-                                            onClick={() => handleClickViewProcess(item.subProcess, item.processSteps)}>
-                                            <div class="progress-button-text">Continue</div>
-                                        </div>
+                                        {item.subProcess.subProcessStatus === "Completed" && (
+                                            <div class="footer-progress-button"
+                                                onClick={() => handleClickViewProcess(item.subProcess, item.processSteps, false)}>
+                                                <div class="progress-button-text">Continue</div>
+                                            </div>
+                                        )}
+
+                                        {item.subProcess.subProcessStatus !== "Completed" && (
+                                            <div class="footer-progress-button"
+                                                onClick={() => handleClickViewProcess(item.subProcess, item.processSteps, true)}>
+                                                <div class="progress-button-text">Continue</div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))

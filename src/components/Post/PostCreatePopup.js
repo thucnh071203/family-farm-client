@@ -125,7 +125,7 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
           setListFriends(listFriendDb);
         }
       } catch (error) {
-        toast.error("Cannot get list friend!");
+        // toast.error("Cannot get list friend!");
       }
     };
 
