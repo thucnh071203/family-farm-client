@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import NavbarHeader from "../../components/Header/NavbarHeader";
 import ProcessSteps from "../../components/ProcessResult/ProcessSteps";
@@ -8,17 +9,21 @@ import ProcessResultInput from "../../components/ProcessResult/ProcessResultInpu
 import ProcessResultHistory from "../../components/ProcessResult/ProcessResultHistory";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const ProcessResultPage = () => {
   const location = useLocation();
-  const { SubprocessData, ProcessStepsData } = location.state || {};
-  
+  const navigate = useNavigate();
+  const { SubprocessData, ProcessStepsData, isEdit } = location.state || {};
+
+  console.log(isEdit)
   const [currentStep, setCurrentStep] = useState(null);
   const [stepResults, setStepResults] = useState([]);
   const [processSteps, setProcessSteps] = useState(ProcessStepsData || []);
   const [serviceData, setServiceData] = useState({ serviceName: "", imageUrl: "" });
   const [accessToken, setAccessToken] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isCompletedProcess, setIsCompletedProcess] = useState(false);
 
   // Lấy access token
   useEffect(() => {
@@ -74,7 +79,7 @@ const ProcessResultPage = () => {
       const response = await instance.get(`/api/process-step/result/${stepId}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      
+
       if (response.data.success) {
         setStepResults(response.data.data);
       } else {
@@ -131,6 +136,82 @@ const ProcessResultPage = () => {
     setCurrentStep(step);
   };
 
+  //kiểm tra xem các prcess step đã có result hay chưa
+  useEffect(() => {
+    const handleCheckCompleted = async () => {
+
+      try {
+        const response = await instance.get(`/api/process/subprocess/check-completed/${SubprocessData.subprocessId}`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+        console.log(response)
+        if (response.status === 200) {
+          setIsCompletedProcess(true);
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    handleCheckCompleted();
+  }, [accessToken, SubprocessData])
+
+  const handleConfirm = async (subprocessId, bookingServiceId) => {
+    const result = await Swal.fire({
+      title: 'Confirm completion',
+      text: 'After confirming you cannot edit, are you sure you want to confirm to complete this process?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#EF3E36',
+      cancelButtonColor: '#aaa',
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      // Hiển thị loading trong Swal
+      Swal.fire({
+        title: 'Đang xử lý...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      try {
+        const response = await instance.put(
+          "/api/process/confirm-subprocess",
+          {
+            subprocessId: subprocessId,
+            bookingServiceid: bookingServiceId
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          }
+        );
+
+
+        Swal.close(); // Đóng loading
+        toast.success("Confirm successful completion of the process");
+        navigate("/ProgressListFarmer");
+
+      } catch (error) {
+        Swal.close();
+
+        // Nếu cần có logic cụ thể với từng lỗi (VD 409: đã confirm rồi)
+        if (error?.response?.status === 409) {
+          toast.warn("Tiến trình đã được xác nhận trước đó.");
+          navigate("/ProgressListFarmer");
+        } else {
+          toast.error("Unable to confirm progress");
+          console.error(error);
+        }
+      }
+    }
+  }
   return (
     <div>
       <Header />
@@ -138,7 +219,7 @@ const ProcessResultPage = () => {
       <div className="flex flex-col gap-5 p-6 mx-auto md:flex-row max-w-7xl pt-[130px] text-left">
         {/* Left Section: Process Steps */}
         <div className="md:w-1/3">
-          <ProcessSteps 
+          <ProcessSteps
             ProcessStepsData={processSteps}
             currentStep={currentStep}
             onStepChange={handleStepChange}
@@ -150,16 +231,35 @@ const ProcessResultPage = () => {
 
         {/* Right Section */}
         <div className="flex flex-col gap-5 md:w-2/3">
-          <ProcessIntroduction 
+          <ProcessIntroduction
             SubprocessData={SubprocessData}
             currentStep={currentStep}
           />
-          <ProcessResultInput 
-            subprocessId={SubprocessData.subprocessId}
-            currentStep={currentStep}
-            onSubmit={createStepResult}
-          />
-          <ProcessResultHistory 
+
+          {isEdit === true && (
+            <ProcessResultInput
+              subprocessId={SubprocessData.subprocessId}
+              currentStep={currentStep}
+              onSubmit={createStepResult}
+            />
+          )}
+
+          {isEdit === false && (
+            <p style={{ color: "#EF3E36" }} className="font-bold italic text-xl">You are no role for edit result. Just view result of process.</p>
+          )}
+
+          {isEdit === true && isCompletedProcess === true && (
+            <div className="mt-4 flex justify-end">
+              <div onClick={() => handleConfirm(SubprocessData.subprocessId, SubprocessData.bookingServiceId)}
+                style={{ color: "#EF3E36", cursor: "pointer" }}
+                className="text-lg font-bold px-12 py-3 rounded-[2px] bg-[rgba(239,62,54,0.25)] hover:bg-[rgba(239,62,54,0.5)] cursor-pointer transition"
+              >
+                Confirm
+              </div>
+            </div>
+          )}
+
+          <ProcessResultHistory
             stepResults={stepResults}
             loading={loading}
           />

@@ -37,6 +37,9 @@ const ListRequestBookingFarmer = () => {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 });
+
+                console.log(response.data.data);
+
                 if (response.status === 200) {
                     setListBooking(response.data.data);
                 }
@@ -153,8 +156,10 @@ const ListRequestBookingFarmer = () => {
         );
     });
 
-    const handldeReview = (serviceId) => {
-        navigate(`/ReviewService/${serviceId}`)
+    const handldeReview = (serviceId, bookingServiceId) => {
+        navigate(`/ReviewService/${serviceId}`,{
+            state: { bookingServiceId }
+        })
     }
 
     return (
@@ -237,7 +242,7 @@ const ListRequestBookingFarmer = () => {
                                                 </div>
                                             )}
 
-                                            {booking.booking.bookingServiceStatus === "Completed" && (
+                                            {booking.booking.bookingServiceStatus === "Completed" && !booking.booking.isCompletedFinal && (
                                                 <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
                                                     <div className="text-completed">Completed</div>
                                                 </div>
@@ -256,6 +261,12 @@ const ListRequestBookingFarmer = () => {
                                             {booking.booking.bookingServiceStatus === "Cancel" && (
                                                 <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
                                                     <div className="text-uncompleted-a-need">Cancelled</div>
+                                                </div>
+                                            )}
+
+                                            {booking.booking.bookingServiceStatus === "Completed" && booking.booking.isCompletedFinal && (
+                                                <div style={{background: "rgba(61, 179, 251, 0.25)"}} className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                    <div style={{color: "#3DB3FB"}} className="text-uncompleted-a-need">Finish</div>
                                                 </div>
                                             )}
                                         </div>
@@ -279,14 +290,15 @@ const ListRequestBookingFarmer = () => {
                                                     </div>
                                                 )}
 
-                                                {booking.booking.bookingServiceStatus === "Completed" && (
+                                                {booking.booking.bookingServiceStatus === "Completed" && !booking.booking.isCompletedFinal && (
                                                     <div
                                                         className="footer-booking-button"
-                                                        onClick={() => handldeReview(booking.booking.serviceId)}
+                                                        onClick={() => handldeReview(booking.booking.serviceId, booking.booking.bookingServiceId)}
                                                     >
                                                         <div className="progress-button-text">Review</div>
                                                     </div>
                                                 )}
+
                                                 {booking.booking.bookingServiceStatus === "On Process" && (
                                                     <div
                                                         className="footer-booking-button"
