@@ -4,7 +4,7 @@ import MenuProgressFarmer from "../MenuProgressFarmer/MenuProgress";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 
-const ReviewServiceForm = () => {
+const ReviewServiceForm = ({bookingServiceId}) => {
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(0);
     const [feedback, setFeedback] = useState("");
@@ -67,6 +67,7 @@ const ReviewServiceForm = () => {
                 "/api/review/create",
                 {
                     ServiceId: serviceId,
+                    BookingServiceId: bookingServiceId,
                     Rating: rating,
                     Comment: feedback || null // Gửi null nếu không có comment
                 }
