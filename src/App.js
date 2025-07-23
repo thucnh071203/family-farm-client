@@ -101,7 +101,7 @@ import ListPhotoOther from "./pages/Profile/ListPhotoOther";
 import CreateSubprocessPage from "./pages/Subprocess/CreateSubprocessPage";
 import RePaymentResultPage from "./pages/CallbackPage/RePaymentResult";
 import ReviewServicePage from "./pages/ProcessPage/ReviewServicePage";
-
+import PaymentInvoicePage from "./pages/PaymentPage/PaymentInvoicePage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -291,6 +291,7 @@ const AppContent = () => {
             <Route path="/CreateSubprocess" element={<CreateSubprocessPage/>} />
             <Route path="/RePaymentResult" element={<RePaymentResultPage />} />
             <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />} />
+            <Route path="/PaymentInvoice" element={<PaymentInvoicePage />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
