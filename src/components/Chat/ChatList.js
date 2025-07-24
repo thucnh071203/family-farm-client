@@ -141,14 +141,14 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
 
     const handleDeleteChatHistory = async (chatId) => {
         const result = await Swal.fire({
-            title: 'Xóa lịch sử trò chuyện?',
-            text: "Bạn có chắc chắn muốn xóa toàn bộ lịch sử trò chuyện này? Hành động này không thể hoàn tác!",
+            title: 'Delete chat history?',
+            text: "Are you sure you want to delete this entire chat history? This action cannot be undone!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy'
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
         });
 
         if (result.isConfirmed) {
