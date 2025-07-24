@@ -101,6 +101,8 @@ import ListPhotoOther from "./pages/Profile/ListPhotoOther";
 import CreateSubprocessPage from "./pages/Subprocess/CreateSubprocessPage";
 import RePaymentResultPage from "./pages/CallbackPage/RePaymentResult";
 import ReviewServicePage from "./pages/ProcessPage/ReviewServicePage";
+import AICheckerPage from "./pages/Dashboard/AICheckerPage";
+import PostAIDetailPage from "./pages/Dashboard/PostAIDetailPage";
 
 
 const AppContent = () => {
@@ -269,6 +271,8 @@ const AppContent = () => {
               path="/AccountDetail/:accId"
               element={<AccountDetailPage />}
             />
+            <Route path="/ListPostCheckedAI" element={<AICheckerPage />} />
+            <Route path="/ListPostCheckedAI/PostAIDetail/:id" element={<PostAIDetailPage />} />
             <Route
               path="/PostCatePage/CreatePostCate"
               element={<CreatePostCatePage />}

@@ -16,13 +16,13 @@ const AccountDetailPage = () => {
         {
           method: "GET",
           headers: {
-            //Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
       const data = await res.json();
-     // console.log("no data jjksdhfksdfnskdnfksdnfjk");
+      // console.log("no data jjksdhfksdfnskdnfksdnfjk");
       if (data !== null) {
         setAccount(data);
         console.log(data.fullName + "   account censor");
