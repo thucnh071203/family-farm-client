@@ -269,7 +269,7 @@ export default function CreateGroupForm() {
     <div className="group-page-right w-full h-full flex flex-col pt-12 lg:mt-[120px] md:ml-[30%] mt-[63px] pr-4 pl-[8%] lg:pl-0">
       <form
         onSubmit={handleCreateGroup}
-        className="create-group-container w-full max-w-[832px] h-screen"
+        className="create-group-container w-full max-w-[832px] h-screen mb-[120px]"
       >
         <div className="create-h1-label">
           <div className="create-group-h1">Create new group</div>

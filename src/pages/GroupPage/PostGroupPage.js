@@ -24,7 +24,7 @@ const PostGroupPage = () => {
     <div>
       <Header />
       <NavbarHeader />
-      <div className="flex">
+      <div className="flex">      
         <GroupSidebar setSection={setSection} />
         {section === "all-group-user" && (
           <div className="lg:mt-[120px] mt-[63px] ml-24 md:ml-[360px] pt-10">
