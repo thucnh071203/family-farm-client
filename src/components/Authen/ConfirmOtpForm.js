@@ -17,6 +17,7 @@ const ConfirmOtpForm = () => {
     });
 
     useEffect(() => {
+        console.log("AccID confirm OTP", accountId)
         if (accountId && email) {
             generateAndSendOTP();
         }
@@ -91,13 +92,17 @@ const ConfirmOtpForm = () => {
     const onSubmit = async (values) => {
         console.log('OTP Form submitted:', values);
         try {
-            const res = await instance.get(`/api/account/get-by-accId/${accountId}`);
+
+            const res = await instance.get(`/api/account/get-by-email/${email}`);
             console.log("check data", res.data);
-            const account = res.data;
+            const account = res.data.data;
 
             if (account) {
                 const serverOtp = account.otp;
                 const otpTime = account.createOtp;
+
+                console.log("serverOTP: ", serverOtp);
+                console.log("otpTime: ", otpTime);
 
                 if (!serverOtp || !otpTime) {
                     setErrors((prev) => ({
