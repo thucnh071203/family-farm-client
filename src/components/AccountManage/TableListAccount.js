@@ -30,7 +30,7 @@ const TableListAccount = ({ displayList, isCensor, onDeleted }) => {
             {
               method: "PUT",
               headers: {
-                // Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
               },
             }

@@ -187,13 +187,13 @@ const SearchPost = () => {
               </div>
               <div className="mt-4 flex gap-2">
                 <button
-                  className="px-3 py-1 bg-blue-500 text-white rounded-full flex-1"
+                  className="px-3 py-2 bg-blue-500 text-white flex-1"
                   onClick={handleSearch}
                 >
-                  Search Again
+                  Search
                 </button>
                 <button
-                  className="px-3 py-1 bg-gray-200 text-gray-800 rounded-full flex-1"
+                  className="px-3 py-1 bg-gray-200 text-gray-800 flex-1"
                   onClick={toggleCategoryPopup}
                 >
                   Close

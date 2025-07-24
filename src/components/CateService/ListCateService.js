@@ -10,8 +10,16 @@ const ListCateService = () => {
 
   const fetchAllService = async () => {
     try {
+      const token = localStorage.getItem("accessToken");
       const res = await fetch(
-        "https://localhost:7280/api/category-service/all-for-admin"
+        `https://localhost:7280/api/category-service/all-for-admin`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+           
+          },
+        }
       );
       const data = await res.json();
       if (Array.isArray(data.data)) {

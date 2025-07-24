@@ -10,11 +10,13 @@ const ListAccountSensor = () => {
 
   const fetchListCensor = async () => {
     try {
+      const token = localStorage.getItem("accessToken");
       const res = await fetch(
         `https://localhost:7280/api/account/list-censor/68007b2a87b41211f0af1d57`,
         {
           method: "GET",
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }

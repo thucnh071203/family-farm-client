@@ -1,18 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
-import $ from "jquery";
-import "datatables.net-dt/css/dataTables.dataTables.css";
-import "datatables.net";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import TablePostManagement from "./TablePostManagement";
+import TableListPostAI from "./TableListPostAI";
 
-const ListPost = () => {
+const ListPostCheckedAI = () => {
   const [listPost, setListPost] = useState([]);
-
   const fetchPost = async () => {
     try {
       const token = localStorage.getItem("accessToken");
       const res = await fetch(
-        `https://localhost:7280/api/post/list-post-for-admin`,
+        `https://localhost:7280/api/post/list-checked-by-ai`,
         {
           method: "GET",
           headers: {
@@ -35,14 +31,6 @@ const ListPost = () => {
   useEffect(() => {
     fetchPost();
   }, []);
-
-  useEffect(() => {
-    const table = $("#postTable").DataTable();
-    return () => {
-      table.destroy();
-    };
-  }, []);
-
   return (
     <div className="ml-20 mt-3 ">
       <div className="flex">
@@ -62,17 +50,17 @@ const ListPost = () => {
           <Link to={"/Dashboard"}>HOME</Link>
         </div>
         <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
-          <Link to="/PostManagement">/Post Management</Link>
+          <Link to="/ListPostCheckedAI">/AI Checker</Link>
         </span>
       </div>
       <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-5 mt-3">
-        POST MANAGEMENT
+        AI CHECKER
       </h1>
 
       <div style={{ width: "90%" }}>
-        <TablePostManagement listPost={listPost} />
+        <TableListPostAI listPost={listPost} />
       </div>
     </div>
   );
 };
-export default ListPost;
+export default ListPostCheckedAI;

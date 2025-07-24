@@ -13,7 +13,17 @@ const ListAccount = () => {
 
   const fetchAllAccounts = async () => {
     try {
-      const res = await fetch("https://localhost:7280/api/account/get-all");
+      const token = localStorage.getItem("accessToken");
+      const res = await fetch(
+        `https://localhost:7280/api/account/get-all`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // "Content-Type": "application/json",
+          },
+        }
+      );
       const data = await res.json();
       if (Array.isArray(data)) {
         setAllList(data);
@@ -25,8 +35,16 @@ const ListAccount = () => {
 
   const fetchFarmerAccounts = async () => {
     try {
+      const token = localStorage.getItem("accessToken");
       const res = await fetch(
-        "https://localhost:7280/api/account/list-censor/68007b0387b41211f0af1d56"
+        `https://localhost:7280/api/account/list-censor/68007b0387b41211f0af1d56`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // "Content-Type": "application/json",
+          },
+        }
       );
       const data = await res.json();
       if (Array.isArray(data)) {
@@ -39,8 +57,16 @@ const ListAccount = () => {
 
   const fetchExpertAccounts = async () => {
     try {
+      const token = localStorage.getItem("accessToken");
       const res = await fetch(
-        "https://localhost:7280/api/account/list-censor/68007b2a87b41211f0af1d57"
+        `https://localhost:7280/api/account/list-censor/68007b2a87b41211f0af1d57`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // "Content-Type": "application/json",
+          },
+        }
       );
       const data = await res.json();
       if (Array.isArray(data)) {
