@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import defaultAvatar from "../../assets/images/default-avatar.png";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2"; // Thêm SweetAlert2
 
 const ReportDetail = () => {
     const { reportId } = useParams(); // Lấy reportId từ URL
@@ -41,55 +42,81 @@ const ReportDetail = () => {
         fetchReport();
     }, [reportId]);
 
-    // Hàm xử lý Accept
+    // Hàm xử lý Accept với xác nhận
     const handleAccept = async () => {
-        try {
-            setActionLoading(true);
-            setActionError(null);
-            const response = await instance.put(`/api/report/accept/${reportId}`);
-            console.log("Accept Response:", response.data);
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to accept this report?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3DB3FB",
+            cancelButtonColor: "#EF3E36",
+            confirmButtonText: "Yes, accept it!",
+            cancelButtonText: "No, cancel",
+        });
 
-            if (response.status === 200) {
-                toast.success(response.data.message || "Report accepted successfully!");
-                navigate("/ReportManagement"); // Điều hướng về danh sách báo cáo
-            } else {
-                throw new Error(response.data.message || "Failed to accept report");
+        if (result.isConfirmed) {
+            try {
+                setActionLoading(true);
+                setActionError(null);
+                const response = await instance.put(`/api/report/accept/${reportId}`);
+                console.log("Accept Response:", response.data);
+
+                if (response.status === 200) {
+                    toast.success(response.data.message || "Report accepted successfully!");
+                    navigate("/ReportManagement"); // Điều hướng về danh sách báo cáo
+                } else {
+                    throw new Error(response.data.message || "Failed to accept report");
+                }
+            } catch (err) {
+                console.error("Accept Error:", {
+                    status: err.response?.status,
+                    data: err.response?.data,
+                    message: err.message,
+                });
+                setActionError(`Failed to accept report: ${err.message}`);
+            } finally {
+                setActionLoading(false);
             }
-        } catch (err) {
-            console.error("Accept Error:", {
-                status: err.response?.status,
-                data: err.response?.data,
-                message: err.message,
-            });
-            setActionError(`Failed to accept report: ${err.message}`);
-        } finally {
-            setActionLoading(false);
         }
     };
 
-    // Hàm xử lý Reject
+    // Hàm xử lý Reject với xác nhận
     const handleReject = async () => {
-        try {
-            setActionLoading(true);
-            setActionError(null);
-            const response = await instance.put(`/api/report/reject/${reportId}`);
-            console.log("Reject Response:", response.data);
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to reject this report?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3DB3FB",
+            cancelButtonColor: "#EF3E36",
+            confirmButtonText: "Yes, reject it!",
+            cancelButtonText: "No, cancel",
+        });
 
-            if (response.status === 200) {
-                toast.success(response.data.message || "Report rejected successfully!");
-                navigate("/ReportManagement"); // Điều hướng về danh sách báo cáo
-            } else {
-                throw new Error(response.data.message || "Failed to reject report");
+        if (result.isConfirmed) {
+            try {
+                setActionLoading(true);
+                setActionError(null);
+                const response = await instance.put(`/api/report/reject/${reportId}`);
+                console.log("Reject Response:", response.data);
+
+                if (response.status === 200) {
+                    toast.success(response.data.message || "Report rejected successfully!");
+                    navigate("/ReportManagement"); // Điều hướng về danh sách báo cáo
+                } else {
+                    throw new Error(response.data.message || "Failed to reject report");
+                }
+            } catch (err) {
+                console.error("Reject Error:", {
+                    status: err.response?.status,
+                    data: err.response?.data,
+                    message: err.message,
+                });
+                setActionError(`Failed to reject report: ${err.message}`);
+            } finally {
+                setActionLoading(false);
             }
-        } catch (err) {
-            console.error("Reject Error:", {
-                status: err.response?.status,
-                data: err.response?.data,
-                message: err.message,
-            });
-            setActionError(`Failed to reject report: ${err.message}`);
-        } finally {
-            setActionLoading(false);
         }
     };
 
@@ -121,14 +148,14 @@ const ReportDetail = () => {
                         onClick={handleReject}
                         disabled={actionLoading}
                     >
-                        {actionLoading ? "Processing..." : "Refuse"}
+                        {actionLoading ? "Processing..." : "Reject"}
                     </button>
                     <button
                         className="bg-[#3DB3FB] text-white px-4 py-2 rounded hover:bg-blue-600 w-24 disabled:bg-gray-400"
                         onClick={handleAccept}
                         disabled={actionLoading}
                     >
-                        {actionLoading ? "Processing..." : "Allow"}
+                        {actionLoading ? "Processing..." : "Accept"}
                     </button>
                 </div>
             </div>

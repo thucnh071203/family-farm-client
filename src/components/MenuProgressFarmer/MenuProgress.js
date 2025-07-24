@@ -19,7 +19,7 @@ export default function MenuProgress({ inPage }) {
                         </Link>
                         <Link to="/ProgressListFarmer" class="menu-your-progress-content mt-6 cursor-pointer">
                             <img class="your-progress-icon h-4 w-4" src={progressIcon} alt=""/>
-                            <div class="text-menu-booking">Your progress</div>
+                            <div class="text-menu-booking">Your process</div>
                         </Link>
                     </>
                 )}
@@ -32,7 +32,7 @@ export default function MenuProgress({ inPage }) {
                         </Link>
                         <Link to="/ProgressListFarmer" class="menu-your-progress-content mt-6 cursor-pointer inPageBackground">
                             <img class="your-progress-icon h-4 w-4" alt="" src={progressIcon} />
-                            <div class="text-menu-booking">Your progress</div>
+                            <div class="text-menu-booking">Your process</div>
                         </Link>
                     </>
                 )}

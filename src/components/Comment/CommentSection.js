@@ -3,6 +3,7 @@ import { getOwnProfile } from "../../services/accountService";
 import instance from "../../Axios/axiosConfig";
 import { toast, Bounce } from "react-toastify";
 import CommentItem from "./CommentItem";
+import Swal from "sweetalert2";
 
 const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
   const [comments, setComments] = useState([]);
@@ -136,20 +137,42 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
   };
 
   const handleDeleteComment = async (commentId) => {
-    try {
-      const response = await instance.delete(`/api/comment/delete/${commentId}`);
-      console.log("Delete comment response:", response.data);
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to delete this comment?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
 
-      if (response.data.success) {
-        setComments(comments.filter((comment) => comment.CommentId !== commentId));
-        onCommentCountChange(commentCount - 1);
-        setMenuOpenCommentId(null);
-      } else {
-        throw new Error(response.data.message || "Cannot delete comment");
+    if (result.isConfirmed) {
+      try {
+        const response = await instance.delete(`/api/comment/delete/${commentId}`);
+        console.log("Delete comment response:", response.data);
+
+        if (response.data.success) {
+          setComments((prev) =>
+            prev.filter((comment) => comment.CommentId !== commentId)
+          );
+          onCommentCountChange(commentCount - 1);
+          setMenuOpenCommentId(null);
+
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "Your comment has been deleted.",
+            timer: 1500,
+            showConfirmButton: false,
+          });
+        } else {
+          throw new Error(response.data.message || "Cannot delete comment");
+        }
+      } catch (error) {
+        console.error("Failed to delete comment:", error);
+        Swal.fire("Error", error.message || "Cannot delete comment", "error");
       }
-    } catch (error) {
-      console.error("Failed to delete comment:", error);
-      toast.error(error.message || "Cannot delete comment");
     }
   };
 
@@ -209,7 +232,7 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
           </button>
         </div>
         <div className="text-right text-xs text-gray-500">
-          {newComment.length}/{MAX_COMMENT_LENGTH} ký tự
+          {newComment.length}/{MAX_COMMENT_LENGTH} characters
         </div>
       </form>
     </div>

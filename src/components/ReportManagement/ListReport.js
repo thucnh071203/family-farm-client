@@ -17,7 +17,7 @@ const ListReport = ({ filter }) => {
             try {
                 setLoading(true);
                 const response = await instance.get("/api/report/all");
-                const reports = response.data.data; // Access the Data field from ListReportResponseDTO
+                const reports = response.data.data;
 
                 // Transform API data to match the table structure
                 const transformedData = reports.map((report) => ({
@@ -25,7 +25,8 @@ const ListReport = ({ filter }) => {
                     reason: report.report?.reason || "No content available",
                     owner: report.reporter?.fullName || "Unknown",
                     status: report.report?.status ? report.report.status.charAt(0).toUpperCase() + report.report.status.slice(1) : "Pending",
-                    createdAt: formatTime(report.report?.createdAt) || "N/A",
+                    createdAt: report.report?.createdAt || "N/A", // Lưu giá trị gốc để sắp xếp
+                    formattedCreatedAt: formatTime(report.report?.createdAt) || "N/A", // Giá trị đã định dạng để hiển thị
                 }));
 
                 setReportData(transformedData);
@@ -43,7 +44,9 @@ const ListReport = ({ filter }) => {
     // Initialize DataTable after data is fetched
     useEffect(() => {
         if (!loading && reportData.length > 0) {
-            const table = $("#reportTable").DataTable();
+            const table = $("#reportTable").DataTable({
+                ordering: false, // Vô hiệu hóa sắp xếp mặc định
+            });
             return () => {
                 table.destroy();
             };
@@ -64,14 +67,26 @@ const ListReport = ({ filter }) => {
     };
 
     const filteredReports = () => {
+        let filteredData = reportData;
+
+        // Lọc theo trạng thái nếu có bộ lọc
         if (filter === "Pending") {
-            return reportData.filter((report) => report.status === "Pending");
+            filteredData = reportData.filter((report) => report.status === "Pending");
         } else if (filter === "Accepted") {
-            return reportData.filter((report) => report.status === "Accepted");
+            filteredData = reportData.filter((report) => report.status === "Accepted");
         } else if (filter === "Rejected") {
-            return reportData.filter((report) => report.status === "Rejected");
+            filteredData = reportData.filter((report) => report.status === "Rejected");
         }
-        return reportData;
+
+        // Sắp xếp dữ liệu
+        return filteredData.sort((a, b) => {
+            // 1. Ưu tiên trạng thái Pending
+            if (a.status === "Pending" && b.status !== "Pending") return -1;
+            if (a.status !== "Pending" && b.status === "Pending") return 1;
+
+            // 2. Sắp xếp theo thời gian mới nhất (createdAt)
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
     };
 
     if (loading) {
@@ -102,15 +117,16 @@ const ListReport = ({ filter }) => {
                             <td className={`font-bold text-left ${getStatusClass(report.status)}`}>
                                 {report.status}
                             </td>
-                            <td className="text-left">{report.createdAt}</td>
+                            <td className="text-left">{report.formattedCreatedAt}</td>
                             <td className="text-left">
-                                {report.status === "Pending" &&
-                                    (<Link
-                                        to={`/ReportDetail/${report.reportId}`} // Assuming you want to pass reportId to the detail page
+                                {report.status === "Pending" && (
+                                    <Link
+                                        to={`/ReportDetail/${report.reportId}`}
                                         className="text-[#3DB3FB] px-2 py-0.5 rounded font-semibold underline"
                                     >
                                         Detail
-                                    </Link>)}
+                                    </Link>
+                                )}
                             </td>
                         </tr>
                     ))}
