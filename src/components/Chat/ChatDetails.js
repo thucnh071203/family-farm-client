@@ -390,8 +390,8 @@ const ChatDetails = ({
                                             {detail.isRecalled ? (
                                                 <div
                                                     className={`p-2 rounded-full ${group.senderId === currentUserId
-                                                            ? "bg-[#3DB3FB] text-white"
-                                                            : "bg-gray-100 text-[#344258]"
+                                                        ? "bg-[#3DB3FB] text-white"
+                                                        : "bg-gray-100 text-[#344258]"
                                                         } break-all w-fit overflow-hidden`}
                                                 >
                                                     <p
@@ -420,8 +420,8 @@ const ChatDetails = ({
                                                     {detail.fileUrl && detail.fileType !== "image" && (
                                                         <div
                                                             className={`p-2 rounded-lg ${group.senderId === currentUserId
-                                                                    ? "bg-[#3DB3FB] text-white"
-                                                                    : "bg-gray-100 text-[#344258]"
+                                                                ? "bg-[#3DB3FB] text-white"
+                                                                : "bg-gray-100 text-[#344258]"
                                                                 } break-all w-fit overflow-hidden`}
                                                         >
                                                             <a
@@ -452,18 +452,18 @@ const ChatDetails = ({
                                                         >
                                                             <button
                                                                 onClick={() => handleRecallMessage(detail.chatDetailId)}
-                                                                className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
+                                                                className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left border border-solid border-gray-400 rounded-md"
                                                                 aria-label="Recall message"
                                                             >
-                                                                Recall
+                                                                <i class="fa fa-undo" aria-hidden="true"></i> Recall
                                                             </button>
                                                         </div>
                                                     )}
                                                     {detail.message?.trim() && (
                                                         <div
                                                             className={`p-2 rich-text-editor rounded-lg ${group.senderId === currentUserId
-                                                                    ? "bg-[#3DB3FB] text-white"
-                                                                    : "bg-gray-100 text-[#344258]"
+                                                                ? "bg-[#3DB3FB] text-white"
+                                                                : "bg-gray-100 text-[#344258]"
                                                                 } break-all w-fit overflow-hidden`}
                                                         >
                                                             <div

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
+import default_avatar from "../../assets/images/default-avatar.png"
 
 const ReactionList = ({ entityType, entityId, isOpen, onClose }) => {
   const [reactions, setReactions] = useState([]);
@@ -117,7 +118,7 @@ const ReactionList = ({ entityType, entityId, isOpen, onClose }) => {
             {filteredReactions.map((reaction) => (
               <li key={reaction.reaction.reactionId} className="flex items-center gap-3">
                 <img
-                  src={reaction.account.avatar}
+                  src={reaction.account.avatar || default_avatar}
                   alt={reaction.account.fullName}
                   className="w-10 h-10 rounded-full object-cover"
                 />
