@@ -1,90 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import Swal from "sweetalert2";
-import "sweetalert2/dist/sweetalert2.min.css";
-const PostAIDetail = ({ post }) => {
-  const navigate = useNavigate();
-  const handleDelete = (postId) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      // <-- Sửa ở đây
-      if (result.isConfirmed) {
-        try {
-          const token = localStorage.getItem("accessToken");
 
-          const res = await fetch(
-            `https://localhost:7280/api/post/hard-delete/${postId}`,
-            {
-              method: "DELETE",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          const data = await res.json();
-          if (data.success === true) {
-            Swal.fire("Deleted!", "The post has been deleted.", "success");
-
-            navigate("/ListPostCheckedAI"); // chuyển hướng sau khi hiển thị alert
-          }
-        } catch (err) {
-          console.error("Error fetching post censor:", err.message || err);
-          Swal.fire("Error!", "Something went wrong.", "error");
-        }
-      }
-    });
-  };
-
-  const handleAllow = (postId) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You are about to approve this post.",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6", // Xanh dương tích cực
-      cancelButtonColor: "#d33", // Đỏ cho cancel (nếu muốn)
-      confirmButtonText: "Yes, approve it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const token = localStorage.getItem("accessToken");
-
-          const res = await fetch(
-            `https://localhost:7280/api/post/moderation-post/${postId}`,
-            {
-              method: "PUT",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          const data = await res.json();
-
-          if (data === true) {
-            Swal.fire("Approved!", "The post has been approved.", "success");
-            navigate("/ListPostCheckedAI");
-          } else {
-            Swal.fire("Failed!", data.message || "Approval failed.", "error");
-          }
-        } catch (err) {
-          console.error("Error approving post:", err.message || err);
-          Swal.fire("Error!", "Something went wrong.", "error");
-        }
-      }
-    });
-  };
+const PostManagementDetail = ({ post }) => {
   return (
     <div className="ml-20 mt-3 ">
       <div className="flex">
@@ -104,7 +22,7 @@ const PostAIDetail = ({ post }) => {
           <Link to={"/Dashboard"}>HOME</Link>
         </div>
         <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
-          / AI Checker
+           <Link to="/PostManagement">/Post Management</Link>
         </span>
         <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
           / Post Detail
@@ -112,30 +30,9 @@ const PostAIDetail = ({ post }) => {
       </div>
 
       <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-4">
-        AI Checker
+        Post detail
       </h1>
-      <div className="mt-4 text-left bg-[rgba(61,179,251,0.1)] w-[80%] rounded-xl">
-        <div className="p-4">
-          <p className="text-left">
-            The AI ​​system has detected invalid content in the article below.
-            Please review the content and take action to allow or not!
-          </p>
-          <div className="mt-8 flex gap-6 text-white">
-            <button
-              onClick={() => handleDelete(post.post.postId)}
-              className="px-7 pt-2 pb-2 bg-[#EF3E36] rounded-lg"
-            >
-              Delete
-            </button>
-            <button
-              onClick={() => handleAllow(post.post.postId)}
-              className="px-7 pt-2 pb-2 bg-[#3DB3FB] rounded-lg"
-            >
-              Approve
-            </button>
-          </div>
-        </div>
-      </div>
+
       <div className="flex gap-2 w-[80%] align-middle items-center mt-10 font-bold">
         <img
           className="rounded-full w-[40px] h-[40px] object-cover mr-4"
@@ -230,11 +127,11 @@ const PostAIDetail = ({ post }) => {
       </div>
       <div className="flex justify-start mt-4">
         <button className="font-bold">
-          <Link to={"/ListPostCheckedAI"}>Back to list</Link>
+          <Link to={"/PostManagement"}>Back to list</Link>
         </button>
       </div>
     </div>
   );
 };
 
-export default PostAIDetail;
+export default PostManagementDetail;
