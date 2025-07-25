@@ -104,6 +104,7 @@ import ReviewServicePage from "./pages/ProcessPage/ReviewServicePage";
 import AICheckerPage from "./pages/Dashboard/AICheckerPage";
 import PostAIDetailPage from "./pages/Dashboard/PostAIDetailPage";
 import PaymentInvoicePage from "./pages/PaymentPage/PaymentInvoicePage";
+import PostManagementDetailPage from "./pages/Dashboard/PostManagementDetailPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -273,6 +274,8 @@ const AppContent = () => {
             />
             <Route path="/ListPostCheckedAI" element={<AICheckerPage />} />
             <Route path="/ListPostCheckedAI/PostAIDetail/:id" element={<PostAIDetailPage />} />
+            <Route path="/PostManagementDetail/:id" element={<PostManagementDetailPage />} />
+            {/* /PostManagement/PostDetail */}
             <Route
               path="/PostCatePage/CreatePostCate"
               element={<CreatePostCatePage />}
