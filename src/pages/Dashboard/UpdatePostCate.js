@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const UpdatePostCate = () => {
@@ -63,6 +63,29 @@ const UpdatePostCate = () => {
 
   return (
     <div className="p-6">
+      <div className="flex">
+        <div className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6.52734 13V8.5H9.52734V13H13.2773V7H15.5273L8.02734 0.25L0.527344 7H2.77734V13H6.52734Z"
+              fill="rgba(62,63,94,0.25)"
+            />
+          </svg>
+          <Link to="/Dashboard">HOME</Link>
+        </div>
+        <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
+          <Link to="/CatePost">/Category post</Link>
+        </span>
+      </div>
+      <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-5 mt-3">
+        CATEGORY POST
+      </h1>
       <h1 className="text-xl font-bold text-sky-400 mb-4 text-left">
         Edit Category
       </h1>

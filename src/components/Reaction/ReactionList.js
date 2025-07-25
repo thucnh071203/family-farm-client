@@ -112,7 +112,7 @@ const ReactionList = ({ entityType, entityId, isOpen, onClose }) => {
 
         {/* Reaction list */}
         {loading ? (
-          <div className="text-center text-gray-600">Đang tải...</div>
+          <div className="text-center text-gray-600">Loading...</div>
         ) : filteredReactions.length > 0 ? (
           <ul className="space-y-3">
             {filteredReactions.map((reaction) => (
