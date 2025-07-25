@@ -1,17 +1,13 @@
-import React from "react";
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import React, { useState } from "react";
 import "./notificationstyle.css";
 import cancelIcon from "../../assets/images/cancel_vector.png";
 import headLine from "../../assets/images/head_line.png";
 import readIcon from "../../assets/images/letter_vector.png";
 import lineShape from "../../assets/images/border_line.png";
 import formatTime from "../../utils/formatTime";
-import instance from "../../Axios/axiosConfig";
 import { useNotification } from "../../context/NotificationContext";
 
-
 const NotificationList = ({ onToggle, isVisible }) => {
-
     const {
         notifications,
         unreadCount,
@@ -20,7 +16,15 @@ const NotificationList = ({ onToggle, isVisible }) => {
         markAsRead,
         markAllAsRead,
     } = useNotification();
-    
+
+    const [filterStatus, setFilterStatus] = useState("all");
+
+    // Lọc thông báo theo trạng thái
+    const filteredNotifications = notifications.filter((noti) => {
+        if (filterStatus === "unread") return !noti.status.isRead;
+        return true; // all
+    });
+
     return (
         <div className="relative">
             <div
@@ -51,10 +55,20 @@ const NotificationList = ({ onToggle, isVisible }) => {
                         <img className="w-full mt-3 header-noti-line" src={headLine} alt="Header line" />
                         <div className="flex px-4 mt-3 sm:px-0">
                             <div className="flex flex-row gap-2">
-                                <div className="font-semibold text-gray-500 bg-gray-100 text-sm leading-normal whitespace-nowrap px-3.5 py-1.5 rounded-md cursor-pointer hover:bg-cyan-300 transition-colors duration-200">
+                                <div
+                                    className={`font-semibold text-gray-500 bg-gray-100 text-sm leading-normal whitespace-nowrap px-3.5 py-1.5 rounded-md cursor-pointer hover:bg-cyan-300 transition-colors duration-200 ${
+                                        filterStatus === "all" ? "text-[#3DB3FB] bg-cyan-100" : ""
+                                    }`}
+                                    onClick={() => setFilterStatus("all")}
+                                >
                                     All
                                 </div>
-                                <div className="font-semibold text-gray-500 bg-gray-100 text-sm leading-normal whitespace-nowrap px-1.5 py-1.5 rounded-md cursor-pointer hover:bg-cyan-300 transition-colors duration-200">
+                                <div
+                                    className={`font-semibold text-gray-500 bg-gray-100 text-sm leading-normal whitespace-nowrap px-1.5 py-1.5 rounded-md cursor-pointer hover:bg-cyan-300 transition-colors duration-200 ${
+                                        filterStatus === "unread" ? "text-[#3DB3FB] bg-cyan-100" : ""
+                                    }`}
+                                    onClick={() => setFilterStatus("unread")}
+                                >
                                     Not read yet
                                 </div>
                             </div>
@@ -71,13 +85,13 @@ const NotificationList = ({ onToggle, isVisible }) => {
                         </div>
                         <div className="noti-list-container w-full mx-auto mt-[16.3px] px-4 sm:px-0 max-h-[75vh] overflow-y-auto flex flex-col justify-start items-start gap-3">
                             {loading ? (
-                                <div className="text-center py-4">Đang tải...</div>
+                                <div className="text-center py-4 w-full ">Loading...</div>
                             ) : error ? (
-                                <div className="text-center py-4 text-red-500">{error}</div>
-                            ) : notifications.length === 0 ? (
-                                <div className="text-center py-4">Không có thông báo</div>
+                                <div className="text-center py-4 w-full text-red-500">{error}</div>
+                            ) : filteredNotifications.length === 0 ? (
+                                <div className="text-center py-4 w-full ">No notifications found!</div>
                             ) : (
-                                notifications.map((noti) => (
+                                filteredNotifications.map((noti) => (
                                     <div
                                         key={noti.notifiId}
                                         className="flex flex-col items-start w-full gap-3 noti-item-container"

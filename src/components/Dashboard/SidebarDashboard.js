@@ -164,7 +164,7 @@ const SidebarDashboard = () => {
         </div>
         <button className="bg-red-100 text-[#EF3E36] py-4 rounded hover:bg-red-200 text-md w-full">
           <span className="font-semibold">Log out </span>
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <i className="fa-solid fa-arrow-right-from-bracket"></i>
         </button>
       </div>
     </div>
