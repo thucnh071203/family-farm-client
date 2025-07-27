@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import "./notificationstyle.css";
 import cancelIcon from "../../assets/images/cancel_vector.png";
 import headLine from "../../assets/images/head_line.png";
@@ -6,6 +7,8 @@ import readIcon from "../../assets/images/letter_vector.png";
 import lineShape from "../../assets/images/border_line.png";
 import formatTime from "../../utils/formatTime";
 import { useNotification } from "../../context/NotificationContext";
+import { toast } from "react-toastify";
+import instance from "../../Axios/axiosConfig";
 
 const NotificationList = ({ onToggle, isVisible }) => {
     const {
@@ -15,7 +18,58 @@ const NotificationList = ({ onToggle, isVisible }) => {
         error,
         markAsRead,
         markAllAsRead,
+        fetchNotifications
     } = useNotification();
+
+    const [inviteStatusMap, setInviteStatusMap] = useState({});
+
+    useEffect(() => {
+        const fetchInviteStatuses = async () => {
+            const newMap = {};
+
+            const inviteNotis = notifications.filter(
+            (n) => n.targetType === "GroupMember" && n.targetId
+            );
+
+            const requests = inviteNotis.map(async (noti) => {
+            try {
+                const res = await instance.get(
+                `/api/group-member/get-member-invite-by-id/${noti.targetId}`
+                );
+                if (res.status === 200 && res.data) {
+                newMap[noti.targetId] = res.data.memberStatus || "Unknown";
+                }
+            } catch (err) {
+                console.warn(`❗ Không lấy được trạng thái lời mời của ${noti.targetId}`, err);
+            }
+            });
+
+            await Promise.all(requests);
+            setInviteStatusMap(newMap);
+        };
+
+        if (notifications.length > 0) {
+            fetchInviteStatuses();
+        }
+        }, [notifications]);
+
+
+    const handleRespondToInvite = async (groupMemberId, status) => {
+        try {
+        const res = await instance.put(
+            `/api/group-member/response-to-invite-group/${groupMemberId}?status=${status}`
+        );
+        if (res.status === 200) {
+            toast.success(`You have ${status.toLowerCase()}ed the invite.`);
+            fetchNotifications();
+        } else {
+            toast.error("Failed to respond to invite");
+        }
+        } catch (err) {
+        console.error("Error responding to invite:", err);
+        toast.error("Something went wrong");
+        }
+    };
 
     const [filterStatus, setFilterStatus] = useState("all");
 
@@ -91,44 +145,60 @@ const NotificationList = ({ onToggle, isVisible }) => {
                             ) : filteredNotifications.length === 0 ? (
                                 <div className="text-center py-4 w-full ">No notifications found!</div>
                             ) : (
-                                filteredNotifications.map((noti) => (
-                                    <div
-                                        key={noti.notifiId}
-                                        className="flex flex-col items-start w-full gap-3 noti-item-container"
-                                    >
-                                        <div className="noti-item">
-                                            <div className="noti-content">
-                                                <img
-                                                    className="noti-avatar"
-                                                    src={
-                                                        noti.senderAvatar ||
-                                                        "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2F638844485492936808_default-avatar.jpg?alt=media&token=14e7b834-a6c0-4cb2-830d-088639d3f588"
-                                                    }
-                                                    alt={noti.senderName || "System"}
-                                                />
-                                                <div className="noti-info">
-                                                    <p className="p-noti text-start line-clamp-2">
-                                                        {noti.senderName && (
-                                                            <span className="font-semibold username-span">
-                                                                {noti.senderName}{" "}
-                                                            </span>
+                                notifications.map((noti) => {
+                                    const isGroupInvite = noti.targetType === "GroupMember";
+                                    const memberStatus = inviteStatusMap[noti.targetId]; // có thể là undefined
+                                    const shouldShowButtons = isGroupInvite && memberStatus === "Invite";
+
+                                    return (
+                                        <div key={noti.notifiId} className="flex flex-col gap-3">
+                                            <div className="noti-item flex justify-between items-start">
+                                                <div className="flex">
+                                                    <img
+                                                        className="noti-avatar w-10 h-10 rounded-full mr-3"
+                                                        src={
+                                                            noti.senderAvatar ||
+                                                            "https://firebasestorage.googleapis.com/...default-avatar.jpg"
+                                                        }
+                                                        alt={noti.senderName || "System"}
+                                                    />
+                                                    <div>
+                                                        <p className="text-sm text-start leading-snug">
+                                                            {noti.senderName && <span className="font-semibold">{noti.senderName} </span>}
+                                                            {noti.content}
+                                                        </p>
+                                                        <span className="text-xs text-gray-400">{formatTime(noti.createdAt)}</span>
+
+                                                        {shouldShowButtons  && (
+                                                            <div className="flex gap-2 mt-2">
+                                                                <button
+                                                                    onClick={() => handleRespondToInvite(noti.targetId, "Accept")}
+                                                                    className="bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600"
+                                                                >
+                                                                    Accept
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => handleRespondToInvite(noti.targetId, "Reject")}
+                                                                    className="bg-red-500 text-white px-3 py-1 text-xs rounded hover:bg-red-600"
+                                                                >
+                                                                    Reject
+                                                                </button>
+                                                            </div>
                                                         )}
-                                                        {noti.content}
-                                                    </p>
-                                                    <span className="action-time">{formatTime(noti.createdAt)}</span>
+                                                    </div>
                                                 </div>
+
+                                                <img
+                                                    className={`noti-status w-4 h-4 cursor-pointer mt-1 ${noti.status.isRead ? "opacity-30" : ""}`}
+                                                    src={readIcon}
+                                                    alt={noti.status.isRead ? "Read" : "Unread"}
+                                                    onClick={() => !noti.status.isRead && markAsRead(noti.status.notifiStatusId)}
+                                                />
                                             </div>
-                                            <img
-                                                className={`noti-status ${noti.status.isRead ? "noti-status-not" : ""}`}
-                                                src={readIcon}
-                                                alt={noti.status.isRead ? "Read" : "Unread"}
-                                                onClick={() => !noti.status.isRead && markAsRead(noti.status.notifiStatusId)}
-                                                style={{ cursor: noti.status.isRead ? "default" : "pointer" }}
-                                            />
+                                            <img src={lineShape} alt="Divider" />
                                         </div>
-                                        <img className="noti-item-line" src={lineShape} alt="Divider" />
-                                    </div>
-                                ))
+                                    );
+                                })
                             )}
                         </div>
                     </div>
