@@ -327,37 +327,27 @@ const PersonalPage = () => {
   const renderActionButton = () => {
     if (isOwner) return null;
     console.log("Rendering action button - friendshipStatus:", friendshipStatus, "isFriend:", isFriend);
-    if (isFriend) {
-      return (
-        <button
-          onClick={handleStartChat}
-          className="p-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-md w-32 transition flex items-center justify-center"
-        >
-          <i className="fa-solid fa-comment mr-2"></i>
-          Start Chat
-        </button>
-      );
-    }
 
     return (
-      <FriendActionButton
-        status={friendshipStatus}
-        roleId={roleId}
-        accId={accId}
-      />
-    )
+      <div className="flex items-center gap-2">
+        {/* Nút Start Chat */}
+        <button
+          onClick={handleStartChat}
+          className="p-1 px-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-md w- transition flex items-center justify-center"
+        >
+          <i className="fa-solid fa-comment mr-2"></i>
+          Send Message
+        </button>
+        {/* FriendActionButton */}
+        <FriendActionButton
+          status={friendshipStatus}
+          roleId={roleId}
+          accId={accId}
+        />
+      </div>
+    );
   };
-  console.log("accId:", accId);
-  console.log("isOwner:", isOwner);
-  console.log("friendshipStatus:", friendshipStatus);
-  console.log("isFriend:", isFriend);
-  console.log("listFriends:", listFriends);
-
-//   const matchedAccount =
-//     !isOwner &&
-//     Array.isArray(listCheckRelationShip) &&
-//     listCheckRelationShip.find((a) => a.accId === accId);
-  //get list photo
+  
   const fetchPhotos = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -418,7 +408,7 @@ const PersonalPage = () => {
                 isProfile={true}
                 accId={accId}
               />
-              <PhotoGallery photos={photos} isOwner={isOwner} accId={accId}/>
+              <PhotoGallery photos={photos} isOwner={isOwner} accId={accId} />
             </aside>
             <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
               {isOwner && (
@@ -461,14 +451,14 @@ const PersonalPage = () => {
                         : [],
                       tagFriends: postMapper.postTags
                         ? postMapper.postTags.map((tag) => ({
-                            accId: tag.accId,
-                            fullname: tag.fullname || "Unknown",
-                          }))
+                          accId: tag.accId,
+                          fullname: tag.fullname || "Unknown",
+                        }))
                         : [],
                       categories: postMapper.postCategories
                         ? postMapper.postCategories.map(
-                            (cat) => cat.categoryName
-                          )
+                          (cat) => cat.categoryName
+                        )
                         : [],
                       likes: postMapper.reactionCount || 0,
                       comments: postMapper.commentCount || 0,

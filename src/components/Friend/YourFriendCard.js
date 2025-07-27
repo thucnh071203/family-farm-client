@@ -118,7 +118,7 @@ const YourFriendCard = ({ friend, isListFollower, isOwner, isProfile }) => {
           />
         </div>
         <div className="flex items-center flex-col gap-1">
-          <p className="text-base font-bold">{friend.username || "Mai Xuan"}</p>
+          <p className="text-base font-bold">{friend.fullName || "Mai Xuan"}</p>
           <p className="text-base font-normal text-[#999999]">
             {friend.city || "From Can Tho"}
           </p>
