@@ -277,19 +277,19 @@ const AppContent = () => {
             <Route path="/PostManagementDetail/:id" element={<PostManagementDetailPage />} />
             {/* /PostManagement/PostDetail */}
             <Route
-              path="/PostCatePage/CreatePostCate"
+              path="/CreatePostCate"
               element={<CreatePostCatePage />}
             />
             <Route
-              path="/PostCatePage/UpdatePostCate/:id"
+              path="/UpdatePostCate/:id"
               element={<UpdatePostCatePage />}
             />
             <Route
               path="/PostCatePage/DetailPostCate/:id"
               element={<DetailPostCatePage />}
             />
-            <Route path="/CreatePostCate" element={<CreatePostCate />} />
-            <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} />
+            {/* <Route path="/CreatePostCate" element={<CreatePostCate />} /> */}
+            {/* <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} /> */}
             <Route path="/DetailPostCate/:id" element={<DetailPostCate />} />
             <Route path="/payment-callback" element={<CallbackPage />} />
             <Route path="/PaymentResult" element={<PaymentResultPage />} />
