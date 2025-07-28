@@ -9,10 +9,18 @@ import { ToastContainer, Bounce } from "react-toastify";
 import { SignalRProvider } from "./context/SignalRContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import useAuth from "./hooks/useAuth";
+import ExpertRevenue from "./components/Statistic/ExpertRevenue";
+import BookingListPage from "./components/Statistic/BookingListPage";
+import BookingDetailPage from "./components/Statistic/BookingDetailPage";
+import BookingStatisticPage from "./components/Statistic/BookingStatisticPage";
+import PageStatisticExpert from "./pages/StatisticExpert/PageStatisticExpert";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-
+import AICheckerPage from "./pages/Dashboard/AICheckerPage";
+import PostAIDetailPage from "./pages/Dashboard/PostAIDetailPage";
+import PaymentInvoicePage from "./pages/PaymentPage/PaymentInvoicePage";
+import PostManagementDetailPage from "./pages/Dashboard/PostManagementDetailPage";
 import LoginPage from "./pages/AuthenPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ServicePage from "./pages/ServicePage/ServicePage";
@@ -102,7 +110,6 @@ import ListPhotoOther from "./pages/Profile/ListPhotoOther";
 import CreateSubprocessPage from "./pages/Subprocess/CreateSubprocessPage";
 import RePaymentResultPage from "./pages/CallbackPage/RePaymentResult";
 import ReviewServicePage from "./pages/ProcessPage/ReviewServicePage";
-
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -283,13 +290,16 @@ const AppContent = () => {
               element={<AccountDetailPage />}
             />
             <Route path="/ListPostCheckedAI" element={<AICheckerPage />} />
-            <Route path="/ListPostCheckedAI/PostAIDetail/:id" element={<PostAIDetailPage />} />
-            <Route path="/PostManagementDetail/:id" element={<PostManagementDetailPage />} />
-            {/* /PostManagement/PostDetail */}
             <Route
-              path="/CreatePostCate"
-              element={<CreatePostCatePage />}
+              path="/ListPostCheckedAI/PostAIDetail/:id"
+              element={<PostAIDetailPage />}
             />
+            <Route
+              path="/PostManagementDetail/:id"
+              element={<PostManagementDetailPage />}
+            />
+            {/* /PostManagement/PostDetail */}
+            <Route path="/CreatePostCate" element={<CreatePostCatePage />} />
             <Route
               path="/UpdatePostCate/:id"
               element={<UpdatePostCatePage />}
@@ -310,7 +320,10 @@ const AppContent = () => {
               element={<CreateSubprocessPage />}
             />
             <Route path="/RePaymentResult" element={<RePaymentResultPage />} />
-            <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />} />
+            <Route
+              path="/ReviewService/:serviceId"
+              element={<ReviewServicePage />}
+            />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
