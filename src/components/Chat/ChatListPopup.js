@@ -5,13 +5,14 @@ import ChatList from "./ChatList";
 import ChatDetails from "./ChatDetails";
 import formatTime from "../../utils/formatTime";
 import { Link } from "react-router-dom";
-import { SignalRProvider, useSignalR } from "../../context/SignalRContext";
+import { useSignalR } from "../../context/SignalRContext";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 
 const ChatListPopup = ({ onToggle, isVisible }) => {
     const [selectedChat, setSelectedChat] = useState(null);
     const [unreadChatCount, setUnreadChatCount] = useState(0);
+    const [filterStatus, setFilterStatus] = useState("all");
     const { connection, currentUserId } = useSignalR();
 
     // Gọi API để lấy unreadChatCount khi component mount
@@ -22,11 +23,9 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
             try {
                 const response = await instance.get("/api/chat/get-by-user");
                 if (response.data.success) {
-                    // console.log("Initial unreadChatCount:", response.data.unreadChatCount);
                     setUnreadChatCount(response.data.unreadChatCount || 0);
                 }
             } catch (error) {
-                // toast.error("Load unread message count failed!");
                 console.error("Fetch unread count error:", error);
             }
         };
@@ -37,23 +36,18 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
     // Xử lý sự kiện SignalR để cập nhật unreadChatCount
     useEffect(() => {
         if (!connection || !currentUserId) {
-            console.warn("No SignalR connection or currentUserId");
             return;
         }
 
         const receiveMessageHandler = (chatDetail, chatDTO) => {
-            console.log("ReceiveMessage in ChatListPopup:", { chatDetail, chatDTO });
             if (!chatDTO || !chatDTO.chatId || !chatDTO.receiver || !chatDTO.receiver.accId) {
-                console.warn("Invalid or missing chatDTO:", { chatDetail, chatDTO });
                 toast.warn("Invalid message data!");
                 return;
             }
-            // Gọi lại API để lấy unreadChatCount mới nhất thay vì tăng thủ công
             const fetchUnreadCount = async () => {
                 try {
                     const response = await instance.get("/api/chat/get-by-user");
                     if (response.data.success) {
-                        console.log("Updated unreadChatCount:", response.data.unreadChatCount);
                         setUnreadChatCount(response.data.unreadChatCount || 0);
                     }
                 } catch (error) {
@@ -64,17 +58,13 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
         };
 
         const messageSeenHandler = (chatId, chatDTO) => {
-            console.log("MessageSeen in ChatListPopup:", { chatId, chatDTO });
             if (!chatId || !chatDTO || !chatDTO.chatId || !chatDTO.receiver || !chatDTO.receiver.accId) {
-                console.warn("Invalid MessageSeen data:", { chatId, chatDTO });
                 return;
             }
-            // Gọi lại API để lấy unreadChatCount mới nhất
             const fetchUnreadCount = async () => {
                 try {
                     const response = await instance.get("/api/chat/get-by-user");
                     if (response.data.success) {
-                        console.log("Updated unreadChatCount after MessageSeen:", response.data.unreadChatCount);
                         setUnreadChatCount(response.data.unreadChatCount || 0);
                     }
                 } catch (error) {
@@ -108,7 +98,6 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
     };
 
     const handleUnreadCountChange = (count) => {
-        // console.log("Received unreadChatCount from ChatList:", count);
         setUnreadChatCount(count);
     };
 
@@ -144,10 +133,20 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
                         <img className="w-full h-[1px] object-cover mt-3" src={headLine} alt="Header line" />
                         <div className="flex px-4 mt-3 sm:px-0">
                             <div className="flex flex-row gap-2">
-                                <div className="font-semibold text-gray-500 bg-gray-100 text-sm leading-normal whitespace-nowrap px-3.5 py-1.5 rounded-md cursor-pointer hover:bg-cyan-300 transition-colors duration-200">
+                                <div
+                                    className={`font-semibold text-gray-500 bg-gray-100 text-sm leading-normal whitespace-nowrap px-3.5 py-1.5 rounded-md cursor-pointer hover:bg-cyan-300 transition-colors duration-200 ${
+                                        filterStatus === "all" ? "text-[#3DB3FB] bg-cyan-100" : ""
+                                    }`}
+                                    onClick={() => setFilterStatus("all")}
+                                >
                                     All
                                 </div>
-                                <div className="font-semibold text-gray-500 bg-gray-100 text-sm leading-normal whitespace-nowrap px-1.5 py-1.5 rounded-md cursor-pointer hover:bg-cyan-300 transition-colors duration-200">
+                                <div
+                                    className={`font-semibold text-gray-500 bg-gray-100 text-sm leading-normal whitespace-nowrap px-1.5 py-1.5 rounded-md cursor-pointer hover:bg-cyan-300 transition-colors duration-200 ${
+                                        filterStatus === "unread" ? "text-[#3DB3FB] bg-cyan-100" : ""
+                                    }`}
+                                    onClick={() => setFilterStatus("unread")}
+                                >
                                     Not read yet
                                 </div>
                             </div>
@@ -163,6 +162,7 @@ const ChatListPopup = ({ onToggle, isVisible }) => {
                         <ChatList
                             onChatSelect={handleChatSelect}
                             onUnreadCountChange={handleUnreadCountChange}
+                            filterStatus={filterStatus}
                         />
                     </div>
                 </div>

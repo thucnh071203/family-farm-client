@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PostCreatePopup from "./PostCreatePopup";
 import { useUser } from "../../context/UserContext";
+import default_avatar from "../../assets/images/default-avatar.png";
 
 const PostCreate = ({ onPostCreate, profileImage, groupId }) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -21,8 +22,7 @@ const { user } = useUser();
       </button>
       <div className="flex items-center gap-3">
         <img
-            src={user?.avatar
-          }
+            src={user?.avatar || default_avatar}
           alt="Avatar"
           className="w-10 h-10 rounded-full"
         />

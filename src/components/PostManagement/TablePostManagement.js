@@ -10,6 +10,46 @@ const TablePostManagement = ({ listPost }) => {
   const navigate = useNavigate();
   const tableRef = useRef(null);
 
+  const handleDelete = (postId) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      // <-- Sửa ở đây
+      if (result.isConfirmed) {
+        try {
+          const token = localStorage.getItem("accessToken");
+
+          const res = await fetch(
+            `https://localhost:7280/api/post/hard-delete/${postId}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          const data = await res.json();
+          if (data.success === true) {
+            Swal.fire("Deleted!", "The post has been deleted.", "success");
+            $(`button[data-id="${postId}"]`).closest("tr").remove();
+            //navigate("/Dashboard/ListAccount"); // chuyển hướng sau khi hiển thị alert
+          }
+        } catch (err) {
+          console.error("Error fetching post censor:", err.message || err);
+          Swal.fire("Error!", "Something went wrong.", "error");
+        }
+      }
+    });
+  };
+
   useEffect(() => {
     let dtInstance; //Khai báo ở đây
     // if (!listPost || listPost.length === 0) return;
@@ -56,7 +96,9 @@ const TablePostManagement = ({ listPost }) => {
             title: "Action",
             render: function (data, type, row) {
               const postId = row.post?.postId;
-              return `<button class='btn-detail text-[#3DB3FB] hover:underline' data-id='${postId}'>Detail</button>`;
+              const detailBtn = `<button class='btn-detail text-[#3DB3FB] hover:underline mr-2' data-id='${postId}'>Detail</button>`;
+              const deleteBtn = `<button class='btn-delete text-[#d65f45] hover:underline' data-id='${postId}'>Delete</button>`;
+              return detailBtn + deleteBtn;
             },
           },
         ],
@@ -80,8 +122,13 @@ const TablePostManagement = ({ listPost }) => {
       $(tableRef.current).on("click", ".btn-detail", function () {
         const postId = $(this).data("id");
         if (postId != null) {
-          navigate(`/ListPostCheckedAI/PostAIDetail/${postId}`);
+          navigate(`/PostManagementDetail/${postId}`);
         }
+      });
+      // Gắn click cho nút Delete
+      $(tableRef.current).on("click", ".btn-delete", function () {
+        const postId = $(this).data("id");
+        handleDelete(postId);
       });
     }, 100); // Delay 100ms
     $(tableRef.current).find("thead").addClass("bg-blue-100");

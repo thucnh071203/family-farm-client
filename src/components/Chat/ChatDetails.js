@@ -90,10 +90,10 @@ const ChatDetails = ({
                 if (response.data === "Messages marked as seen.") {
                     // console.log("Messages marked as seen for chatId:", chatId);
                 } else {
-                    console.warn("Failed to mark messages as seen:", response.data);
+                    // console.warn("Failed to mark messages as seen:", response.data);
                 }
             } catch (error) {
-                console.error("Error marking messages as seen:", error.response?.data || error.message);
+                // console.error("Error marking messages as seen:", error.response?.data || error.message);
             }
         };
 
@@ -123,7 +123,7 @@ const ChatDetails = ({
             });
 
             connection.on("ChatRecalled", (receivedChatId, chatDetailId) => {
-                console.log("ChatRecalled in ChatDetails:", { receivedChatId, chatDetailId });
+                // console.log("ChatRecalled in ChatDetails:", { receivedChatId, chatDetailId });
                 if (receivedChatId === chatId) {
                     setMessages((prevMessages) =>
                         prevMessages.map((msg) => msg.chatDetailId === chatDetailId ? { ...msg, isRecalled: true } : msg
@@ -134,7 +134,7 @@ const ChatDetails = ({
             });
 
             connection.on("ChatHistoryDeleted", (receivedChatId) => {
-                console.log("ChatHistoryDeleted in ChatDetails:", receivedChatId);
+                // console.log("ChatHistoryDeleted in ChatDetails:", receivedChatId);
                 if (receivedChatId === chatId) {
                     setMessages([]);
                     setTotalMessages(0);
@@ -144,14 +144,14 @@ const ChatDetails = ({
             });
 
             connection.on("SendTyping", (senderId) => {
-                console.log("SendTyping in ChatDetails:", senderId);
+                // console.log("SendTyping in ChatDetails:", senderId);
                 if (senderId === receiverId) {
                     setIsTyping(true);
                 }
             });
 
             connection.on("StopTyping", (senderId) => {
-                console.log("StopTyping in ChatDetails:", senderId);
+                // console.log("StopTyping in ChatDetails:", senderId);
                 if (senderId === receiverId) {
                     setIsTyping(false);
                 }
@@ -228,7 +228,7 @@ const ChatDetails = ({
                 toast.error("Failed to recall message.");
             }
         } catch (error) {
-            console.error("Error recalling message:", error.response?.data || error.message);
+            // console.error("Error recalling message:", error.response?.data || error.message);
             toast.error("An error occurred while recalling the message.");
         }
     };
@@ -455,7 +455,7 @@ const ChatDetails = ({
                                                                 className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left border border-solid border-gray-400 rounded-md"
                                                                 aria-label="Recall message"
                                                             >
-                                                                <i class="fa fa-undo" aria-hidden="true"></i> Recall
+                                                                <i className="fa fa-undo" aria-hidden="true"></i> Recall
                                                             </button>
                                                         </div>
                                                     )}
