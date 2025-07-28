@@ -30,7 +30,7 @@ const DetailPostCate = () => {
     fetchDetail();
   }, [id]);
 
-  if (loading) return <p className="p-6 text-gray-600">Đang tải dữ liệu...</p>;
+  if (loading) return <p className="p-6 text-gray-600">Loading data...</p>;
   if (!category)
     return <p className="p-6 text-red-500">Không tìm thấy danh mục.</p>;
 

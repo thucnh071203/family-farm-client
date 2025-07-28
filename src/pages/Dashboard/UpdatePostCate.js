@@ -54,12 +54,12 @@ const UpdatePostCate = () => {
       }, 1000);
     } catch (err) {
       console.error("Cập nhật thất bại:", err);
-      alert("Cập nhật thất bại!");
+      alert("Update failed!");
     }
   };
 
-  if (loading) return <p>Đang tải dữ liệu...</p>;
-  if (!category) return <p>Không tìm thấy category.</p>;
+  if (loading) return <p>Loading data...</p>;
+  if (!category) return <p>No category found.</p>;
 
   return (
     <div className="p-6">
