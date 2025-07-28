@@ -102,11 +102,8 @@ import ListPhotoOther from "./pages/Profile/ListPhotoOther";
 import CreateSubprocessPage from "./pages/Subprocess/CreateSubprocessPage";
 import RePaymentResultPage from "./pages/CallbackPage/RePaymentResult";
 import ReviewServicePage from "./pages/ProcessPage/ReviewServicePage";
-import ExpertRevenue from "./components/Statistic/ExpertRevenue";
-import BookingListPage from "./components/Statistic/BookingListPage";
-import BookingDetailPage from "./components/Statistic/BookingDetailPage";
-import BookingStatisticPage from "./components/Statistic/BookingStatisticPage";
-import PageStatisticExpert from "./pages/StatisticExpert/PageStatisticExpert";
+
+
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -285,20 +282,24 @@ const AppContent = () => {
               path="/AccountDetail/:accId"
               element={<AccountDetailPage />}
             />
+            <Route path="/ListPostCheckedAI" element={<AICheckerPage />} />
+            <Route path="/ListPostCheckedAI/PostAIDetail/:id" element={<PostAIDetailPage />} />
+            <Route path="/PostManagementDetail/:id" element={<PostManagementDetailPage />} />
+            {/* /PostManagement/PostDetail */}
             <Route
-              path="/PostCatePage/CreatePostCate"
+              path="/CreatePostCate"
               element={<CreatePostCatePage />}
             />
             <Route
-              path="/PostCatePage/UpdatePostCate/:id"
+              path="/UpdatePostCate/:id"
               element={<UpdatePostCatePage />}
             />
             <Route
               path="/PostCatePage/DetailPostCate/:id"
               element={<DetailPostCatePage />}
             />
-            <Route path="/CreatePostCate" element={<CreatePostCate />} />
-            <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} />
+            {/* <Route path="/CreatePostCate" element={<CreatePostCate />} /> */}
+            {/* <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} /> */}
             <Route path="/DetailPostCate/:id" element={<DetailPostCate />} />
             <Route path="/payment-callback" element={<CallbackPage />} />
             <Route path="/PaymentResult" element={<PaymentResultPage />} />
@@ -309,10 +310,7 @@ const AppContent = () => {
               element={<CreateSubprocessPage />}
             />
             <Route path="/RePaymentResult" element={<RePaymentResultPage />} />
-            <Route
-              path="/ReviewService/:serviceId"
-              element={<ReviewServicePage />}
-            />
+            <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login

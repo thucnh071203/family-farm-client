@@ -8,18 +8,19 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSignalR } from "../../context/SignalRContext";
 import Swal from "sweetalert2";
 
-const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) => {
+const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {}, filterStatus = "all" }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [chats, setChats] = useState([]);
     const [loading, setLoading] = useState(false);
     const [hoveredChatId, setHoveredChatId] = useState(null);
     const [activeDropdown, setActiveDropdown] = useState(null);
-    const { connection, currentUserId } = useSignalR();
+    const { connection, currentUserId, updateCurrentUserId } = useSignalR();
 
     useEffect(() => {
-        if (!currentUserId) {
-            console.warn("No currentUserId, cannot fetch chats or connect to SignalR");
-            toast.warn("Please log in to view chats");
+        if (!currentUserId && localStorage.getItem("accId")) {
+            if (updateCurrentUserId) {
+                updateCurrentUserId();
+            }
             return;
         }
 
@@ -27,17 +28,14 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
             setLoading(true);
             try {
                 const response = await instance.get("/api/chat/get-by-user");
-                // console.log("Fetched chats:", response.data);
                 if (response.data.success) {
                     const validChats = (response.data.chats || []).filter(
                         (chat) => chat && chat.chatId && chat.receiver && chat.receiver.accId
                     );
-                    // console.log("Valid chats after filtering:", validChats);
                     setChats(validChats);
                     onUnreadCountChange(response.data.unreadChatCount || 0);
                 }
             } catch (error) {
-                // toast.error("Chat list loading failed!");
                 console.error("Fetch chats error:", error);
             } finally {
                 setLoading(false);
@@ -45,18 +43,15 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
         };
 
         fetchChats();
-    }, [currentUserId, onUnreadCountChange]);
+    }, [currentUserId, onUnreadCountChange, updateCurrentUserId]);
 
     useEffect(() => {
         if (!connection) {
-            console.warn("No SignalR connection available");
             return;
         }
         if (connection.state === "Connected") {
             const receiveMessageHandler = (chatDetail, chatDTO) => {
-                console.log("ReceiveMessage in ChatList:", { chatDetail, chatDTO });
                 if (!chatDTO || !chatDTO.chatId || !chatDTO.receiver || !chatDTO.receiver.accId) {
-                    console.warn("Invalid or missing chatDTO:", { chatDetail, chatDTO });
                     toast.warn("Received invalid message data");
                     return;
                 }
@@ -82,9 +77,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
 
             connection.on("ReceiveMessage", receiveMessageHandler);
             connection.on("MessageSeen", (chatId, chatDTO) => {
-                console.log("MessageSeen in ChatList:", { chatId, chatDTO });
                 if (!chatId || !chatDTO || !chatDTO.chatId || !chatDTO.receiver || !chatDTO.receiver.accId) {
-                    console.warn("Invalid MessageSeen data:", { chatId, chatDTO });
                     return;
                 }
                 setChats((prevChats) =>
@@ -95,9 +88,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
             });
 
             connection.on("ChatRecalled", (chatId, chatDetailId, chatDTO) => {
-                console.log("ChatRecalled:", { chatId, chatDetailId, chatDTO });
                 if (!chatId || !chatDTO || !chatDTO.chatId || !chatDTO.receiver || !chatDTO.receiver.accId) {
-                    console.warn("Invalid ChatRecalled data:", { chatId, chatDetailId, chatDTO });
                     return;
                 }
                 setChats((prevChats) =>
@@ -106,11 +97,9 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
                     )
                 );
             });
-            
+
             connection.on("ChatHistoryDeleted", (chatId) => {
-                console.log("ChatHistoryDeleted:", chatId);
                 if (!chatId) {
-                    console.warn("Invalid chatId for ChatHistoryDeleted");
                     return;
                 }
                 setChats((prevChats) => prevChats.filter((chat) => chat.chatId !== chatId));
@@ -118,7 +107,6 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
             });
 
             return () => {
-                // console.log("Cleaning up SignalR event handlers in ChatList");
                 connection.off("ReceiveMessage", receiveMessageHandler);
                 connection.off("MessageSeen");
                 connection.off("ChatRecalled");
@@ -141,14 +129,14 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
 
     const handleDeleteChatHistory = async (chatId) => {
         const result = await Swal.fire({
-            title: 'Xóa lịch sử trò chuyện?',
-            text: "Bạn có chắc chắn muốn xóa toàn bộ lịch sử trò chuyện này? Hành động này không thể hoàn tác!",
+            title: 'Delete chat history?',
+            text: "Are you sure you want to delete this entire chat history? This action cannot be undone!",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
             cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Xóa',
-            cancelButtonText: 'Hủy'
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
         });
 
         if (result.isConfirmed) {
@@ -164,19 +152,16 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
         setActiveDropdown(null);
     };
 
-    const filteredChats = chats.filter((chat) =>
-        chat && chat.receiver && chat.receiver.fullName
+    const filteredChats = chats.filter((chat) => {
+        const matchesSearch = chat && chat.receiver && chat.receiver.fullName
             ? chat.receiver.fullName.toLowerCase().includes(searchQuery.toLowerCase())
-            : false
-    );
-
-    useEffect(() => {
-        // console.log("Filtered chats:", filteredChats);
-    }, [filteredChats]);
+            : false;
+        const matchesFilter = filterStatus === "unread" ? chat.unreadCount > 0 : true;
+        return matchesSearch && matchesFilter;
+    });
 
     const handleChatClick = (chat) => {
         if (!chat || !chat.receiver || !chat.receiver.accId) {
-            console.warn("Invalid chat in handleChatClick:", chat);
             toast.warn("Invalid chat data!");
             return;
         }
@@ -219,7 +204,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
                             role="button"
                             aria-label={`Open chat with ${chat.receiver?.fullName || "User"}`}
                         >
-                            <div 
+                            <div
                                 className="flex items-center flex-grow gap-2"
                                 onClick={() => handleChatClick(chat)}
                             >
@@ -259,7 +244,7 @@ const ChatList = ({ onChatSelect = () => {}, onUnreadCountChange = () => {} }) =
                                             <i className="fas fa-ellipsis-v text-gray-500"></i>
                                         </button>
                                         {activeDropdown === chat.chatId && (
-                                            <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg  min-w-[150px] z-10">
+                                            <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg min-w-[150px] z-10">
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();

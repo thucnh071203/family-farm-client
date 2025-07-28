@@ -44,58 +44,58 @@ export default function ProgressListOfFarmer() {
         fetchListProcess();
     }, [accessToken])
 
-    const handleClickViewProcess = (SubprocessData, ProcessStepsData) => {
+    const handleClickViewProcess = (SubprocessData, ProcessStepsData, isEdit) => {
         navigate(`/ProcessResult/${SubprocessData.subprocessId}`, {
-            state: { SubprocessData, ProcessStepsData },
+            state: { SubprocessData, ProcessStepsData, isEdit },
         });
     };
 
     return (
-        <div class="progress-managment pt-36">
-            <div class="progress-managment-container flex flex-col lg:flex-row justify-center items-center lg:items-start gap-[23px] px-2">
+        <div className="progress-managment pt-36">
+            <div className="progress-managment-container flex flex-col lg:flex-row justify-center items-center lg:items-start gap-[23px] px-2">
                 <MenuProgressFarmer inPage="process" />
-                <div class="list-progress-section w-full xl:w-[831px] max-w-[831px]">
-                    <div class="status-nav-container w-full">
-                        <div class="status-progress-nav w-full">
-                            <div class="status-all w-[12.15%]">
-                                <div class="text-2">All</div>
+                <div className="list-progress-section w-full xl:w-[831px] max-w-[831px]">
+                    <div className="status-nav-container w-full">
+                        <div className="status-progress-nav w-full">
+                            <div className="status-all w-[12.15%]">
+                                <div className="text-2">All</div>
                             </div>
-                            <div class="status-uncompleted w-[21.5%]">
-                                <div class="text-2">Uncompleted</div>
+                            <div className="status-uncompleted w-[21.5%]">
+                                <div className="text-2">Uncompleted</div>
                             </div>
-                            <div class="status-completed w-[17.8%]">
-                                <div class="text-2">Completed</div>
+                            <div className="status-completed w-[17.8%]">
+                                <div className="text-2">Completed</div>
                             </div>
-                            <div class="status-need-info w-[17.8%]">
-                                <div class="text-2">Need confirmation</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="search-progress-container mt-[13px] h-10">
-                        <div class="search-bar w-full h-full">
-                            <div class="search-bar relative w-full h-full flex items-center">
-                                <img class="material-symbols-2 pl-4" src={searchIcon} alt="search icon" />
-                                <input type="text" class="search-input w-[38.5%]" placeholder="Search based on service name, expert name, or booking ID" />
+                            <div className="status-need-info w-[17.8%]">
+                                <div className="text-2">Need confirmation</div>
                             </div>
                         </div>
                     </div>
-                    <div class="progress-list-container mt-[26px] flex flex-col gap-10">
+                    <div className="search-progress-container mt-[13px] h-10">
+                        <div className="search-bar w-full h-full">
+                            <div className="search-bar relative w-full h-full flex items-center">
+                                <img className="material-symbols-2 pl-4" src={searchIcon} alt="search icon" />
+                                <input type="text" className="search-input w-[38.5%]" placeholder="Search based on service name, expert name, or booking ID" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="progress-list-container mt-[26px] flex flex-col gap-10">
 
                         {Array.isArray(subprocesses) && subprocesses.length > 0 ? (
                             subprocesses.map((item, index) => (
-                                <div key={item.subProcess.subprocessId || index} class="progress-card w-full">
-                                    <div class="header-progress-section flex flex-col sm:flex-row justify-between">
-                                        <div class="infor-progress-section">
-                                            <div class="info-1">
-                                                <div class="text-progress-info-1">ID Process:</div>
-                                                <div class="text-progress-id">{item.subProcess.subprocessId}</div>
+                                <div key={item.subProcess.subprocessId || index} className="progress-card w-full">
+                                    <div className="header-progress-section flex flex-col sm:flex-row justify-between">
+                                        <div className="infor-progress-section">
+                                            <div className="info-1">
+                                                <div className="text-progress-info-1">ID Process:</div>
+                                                <div className="text-progress-id">{item.subProcess.subprocessId}</div>
                                             </div>
-                                            <div class="info-1">
-                                                <div class="text-progress-info-1">ID booking:</div>
-                                                <div class="text-progress-p-1">{item.subProcess.bookingServiceId}</div>
+                                            <div className="info-1">
+                                                <div className="text-progress-info-1">ID booking:</div>
+                                                <div className="text-progress-p-1">{item.subProcess.bookingServiceId}</div>
                                             </div>
-                                            <div class="date-info">
-                                                <div class="text-progress-info-1">Lasted updated:</div>
+                                            <div className="date-info">
+                                                <div className="text-progress-info-1">Lasted updated:</div>
                                                 {(() => {
                                                     const d = new Date(item.subProcess.updatedAt || item.subProcess.createdAt);
                                                     const dateStr = d.toLocaleDateString("vi-VN");
@@ -109,40 +109,49 @@ export default function ProgressListOfFarmer() {
                                             </div>
                                         </div>
 
-                                        {item.subProcess.subProcessStatus === "Created" && (
-                                            <div class="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
-                                                <div class="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
+                                        {item.subProcess.subProcessStatus === "Not Started" && (
+                                            <div style={{ background: "rgba(62, 63, 94, 0.25)", color: "#3E3F5E" }} className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                <div style={{ color: "#3E3F5E" }} className="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
                                             </div>
                                         )}
 
                                         {item.subProcess.subProcessStatus === "On Process" && (
-                                            <div class="status-info-completed max-h-[30px] mt-4 sm:mt-0">
-                                                <div class="text-completed">On Process</div>
+                                            <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
+                                                <div className="text-completed">On Process</div>
                                             </div>
                                         )}
 
                                         {item.subProcess.subProcessStatus === "Completed" && (
-                                            <div class="status-info-completed max-h-[30px] mt-4 sm:mt-0">
-                                                <div class="text-completed">Completed</div>
+                                            <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
+                                                <div className="text-completed">Completed</div>
                                             </div>
                                         )}
 
 
                                     </div>
-                                    <div class="progress-step-container w-full">
+                                    <div className="progress-step-container w-full">
                                         {item.processSteps.length > 0 && (
                                             item.processSteps.map((step, index) => (
-                                                <div class={step.processStep.stepNumber <= item.subProcess.continueStep ? "done-step" : "not-done-step"}>
-                                                    <div class="text-progress-info-1">Step {step.processStep.stepNumber}</div>
+                                                <div className={step.processStep.stepNumber <= item.subProcess.continueStep ? "done-step" : "not-done-step"}>
+                                                    <div className="text-progress-info-1">Step {step.processStep.stepNumber}</div>
                                                 </div>
                                             ))
                                         )}
                                     </div>
-                                    <div class="footer-progress-section">
-                                        <div class="footer-progress-button"
-                                            onClick={() => handleClickViewProcess(item.subProcess, item.processSteps)}>
-                                            <div class="progress-button-text">Continue</div>
-                                        </div>
+                                    <div className="footer-progress-section">
+                                        {item.subProcess.subProcessStatus === "Completed" && (
+                                            <div className="footer-progress-button"
+                                                onClick={() => handleClickViewProcess(item.subProcess, item.processSteps, false)}>
+                                                <div className="progress-button-text">Continue</div>
+                                            </div>
+                                        )}
+
+                                        {item.subProcess.subProcessStatus !== "Completed" && (
+                                            <div className="footer-progress-button"
+                                                onClick={() => handleClickViewProcess(item.subProcess, item.processSteps, true)}>
+                                                <div className="progress-button-text">Continue</div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))

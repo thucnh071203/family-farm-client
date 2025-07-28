@@ -90,10 +90,10 @@ const ChatDetails = ({
                 if (response.data === "Messages marked as seen.") {
                     // console.log("Messages marked as seen for chatId:", chatId);
                 } else {
-                    console.warn("Failed to mark messages as seen:", response.data);
+                    // console.warn("Failed to mark messages as seen:", response.data);
                 }
             } catch (error) {
-                console.error("Error marking messages as seen:", error.response?.data || error.message);
+                // console.error("Error marking messages as seen:", error.response?.data || error.message);
             }
         };
 
@@ -123,7 +123,7 @@ const ChatDetails = ({
             });
 
             connection.on("ChatRecalled", (receivedChatId, chatDetailId) => {
-                console.log("ChatRecalled in ChatDetails:", { receivedChatId, chatDetailId });
+                // console.log("ChatRecalled in ChatDetails:", { receivedChatId, chatDetailId });
                 if (receivedChatId === chatId) {
                     setMessages((prevMessages) =>
                         prevMessages.map((msg) => msg.chatDetailId === chatDetailId ? { ...msg, isRecalled: true } : msg
@@ -134,7 +134,7 @@ const ChatDetails = ({
             });
 
             connection.on("ChatHistoryDeleted", (receivedChatId) => {
-                console.log("ChatHistoryDeleted in ChatDetails:", receivedChatId);
+                // console.log("ChatHistoryDeleted in ChatDetails:", receivedChatId);
                 if (receivedChatId === chatId) {
                     setMessages([]);
                     setTotalMessages(0);
@@ -144,14 +144,14 @@ const ChatDetails = ({
             });
 
             connection.on("SendTyping", (senderId) => {
-                console.log("SendTyping in ChatDetails:", senderId);
+                // console.log("SendTyping in ChatDetails:", senderId);
                 if (senderId === receiverId) {
                     setIsTyping(true);
                 }
             });
 
             connection.on("StopTyping", (senderId) => {
-                console.log("StopTyping in ChatDetails:", senderId);
+                // console.log("StopTyping in ChatDetails:", senderId);
                 if (senderId === receiverId) {
                     setIsTyping(false);
                 }
@@ -228,7 +228,7 @@ const ChatDetails = ({
                 toast.error("Failed to recall message.");
             }
         } catch (error) {
-            console.error("Error recalling message:", error.response?.data || error.message);
+            // console.error("Error recalling message:", error.response?.data || error.message);
             toast.error("An error occurred while recalling the message.");
         }
     };
@@ -390,8 +390,8 @@ const ChatDetails = ({
                                             {detail.isRecalled ? (
                                                 <div
                                                     className={`p-2 rounded-full ${group.senderId === currentUserId
-                                                            ? "bg-[#3DB3FB] text-white"
-                                                            : "bg-gray-100 text-[#344258]"
+                                                        ? "bg-[#3DB3FB] text-white"
+                                                        : "bg-gray-100 text-[#344258]"
                                                         } break-all w-fit overflow-hidden`}
                                                 >
                                                     <p
@@ -420,8 +420,8 @@ const ChatDetails = ({
                                                     {detail.fileUrl && detail.fileType !== "image" && (
                                                         <div
                                                             className={`p-2 rounded-lg ${group.senderId === currentUserId
-                                                                    ? "bg-[#3DB3FB] text-white"
-                                                                    : "bg-gray-100 text-[#344258]"
+                                                                ? "bg-[#3DB3FB] text-white"
+                                                                : "bg-gray-100 text-[#344258]"
                                                                 } break-all w-fit overflow-hidden`}
                                                         >
                                                             <a
@@ -452,18 +452,18 @@ const ChatDetails = ({
                                                         >
                                                             <button
                                                                 onClick={() => handleRecallMessage(detail.chatDetailId)}
-                                                                className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
+                                                                className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left border border-solid border-gray-400 rounded-md"
                                                                 aria-label="Recall message"
                                                             >
-                                                                Recall
+                                                                <i className="fa fa-undo" aria-hidden="true"></i> Recall
                                                             </button>
                                                         </div>
                                                     )}
                                                     {detail.message?.trim() && (
                                                         <div
                                                             className={`p-2 rich-text-editor rounded-lg ${group.senderId === currentUserId
-                                                                    ? "bg-[#3DB3FB] text-white"
-                                                                    : "bg-gray-100 text-[#344258]"
+                                                                ? "bg-[#3DB3FB] text-white"
+                                                                : "bg-gray-100 text-[#344258]"
                                                                 } break-all w-fit overflow-hidden`}
                                                         >
                                                             <div

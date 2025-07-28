@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import logo from "../../assets/images/logo_img.png";
 import mdiUser from "../../assets/images/mdi_user.png";
@@ -7,22 +7,68 @@ import iconEye from "../../assets/images/mdi_eye (1).png";
 import googleIcon from "../../assets/images/devicon_google.png";
 import fbIcon from "../../assets/images/devicon-plain_facebook.png";
 import { getOwnProfile } from "../../services/accountService";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
-import { useState } from "react";
-import { toast, Bounce } from "react-toastify";
-import { GoogleLogin } from "@react-oauth/google";
+import { toast } from "react-toastify";
 import useGoogleAuth from "../../hooks/useGoogleAuth";
+import { useUser } from "../../context/UserContext";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
   const [errors, setErrors] = useState({ username: "", password: "" });
-  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { reloadUser } = useUser();
 
+  const navigate = useNavigate();
   const { initiateGoogleLogin, loading, error } = useGoogleAuth();
+
+  // Helper function để clear tất cả tokens
+  const clearAllTokens = () => {
+    ["accessToken", "refreshToken", "username", "accId", "roleId", "tokenExpiry", "fullName", "avatarUrl", "profileData"].forEach(key => {
+      localStorage.removeItem(key);
+      sessionStorage.removeItem(key);
+    });
+  };
+
+  // Helper function để lưu tokens theo rememberMe choice
+  const saveTokens = (loginData, remember) => {
+    const storage = remember ? localStorage : sessionStorage;
+    
+    // Clear tokens từ storage khác trước khi lưu
+    const otherStorage = remember ? sessionStorage : localStorage;
+    ["accessToken", "refreshToken", "username", "accId", "roleId", "tokenExpiry"].forEach(key => {
+      otherStorage.removeItem(key);
+    });
+
+    // Lưu tokens vào storage được chọn
+    storage.setItem("accessToken", loginData.accessToken);
+    storage.setItem("refreshToken", loginData.refreshToken);
+    storage.setItem("username", loginData.username);
+    storage.setItem("accId", loginData.accId);
+    storage.setItem("roleId", loginData.roleId);
+
+    const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
+    storage.setItem("tokenExpiry", expiryTime);
+  };
+
+  // Helper function để lưu profile data
+  const saveProfileData = (profileData, remember) => {
+    const storage = remember ? localStorage : sessionStorage;
+    const otherStorage = remember ? sessionStorage : localStorage;
+    
+    // Clear profile data từ storage khác
+    ["fullName", "avatarUrl", "profileData"].forEach(key => {
+      otherStorage.removeItem(key);
+    });
+
+    // Lưu profile data
+    storage.setItem("fullName", profileData.data.fullName || storage.getItem("username"));
+    storage.setItem("avatarUrl", profileData.data.avatar || "");
+    storage.setItem("profileData", JSON.stringify(profileData.data || {}));
+  };
 
   const handleGoogleLogin = () => {
     initiateGoogleLogin(rememberMe, navigate);
@@ -41,12 +87,11 @@ const LoginForm = () => {
           appId: "1018117513816487",
           cookie: true,
           xfbml: true,
-          version: "v17.0", // Dùng version ổn định
+          version: "v17.0",
         });
       };
       document.body.appendChild(script);
     } else {
-      // Nếu SDK đã sẵn sàng, chỉ cần init
       window.FB.init({
         appId: "1018117513816487",
         cookie: true,
@@ -60,17 +105,13 @@ const LoginForm = () => {
   const handleFacebookLogin = () => {
     window.FB.login(
       function (response) {
-        console.log("Facebook response: ", response.authResponse);
         if (response.authResponse) {
           const accessToken = response.authResponse.accessToken;
 
-          // Gọi Facebook API để lấy thông tin người dùng
           window.FB.api(
             "/me",
             { fields: "id,name,email,picture", access_token: accessToken },
             async function (userInfo) {
-              console.log("Facebook user info:", userInfo);
-
               const payload = {
                 facebookId: userInfo.id,
                 email: userInfo.email,
@@ -79,52 +120,25 @@ const LoginForm = () => {
               };
 
               try {
-                // const loginResponse = await axios.post(
-                //   "https://localhost:7280/api/authen/login-facebook",
-                //   payload
-                // );
-                const loginResponse = await instance.post("api/authen/login-facebook", payload);
+                const loginResponse = await instance.post("api/authen/login-facebook", payload, {
+                  skipInterceptor: true
+                });
 
                 const loginData = loginResponse.data;
 
                 if (loginResponse.status === 200) {
-                  const rememberMe = true; // Tùy bạn có lưu nhớ không
-                  const storage = rememberMe ? localStorage : sessionStorage;
+                  // Sử dụng helper function để lưu tokens
+                  saveTokens(loginData, rememberMe);
 
-                  // Lưu accessToken, refreshToken, username
-                  storage.setItem("accessToken", loginData.accessToken);
-                  storage.setItem("refreshToken", loginData.refreshToken);
-                  storage.setItem("username", loginData.username);
-                  storage.setItem("accId", loginData.accId);
-                  storage.setItem("roleId", loginData.roleId);
-                  
-                  // Hạn token
-                  const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
-                  storage.setItem("tokenExpiry", expiryTime);
+                  // Lấy thông tin profile
+                  try {
+                    const profileResponse = await getOwnProfile();
+                    saveProfileData(profileResponse, rememberMe);
+                  } catch (profileError) {
+                    console.warn("Could not fetch profile data:", profileError);
+                  }
 
-                  // Lấy thông tin profile (nếu cần thiết)
-                  const profileResponse = await axios.get(
-                    "https://localhost:7280/api/account/own-profile",
-                    {
-                      headers: {
-                        Authorization: `Bearer ${loginData.accessToken}`,
-                      },
-                    }
-                  );
-                  // const profileResponse = await getOwnProfile();
-
-                  const profileData = profileResponse.data;
-
-                  storage.setItem("profileData", JSON.stringify(profileData.data || {}));
-
-                  console.log("🔥 Dữ liệu profile:", JSON.stringify(profileData, null, 2));
-
-                  storage.setItem(
-                    "fullName",
-                    profileData.data.fullName || loginData.username
-                  );
-                  storage.setItem("avatarUrl", profileData.data.avatar || "");
-
+                  await reloadUser();
                   toast.success("LOGIN SUCCESSFULLY!");
                   navigate("/");
                 } else {
@@ -139,52 +153,92 @@ const LoginForm = () => {
               }
             }
           );
-        } else {
-          console.log("Người dùng từ chối đăng nhập Facebook.");
         }
       },
       { scope: "public_profile,email" }
     );
   };
 
+  const handlePasswordChange = (e) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
 
-  const handleLogin = async () => {
+    if (newPassword.length < 8) {
+      setErrors((prev) => ({
+        ...prev,
+        password: "Password must be at least 8 characters",
+      }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        password: "",
+      }));
+    }
+  };
+
+  const handleLogin = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    setIsSubmitted(true);
+
+    const newErrors = {};
+
+    if (!username.trim()) {
+      newErrors.username = "Username is required";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
 
     try {
-      const loginResponse = await instance.post('/api/authen/login', {
+      // Clear any existing tokens before new login
+      clearAllTokens();
 
+      const loginResponse = await instance.post('/api/authen/login', {
         Identifier: username,
         Password: password,
+      }, {
+        skipInterceptor: true
       });
 
       const loginData = loginResponse.data;
+
       if (loginResponse.status === 200) {
-        const storage = rememberMe ? localStorage : sessionStorage;
+        // Sử dụng helper function để lưu tokens
+        saveTokens(loginData, rememberMe);
 
-        // Lưu accessToken, refreshToken, username
-        storage.setItem("accessToken", loginData.accessToken);
-        storage.setItem("refreshToken", loginData.refreshToken);
-        storage.setItem("username", loginData.username);
-        storage.setItem("accId", loginData.accId);
-        storage.setItem("roleId", loginData.roleId);
+        // Lấy thông tin profile
+        try {
+          const profileData = await getOwnProfile();
+          saveProfileData(profileData, rememberMe);
+        } catch (profileError) {
+          console.warn("Could not fetch profile data:", profileError);
+          // Fallback: chỉ lưu username
+          const storage = rememberMe ? localStorage : sessionStorage;
+          storage.setItem("fullName", loginData.username);
+          storage.setItem("avatarUrl", "");
+          storage.setItem("profileData", JSON.stringify({}));
+        }
 
-        // Tính thời điểm hết hạn (current time + tokenExpiryIn giây)
-        const expiryTime = Date.now() + loginData.tokenExpiryIn * 1000;
-        storage.setItem("tokenExpiry", expiryTime);
-
-        // const profileResponse = await instance.get('/api/account/own-profile');
-        const profileData = await getOwnProfile();
-
-        storage.setItem("fullName", profileData.data.fullName || loginData.username);
-        storage.setItem("avatarUrl", profileData.data.avatar || "");
-        storage.setItem("profileData", JSON.stringify(profileData.data || {}));
-
+        await reloadUser();
         toast.success("LOGIN SUCCESSFULLY!");
         navigate("/");
       } else {
         toast.error("Login failed! Please check your username or password!");
       }
     } catch (error) {
+      console.error("Login error:", error);
+      
       if (error.response && error.response.status === 401) {
         toast.error("Login failed! Please check your username or password!");
       } else {
@@ -194,7 +248,6 @@ const LoginForm = () => {
   };
 
   return (
-
     <div className="overlap w-full md:w-1/2 mt-6 md:mt-0 md:ml-[5%] bg-gray-200 bg-opacity-25">
       <div className="form-container w-full max-w-[466px] flex flex-col gap-7 mx-auto">
         <div className="flex items-center justify-center mx-auto logo gap-x-4">
@@ -220,7 +273,12 @@ const LoginForm = () => {
                 type="text"
                 placeholder="Enter your username, email or phone"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (isSubmitted && e.target.value.trim()) {
+                    setErrors((prev) => ({ ...prev, username: "" }));
+                  }
+                }}
               />
             </div>
           </div>
@@ -239,12 +297,26 @@ const LoginForm = () => {
               <img className="mdi-clock" src={mdiClock} alt="Clock Icon" />
               <input
                 className="input-text"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setPassword(value);
+
+                  if (isSubmitted) {
+                    if (value.length >= 8) {
+                      setErrors((prev) => ({ ...prev, password: "" }));
+                    }
+                  }
+                }}
               />
-              <img className="mdi-eye" src={iconEye} alt="Eye Icon" />
+              <img
+                className="mdi-eye cursor-pointer"
+                src={iconEye}
+                alt="Toggle Password Visibility"
+                onClick={() => setShowPassword((prev) => !prev)}
+              />
             </div>
           </div>
           {errors.password && (
@@ -268,14 +340,18 @@ const LoginForm = () => {
         </div>
 
         <div className="w-full frame-2">
-          <div className="div-wrapper" onClick={handleLogin}>
-            <button type="button"
-              className="text-wrapper-2">
+          <div className="div-wrapper"
+            onClick={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+          >
+            <button type="button" className="text-wrapper-2">
               Login
             </button>
           </div>
           <div className="frame-3">
-            <div className="text-wrapper-3">Don’t have an account?</div>
+            <div className="text-wrapper-3">Don't have an account?</div>
             <Link to="/Register" className="text-wrapper-4">
               Register now
             </Link>
@@ -286,8 +362,6 @@ const LoginForm = () => {
           <div className="text-wrapper-12">Login With</div>
           <div className="flex flex-col items-center justify-center frame-9 lg:flex-row">
             <div className="frame-10 w-full lg:w-[223px]">
-              {/* <img className="img" src={googleIcon} alt="Google Icon" /> */}
-              {/* <div className="text-wrapper-13">Continue with Google</div> */}
               <div
                 className={`frame-10 w-full lg:w-[223px] cursor-pointer flex items-center justify-center border border-gray-300 rounded-md py-2 ${loading ? 'opacity-50 pointer-events-none' : ''}`}
                 onClick={handleGoogleLogin}

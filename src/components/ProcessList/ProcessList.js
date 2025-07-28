@@ -40,17 +40,18 @@ export default function ProcessList() {
                     setSuprocesses(response.data.subprocesses);
                 }
             } catch (error) {
-                toast.error("Cannot get list sub process")
+                // toast.error("Cannot get list sub process")
+                console.log(error)
             }
         }
         fetchListProcess();
     }, [accessToken])
 
     const handleClickViewProcess = (SubprocessData, ProcessStepsData) => {
-        navigate('/ProcessResult', {
-            state: {SubprocessData, ProcessStepsData}
-        })
-    }
+        navigate(`/ProcessResult/${SubprocessData.subprocessId}`, {
+            state: { SubprocessData, ProcessStepsData },
+        });
+    };
     return (
         <div className="pt-16 progress-management progress-managment">
             <div className="px-2 mx-auto div max-w-7xl">
@@ -88,19 +89,19 @@ export default function ProcessList() {
                         <div className="flex flex-col gap-6 mt-2 progress-list-container">
                             {Array.isArray(subprocesses) && subprocesses.length > 0 ? (
                                 subprocesses.map((item, index) => (
-                                    <div key={item.subProcess.subprocessId || index} class="progress-card w-full">
-                                        <div class="header-progress-section flex flex-col sm:flex-row justify-between">
-                                            <div class="infor-progress-section">
-                                                <div class="info-1">
-                                                    <div class="text-progress-info-1">ID Process:</div>
-                                                    <div class="text-progress-id">{item.subProcess.subprocessId}</div>
+                                    <div key={item.subProcess.subprocessId || index} className="progress-card w-full">
+                                        <div className="header-progress-section flex flex-col sm:flex-row justify-between">
+                                            <div className="infor-progress-section">
+                                                <div className="info-1">
+                                                    <div className="text-progress-info-1">ID Process:</div>
+                                                    <div className="text-progress-id">{item.subProcess.subprocessId}</div>
                                                 </div>
-                                                <div class="info-1">
-                                                    <div class="text-progress-info-1">ID booking:</div>
-                                                    <div class="text-progress-p-1">{item.subProcess.bookingServiceId}</div>
+                                                <div className="info-1">
+                                                    <div className="text-progress-info-1">ID booking:</div>
+                                                    <div className="text-progress-p-1">{item.subProcess.bookingServiceId}</div>
                                                 </div>
-                                                <div class="date-info">
-                                                    <div class="text-progress-info-1">Lasted updated:</div>
+                                                <div className="date-info">
+                                                    <div className="text-progress-info-1">Lasted updated:</div>
                                                     {(() => {
                                                         const d = new Date(item.subProcess.updatedAt || item.subProcess.createdAt);
                                                         const dateStr = d.toLocaleDateString("vi-VN");
@@ -114,23 +115,23 @@ export default function ProcessList() {
                                                 </div>
                                             </div>
 
-                                            <div class="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
-                                                <div class="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
+                                            <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                <div className="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
                                             </div>
 
                                         </div>
-                                        <div class="progress-step-container w-full">
+                                        <div className="progress-step-container w-full">
                                             {item.processSteps.length > 0 && (
                                                 item.processSteps.map((step, index) => (
-                                                    <div class={step.processStep.stepNumber <= item.subProcess.continueStep ? "done-step" : "not-done-step"}>
-                                                        <div class="text-progress-info-1">Step {step.processStep.stepNumber}</div>
+                                                    <div className={step.processStep.stepNumber <= item.subProcess.continueStep ? "done-step" : "not-done-step"}>
+                                                        <div className="text-progress-info-1">Step {step.processStep.stepNumber}</div>
                                                     </div>
                                                 ))
                                             )}
                                         </div>
-                                        <div class="footer-progress-section">
-                                            <div class="footer-progress-button" onClick={() => handleClickViewProcess(item.subProcess, item.processSteps)}>
-                                                <div class="progress-button-text">View</div>
+                                        <div className="footer-progress-section">
+                                            <div className="footer-progress-button" onClick={() => handleClickViewProcess(item.subProcess, item.processSteps)}>
+                                                <div className="progress-button-text">View</div>
                                             </div>
                                         </div>
                                     </div>

@@ -173,7 +173,7 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                             <div className="flex flex-col gap-4 text-left">
                                 <div className="flex border border-solid border-gray-300 items-center p-3 gap-3 rounded">
                                     <div className="w-10">
-                                        <i class="fa-solid fa-envelope p-2 fa-lg text-[#3DB3FB]"></i>
+                                        <i className="fa-solid fa-envelope p-2 fa-lg text-[#3DB3FB]"></i>
                                     </div>
                                     <div>
                                         <p className="text-sm font-bold text-gray-600">Email</p>

@@ -56,16 +56,20 @@ const SidebarDashboard = () => {
             <span>Censor</span>
             <span className="ml-auto">
               <i
-                className={`fa-solid ${openSections.censor ? "fa-angle-down" : "fa-angle-right"
-                  }`}
+                className={`fa-solid ${
+                  openSections.censor ? "fa-angle-down" : "fa-angle-right"
+                }`}
               ></i>
             </span>
           </div>
           <ul
-            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.censor ? "" : "hidden"
-              }`}
+            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${
+              openSections.censor ? "" : "hidden"
+            }`}
           >
-            <li>AI Checker</li>
+            <li>
+              <Link to="/ListPostCheckedAI">AI Checker</Link>
+            </li>
             <li>
               <Link to="/ListCensor">Account Censor</Link>
             </li>
@@ -89,14 +93,16 @@ const SidebarDashboard = () => {
             <span>Management</span>
             <span className="ml-auto">
               <i
-                className={`fa-solid ${openSections.management ? "fa-angle-down" : "fa-angle-right"
-                  }`}
+                className={`fa-solid ${
+                  openSections.management ? "fa-angle-down" : "fa-angle-right"
+                }`}
               ></i>
             </span>
           </div>
           <ul
-            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.management ? "" : "hidden"
-              }`}
+            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${
+              openSections.management ? "" : "hidden"
+            }`}
           >
             <li>
               <Link to="/ListAccount">Account Management</Link>
@@ -130,14 +136,16 @@ const SidebarDashboard = () => {
             <span>System Management</span>
             <span className="ml-auto">
               <i
-                className={`fa-solid ${openSections.system ? "fa-angle-down" : "fa-angle-right"
-                  }`}
+                className={`fa-solid ${
+                  openSections.system ? "fa-angle-down" : "fa-angle-right"
+                }`}
               ></i>
             </span>
           </div>
           <ul
-            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.system ? "" : "hidden"
-              }`}
+            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${
+              openSections.system ? "" : "hidden"
+            }`}
           >
             <li>Chatbot</li>
             <li>
@@ -148,7 +156,6 @@ const SidebarDashboard = () => {
             </li>
             <li>
               <Link to="/ReactionManagement">Reaction</Link>
-
             </li>
           </ul>
         </nav>
@@ -164,7 +171,7 @@ const SidebarDashboard = () => {
         </div>
         <button className="bg-red-100 text-[#EF3E36] py-4 rounded hover:bg-red-200 text-md w-full">
           <span className="font-semibold">Log out </span>
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          <i className="fa-solid fa-arrow-right-from-bracket"></i>
         </button>
       </div>
     </div>

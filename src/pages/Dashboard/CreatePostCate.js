@@ -39,8 +39,19 @@ const CreatePostCate = () => {
 
   return (
     <main className="flex-1 bg-blue-50 p-10 min-h-screen">
-      <div className="text-sm text-gray-400 mb-4 text-left">
-        🏠 HOME / Category post
+      <div className="text-sm text-gray-400 mb-4 text-left flex items-center">
+        <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6.52734 13V8.5H9.52734V13H13.2773V7H15.5273L8.02734 0.25L0.527344 7H2.77734V13H6.52734Z"
+              fill="rgba(62,63,94,0.25)"
+            />
+          </svg> <span>HOME / Category post</span>
       </div>
       <h1 className="text-2xl font-bold text-blue-400 mb-6 text-left">
         CATEGORY POST
