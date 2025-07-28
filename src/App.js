@@ -157,27 +157,11 @@ const AppContent = () => {
             </Route>
             <Route path="/Professional" element={<ProfessionalPage />} />
             <Route path="/Friend" element={<FriendPage />} />
-            <Route
-              path="/Friend/requests-receive"
-              element={<FriendRequestPage />}
-            />
-            <Route
-              path="/Friend/requests-sent"
-              element={<SentRequestFriendPage />}
-            />
-            <Route
-              path="/Friend/list-following"
-              element={<YourFollowingPage />}
-            />
-            <Route
-              path="/Friend/list-follower"
-              element={<YourFollowerPage />}
-            />
-            <Route
-              path="/Friend/suggestion-friend"
-              element={<SuggestionFriendPage />}
-            />
-
+            <Route path="/Friend/requests-receive" element={<FriendRequestPage />} />
+            <Route path="/Friend/requests-sent" element={<SentRequestFriendPage />} />
+            <Route path="/Friend/list-following" element={<YourFollowingPage />} />
+            <Route path="/Friend/list-follower" element={<YourFollowerPage />} />
+            <Route path="/Friend/suggestion-friend" element={<SuggestionFriendPage />} />
             <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
             <Route path="/Statistic1" element={<Statistic1 />} />
             <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
@@ -191,28 +175,18 @@ const AppContent = () => {
             <Route path="/UserFriends/:accId" element={<UserFriendOfOther />} />
             <Route path="/UserPhotos" element={<ListPhotoPage />} />
             <Route path="/UserPhotos/:accId" element={<ListPhotoOther />} />
-            
             <Route path="/ProcessList" element={<ProcessListPage />} />
             <Route path="/ProcessResult/:subprocessId" element={<ProcessResultPage />} />
             <Route path="/WaitingOrderList" element={<WaitingListPage />} />
             <Route path="/UnpaidBooking" element={<UnpaidBookingPage/>} />
             <Route path="/GroupPage" element={<GroupPage />} />
-            <Route
-              path="/JoinRequestsListPage"
-              element={<JoinRequestsListPage />}
-            />
-            <Route
-              path="/PermissionGroupPage"
-              element={<PermissionGroupPage />}
-            />
+            <Route path="/JoinRequestsListPage" element={<JoinRequestsListPage />} />
+            <Route path="/PermissionGroupPage" element={<PermissionGroupPage />} />
             <Route path="/SavedPostPage" element={<SavedPostPage />} />
             <Route path="/CreateService" element={<CreateServicePage />} />
             <Route path="/EditService/:id" element={<EditServicePage />} />
             <Route path="/ServiceDetail/:id" element={<ServiceDetailPage />} />
-            <Route
-              path="/ProgressListFarmer"
-              element={<ProcessListFarmerPage />}
-            />
+            <Route path="/ProgressListFarmer" element={<ProcessListFarmerPage />} />
             <Route path="/HomeProcessFarmer" element={<HomeProcessFarmer />} />
             <Route path="/CreateStepPage/:id" element={<CreateStepPage />} />
             <Route path="/EditStepPage/:id" element={<EditStepPage />} />
@@ -220,75 +194,38 @@ const AppContent = () => {
             <Route path="/FilterService" element={<FilterService />} />
             <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
             <Route path="/EditGroup/:groupId" element={<EditGroupPage />} />
-
             <Route path="/Trash" element={<RecycleBin />} />
             <Route path="/ChangePassword" element={<ChangePasswordPage />} />
             <Route path="/SetPassword" element={<SetPasswordPage />} />
             <Route path="/ForgotPassword" element={<ForgotPasswordPage />} />
             <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
             <Route path="/ResetPassword" element={<ResetPasswordPage />} />
-
             <Route path="/ReactionManagement" element={<ReactionPage />} />
             <Route path="/CreateReaction" element={<CreateReactionPage />} />
-            <Route
-              path="/UpdateReaction/:id"
-              element={<UpdateReactionPage />}
-            />
+            <Route path="/UpdateReaction/:id" element={<UpdateReactionPage />} />
             <Route path="/PostCatePage" element={<PostCatePage />} />
-            <Route
-              path="/PaymentManagement"
-              element={<PaymentManagementPage />}
-            />
-
+            <Route path="/PaymentManagement" element={<PaymentManagementPage />} />
             <Route path="/PostCatePage" element={<PostCatePage />} />
             <Route path="/PostManagement" element={<PostManagementPage />} />
-            <Route
-              path="/ReportManagement"
-              element={<ReportManagementPage />}
-            />
-            <Route
-              path="/ReportDetail/:reportId"
-              element={<ReportDetailPage />}
-            />
-
+            <Route path="/ReportManagement" element={<ReportManagementPage />} />
+            <Route path="/ReportDetail/:reportId" element={<ReportDetailPage />} />
             <Route path="/StatisticPage" element={<StatisticPage />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
             <Route path="/ListCensor" element={<ListCensorPage />} />
             <Route path="/CateService" element={<CateServicePage />} />
-            <Route
-              path="/CateService/Create"
-              element={<CreateCateServicePage />}
-            />
-            <Route
-              path="/CateService/Detail/:id"
-              element={<DetailCateServicePage />}
-            />
-            <Route
-              path="/CateService/Edit/:id"
-              element={<EditCateServicePage />}
-            />
+            <Route path="/CateService/Create" element={<CreateCateServicePage />} />
+            <Route path="/CateService/Detail/:id" element={<DetailCateServicePage />} />
+            <Route path="/CateService/Edit/:id" element={<EditCateServicePage />} />
             <Route path="/ListAccount" element={<ListAccountPage />} />
             <Route path="/CensorDetail/:accId" element={<CensorDetailPage />} />
-            <Route
-              path="/AccountDetail/:accId"
-              element={<AccountDetailPage />}
-            />
+            <Route path="/AccountDetail/:accId" element={<AccountDetailPage />} />
             <Route path="/ListPostCheckedAI" element={<AICheckerPage />} />
             <Route path="/ListPostCheckedAI/PostAIDetail/:id" element={<PostAIDetailPage />} />
             <Route path="/PostManagementDetail/:id" element={<PostManagementDetailPage />} />
             {/* /PostManagement/PostDetail */}
-            <Route
-              path="/CreatePostCate"
-              element={<CreatePostCatePage />}
-            />
-            <Route
-              path="/UpdatePostCate/:id"
-              element={<UpdatePostCatePage />}
-            />
-            <Route
-              path="/PostCatePage/DetailPostCate/:id"
-              element={<DetailPostCatePage />}
-            />
+            <Route path="/CreatePostCate" element={<CreatePostCatePage />} />
+            <Route path="/UpdatePostCate/:id" element={<UpdatePostCatePage />} />
+            <Route path="/PostCatePage/DetailPostCate/:id" element={<DetailPostCatePage />} />
             {/* <Route path="/CreatePostCate" element={<CreatePostCate />} /> */}
             {/* <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} /> */}
             <Route path="/DetailPostCate/:id" element={<DetailPostCate />} />

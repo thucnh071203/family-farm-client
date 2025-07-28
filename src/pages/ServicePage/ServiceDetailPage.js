@@ -80,8 +80,8 @@ const ServiceDetailPage = () => {
         fetchServiceData();
     }, [id, accessToken]);
 
-    if (loading) return <p className="pt-24 text-center">Đang tải dữ liệu...</p>;
-    if (!serviceData) return <p className="pt-24 text-center">Không tìm thấy dịch vụ</p>;
+    if (loading) return <p className="pt-24 text-center">Loading data...</p>;
+    if (!serviceData) return <p className="pt-24 text-center">No service found</p>;
 
     return (
         <div className="ServicePage">

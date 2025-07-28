@@ -134,7 +134,7 @@ export const UserGrowthChart = () => {
         {chartData && <Bar data={chartData} options={chartOptions} />}
       </div>
 
-      <div className="flex flex-col md:flex-row items-center ml-16 gap-4">
+      <div className="flex justify-center flex-col md:flex-row items-center gap-4">
         {/* //<div className="flex flex-col items-center gap-4 md:flex-row"> */}
 
         <div className="space-y-1">
