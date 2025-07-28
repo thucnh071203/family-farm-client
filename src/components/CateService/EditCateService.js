@@ -32,7 +32,6 @@ const EditCateService = () => {
       if (data.success === true && data.data.length > 0) {
         const service = data.data[0].categoryService;
         setCateService(service); // chỉ set object, không set input ở đây
-       toast.success("EDIT CATEGORY SUCCESSFULLY!");
       }
     } catch (err) {
       console.error("Error fetching category service:", err.message || err);
@@ -106,6 +105,7 @@ const EditCateService = () => {
       if (data.success === true) {
         setMessage("✅ Category updated successfully.");
         setErrors({ name: "", description: "" });
+        toast.success("EDIT CATEGORY SUCCESSFULLY!");
         navigate(`/CateService`);
       } else {
         setMessage(`❌ Error: ${data.message || "Something went wrong."}`);
