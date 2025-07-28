@@ -27,6 +27,7 @@ import ServiceManagement from "./components/ServiceManagement/ServiceManagement"
 import CreateProcessStep from "./components/ProcessStep/CreateProcessStep";
 import { Statistic1 } from "./components/Statistic/Statistic1";
 import MapChart from "./components/Statistic/MapChart";
+import SystemRevenue from "./components/Statistic/SystemRevenue";
 import MostUser from "./components/Statistic/MostUser";
 import SidebarDashboard from "./components/Dashboard/SidebarDashboard";
 import { UserGrowthChart } from "./components/Statistic/UserGrowthChart";
@@ -101,8 +102,11 @@ import ListPhotoOther from "./pages/Profile/ListPhotoOther";
 import CreateSubprocessPage from "./pages/Subprocess/CreateSubprocessPage";
 import RePaymentResultPage from "./pages/CallbackPage/RePaymentResult";
 import ReviewServicePage from "./pages/ProcessPage/ReviewServicePage";
-
-
+import ExpertRevenue from "./components/Statistic/ExpertRevenue";
+import BookingListPage from "./components/Statistic/BookingListPage";
+import BookingDetailPage from "./components/Statistic/BookingDetailPage";
+import BookingStatisticPage from "./components/Statistic/BookingStatisticPage";
+import PageStatisticExpert from "./pages/StatisticExpert/PageStatisticExpert";
 const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -173,11 +177,24 @@ const AppContent = () => {
               path="/Friend/suggestion-friend"
               element={<SuggestionFriendPage />}
             />
-
             <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
             <Route path="/Statistic1" element={<Statistic1 />} />
             <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
-            <Route path="/MapChart" element={<MapChart />} />
+            <Route path="/MapChart" element={<MapChart />} />\
+            <Route path="/SystemRevenue" element={<SystemRevenue />} />
+            <Route
+              path="/BookingDetailPage/:id"
+              element={<BookingDetailPage />}
+            />
+            <Route
+              path="/BookingStatisticPage"
+              element={<BookingStatisticPage />}
+            />
+            <Route
+              path="/PageStatisticExpert"
+              element={<PageStatisticExpert />}
+            />
+            <Route path="/BookingListPage" element={<BookingListPage />} />
             <Route path="/Service" element={<ServicePage />} />
             <Route path="/Group" element={<PostGroupPage />} />
             <Route path="/Search" element={<SearchPage />} />
@@ -187,11 +204,13 @@ const AppContent = () => {
             <Route path="/UserFriends/:accId" element={<UserFriendOfOther />} />
             <Route path="/UserPhotos" element={<ListPhotoPage />} />
             <Route path="/UserPhotos/:accId" element={<ListPhotoOther />} />
-            
             <Route path="/ProcessList" element={<ProcessListPage />} />
-            <Route path="/ProcessResult/:subprocessId" element={<ProcessResultPage />} />
+            <Route
+              path="/ProcessResult/:subprocessId"
+              element={<ProcessResultPage />}
+            />
             <Route path="/WaitingOrderList" element={<WaitingListPage />} />
-            <Route path="/UnpaidBooking" element={<UnpaidBookingPage/>} />
+            <Route path="/UnpaidBooking" element={<UnpaidBookingPage />} />
             <Route path="/GroupPage" element={<GroupPage />} />
             <Route
               path="/JoinRequestsListPage"
@@ -216,14 +235,12 @@ const AppContent = () => {
             <Route path="/FilterService" element={<FilterService />} />
             <Route path="/EditPost/:postId" element={<UpdatePostPage />} />
             <Route path="/EditGroup/:groupId" element={<EditGroupPage />} />
-
             <Route path="/Trash" element={<RecycleBin />} />
             <Route path="/ChangePassword" element={<ChangePasswordPage />} />
             <Route path="/SetPassword" element={<SetPasswordPage />} />
             <Route path="/ForgotPassword" element={<ForgotPasswordPage />} />
             <Route path="/ConfirmOtp" element={<ConfirmOtpPage />} />
             <Route path="/ResetPassword" element={<ResetPasswordPage />} />
-
             <Route path="/ReactionManagement" element={<ReactionPage />} />
             <Route path="/CreateReaction" element={<CreateReactionPage />} />
             <Route
@@ -235,7 +252,6 @@ const AppContent = () => {
               path="/PaymentManagement"
               element={<PaymentManagementPage />}
             />
-
             <Route path="/PostCatePage" element={<PostCatePage />} />
             <Route path="/PostManagement" element={<PostManagementPage />} />
             <Route
@@ -246,8 +262,8 @@ const AppContent = () => {
               path="/ReportDetail/:reportId"
               element={<ReportDetailPage />}
             />
-
             <Route path="/StatisticPage" element={<StatisticPage />} />
+            <Route path="/ExpertRevenue" element={<ExpertRevenue />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
             <Route path="/ListCensor" element={<ListCensorPage />} />
             <Route path="/CateService" element={<CateServicePage />} />
@@ -288,9 +304,15 @@ const AppContent = () => {
             <Route path="/PaymentResult" element={<PaymentResultPage />} />
             <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
             <Route path="/PaymentFailed" element={<PaymentFailed />} />
-            <Route path="/CreateSubprocess" element={<CreateSubprocessPage/>} />
+            <Route
+              path="/CreateSubprocess"
+              element={<CreateSubprocessPage />}
+            />
             <Route path="/RePaymentResult" element={<RePaymentResultPage />} />
-            <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />} />
+            <Route
+              path="/ReviewService/:serviceId"
+              element={<ReviewServicePage />}
+            />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login

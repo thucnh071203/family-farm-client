@@ -6,7 +6,7 @@ export function MapChart() {
   const chartRef = useRef(null);
   const echartsInstance = useRef(null);
 
-  // Chuẩn hóa tên tỉnh (copy từ bạn)
+  // chuẩn hóa tên tỉnh
   const normalizeProvinceName = (name) => {
     const mapping = {
       "an giang": "An Giang",
@@ -74,7 +74,7 @@ export function MapChart() {
       "dong thap": "Đồng Tháp",
     };
 
-    // Hàm chuyển tiếng Việt có dấu thành không dấu
+    // chuyển tiếng Việt có dấu thành không dấu
     const removeVietnameseTones = (str) => {
       return str
         .normalize("NFD")
@@ -83,7 +83,7 @@ export function MapChart() {
         .replace(/Đ/g, "D");
     };
 
-    // Tiền xử lý: loại dấu, chuyển thường, loại bỏ khoảng trắng thừa
+    // loại dấu, chuyển thường, loại bỏ khoảng trắng thừa
     const processedName = removeVietnameseTones(name)
       .toLowerCase()
       .replace(/\s+/g, " ")
@@ -92,16 +92,10 @@ export function MapChart() {
     return mapping[processedName] || name;
   };
 
-  // Ví dụ
-  console.log(normalizeProvinceName("TP. Hồ Chí Minh")); // Hồ Chí Minh
-  console.log(normalizeProvinceName("Ho Chi Minh")); // Hồ Chí Minh
-  console.log(normalizeProvinceName("Can Tho")); // Cần Thơ
-  console.log(normalizeProvinceName("Thua Thien Hue")); // Thừa Thiên - Huế
-
   useEffect(() => {
     if (!chartRef.current) return;
 
-    // Khởi tạo biểu đồ ECharts
+    // tạo biểu đồ ECharts
     echartsInstance.current = echarts.init(chartRef.current);
 
     let connection = null;
