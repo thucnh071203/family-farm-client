@@ -9,18 +9,10 @@ import { ToastContainer, Bounce } from "react-toastify";
 import { SignalRProvider } from "./context/SignalRContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import useAuth from "./hooks/useAuth";
-import ExpertRevenue from "./components/Statistic/ExpertRevenue";
-import BookingListPage from "./components/Statistic/BookingListPage";
-import BookingDetailPage from "./components/Statistic/BookingDetailPage";
-import BookingStatisticPage from "./components/Statistic/BookingStatisticPage";
-import PageStatisticExpert from "./pages/StatisticExpert/PageStatisticExpert";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
-import AICheckerPage from "./pages/Dashboard/AICheckerPage";
-import PostAIDetailPage from "./pages/Dashboard/PostAIDetailPage";
-import PaymentInvoicePage from "./pages/PaymentPage/PaymentInvoicePage";
-import PostManagementDetailPage from "./pages/Dashboard/PostManagementDetailPage";
+
 import LoginPage from "./pages/AuthenPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import ServicePage from "./pages/ServicePage/ServicePage";
@@ -35,7 +27,6 @@ import ServiceManagement from "./components/ServiceManagement/ServiceManagement"
 import CreateProcessStep from "./components/ProcessStep/CreateProcessStep";
 import { Statistic1 } from "./components/Statistic/Statistic1";
 import MapChart from "./components/Statistic/MapChart";
-import SystemRevenue from "./components/Statistic/SystemRevenue";
 import MostUser from "./components/Statistic/MostUser";
 import SidebarDashboard from "./components/Dashboard/SidebarDashboard";
 import { UserGrowthChart } from "./components/Statistic/UserGrowthChart";
@@ -110,6 +101,10 @@ import ListPhotoOther from "./pages/Profile/ListPhotoOther";
 import CreateSubprocessPage from "./pages/Subprocess/CreateSubprocessPage";
 import RePaymentResultPage from "./pages/CallbackPage/RePaymentResult";
 import ReviewServicePage from "./pages/ProcessPage/ReviewServicePage";
+import AICheckerPage from "./pages/Dashboard/AICheckerPage";
+import PostAIDetailPage from "./pages/Dashboard/PostAIDetailPage";
+import PaymentInvoicePage from "./pages/PaymentPage/PaymentInvoicePage";
+import PostManagementDetailPage from "./pages/Dashboard/PostManagementDetailPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -156,7 +151,8 @@ const AppContent = () => {
             <Route path="/Login" element={<LoginPage />} />
             <Route path="/PersonalPage">
               <Route index element={<PersonalPage />} /> {/* my profile */}
-              <Route path=":accId" element={<PersonalPage />} />{" "}{/* other profile */}
+              <Route path=":accId" element={<PersonalPage />} />{" "}
+              {/* other profile */}
             </Route>
             <Route path="/Professional" element={<ProfessionalPage />} />
             <Route path="/Friend" element={<FriendPage />} />
@@ -168,21 +164,7 @@ const AppContent = () => {
             <Route path="/CreateProcessStep" element={<CreateProcessStep />} />
             <Route path="/Statistic1" element={<Statistic1 />} />
             <Route path="/UserGrowthChart" element={<UserGrowthChart />} />
-            <Route path="/MapChart" element={<MapChart />} />\
-            <Route path="/SystemRevenue" element={<SystemRevenue />} />
-            <Route
-              path="/BookingDetailPage/:id"
-              element={<BookingDetailPage />}
-            />
-            <Route
-              path="/BookingStatisticPage"
-              element={<BookingStatisticPage />}
-            />
-            <Route
-              path="/PageStatisticExpert"
-              element={<PageStatisticExpert />}
-            />
-            <Route path="/BookingListPage" element={<BookingListPage />} />
+            <Route path="/MapChart" element={<MapChart />} />
             <Route path="/Service" element={<ServicePage />} />
             <Route path="/Group" element={<PostGroupPage />} />
             <Route path="/Search" element={<SearchPage />} />
@@ -195,7 +177,7 @@ const AppContent = () => {
             <Route path="/ProcessList" element={<ProcessListPage />} />
             <Route path="/ProcessResult/:subprocessId" element={<ProcessResultPage />} />
             <Route path="/WaitingOrderList" element={<WaitingListPage />} />
-            <Route path="/UnpaidBooking" element={<UnpaidBookingPage />} />
+            <Route path="/UnpaidBooking" element={<UnpaidBookingPage/>} />
             <Route path="/GroupPage" element={<GroupPage />} />
             <Route path="/JoinRequestsListPage" element={<JoinRequestsListPage />} />
             <Route path="/PermissionGroupPage" element={<PermissionGroupPage />} />
@@ -227,7 +209,6 @@ const AppContent = () => {
             <Route path="/ReportManagement" element={<ReportManagementPage />} />
             <Route path="/ReportDetail/:reportId" element={<ReportDetailPage />} />
             <Route path="/StatisticPage" element={<StatisticPage />} />
-            <Route path="/ExpertRevenue" element={<ExpertRevenue />} />
             <Route path="/Dashboard" element={<DashboardPage />} />
             <Route path="/ListCensor" element={<ListCensorPage />} />
             <Route path="/CateService" element={<CateServicePage />} />
@@ -240,18 +221,21 @@ const AppContent = () => {
             <Route path="/ListPostCheckedAI" element={<AICheckerPage />} />
             <Route path="/ListPostCheckedAI/PostAIDetail/:id" element={<PostAIDetailPage />} />
             <Route path="/PostManagementDetail/:id" element={<PostManagementDetailPage />} />
+            {/* /PostManagement/PostDetail */}
             <Route path="/CreatePostCate" element={<CreatePostCatePage />} />
             <Route path="/UpdatePostCate/:id" element={<UpdatePostCatePage />} />
             <Route path="/PostCatePage/DetailPostCate/:id" element={<DetailPostCatePage />} />
+            {/* <Route path="/CreatePostCate" element={<CreatePostCate />} /> */}
+            {/* <Route path="/UpdatePostCate/:id" element={<UpdatePostCate />} /> */}
             <Route path="/DetailPostCate/:id" element={<DetailPostCate />} />
             <Route path="/payment-callback" element={<CallbackPage />} />
             <Route path="/PaymentResult" element={<PaymentResultPage />} />
             <Route path="/PaymentSuccess" element={<PaymentSuccess />} />
             <Route path="/PaymentFailed" element={<PaymentFailed />} />
-            <Route path="/CreateSubprocess" element={<CreateSubprocessPage />} />
+            <Route path="/CreateSubprocess" element={<CreateSubprocessPage/>} />
             <Route path="/RePaymentResult" element={<RePaymentResultPage />} />
-            <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />}
-            />
+            <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />} />
+            <Route path="/PaymentInvoice" element={<PaymentInvoicePage />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
