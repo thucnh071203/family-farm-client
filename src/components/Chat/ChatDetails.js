@@ -4,15 +4,8 @@ import headLine from "../../assets/images/head_line.png";
 import ReactQuill from "react-quill";
 import "quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
-import {
-    handleSend,
-    handleTyping,
-    fetchMessages,
-    toggleFormat,
-    handleFileSelect,
-    removeSelectedFile,
-    scrollToBottom,
-} from "../../services/chatService";
+import { handleSend, handleTyping, fetchMessages, toggleFormat, scrollToBottom } from "../../services/chatService";
+import { handleFileSelect, removeSelectedFile } from "../../utils/validateFile";
 import instance from "../../Axios/axiosConfig";
 import { useSignalR } from "../../context/SignalRContext";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
@@ -42,8 +35,8 @@ const ChatDetails = ({
     const [totalMessages, setTotalMessages] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
-    const [hoveredMessageId, setHoveredMessageId] = useState(null); // Theo dõi tin nhắn đang hover
-    const [menuMessageId, setMenuMessageId] = useState(null); // Theo dõi tin nhắn hiển thị menu Recall
+    const [hoveredMessageId, setHoveredMessageId] = useState(null);
+    const [menuMessageId, setMenuMessageId] = useState(null);
     const quillRef = useRef(null);
     const imageInputRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -55,7 +48,6 @@ const ChatDetails = ({
 
     const TAKE = 20;
 
-    // Sử dụng hook useInfiniteScroll
     const { skip, setSkip } = useInfiniteScroll({
         fetchData: ({ currentSkip, previousScrollHeightRef }) =>
             fetchMessages({
@@ -100,11 +92,9 @@ const ChatDetails = ({
         markMessagesAsSeen();
     }, [chatId, currentUserId]);
 
-    // Handle SignalR events
     useEffect(() => {
         if (connection && connection.state === "Connected") {
             connection.on("ReceiveMessage", (chatDetail, chatDTO) => {
-                // console.log("ReceiveMessage in ChatDetails:", { chatDetail, chatDTO });
                 if (chatDetail?.chatId === chatId) {
                     setMessages((prevMessages) => [...prevMessages, chatDetail]);
                     scrollToBottom({ messagesEndRef });
@@ -112,7 +102,6 @@ const ChatDetails = ({
             });
 
             connection.on("MessageSeen", (receivedChatId) => {
-                // console.log("MessageSeen in ChatDetails:", receivedChatId);
                 if (receivedChatId === chatId) {
                     setMessages((prevMessages) =>
                         prevMessages.map((msg) =>
@@ -123,18 +112,16 @@ const ChatDetails = ({
             });
 
             connection.on("ChatRecalled", (receivedChatId, chatDetailId) => {
-                // console.log("ChatRecalled in ChatDetails:", { receivedChatId, chatDetailId });
                 if (receivedChatId === chatId) {
                     setMessages((prevMessages) =>
                         prevMessages.map((msg) => msg.chatDetailId === chatDetailId ? { ...msg, isRecalled: true } : msg
                         )
                     );
-                    setMenuMessageId(null); // Đóng menu sau khi thu hồi
+                    setMenuMessageId(null);
                 }
             });
 
             connection.on("ChatHistoryDeleted", (receivedChatId) => {
-                // console.log("ChatHistoryDeleted in ChatDetails:", receivedChatId);
                 if (receivedChatId === chatId) {
                     setMessages([]);
                     setTotalMessages(0);
@@ -144,14 +131,12 @@ const ChatDetails = ({
             });
 
             connection.on("SendTyping", (senderId) => {
-                // console.log("SendTyping in ChatDetails:", senderId);
                 if (senderId === receiverId) {
                     setIsTyping(true);
                 }
             });
 
             connection.on("StopTyping", (senderId) => {
-                // console.log("StopTyping in ChatDetails:", senderId);
                 if (senderId === receiverId) {
                     setIsTyping(false);
                 }
@@ -168,7 +153,6 @@ const ChatDetails = ({
         }
     }, [connection, chatId, receiverId]);
 
-    // Load initial messages
     useEffect(() => {
         if (!receiverId) return;
         setSkip(0);
@@ -188,7 +172,6 @@ const ChatDetails = ({
         });
     }, [receiverId]);
 
-    // Show/hide scroll button
     useEffect(() => {
         const handleScroll = () => {
             const container = chatContainerRef.current;
@@ -212,7 +195,6 @@ const ChatDetails = ({
         }
     }, [messages, skip]);
 
-    // Xử lý thu hồi tin nhắn
     const handleRecallMessage = async (chatDetailId) => {
         try {
             const response = await instance.put(`/api/chat/recall-message/${chatDetailId}`);
@@ -222,13 +204,12 @@ const ChatDetails = ({
                         msg.chatDetailId === chatDetailId ? { ...msg, isRecalled: true } : msg
                     )
                 );
-                setMenuMessageId(null); // Đóng menu sau khi thu hồi
+                setMenuMessageId(null);
                 toast.success("Message recalled successfully!");
             } else {
                 toast.error("Failed to recall message.");
             }
         } catch (error) {
-            // console.error("Error recalling message:", error.response?.data || error.message);
             toast.error("An error occurred while recalling the message.");
         }
     };
@@ -385,7 +366,7 @@ const ChatDetails = ({
                                         )}
                                         <div
                                             className={`flex flex-col gap-1 max-w-[80%] ${group.senderId === currentUserId ? "items-end" : "items-start"
-                                                } relative`} // Thêm relative để định vị nút "..."
+                                                } relative`}
                                         >
                                             {detail.isRecalled ? (
                                                 <div
@@ -439,7 +420,7 @@ const ChatDetails = ({
                                                         <button
                                                             onClick={() => setMenuMessageId(detail.chatDetailId)}
                                                             className={`absolute top-1/2 -translate-y-1/2 ${group.senderId === currentUserId ? "left-[-30px]" : "right-2"
-                                                                } p-1 text-gray-500 hover:text-gray-700`} // Đặt nút ở bên trái
+                                                                } p-1 text-gray-500 hover:text-gray-700`}
                                                             aria-label="Message options"
                                                         >
                                                             <i className="fas fa-ellipsis-v"></i>
@@ -448,7 +429,7 @@ const ChatDetails = ({
                                                     {group.senderId === currentUserId && menuMessageId === detail.chatDetailId && (
                                                         <div
                                                             className={`absolute top-[calc(50%+1.5rem)] ${group.senderId === currentUserId ? "left-[-30px]" : "right-10"
-                                                                } bg-white border border-gray-300 rounded shadow-lg z-10`} // Menu nằm bên dưới nút
+                                                                } bg-white border border-gray-300 rounded shadow-lg z-10`}
                                                         >
                                                             <button
                                                                 onClick={() => handleRecallMessage(detail.chatDetailId)}
@@ -515,7 +496,7 @@ const ChatDetails = ({
                     <input
                         type="file"
                         id="imageInput"
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,.svg" // Giới hạn định dạng ảnh
                         className="hidden"
                         ref={imageInputRef}
                         onChange={(e) => handleFileSelect({ event: e, setSelectedFile })}
@@ -530,6 +511,7 @@ const ChatDetails = ({
                     <input
                         type="file"
                         id="fileInput"
+                        accept=".pdf,.doc,.docx" // Giới hạn định dạng file
                         className="hidden"
                         ref={fileInputRef}
                         onChange={(e) => handleFileSelect({ event: e, setSelectedFile })}

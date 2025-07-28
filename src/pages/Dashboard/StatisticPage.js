@@ -40,7 +40,7 @@ const StatisticPage = () => {
   }, []);
 
   if (loading) {
-    return <p className="text-gray-600">Đang tải dữ liệu...</p>;
+    return <p className="text-gray-600">Loading data...</p>;
   }
 
   if (error) {

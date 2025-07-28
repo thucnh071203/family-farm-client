@@ -122,7 +122,7 @@ const ListReaction = () => {
       </div>
 
       {loading ? (
-        <p className="text-gray-600 p-4">Đang tải dữ liệu...</p>
+        <p className="text-gray-600 p-4">Loading data...</p>
       ) : (
         <div className="bg-white p-4 rounded shadow">
           <table id="reactionTable" className="display w-full">
