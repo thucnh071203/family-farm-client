@@ -105,6 +105,7 @@ import AICheckerPage from "./pages/Dashboard/AICheckerPage";
 import PostAIDetailPage from "./pages/Dashboard/PostAIDetailPage";
 import PaymentInvoicePage from "./pages/PaymentPage/PaymentInvoicePage";
 import PostManagementDetailPage from "./pages/Dashboard/PostManagementDetailPage";
+import CreateExtraProcess from "./pages/Subprocess/CreateExtraProcess";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -299,6 +300,7 @@ const AppContent = () => {
             <Route path="/RePaymentResult" element={<RePaymentResultPage />} />
             <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />} />
             <Route path="/PaymentInvoice" element={<PaymentInvoicePage />} />
+            <Route path="/RequestExtra" element={<CreateExtraProcess />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login

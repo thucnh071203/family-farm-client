@@ -86,7 +86,7 @@ export default function ProcessList() {
                         </div>
 
 
-                        <div className="flex flex-col gap-6 mt-2 progress-list-container">
+                        <div className="flex flex-col gap-6 mt-4 mb-12 progress-list-container">
                             {Array.isArray(subprocesses) && subprocesses.length > 0 ? (
                                 subprocesses.map((item, index) => (
                                     <div key={item.subProcess.subprocessId || index} className="progress-card w-full">
@@ -99,6 +99,14 @@ export default function ProcessList() {
                                                 <div className="info-1">
                                                     <div className="text-progress-info-1">ID booking:</div>
                                                     <div className="text-progress-p-1">{item.subProcess.bookingServiceId}</div>
+                                                </div>
+                                                <div className="info-1">
+                                                    <div className="text-progress-info-1">Service Name:</div>
+                                                    <div className="text-progress-p-1">{item.service.serviceName}</div>
+                                                </div>
+                                                <div className="info-1">
+                                                    <div className="text-progress-info-1">Farmer Name:</div>
+                                                    <div className="text-progress-p-1">{item.farmer.fullName}</div>
                                                 </div>
                                                 <div className="date-info">
                                                     <div className="text-progress-info-1">Lasted updated:</div>
@@ -115,9 +123,23 @@ export default function ProcessList() {
                                                 </div>
                                             </div>
 
-                                            <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
-                                                <div className="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
-                                            </div>
+                                            {item.subProcess.subProcessStatus === "Not Started" && (
+                                                <div style={{ background: "rgba(62, 63, 94, 0.25)", color: "#3E3F5E" }} className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                    <div style={{ color: "#3E3F5E" }} className="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
+                                                </div>
+                                            )}
+
+                                            {item.subProcess.subProcessStatus === "Completed" && (
+                                                <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
+                                                    <div className="text-completed">Completed</div>
+                                                </div>
+                                            )}
+
+                                            {item.subProcess.subProcessStatus !== "Completed" && item.subProcess.subProcessStatus !== "Not Started" && (
+                                                <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                    <div className="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
+                                                </div>
+                                            )}
 
                                         </div>
                                         <div className="progress-step-container w-full">
