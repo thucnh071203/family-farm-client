@@ -172,7 +172,8 @@ const ProcessResultPage = () => {
     if (result.isConfirmed) {
       // Hiển thị loading trong Swal
       Swal.fire({
-        title: 'Đang xử lý...',
+        title: 'Sending...',
+        text: 'Please wait while we send your request.',
         allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading();
