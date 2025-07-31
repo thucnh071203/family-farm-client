@@ -22,26 +22,27 @@ const NotificationList = ({ onToggle, isVisible }) => {
     } = useNotification();
 
     const [inviteStatusMap, setInviteStatusMap] = useState({});
+    const [filterStatus, setFilterStatus] = useState("all");
 
     useEffect(() => {
         const fetchInviteStatuses = async () => {
             const newMap = {};
 
             const inviteNotis = notifications.filter(
-            (n) => n.targetType === "GroupMember" && n.targetId
+                (n) => n.targetType === "GroupMember" && n.targetId
             );
 
             const requests = inviteNotis.map(async (noti) => {
-            try {
-                const res = await instance.get(
-                `/api/group-member/get-member-invite-by-id/${noti.targetId}`
-                );
-                if (res.status === 200 && res.data) {
-                newMap[noti.targetId] = res.data.memberStatus || "Unknown";
+                try {
+                    const res = await instance.get(
+                        `/api/group-member/get-member-invite-by-id/${noti.targetId}`
+                    );
+                    if (res.status === 200 && res.data) {
+                        newMap[noti.targetId] = res.data.memberStatus || "Unknown";
+                    }
+                } catch (err) {
+                    console.warn(`❗ Không lấy được trạng thái lời mời của ${noti.targetId}`, err);
                 }
-            } catch (err) {
-                console.warn(`❗ Không lấy được trạng thái lời mời của ${noti.targetId}`, err);
-            }
             });
 
             await Promise.all(requests);
@@ -51,32 +52,33 @@ const NotificationList = ({ onToggle, isVisible }) => {
         if (notifications.length > 0) {
             fetchInviteStatuses();
         }
-        }, [notifications]);
-
+    }, [notifications]);
 
     const handleRespondToInvite = async (groupMemberId, status) => {
         try {
-        const res = await instance.put(
-            `/api/group-member/response-to-invite-group/${groupMemberId}?status=${status}`
-        );
-        if (res.status === 200) {
-            toast.success(`You have ${status.toLowerCase()}ed the invite.`);
-            fetchNotifications();
-        } else {
-            toast.error("Failed to respond to invite");
-        }
+            const res = await instance.put(
+                `/api/group-member/response-to-invite-group/${groupMemberId}?status=${status}`
+            );
+            if (res.status === 200) {
+                toast.success(`You have ${status.toLowerCase()}ed the invite.`);
+                fetchNotifications();
+            } else {
+                toast.error("Failed to respond to invite");
+            }
         } catch (err) {
-        console.error("Error responding to invite:", err);
-        toast.error("Something went wrong");
+            console.error("Error responding to invite:", err);
+            toast.error("Something went wrong");
         }
     };
 
-    const [filterStatus, setFilterStatus] = useState("all");
-
     // Lọc thông báo theo trạng thái
     const filteredNotifications = notifications.filter((noti) => {
-        if (filterStatus === "unread") return !noti.status.isRead;
-        return true; // all
+        // Kiểm tra noti.status tồn tại và isRead được định nghĩa
+        if (!noti.status || typeof noti.status.isRead === "undefined") {
+            console.warn(`Thông báo ${noti.notifiId} thiếu trạng thái isRead`, noti);
+            return false; // Bỏ qua thông báo không hợp lệ
+        }
+        return filterStatus === "unread" ? !noti.status.isRead : true;
     });
 
     return (
@@ -139,15 +141,15 @@ const NotificationList = ({ onToggle, isVisible }) => {
                         </div>
                         <div className="noti-list-container w-full mx-auto mt-[16.3px] px-4 sm:px-0 max-h-[75vh] overflow-y-auto flex flex-col justify-start items-start gap-3">
                             {loading ? (
-                                <div className="text-center py-4 w-full ">Loading...</div>
+                                <div className="text-center py-4 w-full">Loading...</div>
                             ) : error ? (
                                 <div className="text-center py-4 w-full text-red-500">{error}</div>
                             ) : filteredNotifications.length === 0 ? (
-                                <div className="text-center py-4 w-full ">No notifications found!</div>
+                                <div className="text-center py-4 w-full">No notifications found!</div>
                             ) : (
-                                notifications.map((noti) => {
+                                filteredNotifications.map((noti) => {
                                     const isGroupInvite = noti.targetType === "GroupMember";
-                                    const memberStatus = inviteStatusMap[noti.targetId]; // có thể là undefined
+                                    const memberStatus = inviteStatusMap[noti.targetId];
                                     const shouldShowButtons = isGroupInvite && memberStatus === "Invite";
 
                                     return (
@@ -162,14 +164,14 @@ const NotificationList = ({ onToggle, isVisible }) => {
                                                         }
                                                         alt={noti.senderName || "System"}
                                                     />
-                                                    <div>
+                                                    <div  className="w-full text-start">
                                                         <p className="text-sm text-start leading-snug">
                                                             {noti.senderName && <span className="font-semibold">{noti.senderName} </span>}
                                                             {noti.content}
                                                         </p>
                                                         <span className="text-xs text-gray-400">{formatTime(noti.createdAt)}</span>
 
-                                                        {shouldShowButtons  && (
+                                                        {shouldShowButtons && (
                                                             <div className="flex gap-2 mt-2">
                                                                 <button
                                                                     onClick={() => handleRespondToInvite(noti.targetId, "Accept")}
