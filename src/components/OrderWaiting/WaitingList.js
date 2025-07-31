@@ -60,7 +60,7 @@ export default function WaitingList() {
 
     const handleNavigateCreate = (service, booking) => {
         navigate('/CreateSubprocess', {
-            state: {service, booking}
+            state: { service, booking, IsExtraProcess: false }
         })
     }
     return (

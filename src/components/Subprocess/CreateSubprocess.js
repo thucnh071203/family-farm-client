@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useLocation } from 'react-router-dom';
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -8,9 +9,14 @@ import ProgressMenu from "../ProcessList/ProgressMenu"
 import "./subprocess.css"
 
 
-const CreateSubprocess = ({ service, booking }) => {
+const CreateSubprocess = () => {
+  const location = useLocation();
+  const { service, booking, IsExtraProcess } = location.state || {};
+  
   console.log(booking);
   console.log(service)
+  console.log(IsExtraProcess);
+
   const navigate = useNavigate();
   const fileInputRefs = useRef({});
   const [accessToken, setAccessToken] = useState("");
@@ -249,6 +255,7 @@ const CreateSubprocess = ({ service, booking }) => {
         title: processTitle,
         description: processDescription,
         numberOfSteps: steps.length,
+        isExtraProcess: IsExtraProcess,
         processSteps: steps.map((step, i) => ({
           stepNumber: i + 1,
           stepTitle: step.title,
