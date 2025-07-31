@@ -106,6 +106,7 @@ import PostAIDetailPage from "./pages/Dashboard/PostAIDetailPage";
 import PaymentInvoicePage from "./pages/PaymentPage/PaymentInvoicePage";
 import PostManagementDetailPage from "./pages/Dashboard/PostManagementDetailPage";
 import CreateExtraProcess from "./pages/Subprocess/CreateExtraProcess";
+import Chatbot from "./components/Chat/ChatBot";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -268,6 +269,7 @@ function App() {
           <SignalRProvider>
             <NotificationProvider>
               <AppContent />
+              <Chatbot />
             </NotificationProvider>
           </SignalRProvider>
         </UserProvider>
