@@ -287,7 +287,7 @@ const ListRequestBookingFarmer = () => {
                                         </div>
 
                                         <div className="footer-booking-card">
-                                            {booking.booking.bookingServiceStatus === "Completed" && !booking.booking.isCompletedFinal && (
+                                            {booking.booking.bookingServiceStatus === "Completed" && !booking.booking.isCompletedFinal && !booking.booking.hasExtraProcess && (
                                                 <div className="left-footer-booking-card">
                                                     <div className="extra-process-btn" onClick={() => handleClickRequest(booking.booking, booking.service)}>
                                                         Request Extra
