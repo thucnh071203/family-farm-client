@@ -22,6 +22,7 @@ export default function UnpaidList() {
     const { connection } = useSignalR();
     const [listBooking, setListBooking] = useState([]);
     const [accessToken, setAccessToken] = useState("");
+    const navigate = useNavigate();
 
     //lấy thông tin người dùng từ storage
     useEffect(() => {
@@ -32,13 +33,13 @@ export default function UnpaidList() {
         }
     }, []);
 
-    //LAY DS UNPAID BOOKING
+    //LAY DS request Extra process
     useEffect(() => {
         if (!accessToken) return;
 
         const fetchListBooking = async () => {
             try {
-                const response = await instance.get("/api/booking-service/expert/booking-unpaid",
+                const response = await instance.get("/api/booking-service/request-extra",
                     {},
                     {
                         headers: {
@@ -57,6 +58,12 @@ export default function UnpaidList() {
         fetchListBooking();
     }, [accessToken])
 
+    const handleNavigateCreate = (service, booking) => {
+        navigate('/CreateSubprocess', {
+            state: { service, booking, IsExtraProcess: true }
+        })
+    }
+
     return (
         <div className="pt-16 progress-management progress-managment">
             <div className="px-2 div">
@@ -69,7 +76,7 @@ export default function UnpaidList() {
                     <div className="progress-right w-full lg:w-[66.5%] xl:w-[830px] lg:max-w-[830px]">
                         <div className="flex flex-col w-full gap-5 header-waiting-container lg:flex-row lg:justify-between lg:gap-0">
                             <div className="frame-6 flex flex-row justify-center items-center gap-3 sm:gap-[40px]">
-                                <div className="text-wrapper-title">List of unpaid booking</div>
+                                <div className="text-wrapper-title">Extra Process Requests</div>
                             </div>
                             <div className="frame-10">
                                 <img className="img-2" src={searchIcon} alt="" />
@@ -114,14 +121,17 @@ export default function UnpaidList() {
                                                 </div>
 
                                                 <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
-                                                    <div className="text-uncompleted-a-need">Unpaid</div>
+                                                    <div className="text-uncompleted-a-need">Request Extra</div>
                                                 </div>
 
                                             </div>
 
                                             <div className="footer-booking-card">
                                                 <div className="footer-wrapper">
-
+                                                    <div className="footer-booking-button" onClick={() => handleNavigateCreate(booking.service, booking.booking)}>
+                                                        <div className="progress-button-text">Create Process</div>
+                                                    </div>
+                                                    
                                                     <div className="footer-booking-price">
                                                         <div className="total-price">
                                                             TOTAL: <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(booking.booking.price)}</span>

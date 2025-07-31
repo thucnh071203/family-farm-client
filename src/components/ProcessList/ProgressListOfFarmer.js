@@ -91,8 +91,16 @@ export default function ProgressListOfFarmer() {
                                                 <div className="text-progress-id">{item.subProcess.subprocessId}</div>
                                             </div>
                                             <div className="info-1">
-                                                <div className="text-progress-info-1">ID booking:</div>
+                                                <div className="text-progress-info-1">ID Booking:</div>
                                                 <div className="text-progress-p-1">{item.subProcess.bookingServiceId}</div>
+                                            </div>
+                                            <div className="info-1">
+                                                <div className="text-progress-info-1">Service Name:</div>
+                                                <div className="text-progress-p-1">{item.service.serviceName}</div>
+                                            </div>
+                                            <div className="info-1">
+                                                <div className="text-progress-info-1">Expert Name:</div>
+                                                <div className="text-progress-p-1">{item.expert.fullName}</div>
                                             </div>
                                             <div className="date-info">
                                                 <div className="text-progress-info-1">Lasted updated:</div>
@@ -115,9 +123,9 @@ export default function ProgressListOfFarmer() {
                                             </div>
                                         )}
 
-                                        {item.subProcess.subProcessStatus === "On Process" && (
-                                            <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
-                                                <div className="text-completed">On Process</div>
+                                        {item.subProcess.subProcessStatus !== "Completed" && item.subProcess.subProcessStatus !== "Not Started" && (
+                                            <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                <div className="text-uncompleted-a-need">{item.subProcess.subProcessStatus}</div>
                                             </div>
                                         )}
 
@@ -126,7 +134,6 @@ export default function ProgressListOfFarmer() {
                                                 <div className="text-completed">Completed</div>
                                             </div>
                                         )}
-
 
                                     </div>
                                     <div className="progress-step-container w-full">

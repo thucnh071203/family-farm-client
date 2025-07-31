@@ -157,8 +157,17 @@ const ListRequestBookingFarmer = () => {
     });
 
     const handldeReview = (serviceId, bookingServiceId) => {
-        navigate(`/ReviewService/${serviceId}`,{
+        navigate(`/ReviewService/${serviceId}`, {
             state: { bookingServiceId }
+        })
+    }
+
+    const handleClickRequest = (bookingData, serviceData) => {
+        navigate("/RequestExtra", {
+            state: {
+                bookingData,
+                serviceData
+            }
         })
     }
 
@@ -248,6 +257,12 @@ const ListRequestBookingFarmer = () => {
                                                 </div>
                                             )}
 
+                                            {booking.booking.bookingServiceStatus === "Extra Request" && (
+                                                <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
+                                                    <div className="text-completed">Extra Request</div>
+                                                </div>
+                                            )}
+
                                             {booking.booking.bookingServiceStatus === "Paid" && (
                                                 <div className="status-info-completed max-h-[30px] mt-4 sm:mt-0">
                                                     <div className="text-completed">Paid</div>
@@ -265,13 +280,22 @@ const ListRequestBookingFarmer = () => {
                                             )}
 
                                             {booking.booking.bookingServiceStatus === "Completed" && booking.booking.isCompletedFinal && (
-                                                <div style={{background: "rgba(61, 179, 251, 0.25)"}} className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
-                                                    <div style={{color: "#3DB3FB"}} className="text-uncompleted-a-need">Finish</div>
+                                                <div style={{ background: "rgba(61, 179, 251, 0.25)" }} className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
+                                                    <div style={{ color: "#3DB3FB" }} className="text-uncompleted-a-need">Finish</div>
                                                 </div>
                                             )}
                                         </div>
 
                                         <div className="footer-booking-card">
+                                            {booking.booking.bookingServiceStatus === "Completed" && !booking.booking.isCompletedFinal && !booking.booking.hasExtraProcess && (
+                                                <div className="left-footer-booking-card">
+                                                    <div className="extra-process-btn" onClick={() => handleClickRequest(booking.booking, booking.service)}>
+                                                        Request Extra
+                                                    </div>
+                                                </div>
+                                            )}
+
+
                                             <div className="footer-wrapper">
                                                 {booking.booking.bookingServiceStatus === "Pending" && (
                                                     <div
@@ -302,12 +326,12 @@ const ListRequestBookingFarmer = () => {
                                                 {booking.booking.bookingServiceStatus === "On Process" && (
                                                     <div
                                                         className="footer-booking-button"
-                                                        // onClick={() => handlePayment(booking.booking.bookingServiceId, booking.booking.price)}
+                                                    // onClick={() => handlePayment(booking.booking.bookingServiceId, booking.booking.price)}
                                                     >
                                                         <div className="progress-button-text">Go to process</div>
                                                     </div>
                                                 )}
-                                                
+
                                                 <div className="footer-booking-price">
                                                     <div className="total-price">
                                                         TOTAL:{" "}
