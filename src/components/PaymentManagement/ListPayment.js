@@ -42,14 +42,14 @@ const ListPayment = ({ data }) => {
 
             $table.find("tbody").append(`
                 <tr>
-                    <td className="text-left break-all max-w-[250px]">${payment.paymentId}</td>
-                    <td className="text-left">${serviceName}</td>
-                    <td className="text-left">${farmerName}</td>
-                    <td className="text-left">${expertName}</td>
-                    <td className="text-right">${formattedPrice}</td>
-                    <td className="text-left">${formattedDate}</td>
-                    <td className="text-left">
-                        <button className="bg-[#3DB3FB]/25 text-[#3DB3FB] text-sm px-2 py-0.5 rounded font-semibold">
+                    <td class="text-left break-all max-w-[250px]">${payment.paymentId}</td>
+                    <td class="text-left">${serviceName}</td>
+                    <td class="text-left">${farmerName}</td>
+                    <td class="text-left">${expertName}</td>
+                    <td class="text-right">${formattedPrice}</td>
+                    <td class="text-left">${formattedDate}</td>
+                    <td class="text-left">
+                        <button class="bg-[#3DB3FB]/25 text-[#3DB3FB] text-sm px-2 py-0.5 rounded font-semibold">
                             Detail
                         </button>
                     </td>

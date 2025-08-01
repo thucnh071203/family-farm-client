@@ -12,6 +12,7 @@ const PaymentManagementPage = () => {
     const [filterMode, setFilterMode] = useState(initialViewMode === "ExpertPayout" ? "Booking" : "All");
     const [rawPaymentData, setRawPaymentData] = useState([]);
     const [paymentStatusFilter, setPaymentStatusFilter] = useState("All");
+    const [repaymentFilter, setRepaymentFilter] = useState("All");
 
     useEffect(() => {
         if (localStorage.getItem("viewMode")) {
@@ -41,6 +42,7 @@ const PaymentManagementPage = () => {
                     status: item.payment?.isRepayment ? "Paid" : "Not yet",
                     price: item.payment?.amount ?? item.booking?.price ?? 0,
                     payAt: item.payment?.payAt || "-",
+                    isRepayment: item.payment?.isRepayment ?? false, // fallback
                 }));
                 setRawPaymentData(mapped);
             } else {
@@ -79,8 +81,10 @@ const PaymentManagementPage = () => {
 
     const filteredData = rawPaymentData.filter((item) => {
         if (viewMode === "PaymentRequest") {
-            if (filterMode === "Booking") return !item.subProcessId;
-            if (filterMode === "ExtraBooking") return !!item.subProcessId;
+            // if (filterMode === "Booking") return !item.subProcessId;
+            // if (filterMode === "ExtraBooking") return !!item.subProcessId;
+            if (repaymentFilter === "Payment") return !item.isRepayment;
+            if (repaymentFilter === "Repayment") return item.isRepayment;
             return true;
         } else if (viewMode === "ExpertPayout") {
             if (paymentStatusFilter === "Paid") return item.status === "Paid";
@@ -111,31 +115,19 @@ const PaymentManagementPage = () => {
                         </h1>
 
                         <div className="flex border-b border-gray-300 mb-6">
-                            {viewMode === "PaymentRequest" ? (
-                                ["All", "Booking", "ExtraBooking"].map((mode) => (
-                                    <button
-                                        key={mode}
-                                        className={`mr-6 pb-2 font-semibold px-5 ${filterMode === mode ? "border-b-2 border-blue-400 text-blue-500" : "text-gray-400"}`}
-                                        onClick={() => setFilterMode(mode)}
-                                    >
-                                        {mode === "All" ? "All" : mode.replace("Booking", " Booking")}
-                                    </button>
-                                ))
-                            ) : (
-                                <>
-                                    <button
-                                        onClick={() => setFilterMode("Booking")}
-                                        className={`mr-6 pb-2 font-semibold px-5 ${filterMode === "Booking" ? "border-b-2 border-blue-400 text-blue-500" : "text-gray-400"}`}
-                                    >
-                                        Booking
-                                    </button>
-                                    <button
-                                        onClick={() => setFilterMode("ExtraBooking")}
-                                        className={`mr-6 pb-2 font-semibold px-5 ${filterMode === "ExtraBooking" ? "border-b-2 border-blue-400 text-blue-500" : "text-gray-400"}`}
-                                    >
-                                        Sub process
-                                    </button>
-                                </>
+                            {viewMode === "PaymentRequest" && (
+                                <div className="flex border-b border-gray-300 mb-6">
+                                    {["All", "Payment", "Repayment"].map((type) => (
+                                        <button
+                                            key={type}
+                                            onClick={() => setRepaymentFilter(type)}
+                                            className={`mr-6 pb-2 font-semibold px-5 ${repaymentFilter === type ? "border-b-2 border-blue-400 text-blue-500" : "text-gray-400"}`}
+                                        >
+                                            {type}
+                                        </button>
+                                    ))}
+                                </div>
+
                             )}
                         </div>
 
