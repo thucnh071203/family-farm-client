@@ -237,7 +237,7 @@ const AppContent = () => {
             <Route path="/CreateSubprocess" element={<CreateSubprocessPage/>} />
             <Route path="/RePaymentResult" element={<RePaymentResultPage />} />
             <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />} />
-            <Route path="/PaymentInvoice" element={<PaymentInvoicePage />} />
+            <Route path="/PaymentInvoice/:id" element={<PaymentInvoicePage />} />
             <Route path="/RequestExtra" element={<CreateExtraProcess />} />
           </>
         ) : (

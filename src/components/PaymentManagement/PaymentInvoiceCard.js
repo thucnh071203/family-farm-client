@@ -2,16 +2,100 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import logo from '../../assets/images/logo.png';
-export default function PaymentInvoiceCard() {
+import { saveAs } from "file-saver"; // ⚠️ nhớ cài
+
+export default function PaymentInvoiceCard({ paymentId }) {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        const fetchBill = async () => {
+            try {
+                const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+                const res = await instance.get(`/api/payment/bill-payment/${paymentId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                console.log("bill payment data:", res.data.data);
+
+                if (res.data.success) {
+                    setData(res.data.data);
+                } else {
+                    alert("Không thể lấy dữ liệu hóa đơn.");
+                }
+            } catch (err) {
+                console.error("Lỗi khi fetch hóa đơn:", err);
+            }
+        };
+
+        if (paymentId) fetchBill();
+    }, [paymentId]);
+
+    // ✅ Nếu chưa có data, hiển thị loading
+    if (!data) {
+        return (
+            <div className="pt-[150px] text-center text-gray-500">
+                Đang tải hóa đơn...
+            </div>
+        );
+    }
+
+    const formattedDate = new Date(data.payAt).toLocaleDateString("vi-VN");
+    const bookingDate = new Date(data.bookingServiceAt).toLocaleDateString("vi-VN");
+    const priceFormatted = new Intl.NumberFormat("vi-VN", {
+        style: "currency",
+        currency: "VND",
+        maximumFractionDigits: 0
+    }).format(data.price ?? 0);
+
+    const handleExportBill = async () => {
+        try {
+            const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+            const res = await fetch(`https://localhost:7280/api/payment/export-bill/${paymentId}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            // 👉 Debug xem server trả về gì
+            if (!res.ok) {
+                const text = await res.text();
+                console.error("❌ Server response:", res.status, res.statusText, text);
+                alert("Tải hóa đơn thất bại.");
+                return;
+            }
+
+            const blob = await res.blob();
+            if (blob.type !== "application/pdf") {
+                const errorText = await blob.text();
+                console.error("❌ Không phải file PDF:", errorText);
+                alert("Phản hồi không hợp lệ, không phải file PDF.");
+                return;
+            }
+
+            saveAs(blob, `Bill_${paymentId}.pdf`);
+        } catch (error) {
+            console.error("❌ Exception khi export:", error);
+            alert("Tải hóa đơn thất bại.");
+        }
+    };
+
+
+
     return (
-        <div className="payment-invoice pt-[150px]">
+        <div className="payment-invoice pt-20">
+            {/* QUAY LẠI Ở ĐÂY */}
             <div className="bill-payment-container mx-auto w-full max-w-[850px] bg-slate-50 py-14 px-16 rounded-3xl shadow-lg">
                 {/* Header */}
                 <div className="bill-header flex flex-row justify-between">
                     <div className="left-header">
                         <img src={logo} className="w-[100px]" alt="Logo" />
                         <p className="font-roboto font-bold text-[28px] leading-normal whitespace-nowrap mt-2">
-                            Invoice: awfioanwfoiiascnascil
+                            Invoice: {data.paymentId}
                         </p>
                     </div>
                     <div className="right-header mr-18">
@@ -32,10 +116,10 @@ export default function PaymentInvoiceCard() {
                         <div className="left-info">
                             <div className="receiver-name-container text-start">
                                 <div className="receiver-name-label font-roboto font-bold text-gray-700 leading-normal whitespace-nowrap">
-                                    Expert information
+                                    Payer information
                                 </div>
                                 <div className="receiver-name font-roboto text-[13px] font-semibold leading-normal whitespace-nowrap">
-                                    DANG NGUYEN DANG KHOA
+                                    {data.payerName}
                                 </div>
                             </div>
 
@@ -53,7 +137,7 @@ export default function PaymentInvoiceCard() {
                                     Invoice creation date
                                 </div>
                                 <div className="invoice-date font-roboto text-[13px] font-semibold leading-normal whitespace-nowrap">
-                                    23/07/2025
+                                    {formattedDate}
                                 </div>
                             </div>
                         </div>
@@ -94,19 +178,23 @@ export default function PaymentInvoiceCard() {
                                 <div className="description-content mt-2 space-y-2 text-start">
                                     <div className="service-name-content">
                                         <span className="service-name-label">Service name: </span>
-                                        <span className="service-name">Dịch vụ 1</span>
+                                        <span className="service-name">{data.serviceName}</span>
                                     </div>
                                     <div className="service-category-content">
                                         <span className="service-category-label">Category: </span>
-                                        <span className="service-category">The loai 1</span>
+                                        <span className="service-category">{data.categoryServiceName}</span>
+                                    </div>
+                                    <div className="farmer-booking-content">
+                                        <span className="farmer-booking-label">Service owner: </span>
+                                        <span className="farmer-booking">{data.expertName}</span>
                                     </div>
                                     <div className="farmer-booking-content">
                                         <span className="farmer-booking-label">Service booker: </span>
-                                        <span className="farmer-booking">KhoaUser</span>
+                                        <span className="farmer-booking">{data.farmerName}</span>
                                     </div>
                                     <div className="booking-date-content">
                                         <span className="booking-date-label">Date booked: </span>
-                                        <span className="booking-date">04/07/2025</span>
+                                        <span className="booking-date">{bookingDate}</span>
                                     </div>
                                 </div>
                             </div>
@@ -116,7 +204,7 @@ export default function PaymentInvoiceCard() {
                                     Total amount
                                 </div>
                                 <div className="money-content mt-2 text-end mr-4">
-                                    25,000VND
+                                    {priceFormatted}
                                 </div>
                             </div>
                         </div>
@@ -127,13 +215,13 @@ export default function PaymentInvoiceCard() {
                                 <div className="total-fee-label font-roboto font-bold text-gray-700 leading-normal whitespace-nowrap">
                                     Total service fee
                                 </div>
-                                <div className="total-fee-price">25,000VND</div>
+                                <div className="total-fee-price">{priceFormatted}</div>
                             </div>
                             <div className="total-payment-container flex flex-row gap-7 justify-end mr-4">
                                 <div className="total-payment-label font-roboto font-bold text-gray-700 leading-normal whitespace-nowrap">
                                     Total payment
                                 </div>
-                                <div className="total-payment-price">25,000VND</div>
+                                <div className="total-payment-price">{priceFormatted}</div>
                             </div>
                         </div>
                     </div>
@@ -141,13 +229,18 @@ export default function PaymentInvoiceCard() {
 
                 {/* Footer */}
                 <div className="bill-footer flex justify-end">
-                    <button className="export-container flex flex-row gap-1 px-2 py-1 bg-zinc-200 hover:bg-zinc-300 transition-colors duration-200 mt-4">
+                    <button className="export-container flex flex-row gap-1 px-2 py-1 bg-zinc-200 hover:bg-zinc-300 transition-colors duration-200 mt-4" onClick={handleExportBill}>
                         <div className="download-img">
                             <i className="fa-solid fa-download"></i>
                         </div>
                         <div className="export">Export</div>
                     </button>
                 </div>
+            </div>
+            <div className="px-4 my-4">
+                <Link to="/PaymentManagement" className="text-blue-500 hover:underline font-medium text-sm">
+                    ← Return to payment management list
+                </Link>
             </div>
         </div>
     )
