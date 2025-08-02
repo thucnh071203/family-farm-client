@@ -100,7 +100,7 @@ const ListExpertPayout = ({ data }) => {
                         BookingServiceId: bookingServiceId,
                         SubprocessId: subProcessId,
                         Amount: amount,
-                        AdminId: "ADMIN123", // hoặc để backend tự lấy
+                        AdminId: "ADMIN123", // hoặc để backend tự lấy, để đây cx không quan trọng
                     },
                     {
                         headers: { Authorization: `Bearer ${token}` },
