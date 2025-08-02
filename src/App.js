@@ -6,6 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
+import { useContext } from 'react';
 import { SignalRProvider } from "./context/SignalRContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import useAuth from "./hooks/useAuth";
@@ -65,6 +66,7 @@ import ResetPasswordPage from "./pages/AuthenPage/ResetPasswordPage";
 import Register from "./components/Authen/Register";
 import CensorDetailPage from "./pages/Dashboard/CensorDetailPage";
 import { UserProvider } from "./context/UserContext";
+import { useUser } from './context/UserContext'
 import PaymentManagementPage from "./pages/Dashboard/PaymentManagementPage";
 import PostManagementPage from "./pages/Dashboard/PostManagementPage";
 import ReportManagementPage from "./pages/Dashboard/ReportManagementPage";
@@ -248,6 +250,14 @@ const AppContent = () => {
   );
 };
 
+const ChatBotContent = () => {
+  const { user, isLoading } = useUser();
+  if (isLoading) return null; 
+  if (!user) return null;
+
+  return <Chatbot />;
+}
+
 function App() {
   return (
     <div className="App">
@@ -269,7 +279,7 @@ function App() {
           <SignalRProvider>
             <NotificationProvider>
               <AppContent />
-              <Chatbot />
+              <ChatBotContent />
             </NotificationProvider>
           </SignalRProvider>
         </UserProvider>

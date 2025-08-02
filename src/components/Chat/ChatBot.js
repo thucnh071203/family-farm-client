@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import chatbot_icon from "../../assets/icons/Chatbot.svg";
 import cancelIcon from "../../assets/images/cancel_vector.png";
 import "./ChatBot.css";
+import instance from "../../Axios/axiosConfig";
 
 const Chatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -59,7 +60,8 @@ const Chatbot = () => {
         setShowWelcome(false); // Hide welcome message when opening chat
     };
 
-    const handleSendMessage = (messageText = inputMessage) => {
+    //XỬ LÝ GỬI TIN NHẮN CHAT BOT
+    const handleSendMessage = async (messageText = inputMessage) => {
         if (!messageText.trim()) return;
 
         const userMessage = {
@@ -70,18 +72,34 @@ const Chatbot = () => {
         };
 
         setMessages(prev => [...prev, userMessage]);
+        setInputMessage('');
 
-        setTimeout(() => {
-            const botResponse = {
+        try {
+            // Gửi đến API backend của bạn
+            const response = await instance.post('/api/chat/bot', messageText);
+
+            const botReply = response.data?.reply || "No response received.";
+
+            const botMessage = {
                 id: messages.length + 2,
-                text: botResponses[messageText] || botResponses.default,
+                text: botReply,
                 isBot: true,
                 timestamp: new Date()
             };
-            setMessages(prev => [...prev, botResponse]);
-        }, 1000);
 
-        setInputMessage('');
+            setMessages(prev => [...prev, botMessage]);
+        } catch (error) {
+            console.error("Error sending message:", error);
+            
+            const errorMessage = {
+                id: messages.length + 2,
+                text: "⚠️ Error: Could not connect to chatbot server.",
+                isBot: true,
+                timestamp: new Date()
+            };
+
+            setMessages(prev => [...prev, errorMessage]);
+        }
     };
 
     const handleQuestionClick = (question) => {
