@@ -102,14 +102,14 @@ export function MapChart() {
 
     const loadMapAndConnect = async () => {
       try {
-        //bản đồ geojson
+        // bản đồ geojson
         const geoRes = await fetch(
           "https://raw.githubusercontent.com/uyenvuminh/mapChartUyen/refs/heads/main/mapVN"
         );
         const vietnamGeoJSON = await geoRes.json();
         echarts.registerMap("VN", vietnamGeoJSON);
 
-        //render biểu đồ từ dữ liệu
+        // render biểu đồ từ dữ liệu
         const renderChart = (rawData) => {
           const data = rawData.map((item) => ({
             name: normalizeProvinceName(item.province),
@@ -163,14 +163,14 @@ export function MapChart() {
           echartsInstance.current.setOption(option);
         };
 
-        //dữ liệu lần đầu
+        // dữ liệu lần đầu
         const response = await fetch(
           "https://localhost:7280/api/statistic/users-by-province"
         );
         const result = await response.json();
         renderChart(result.data);
 
-        //SignalR
+        // SignalR
         connection = new signalR.HubConnectionBuilder()
           .withUrl("https://localhost:7280/topEngagedPostHub")
           .withAutomaticReconnect()
@@ -202,7 +202,7 @@ export function MapChart() {
   }, []);
 
   return (
-    <div className="p-10">
+    <div className="p-4">
       <div
         ref={chartRef}
         className="border rounded shadow w-full h-[700px]"

@@ -87,8 +87,8 @@ const TableListAccount = ({ displayList, isCensor, onDeleted }) => {
           data: "accId",
           title: "Action",
           render: function (data) {
-            const detailBtn = `<button className='btn-detail text-[#3DB3FB] hover:underline' data-id='${data}'>Detail</button>`;
-            const deleteBtn = `<button className='btn-delete text-[#d65f45] hover:underline' data-id='${data}'>Delete</button>`;
+            const detailBtn = `<button class='btn-detail text-[#3DB3FB] font-bold underline' data-id='${data}'>Detail</button>`;
+            const deleteBtn = `<button class='btn-delete text-[#d65f45] font-bold underline' data-id='${data}'>Delete</button>`;
             return isCensor ? detailBtn : `${detailBtn} ${deleteBtn}`;
           },
         },
