@@ -96,8 +96,8 @@ const TablePostManagement = ({ listPost }) => {
             title: "Action",
             render: function (data, type, row) {
               const postId = row.post?.postId;
-              const detailBtn = `<button class='btn-detail text-[#3DB3FB] hover:underline mr-2' data-id='${postId}'>Detail</button>`;
-              const deleteBtn = `<button class='btn-delete text-[#d65f45] hover:underline' data-id='${postId}'>Delete</button>`;
+              const detailBtn = `<button class='btn-detail text-[#3DB3FB] font-bold underline mr-2' data-id='${postId}'>Detail</button>`;
+              const deleteBtn = `<button class='btn-delete text-[#d65f45] font-bold underline' data-id='${postId}'>Delete</button>`;
               return detailBtn + deleteBtn;
             },
           },

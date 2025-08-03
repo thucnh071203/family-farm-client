@@ -160,6 +160,7 @@ const TableListCatePost = ({ displayList }) => {
         ],
         destroy: true,
         searching: true,
+        ordering: false, // Vô hiệu hóa sắp xếp mặc định
       });
 
       $(tableRef.current).find("thead").addClass("bg-[rgba(61,179,251,0.25)]");
@@ -227,40 +228,38 @@ const PostCatePage = () => {
 
   return (
     <div className="flex min-h-screen">
+      {/* Sidebar bên trái */}
       <SidebarDashboard />
-      <div className="flex-1">
-        <div className="p-6 bg-blue-50 min-h-screen">
-          <div className="flex">
-            <div className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6.52734 13V8.5H9.52734V13H13.2773V7H15.5273L8.02734 0.25L0.527344 7H2.77734V13H6.52734Z"
-                  fill="rgba(62,63,94,0.25)"
-                />
-              </svg>
-              <Link to="/Dashboard">HOME</Link>
-            </div>
-            <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
-              <Link to="/CatePost">/Category post</Link>
+      <div className="p-8 w-full bg-[#3DB3FB]/5">
+        <div>
+          <div className="text-left mb-5 font-semibold flex items-center gap-2 text-[#3E3F5E]/25">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6.52734 13V8.5H9.52734V13H13.2773V7H15.5273L8.02734 0.25L0.527344 7H2.77734V13H6.52734Z"
+                fill="rgba(62,63,94,0.25)"
+              />
+            </svg>
+            <span>
+              <Link to="/Dashboard">HOME</Link> / Category Post
             </span>
           </div>
-          <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-5 mt-3">
+          <h1 className="text-2xl font-bold text-blue-500 mb-6 text-left">
             CATEGORY POST
           </h1>
-          <div className="text-left mb-3">
+          <div className="text-left mb-6">
             <Link to="/CreatePostCate">
               <button className="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 text-sm">
                 New Post Category
               </button>
             </Link>
           </div>
-          <div style={{ width: "90%" }}>
+          <div>
             <TableListCatePost displayList={allList} />
           </div>
         </div>

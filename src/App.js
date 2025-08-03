@@ -28,8 +28,6 @@ import ServiceManagement from "./components/ServiceManagement/ServiceManagement"
 import CreateProcessStep from "./components/ProcessStep/CreateProcessStep";
 import { Statistic1 } from "./components/Statistic/Statistic1";
 import MapChart from "./components/Statistic/MapChart";
-import MostUser from "./components/Statistic/MostUser";
-import SidebarDashboard from "./components/Dashboard/SidebarDashboard";
 import { UserGrowthChart } from "./components/Statistic/UserGrowthChart";
 import PersonalPage from "./pages/Profile/PersonalPage";
 import UpdateProfile from "./pages/Profile/UpdateProfile";
@@ -47,10 +45,7 @@ import ChatPage from "./pages/Chat/ChatPage";
 
 import StatisticPage from "./pages/Dashboard/StatisticPage";
 import DashboardPage from "./pages/Dashboard/DashboardPage";
-import ListReaction from "./components/ReactionManagement/ListReaction";
 import PostCatePage from "./pages/Dashboard/PostCatePage";
-import CreatePostCate from "./pages/Dashboard/CreatePostCate";
-import UpdatePostCate from "./pages/Dashboard/UpdatePostCate";
 import DetailPostCate from "./pages/Dashboard/DetailPostCate";
 
 import GroupDetailPage from "./pages/GroupPage/GroupDetailPage";
