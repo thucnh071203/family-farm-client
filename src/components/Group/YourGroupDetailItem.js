@@ -8,7 +8,7 @@ const YourGroupDetailItem = ({ group }) => {
   const navigate = useNavigate();
 
   const handleViewGroup = () => {
-    navigate(`/group/${group.groupId}`);
+    navigate(`/GroupDetail/${group.groupId}`);
   };
   const [leaveGroups, setLeaveGroups] = useState([]);
   const [userAccId, setUserAccId] = useState(null);
@@ -49,7 +49,7 @@ const YourGroupDetailItem = ({ group }) => {
             transition: Bounce,
           });
           setLeaveGroups((prev) => [...prev, groupId]);
-          navigate("/group", { replace: true });
+          navigate("/GroupDetail", { replace: true });
         } else {
           toast.warning("You may have already left this group.");
         }

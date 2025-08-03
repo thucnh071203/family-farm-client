@@ -29,6 +29,7 @@ export default function CreateGroupForm() {
   const [selectedMembers, setSelectedMembers] = useState([]);
 
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Get user information
   useEffect(() => {
@@ -130,26 +131,105 @@ export default function CreateGroupForm() {
     }
   }, [groupName]);
 
+  // const handleCreateGroup = async (e) => {
+  //   e.preventDefault();
+  //   setSubmitted(true); // đánh dấu là đã nhấn submit
+
+  //   const isFormValid = validate();
+  //   const isImageValid = validateImages(avatarFile, bgFile);
+
+  //   if (!isFormValid || !isImageValid) return;
+
+  //   const token =
+  //     localStorage.getItem("accessToken") ||
+  //     sessionStorage.getItem("accessToken");
+  //   const formData = new FormData();
+  //   formData.append("GroupName", groupName);
+  //   formData.append("GroupAvatar", avatarFile);
+  //   formData.append("GroupBackground", bgFile);
+  //   formData.append("PrivacyType", privacyType);
+
+  //   try {
+  //     // 1. Gọi API tạo group
+  //     const createRes = await instance.post("/api/group/create", formData, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+
+  //     toast.success("GROUP CREATED SUCCESSFULLY!");
+
+  //     // 2. Gọi API lấy group mới nhất
+  //     const latestGroupRes = await instance.get("/api/group/get-lastest", {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     const groupId = latestGroupRes?.data?.data?.[0]?.groupId;
+
+  //     if (!groupId) {
+  //       // toast.error("Cannot find newly created group.");
+  //       console.error("Cannot find newly created group.");
+  //       return;
+  //     }
+
+  //     // 3. Gửi các selectedMembers vào nhóm
+  //     for (const member of selectedMembers) {
+  //       try {
+  //         await instance.post(
+  //           `/api/group-member/create/${groupId}/${member.accId}`,
+  //           null,
+  //           {
+  //             headers: {
+  //               Authorization: `Bearer ${token}`,
+  //             },
+  //           }
+  //         );
+  //       } catch (err) {
+  //         console.error("Failed to add member:", member, err);
+  //       }
+  //     }
+
+  //     console.log("All members added successfully!");
+  //     // TODO: Reset form hoặc redirect nếu cần
+
+  //     navigate("/Group", { state: { section: "all-group-user" } });
+  //   } catch (error) {
+  //     console.error("Group creation failed:", error);
+  //     if (error.response && error.response.data) {
+  //       toast.error(error.response.data || "Failed to create group!");
+  //     } else {
+  //       toast.error("Failed to create group!");
+  //     }
+  //   }
+  // };
+
   const handleCreateGroup = async (e) => {
     e.preventDefault();
-    setSubmitted(true); // đánh dấu là đã nhấn submit
+    setSubmitted(true);
+    setIsLoading(true); // 🔹 Start loading
 
     const isFormValid = validate();
     const isImageValid = validateImages(avatarFile, bgFile);
 
-    if (!isFormValid || !isImageValid) return;
-
-    const token =
-      localStorage.getItem("accessToken") ||
-      sessionStorage.getItem("accessToken");
-    const formData = new FormData();
-    formData.append("GroupName", groupName);
-    formData.append("GroupAvatar", avatarFile);
-    formData.append("GroupBackground", bgFile);
-    formData.append("PrivacyType", privacyType);
+    if (!isFormValid || !isImageValid) {
+      setIsLoading(false); // 🔹 Stop loading if validation fails
+      return;
+    }
 
     try {
-      // 1. Gọi API tạo group
+      const token =
+        localStorage.getItem("accessToken") ||
+        sessionStorage.getItem("accessToken");
+
+      const formData = new FormData();
+      formData.append("GroupName", groupName);
+      formData.append("GroupAvatar", avatarFile);
+      formData.append("GroupBackground", bgFile);
+      formData.append("PrivacyType", privacyType);
+
       const createRes = await instance.post("/api/group/create", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -159,7 +239,6 @@ export default function CreateGroupForm() {
 
       toast.success("GROUP CREATED SUCCESSFULLY!");
 
-      // 2. Gọi API lấy group mới nhất
       const latestGroupRes = await instance.get("/api/group/get-lastest", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -169,12 +248,10 @@ export default function CreateGroupForm() {
       const groupId = latestGroupRes?.data?.data?.[0]?.groupId;
 
       if (!groupId) {
-        // toast.error("Cannot find newly created group.");
         console.error("Cannot find newly created group.");
         return;
       }
 
-      // 3. Gửi các selectedMembers vào nhóm
       for (const member of selectedMembers) {
         try {
           await instance.post(
@@ -191,17 +268,16 @@ export default function CreateGroupForm() {
         }
       }
 
-      console.log("All members added successfully!");
-      // TODO: Reset form hoặc redirect nếu cần
-
       navigate("/Group", { state: { section: "all-group-user" } });
     } catch (error) {
       console.error("Group creation failed:", error);
-      if (error.response && error.response.data) {
+      if (error.response?.data) {
         toast.error(error.response.data || "Failed to create group!");
       } else {
         toast.error("Failed to create group!");
       }
+    } finally {
+      setIsLoading(false); // 🔹 Stop loading after everything
     }
   };
 
@@ -272,16 +348,20 @@ export default function CreateGroupForm() {
         className="create-group-container w-full max-w-[832px] h-screen"
       >
         <div className="create-h1-label">
-          <div className="create-group-h1">Create new group</div>
+          <h1 className="create-group-h1">Create new group</h1>
         </div>
-        <div className="user-admin-container mt-5 flex md:flex-row items-center gap-4">
+        <div className="user-admin-container mt-10 flex md:flex-row items-center gap-4">
           <div className="avatar-admin rounded-full w-[60px] h-[60px]">
-            <img src={avatarUrl} alt="avatar" />
+            <img
+              src={avatarUrl}
+              alt="avatar"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="admin-info flex flex-col gap-2">
             <div className="admin-name">{fullName}</div>
             <div className="admin-role bg-[#3DB3FB] px-[14px] py-[7px] bg-opacity-25 w-fit">
-              Admin
+              Owner
             </div>
           </div>
         </div>
@@ -452,11 +532,31 @@ export default function CreateGroupForm() {
         </div>
 
         <button
-          className="create-button lg:w-[220px] mt-14 p-[10px] flex items-center justify-center gap-[10px] bg-[#3db3fb] rounded-sm hover:bg-[#50ace6] cursor-pointer"
           type="submit"
+          disabled={isLoading}
+          className={`create-button lg:w-[220px] mt-14 p-[10px] flex items-center justify-center gap-[10px] rounded-sm transition-colors duration-200 ${isLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-[#3db3fb] hover:bg-[#50ace6] cursor-pointer"
+            }`}
         >
-          <div className="create-btn-text w-fit text-white">Create</div>
+          {isLoading ? (
+            <div className="flex items-center justify-center gap-2 text-white">
+              <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 
+          1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+              Creating...
+            </div>
+          ) : (
+            <div className="create-btn-text w-fit text-white">Create</div>
+          )}
         </button>
+
       </form>
     </div>
   );

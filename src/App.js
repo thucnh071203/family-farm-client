@@ -172,7 +172,7 @@ const AppContent = () => {
             <Route path="/Service" element={<ServicePage />} />
             <Route path="/Group" element={<PostGroupPage />} />
             <Route path="/Search" element={<SearchPage />} />
-            <Route path="/group/:id" element={<GroupDetailPage />} />
+            <Route path="/GroupDetail/:id" element={<GroupDetailPage />} />
             <Route path="/UpdateProfile" element={<UpdateProfile />} />S
             <Route path="/UserFriends" element={<UserFriends />} />
             <Route path="/UserFriends/:accId" element={<UserFriendOfOther />} />

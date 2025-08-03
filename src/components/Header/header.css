@@ -455,7 +455,7 @@ header .login-box:hover a {
     height: 100%;
 }
 
-.navbar-header .navbar-header-wrapper .navbar-header-item {
+/* .navbar-header .navbar-header-wrapper .navbar-header-item {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -468,6 +468,28 @@ header .login-box:hover a {
 
 .navbar-header .navbar-header-wrapper .navbar-header-item.item-active {
     border-bottom: 1px solid #3DB3FB;
+} */
+
+.navbar-header .navbar-header-wrapper .navbar-header-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    text-decoration: none;
+    color: #3DB3FB;
+    padding: 0 2rem;
+    height: 100%;
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+.navbar-header .navbar-header-wrapper .navbar-header-item:hover {
+    color: #1A8CD8; /* Màu chữ khi hover */
+}
+
+.navbar-header .navbar-header-wrapper .navbar-header-item.item-active {
+    border-bottom: 2px solid #3DB3FB;
 }
 
 @media (max-width: 768px) {

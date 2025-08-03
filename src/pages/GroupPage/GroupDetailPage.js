@@ -316,7 +316,7 @@ const GroupDetailPage = () => {
         connection.on("GroupDeleted", (deletedGroupId) => {
           if (deletedGroupId === id) {
             toast.error("This group has been deleted!", { autoClose: 3000 });
-            navigate("/group", { replace: true });
+            navigate("/GroupDetail", { replace: true });
           }
         });
       })
@@ -593,7 +593,7 @@ const GroupDetailPage = () => {
           toast.error("You have been removed from the group!", {
             autoClose: 3000,
           });
-          navigate("/group", { replace: true }); // hoặc về trang khác
+          navigate("/GroupDetail", { replace: true }); // hoặc về trang khác
           return;
         }
       }
