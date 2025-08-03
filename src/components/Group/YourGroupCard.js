@@ -8,7 +8,7 @@ const YourGroupCard = ({ group, member }) => {
   const navigate = useNavigate();
 
   const handleViewGroup = () => {
-    navigate(`/group/${group.groupId}`);
+    navigate(`/GroupDetail/${group.groupId}`);
   };
   const [leaveGroups, setLeaveGroups] = useState([]);
   const [userAccId, setUserAccId] = useState(null);

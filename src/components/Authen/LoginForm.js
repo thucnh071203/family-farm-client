@@ -311,12 +311,22 @@ const LoginForm = () => {
                   }
                 }}
               />
-              <img
+              {/* <img
                 className="mdi-eye cursor-pointer"
                 src={iconEye}
                 alt="Toggle Password Visibility"
                 onClick={() => setShowPassword((prev) => !prev)}
-              />
+              /> */}
+              <div
+                className="mdi-eye cursor-pointer flex items-center px-2"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? (
+                  <i className="fa-solid fa-eye-slash"></i>
+                ) : (
+                  <i className="fa-solid fa-eye"></i>
+                )}
+              </div>
             </div>
           </div>
           {errors.password && (

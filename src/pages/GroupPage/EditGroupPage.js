@@ -38,7 +38,7 @@ export default function EditGroupPage() {
               console.log("📩 GroupDeleted received:", deletedGroupId);
               if (deletedGroupId === groupId) {
                 toast.error("This group has been deleted!");
-                navigate("/group", { replace: true });
+                navigate("/GroupDetail", { replace: true });
               }
             });
       
@@ -62,7 +62,7 @@ export default function EditGroupPage() {
       
               if (isGroupMatch && isAccMatch && isRoleMatch) {
                 toast.warning("You no longer have permission to edit this group.");
-                navigate(`/group/${groupId}`, { replace: true });
+                navigate(`/GroupDetail/${groupId}`, { replace: true });
               }
             });
           })
