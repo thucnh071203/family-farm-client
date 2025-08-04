@@ -55,14 +55,14 @@ export default function ExpertRevenue() {
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-5 font-sans border-4 border-black">
-      <h1 class="text-2xl font-bold mb-4 text-center text-blue-700 flex items-center justify-center gap-2">
+      <h1 className="text-2xl font-bold mb-4 text-center text-blue-700 flex items-center justify-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           stroke-width="1.5"
           stroke="currentColor"
-          class="size-6"
+          className="size-6"
         >
           <path
             stroke-linecap="round"
