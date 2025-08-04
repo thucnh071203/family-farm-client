@@ -104,6 +104,7 @@ import PaymentInvoicePage from "./pages/PaymentPage/PaymentInvoicePage";
 import PostManagementDetailPage from "./pages/Dashboard/PostManagementDetailPage";
 import CreateExtraProcess from "./pages/Subprocess/CreateExtraProcess";
 import Chatbot from "./components/Chat/ChatBot";
+import AddCreditCardPage from "./pages/Profile/CreditCardPage"
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -236,6 +237,7 @@ const AppContent = () => {
             <Route path="/ReviewService/:serviceId" element={<ReviewServicePage />} />
             <Route path="/PaymentInvoice/:id" element={<PaymentInvoicePage />} />
             <Route path="/RequestExtra" element={<CreateExtraProcess />} />
+            <Route path="/AddCreditCardPage" element={<AddCreditCardPage />} />
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
