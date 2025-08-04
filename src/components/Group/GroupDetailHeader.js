@@ -67,7 +67,7 @@ const GroupDetailHeader = ({
               className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white"
               onClick={() => setShowPopupInvite(true)}
             >
-              <i class="fa-solid fa-user-plus text-[#3DB3FB] mr-2"></i>
+              <i className="fa-solid fa-user-plus text-[#3DB3FB] mr-2"></i>
               Invite
             </button>
           {userRole === "680ce8722b3eec497a30201e" && (

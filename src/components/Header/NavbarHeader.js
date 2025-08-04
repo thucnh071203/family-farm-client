@@ -28,7 +28,7 @@ const NavbarHeader = () => {
           path.includes("/Friend") || path.includes("/friend") ? "item-active" : ""
         }`}
         >
-          <i class="fa-solid fa-user-plus"></i>
+          <i className="fa-solid fa-user-plus"></i>
           <span>Friends</span>
         </Link>
 
@@ -36,7 +36,7 @@ const NavbarHeader = () => {
           to="/Group"
           className={`navbar-header-item ${path.includes("Group") ? "item-active" : ""}`}
         >
-          <i class="fa-solid fa-user-group"></i>
+          <i className="fa-solid fa-user-group"></i>
           <span>Groups</span>
         </Link>
 
@@ -44,7 +44,7 @@ const NavbarHeader = () => {
           to="/Service"
           className={`navbar-header-item ${path.includes("/Service") ? "item-active" : ""}`}
         >
-          <i class="fa-solid fa-handshake"></i>
+          <i className="fa-solid fa-handshake"></i>
           <span>Services</span>
         </Link>
       </div>

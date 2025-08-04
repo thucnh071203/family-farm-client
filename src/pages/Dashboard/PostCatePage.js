@@ -127,19 +127,19 @@ const TableListCatePost = ({ displayList }) => {
               if (isDeleted) {
                 return `
                   <button class='btn-restore hover:underline text-yellow-500' data-id='${id}'>
-                    <i class="fa-solid fa-rotate-left"></i>
+                    <i className="fa-solid fa-rotate-left"></i>
                   </button>
                 `;
               } else {
                 return `
                   <button class='btn-detail hover:underline pr-2 text-blue-400' data-id='${id}'>
-                    <i class="fa-solid fa-eye"></i>
+                    <i className="fa-solid fa-eye"></i>
                   </button>
                   <button class='btn-edit hover:underline pr-1 text-green-500' data-id='${id}'>
-                    <i class="fa-solid fa-pencil"></i>
+                    <i className="fa-solid fa-pencil"></i>
                   </button>
                   <button class='btn-delete hover:underline text-red-400' data-id='${id}'>
-                    <i class="fa-solid fa-trash"></i>
+                    <i className="fa-solid fa-trash"></i>
                   </button>
                 `;
               }
