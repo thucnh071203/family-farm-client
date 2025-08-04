@@ -41,10 +41,10 @@ const BookingListPage = () => {
 
   return (
     <div className="mt-6 bg-gray-100 p-6 relative text-gray-800 h-[300px] overflow-y-auto border border-gray-300 rounded-xl">
-      <h2 class="text-2xl font-bold mb-4 text-center text-blue-700 flex items-center justify-center gap-2">
+      <h2 className="text-2xl font-bold mb-4 text-center text-blue-700 flex items-center justify-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6 text-blue-700"
+          className="h-6 w-6 text-blue-700"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
