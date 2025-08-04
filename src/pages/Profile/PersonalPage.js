@@ -15,6 +15,7 @@ import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import alertICon from "../../assets/icons/nam_alert_icon.svg"
 
 const PersonalPage = () => {
   const { user } = useUser();
@@ -347,7 +348,7 @@ const PersonalPage = () => {
       </div>
     );
   };
-  
+
   const fetchPhotos = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -380,6 +381,7 @@ const PersonalPage = () => {
       fetchPhotos();
     }
   }, [accId, isOwner, accessToken]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -411,6 +413,20 @@ const PersonalPage = () => {
               <PhotoGallery photos={photos} isOwner={isOwner} accId={accId} />
             </aside>
             <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
+
+            {/* UPDATE BANK CARD  */}
+              <div style={{background: "rgba(61, 179, 251, 0.15)"}} className="flex flex-col gap-3 p-4 rounded-md shadow-lg">
+                <div className="flex flex-row">
+                  <p className="text-start text-base flex flex-row gap-3 items-start">
+                    <img src={alertICon} alt=""/>
+                    It looks like you haven't added a bank card yet. Please update your information to continue performing professional functions.</p>
+                </div>
+                <div className="flex flex-row justify-end">
+                  <Link to="/AddCreditCardPage" style={{background: "rgba(61, 179, 251, 1)"}} className="p-2 font-bold text-base text-white shadow-md rounded-md">Update now!</Link>
+                </div>
+              </div>
+
+              
               {isOwner && (
                 <PostCreate
                   profileImage={avatar}
