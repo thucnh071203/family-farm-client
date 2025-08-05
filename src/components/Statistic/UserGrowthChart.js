@@ -1,8 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { toast, Bounce } from "react-toastify";
-
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import * as signalR from "@microsoft/signalr";
-
 import {
   Chart as ChartJS,
   BarElement,
@@ -16,7 +14,6 @@ import { Bar } from "react-chartjs-2";
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export const UserGrowthChart = () => {
-  //   const chartRef = useRef(null);
   const [chartData, setChartData] = useState(null);
   const [chartOptions, setChartOptions] = useState({});
 
@@ -34,9 +31,6 @@ export const UserGrowthChart = () => {
   const { start, end } = getDefaultDates();
   const [fromDate, setFromDate] = useState(start);
   const [toDate, setToDate] = useState(end);
-  //   const chartInstance = useRef(null);
-
-  <Bar data={chartData} options={chartOptions} />;
 
   const fetchData = async () => {
     let url = "https://localhost:7280/api/statistic/user-growth";
@@ -51,14 +45,6 @@ export const UserGrowthChart = () => {
       const result = await response.json();
       const data = result.data;
 
-      // if (!data || Object.keys(data).length === 0) {
-      //   toast.info("Không có dữ liệu để hiển thị");
-
-      //   return;
-      // }
-
-      // const labels = Object.keys(data);
-      // const values = Object.values(data);
       const labels = Object.keys(data).map((dateStr) => {
         const [day, month, year] = dateStr.split("/");
         return `${year}-${month}-${day}`; // Chuyển về yyyy-MM-dd
@@ -78,6 +64,7 @@ export const UserGrowthChart = () => {
 
       setChartOptions({
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           y: {
             beginAtZero: true,
@@ -128,15 +115,11 @@ export const UserGrowthChart = () => {
 
   return (
     <div className="space-y-1">
-      <h1 className="text-2xl font-bold">User Growth</h1>
-
-      <div className="w-full max-w-[700px] h-[300px]">
+      <h1 className="text-2xl font-bold text-blue-500">User Growth</h1>
+      <div className="w-full h-[300px]">
         {chartData && <Bar data={chartData} options={chartOptions} />}
       </div>
-
-      <div className="flex flex-col md:flex-row items-center ml-16 gap-4">
-        {/* //<div className="flex flex-col items-center gap-4 md:flex-row"> */}
-
+      <div className="flex justify-center flex-col md:flex-row items-center gap-4">
         <div className="space-y-1">
           <label htmlFor="fromDate" className="block mb-1">
             From
@@ -146,6 +129,7 @@ export const UserGrowthChart = () => {
             id="fromDate"
             value={fromDate}
             onChange={(e) => setFromDate(e.target.value)}
+            className="border p-2 rounded"
           />
         </div>
         <div className="space-y-1">
@@ -157,10 +141,11 @@ export const UserGrowthChart = () => {
             id="toDate"
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
+            className="border p-2 rounded"
           />
         </div>
         <button
-          className="px-4 py-2 mt-6 text-white transition rounded md:mt-0 hover:bg-lime-600 bg-lime-500"
+          className="px-4 py-2 mt-6 text-white transition rounded md:mt-0 hover:bg-blue-600 bg-blue-500"
           onClick={fetchData}
         >
           Load

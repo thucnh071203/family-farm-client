@@ -49,7 +49,10 @@ const ListPayment = ({ data }) => {
                     <td class="text-right">${formattedPrice}</td>
                     <td class="text-left">${formattedDate}</td>
                     <td class="text-left">
-                        <button class="bg-[#3DB3FB]/25 text-[#3DB3FB] text-sm px-2 py-0.5 rounded font-semibold">
+                        <button 
+                            class="bg-[#3DB3FB]/25 text-[#3DB3FB] text-sm px-2 py-0.5 rounded font-semibold detail-btn"
+                            data-id="${payment.paymentId}"
+                        >
                             Detail
                         </button>
                     </td>
@@ -64,6 +67,13 @@ const ListPayment = ({ data }) => {
         $table.DataTable({
             retrieve: true,
             autoWidth: false,
+        });
+
+        // Gắn click event cho nút Detail sau khi render xong
+        $table.find(".detail-btn").on("click", function () {
+            const paymentId = $(this).data("id");
+            console.log("Chuyển trang");
+            window.location.href = `/PaymentInvoice/${paymentId}`;
         });
     };
 

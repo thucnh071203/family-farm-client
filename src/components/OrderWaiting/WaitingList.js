@@ -60,7 +60,7 @@ export default function WaitingList() {
 
     const handleNavigateCreate = (service, booking) => {
         navigate('/CreateSubprocess', {
-            state: {service, booking}
+            state: { service, booking, IsExtraProcess: false }
         })
     }
     return (
@@ -85,23 +85,23 @@ export default function WaitingList() {
 
                         <div className="w-full xl:w-[831px] max-w-[831px]">
 
-                            <div class="progress-list-container mt-[26px] flex flex-col gap-10">
+                            <div className="progress-list-container mt-[26px] flex flex-col gap-10">
                                 {Array.isArray(listBooking) && listBooking.length > 0 ? (
                                     listBooking.map((booking, index) => (
 
-                                        <div key={booking.booking.bookingServiceId || index} class="progress-card w-full">
-                                            <div class="header-progress-section flex flex-col sm:flex-row justify-between">
-                                                <div class="infor-progress-section">
-                                                    <div class="info-1">
-                                                        <div class="text-progress-info-1">ID Booking:</div>
-                                                        <div class="text-progress-id">{booking.booking.bookingServiceId}</div>
+                                        <div key={booking.booking.bookingServiceId || index} className="progress-card w-full">
+                                            <div className="header-progress-section flex flex-col sm:flex-row justify-between">
+                                                <div className="infor-progress-section">
+                                                    <div className="info-1">
+                                                        <div className="text-progress-info-1">ID Booking:</div>
+                                                        <div className="text-progress-id">{booking.booking.bookingServiceId}</div>
                                                     </div>
-                                                    <div class="info-1">
-                                                        <div class="text-progress-info-1">Farmer Name: </div>
-                                                        <div class="text-progress-p-1">{booking.account.fullName}</div>
+                                                    <div className="info-1">
+                                                        <div className="text-progress-info-1">Farmer Name: </div>
+                                                        <div className="text-progress-p-1">{booking.account.fullName}</div>
                                                     </div>
-                                                    <div class="date-info">
-                                                        <div class="text-progress-info-1">Booking at:</div>
+                                                    <div className="date-info">
+                                                        <div className="text-progress-info-1">Booking at:</div>
                                                         {(() => {
                                                             const d = new Date(booking.booking.bookingServiceAt);
                                                             const dateStr = d.toLocaleDateString("vi-VN");
@@ -113,9 +113,9 @@ export default function WaitingList() {
                                                             );
                                                         })()}
                                                     </div>
-                                                    <div class="info-1">
-                                                        <div class="text-progress-info-1">Service name:</div>
-                                                        <div class="text-progress-p-1">{booking.service.serviceName}</div>
+                                                    <div className="info-1">
+                                                        <div className="text-progress-info-1">Service name:</div>
+                                                        <div className="text-progress-p-1">{booking.service.serviceName}</div>
                                                     </div>
                                                 </div>
 
@@ -125,15 +125,15 @@ export default function WaitingList() {
 
                                             </div>
 
-                                            <div class="footer-booking-card">
+                                            <div className="footer-booking-card">
                                                 <div className="footer-wrapper">
 
-                                                    <div class="footer-booking-button" onClick={() => handleNavigateCreate(booking.service, booking.booking)}>
-                                                        <div class="progress-button-text">Create Process</div>
+                                                    <div className="footer-booking-button" onClick={() => handleNavigateCreate(booking.service, booking.booking)}>
+                                                        <div className="progress-button-text">Create Process</div>
                                                     </div>
 
-                                                    <div class="footer-booking-price">
-                                                        <div class="total-price">
+                                                    <div className="footer-booking-price">
+                                                        <div className="total-price">
                                                             TOTAL: <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(booking.booking.price)}</span>
                                                         </div>
                                                     </div>

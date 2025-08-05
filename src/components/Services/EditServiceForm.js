@@ -70,10 +70,31 @@ const EditServiceForm = () => {
         fetchService();
     }, [id]);
 
+    // const handleImageChange = (e) => {
+    //     const file = e.target.files[0];
+    //     setImage(file);
+    //     setPreview(URL.createObjectURL(file));
+    // };
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        setImage(file);
-        setPreview(URL.createObjectURL(file));
+
+        // Các điều kiện validate file hình ảnh
+        const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg+xml'];
+
+        if (file) {
+            if (!allowedImageTypes.includes(file.type)) {
+                toast.error("Only accept image files in .jpg, .jpeg, .png, or .svg format");
+                return; // Dừng nếu file không hợp lệ
+            }
+
+            // Nếu file hợp lệ, cập nhật state
+            setImage(file);
+            setPreview(URL.createObjectURL(file)); // Tạo preview của ảnh
+        } else {
+            setImage(null);
+            setPreview(null);
+        }
     };
 
     const handleRemoveImage = () => {
@@ -132,7 +153,6 @@ const EditServiceForm = () => {
                     "Content-Type": "multipart/form-data"
                 }
             });
-            // alert("✅ Service updated successfully!");
             toast.success("SERVICE UPDATED SUCCESSFULLY!");
             navigate("/ServiceManagement");
         } catch (err) {

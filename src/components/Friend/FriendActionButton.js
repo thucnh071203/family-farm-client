@@ -7,6 +7,11 @@ const FriendActionButton = ({ status, roleId, accId }) => {
   const [roleIdOfUser, setRoleId] = useState(null);
   const [currentStatus, setCurrentStatus] = useState(status);
 
+  // Đồng bộ currentStatus với prop status khi prop thay đổi
+  useEffect(() => {
+    setCurrentStatus(status);
+  }, [status]);
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -33,10 +38,7 @@ const FriendActionButton = ({ status, roleId, accId }) => {
 
   const handleCancelOrUnfriend = async () => {
     try {
-      const response = await instance.delete(
-        `/api/friend/unfriend/${accId}`
-      );
-
+      const response = await instance.delete(`/api/friend/unfriend/${accId}`);
       if (response.status === 200 && response.data === true) {
         setCurrentStatus(null);
         toast.success("Action completed successfully!");
@@ -82,13 +84,14 @@ const FriendActionButton = ({ status, roleId, accId }) => {
     },
   };
 
-  // Chọn config phù hợp
   const config = buttonConfig[currentStatus] || buttonConfig.null;
 
   return (
     <button
       onClick={
-        currentStatus === "Friend" || currentStatus === "Following" || currentStatus === "Pending"
+        currentStatus === "Friend" ||
+        currentStatus === "Following" ||
+        currentStatus === "Pending"
           ? handleCancelOrUnfriend
           : handleAddFriend
       }

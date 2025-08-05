@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import useAddress from '../../hooks/useAddress';
 import instance from "../../Axios/axiosConfig";
 import { useNavigate } from "react-router-dom";
+import { handleFileSelect } from '../../utils/validateFile';
 
 const UpdateProfileForm = ({ profileData }) => {
   // 👇 Khi profileData thay đổi → map vào formData
@@ -157,14 +158,8 @@ const UpdateProfileForm = ({ profileData }) => {
         ward: selectedWard?.id || '',
       }));
 
-      // console.log("Selected Ward:", selectedWard);
     }
   }, [formData.district, wards, profileData?.address]);
-
-
-  // useEffect(() => {
-  //   console.log("✅ Current formData:", formData);
-  // }, [formData]);
 
   // 👉 Handle change 
   const handleChange = (e) => {
@@ -193,24 +188,40 @@ const UpdateProfileForm = ({ profileData }) => {
   };
 
   // Handler khi chọn ảnh:
+  // const handleCertificateChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setCertificateFile(file);
+  //     setCertificatePreview(URL.createObjectURL(file));
+  //     setIsCertificateRemoved(false); // 👉 Reset lại nếu chọn ảnh mới
+  //     setErrors(prev => ({ ...prev, certificate: '' })); // clear lỗi khi chọn file
+  //   }
+  // };
+
   const handleCertificateChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setCertificateFile(file);
-      setCertificatePreview(URL.createObjectURL(file));
-      setIsCertificateRemoved(false); // 👉 Reset lại nếu chọn ảnh mới
-      setErrors(prev => ({ ...prev, certificate: '' })); // clear lỗi khi chọn file
-    }
+    handleFileSelect({
+      event: e,
+      setSelectedFile: (fileData) => {
+        setCertificateFile(fileData.file); // Lưu lại file đã chọn
+        setCertificatePreview(fileData.url); // Hiển thị preview của file (nếu có)
+        setIsCertificateRemoved(false); // Đặt lại trạng thái đã xóa nếu có file mới
+        setErrors((prev) => ({ ...prev, certificate: '' })); // Clear lỗi nếu file hợp lệ
+      },
+    });
   };
 
   // Handler xóa ảnh:
   const handleRemoveCertificate = (e) => {
-    e.stopPropagation(); // 👉 chặn sự kiện lan lên label
-    e.preventDefault();  // 👉 phòng khi button là submit
+    e.stopPropagation(); // 👉 Chặn sự kiện lan lên label
+    e.preventDefault();  // 👉 Phòng khi button là submit
     setCertificateFile(null);
     setCertificatePreview(null);
-    // setErrors(prev => ({ ...prev, certificate: 'Certificate is required for expert!' }));
-    setIsCertificateRemoved(true); // 👉 Đánh dấu đã xoá ảnh
+    setIsCertificateRemoved(true); // Đánh dấu đã xoá ảnh
+    
+    // Cập nhật profileData nếu cần
+    if (profileData && profileData.certificate) {
+      profileData.certificate = null; // Hoặc nếu không cần cập nhật vào profileData thì không cần dòng này
+    }
   };
 
   const validateForm = () => {
@@ -259,21 +270,9 @@ const UpdateProfileForm = ({ profileData }) => {
     }
 
     // Nếu là expert thì phải có file
-    // if (
-    //   userRole === '68007b2a87b41211f0af1d57' &&
-    //   !certificateFile && // chưa upload mới
-    //   !profileData?.certificate // và ảnh cũ cũng không có
-    // ) {
-    //   newErrors.certificate = 'Certificate is required for expert!';
-    //   isValid = false;
-    // }
-
-    // console.log("Validate ảnh", profileData?.certificate);
     if (
       userRole === '68007b2a87b41211f0af1d57' &&
       !certificateFile && // chưa chọn mới
-      // !profileData?.certificate &&// và ảnh cũ cũng không có
-      // !certificatePreview // không có cả preview từ ảnh cũ
       (!profileData?.certificate || profileData.certificate.trim() === "")
     ) {
       newErrors.certificate = 'Certificate is required for expert!';
@@ -321,7 +320,6 @@ const UpdateProfileForm = ({ profileData }) => {
       }
 
       // Nếu có thêm Certificate (cho expert), bạn có thể append thêm
-
       const res = await instance.put("/api/account/update-profile", formDataToSend, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -594,25 +592,7 @@ const UpdateProfileForm = ({ profileData }) => {
                 onChange={handleCertificateChange}
               />
 
-              {/* <label htmlFor="certificate-upload" className="block cursor-pointer mt-2 w-full relative">
-                <img
-                  className="relative px-3 object-cover rounded-[12px] w-full min-h-[200px] h-auto border z-50"
-                  src={certificatePreview || profileData.certificate}
-                />
-
-                {!certificatePreview && (
-                  <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-xl z-0">
-                    <i className="fa-solid fa-cloud-arrow-up"></i>Upload certificate here
-                  </div>
-                )}
-              </label> */}
-
               <label htmlFor="certificate-upload" className="block cursor-pointer mt-2 w-full relative group">
-                {/* <img
-                  className="relative px-3 object-cover rounded-[12px] w-full min-h-[200px] h-auto border z-10"
-                  src={certificatePreview || profileData.certificate}
-                  alt="Certificate preview"
-                /> */}
                 <img
                   className="relative px-3 object-cover rounded-[12px] w-full min-h-[200px] h-auto border z-10"
                   src={

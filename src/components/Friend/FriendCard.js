@@ -88,7 +88,7 @@ const FriendCard = ({ friend, onActionComplete }) => {
           />
         </div>
         <div className="flex items-center flex-col gap-1">
-          <p className="text-base font-bold">{friend.username || "Mai Xuan"}</p>
+          <p className="text-base font-bold">{friend.fullName || "Unknown"}</p>
           <p className="text-base font-normal text-[#999999]">
             {friend.city || "From Can Tho"}
           </p>
@@ -100,13 +100,13 @@ const FriendCard = ({ friend, onActionComplete }) => {
           onClick={handleDelete}
           className="w-[87px] h-6 text-[#E74C3C] hover:bg-[#E74C3C] hover:text-white rounded-[10px] font-normal"
         >
-          <i class="fa-solid fa-trash mr-1"></i>Delete
+          <i className="fa-solid fa-trash mr-1"></i>Delete
         </button>
         <button
           onClick={handleAccept}
           className="text-[#3DB3FB] w-[87px] h-6 hover:bg-[#3DB3FB] hover:text-white rounded-[10px] font-normal"
         >
-          <i class="fa-solid fa-check mr-1"></i>
+          <i className="fa-solid fa-check mr-1"></i>
           Accept
         </button>
       </div>

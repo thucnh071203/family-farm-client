@@ -93,7 +93,7 @@ const StatisticPage = () => {
       )}
 
       {/* Đây là phần mình đẩy xuống đáy */}
-      <div className="flex gap-4 mt-auto ml-12">
+      <div className="flex gap-4 mt-auto justify-center">
         <div>
           <label className="block mb-1">From</label>
           <input

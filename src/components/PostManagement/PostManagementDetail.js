@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import { Link } from "react-router-dom";
 
 const PostManagementDetail = ({ post }) => {
   return (
+
     <div className="ml-20 mt-3 ">
       <div className="flex">
         <div className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
@@ -28,12 +28,10 @@ const PostManagementDetail = ({ post }) => {
           / Post Detail
         </span>
       </div>
-
-      <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-4">
-        Post detail
+      <h1 className="text-2xl font-bold text-blue-500 mb-6 text-left">
+        POST DETAIL
       </h1>
-
-      <div className="flex gap-2 w-[80%] align-middle items-center mt-10 font-bold">
+      <div className="flex gap-2 w-full align-middle items-center mt-10 font-bold">
         <img
           className="rounded-full w-[40px] h-[40px] object-cover mr-4"
           src={
@@ -50,69 +48,54 @@ const PostManagementDetail = ({ post }) => {
             : "Farmer"}
         </p>
       </div>
-      {/* bg-[rgba(61,179,251,0.1)] w-[80%] rounded-xl */}
-
-      <div className="w-[80%] mt-7 bg-white">
-        <div className="flex text-left items-center">
-          <div className="pt-4 pb-4">
-            <p className="w-[180px] pl-4">Content:</p>
+      <div className="w-full mt-7 bg-white rounded-xl">
+        <div className="flex text-left items-center border-b border-gray-200">
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
+            Content
           </div>
-
-          <p
-            className="pl-4 p-3  text-black w-full rounded-sm"
-            style={{ border: "0.5px solid #d1d5db" }}
-          >
-            {post.post.postContent}
-          </p>
+          <p className="pl-4">{post.post.postContent}</p>
         </div>
-        <div className="flex text-left items-center">
-          <div className="pt-4 pb-4">
-            <p className="w-[180px] pl-4">HashTags:</p>
+        <div className="flex text-left items-center border-b border-gray-200">
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
+            HashTags
           </div>
-          <p
-            className="pl-4 p-3  text-black w-full rounded-sm"
-            style={{ border: "0.5px solid #d1d5db" }}
-          >
+          <p className="pl-4">
             {post.hashTags.map((tag, index) => (
               <span key={index}>#{tag.hashTagContent} </span>
             ))}
           </p>
         </div>
-        <div className="flex text-left items-center">
-          <div className="pt-4 pb-4">
-            <p className="w-[180px] pl-4">Category:</p>
+        <div className="flex text-left items-center border-b border-gray-200">
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
+            Category
           </div>
-          <p
-            className="pl-4 p-3  text-black w-full rounded-sm"
-            style={{ border: "0.5px solid #d1d5db" }}
-          >
+          <p className="pl-4">
             {post.postCategories.map((cat, index) => (
               <span key={index}>#{cat.categoryName} </span>
             ))}
           </p>
         </div>
-        <div className="flex text-left items-center">
-          <div className="pt-4 pb-4">
-            <p className="w-[180px] pl-4">Tag uses:</p>
+        <div className="flex text-left items-center border-b border-gray-200">
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
+            Tag users
           </div>
-          <p
-            className="pl-4 p-3  text-black w-full rounded-sm"
-            style={{ border: "0.5px solid #d1d5db" }}
-          >
+          <p className="pl-4">
             {post.postTags.map((user, index) => (
               <span key={index}>#{user.username} </span>
             ))}
           </p>
         </div>
         <div className="flex text-left items-center">
-          <div className="pt-4 pb-4">
-            <p className="w-[180px] pl-4">Images:</p>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
+            Images
           </div>
+
           <p
             className="pl-4 p-3  text-black w-full flex gap-2"
             style={{ border: "0.5px solid #d1d5db" }}
           >
             {post.postImages.map((postImage, index) => (
+
               <img
                 key={index}
                 className="w-[100px] h-[100px] object-cover mr-4"
@@ -126,9 +109,9 @@ const PostManagementDetail = ({ post }) => {
           </p>
         </div>
       </div>
-      <div className="flex justify-start mt-4">
-        <button className="font-bold">
-          <Link to={"/PostManagement"}>Back to list</Link>
+      <div className="flex justify-start mt-6">
+        <button className="font-semibold text-blue-500 hover:underline">
+          <Link to="/PostManagement">Back to list</Link>
         </button>
       </div>
     </div>

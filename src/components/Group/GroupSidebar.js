@@ -1,6 +1,7 @@
 import React from "react";
 
-const GroupSidebar = ({ setSection }) => {
+const GroupSidebar = ({ section, setSection }) => {
+  const isActive = (value) => section === value;
   return (
     <div className="w-[289px] bg-[#E5E4E9] font-roboto rounded-r-[10px] hidden md:block lg:mt-[120px] mt-[63px] fixed h-full">
       <div className="flex items-start pt-6 ml-8">
@@ -12,7 +13,9 @@ const GroupSidebar = ({ setSection }) => {
 
         <button
           onClick={() => setSection("post-in-group")}
-          className="hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3"
+          className={`flex w-full h-10 rounded-[10px] p-3 ${
+            isActive("post-in-group") ? "bg-[#3DB3FB] text-white" : "hover:bg-[#999999]"
+          }`}
         >
           <div className="flex items-center mx-2">
             <i className="fa-solid fa-file-invoice"></i>
@@ -25,7 +28,9 @@ const GroupSidebar = ({ setSection }) => {
 
         <button
           onClick={() => setSection("all-group-user")}
-          className="hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3"
+          className={`flex w-full h-10 rounded-[10px] p-3 ${
+            isActive("all-group-user") ? "bg-[#3DB3FB] text-white" : "hover:bg-[#999999]"
+          }`}
         >
           <div className="flex items-center mx-2">
             <i className="fa-solid fa-users"></i>
@@ -38,7 +43,9 @@ const GroupSidebar = ({ setSection }) => {
 
         <button
           onClick={() => setSection("group-suggestion-in-group")}
-          className="hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3"
+          className={`flex w-full h-10 rounded-[10px] p-3 ${
+            isActive("group-suggestion-in-group") ? "bg-[#3DB3FB] text-white" : "hover:bg-[#999999]"
+          }`}
         >
           <div className="flex items-center mx-2">
             <i className="fa-solid fa-bolt"></i>
@@ -46,8 +53,10 @@ const GroupSidebar = ({ setSection }) => {
           <div className="flex items-center font-bold">Suggested Groups </div>
         </button>
         <button
-          className="hover:bg-[#3DB3FB] flex justify-center items-center w-full h-10 rounded-[10px] hover:text-white gap-2 p-3"
           onClick={() => setSection("create-group")}
+          className={`flex justify-center items-center w-full h-10 rounded-[10px] gap-2 p-3 ${
+            isActive("create-group") ? "bg-[#3DB3FB] text-white" : "hover:bg-[#3DB3FB] hover:text-white"
+          }`}
         >
           <div>
             <i className="fa-solid fa-plus"></i>

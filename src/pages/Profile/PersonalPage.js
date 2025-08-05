@@ -15,6 +15,7 @@ import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import alertICon from "../../assets/icons/nam_alert_icon.svg"
 
 const PersonalPage = () => {
   const { user } = useUser();
@@ -27,6 +28,8 @@ const PersonalPage = () => {
   const [accessToken, setAccessToken] = useState("");
   const [posts, setPosts] = useState([]);
   const [photos, setPhotos] = useState([]);
+  const [hasCreditCard, setHasCreditCard] = useState(null);
+
 
   const { accId } = useParams();
   const defaultBackground =
@@ -65,11 +68,12 @@ const PersonalPage = () => {
           });
           if (response.status === 200) {
             const data = response.data.data;
+            console.log("Du lieu profile", data);
             setFullName(data.fullName || data.firstName || "Unknown User");
             setAvatar(data.avatar || data.profileImage || "default-avatar-url");
             setBackground(data.background || data.coverImage || defaultBackground);
             setRoleId(data.roleId);
-
+            setHasCreditCard(data.hasCreditCard); // 👈 Thêm dòng này
 
             const basicInfoMapping = {
               gender: data.gender || "Updating",
@@ -327,37 +331,27 @@ const PersonalPage = () => {
   const renderActionButton = () => {
     if (isOwner) return null;
     console.log("Rendering action button - friendshipStatus:", friendshipStatus, "isFriend:", isFriend);
-    if (isFriend) {
-      return (
-        <button
-          onClick={handleStartChat}
-          className="p-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-md w-32 transition flex items-center justify-center"
-        >
-          <i className="fa-solid fa-comment mr-2"></i>
-          Start Chat
-        </button>
-      );
-    }
 
     return (
-      <FriendActionButton
-        status={friendshipStatus}
-        roleId={roleId}
-        accId={accId}
-      />
-    )
+      <div className="flex items-center gap-2">
+        {/* Nút Start Chat */}
+        <button
+          onClick={handleStartChat}
+          className="p-1 px-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-md w- transition flex items-center justify-center"
+        >
+          <i className="fa-solid fa-comment mr-2"></i>
+          Send Message
+        </button>
+        {/* FriendActionButton */}
+        <FriendActionButton
+          status={friendshipStatus}
+          roleId={roleId}
+          accId={accId}
+        />
+      </div>
+    );
   };
-  console.log("accId:", accId);
-  console.log("isOwner:", isOwner);
-  console.log("friendshipStatus:", friendshipStatus);
-  console.log("isFriend:", isFriend);
-  console.log("listFriends:", listFriends);
 
-//   const matchedAccount =
-//     !isOwner &&
-//     Array.isArray(listCheckRelationShip) &&
-//     listCheckRelationShip.find((a) => a.accId === accId);
-  //get list photo
   const fetchPhotos = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -390,6 +384,7 @@ const PersonalPage = () => {
       fetchPhotos();
     }
   }, [accId, isOwner, accessToken]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -418,9 +413,36 @@ const PersonalPage = () => {
                 isProfile={true}
                 accId={accId}
               />
-              <PhotoGallery photos={photos} isOwner={isOwner} accId={accId}/>
+              <PhotoGallery photos={photos} isOwner={isOwner} accId={accId} />
             </aside>
             <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
+
+            {/* UPDATE BANK CARD  */}
+              {isOwner &&
+                roleId === "68007b2a87b41211f0af1d57" &&
+                !hasCreditCard && ( // ✅ đơn giản hơn: false, null, undefined đều thỏa
+                  <div
+                    style={{ background: "rgba(61, 179, 251, 0.15)" }}
+                    className="flex flex-col gap-3 p-4 rounded-md shadow-lg mt-4"
+                  >
+                    <div className="flex flex-row">
+                      <p className="text-start text-base flex flex-row gap-3 items-start">
+                        <img src={alertICon} alt="" />
+                        It looks like you haven't added a bank card yet. Please update your information to continue performing professional functions.
+                      </p>
+                    </div>
+                    <div className="flex flex-row justify-end">
+                      <Link
+                        to="/CreditCardPage"
+                        style={{ background: "rgba(61, 179, 251, 1)" }}
+                        className="p-2 font-bold text-base text-white shadow-md rounded-md"
+                      >
+                        Update now!
+                      </Link>
+                    </div>
+                  </div>
+              )}
+
               {isOwner && (
                 <PostCreate
                   profileImage={avatar}
@@ -461,14 +483,14 @@ const PersonalPage = () => {
                         : [],
                       tagFriends: postMapper.postTags
                         ? postMapper.postTags.map((tag) => ({
-                            accId: tag.accId,
-                            fullname: tag.fullname || "Unknown",
-                          }))
+                          accId: tag.accId,
+                          fullname: tag.fullname || "Unknown",
+                        }))
                         : [],
                       categories: postMapper.postCategories
                         ? postMapper.postCategories.map(
-                            (cat) => cat.categoryName
-                          )
+                          (cat) => cat.categoryName
+                        )
                         : [],
                       likes: postMapper.reactionCount || 0,
                       comments: postMapper.commentCount || 0,

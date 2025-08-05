@@ -177,7 +177,7 @@ const PostInGroupCard = ({
     navigate(`/PersonalPage/${accId}`);
   };
   const handleClickToGroupName = (groupId) => {
-    navigate(`/group/${groupId}`);
+    navigate(`/GroupDetail/${groupId}`);
   };
 
   const handleToggleComments = () => {

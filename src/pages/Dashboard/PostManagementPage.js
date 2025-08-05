@@ -1,16 +1,16 @@
 import SidebarDashboard from "../../components/Dashboard/SidebarDashboard";
 import ListPost from "../../components/PostManagement/ListPost";
-import { useState } from "react";
 
 const PostManagement = () => {
-    return (
-        <div className="flex min-h-screen">
-          <SidebarDashboard />
-          <div className="flex-1 w-full">
-            <ListPost />
-          </div>
-        </div>
-      );
-    };
+  return (
+    <div className="flex min-h-screen">
+      {/* Sidebar bên trái */}
+      <SidebarDashboard />
+      <div className="p-8 w-full bg-[#3DB3FB]/5">
+        <ListPost />
+      </div>
+    </div>
+  );
+};
 
 export default PostManagement;

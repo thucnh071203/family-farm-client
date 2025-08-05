@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { handleFileSelect } from '../../utils/validateFile';
 
 const CreateServiceForm = () => {
     const navigate = useNavigate();
@@ -15,20 +16,43 @@ const CreateServiceForm = () => {
     const [categoryList, setCategoryList] = useState([]);
     const [errors, setErrors] = useState({});
 
+    // const handleImageChange = (e) => {
+    //     const file = e.target.files[0];
+    //     setImage(file);
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onloadend = () => {
+    //             setPreview(reader.result);
+    //         };
+    //         reader.readAsDataURL(file);
+    //     } else {
+    //         setPreview(null);
+    //     }
+    // };
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        setImage(file);
         if (file) {
+            // Kiểm tra file hình ảnh
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg+xml'];
+            if (!allowedImageTypes.includes(file.type)) {
+                // Hiển thị toast thông báo lỗi nếu file không hợp lệ
+                toast.error("Only accept image files in .jpg, .jpeg, .png, or .svg format");
+                return; // Dừng lại nếu file không hợp lệ
+            }
+
+            // Nếu file hợp lệ, lưu vào state
+            setImage(file);
             const reader = new FileReader();
             reader.onloadend = () => {
-                setPreview(reader.result);
+                setPreview(reader.result); // Hiển thị preview
             };
             reader.readAsDataURL(file);
         } else {
             setPreview(null);
+            setImage(null);
         }
     };
-
     const handleRemoveImage = () => {
         setImage(null);
         setPreview(null);
@@ -70,6 +94,37 @@ const CreateServiceForm = () => {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
+    // ✅ Validate dữ liệu đầu vào
+    // const validate = () => {
+    //     const newErrors = {};
+    //     if (!serviceName.trim()) newErrors.serviceName = "Service name is required.";
+    //     if (!category) newErrors.category = "Category is required.";
+    //     if (!price) {
+    //         newErrors.price = "Price is required.";
+    //     } else if (isNaN(price)) {
+    //         newErrors.price = "Price must be a number.";
+    //     } else if (Number(price) <= 0) {
+    //         newErrors.price = "Price must be a positive number.";
+    //     }
+    //     if (!description.trim()) newErrors.description = "Description is required.";
+        
+    //     // Validate hình ảnh
+    //     if (!image) {
+    //         newErrors.image = "Image is required.";
+    //     } else {
+    //         // Kiểm tra thêm định dạng file nếu cần
+    //         const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg+xml'];
+    //         if (!allowedImageTypes.includes(image.type)) {
+    //             newErrors.image = "Only image files (.jpeg, .jpg, .png, .svg) are allowed.";
+    //             // toast.error('Only accept image files in .jpg, .jpeg, .png, or .svg format');
+    //         }
+    //     }
+
+    //     setErrors(newErrors);
+    //     return Object.keys(newErrors).length === 0;
+    // };
+
 
     // ✅ Submit form
     const handleSubmit = async (e) => {

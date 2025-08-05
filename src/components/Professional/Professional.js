@@ -6,7 +6,10 @@ import { useEffect, useState } from "react";
 import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { useNotification } from "../../context/NotificationContext";
-
+import BookingListPage from "../../components/Statistic/BookingListPage";
+import ExpertRevenue from "../../components/Statistic/ExpertRevenue";
+import BookingDetailPage from "../../components/Statistic/BookingDetailPage";
+import BookingStatisticPage from "../../components/Statistic/BookingStatisticPage";
 const Professional = () => {
   const { hubConnection } = useNotification();
   // const [bookingRequests, setBookingRequests] = useState([]);
@@ -16,11 +19,14 @@ const Professional = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState({}); // Trạng thái loading cho từng booking
+  const [showStatistic, setShowStatistic] = useState(false); //show cái thống kê lên
 
   // Hàm lấy danh sách booking requests của expert
   const getExpertBookingRequests = async () => {
     try {
-      const response = await instance.get("/api/booking-service/expert-list-request-booking");
+      const response = await instance.get(
+        "/api/booking-service/expert-list-request-booking"
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching booking requests:", error);
@@ -46,14 +52,13 @@ const Professional = () => {
           },
           service: {
             serviceName: newBooking.serviceName,
-          }
+          },
         },
-        ...prev
+        ...prev,
       ]);
 
       console.log("SignalR new booking:", newBooking);
     };
-
 
     hubConnection.on("ReceiveNewBookingRequest", handleNewBookingRequest);
     return () => {
@@ -66,15 +71,17 @@ const Professional = () => {
     try {
       setActionLoading((prev) => ({ ...prev, [bookingId]: true }));
       // const response = await instance.put(`/api/booking-service/accept-booking/${bookingId}`);
-      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+      const token =
+        localStorage.getItem("accessToken") ||
+        sessionStorage.getItem("accessToken");
 
       const response = await instance.put(
         `/api/booking-service/accept-booking/${bookingId}`,
         null, // Vì PUT này không có body
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
@@ -97,7 +104,9 @@ const Professional = () => {
   const cancelBooking = async (bookingId) => {
     try {
       setActionLoading((prev) => ({ ...prev, [bookingId]: true }));
-      const response = await instance.put(`/api/booking-service/reject-booking/${bookingId}`);
+      const response = await instance.put(
+        `/api/booking-service/reject-booking/${bookingId}`
+      );
       if (response.data) {
         toast.success("Booking rejected successfully!");
         // Cập nhật danh sách để loại bỏ booking đã hủy
@@ -170,13 +179,36 @@ const Professional = () => {
         <Link to="/payment" className="mt-5 text-blue-500 hover:underline">
           Go to Payment page
         </Link>
+        {!showStatistic ? (
+          <button
+            onClick={() => setShowStatistic(true)}
+            className="mt-5 text-blue-500 hover:underline"
+          >
+            Statistic
+          </button>
+        ) : (
+          <button
+            onClick={() => setShowStatistic(false)}
+            className="mt-5 text-gray-500 hover:underline"
+          >
+            Back to Booking Requests
+          </button>
+        )}
       </div>
 
       <div className="w-full md:w-3/4">
-        {bookingRequests.length > 0 ? (
+        {showStatistic ? (
+          <div className="pt-6">
+            <ExpertRevenue />
+            <BookingListPage />
+            <BookingDetailPage />
+            <BookingStatisticPage />
+          </div>
+        ) : bookingRequests.length > 0 ? (
           bookingRequests.map((req, index) => {
             const fullName = req?.account?.fullName || "-";
-            const avatar = req?.account?.avatar || "https://i.imgur.com/hYVzLgm.png";
+            const avatar =
+              req?.account?.avatar || "https://i.imgur.com/hYVzLgm.png";
             const serviceName = req?.service?.serviceName || "Unknown Service";
             const bookingAt = req?.booking?.bookingServiceAt
               ? new Date(req.booking.bookingServiceAt).toLocaleString()
@@ -193,26 +225,32 @@ const Professional = () => {
                     />
                     <div className="space-y-2">
                       <p className="font-semibold">
-                        {fullName} -{" "} in{" "}
+                        {fullName} - in{" "}
                         <span className="text-blue-500 underline cursor-pointer">
                           {serviceName}
                         </span>
                       </p>
-                      <p className="text-sm text-gray-500">Request at {bookingAt}</p>
+                      <p className="text-sm text-gray-500">
+                        Request at {bookingAt}
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex space-x-6">
                     <button
                       className="text-red-500 hover:underline flex items-center gap-2 disabled:opacity-50"
-                      onClick={() => cancelBooking(req.booking.bookingServiceId)}
+                      onClick={() =>
+                        cancelBooking(req.booking.bookingServiceId)
+                      }
                       disabled={actionLoading[req.booking.bookingServiceId]}
                     >
                       <img src={reject_icon} alt="" /> <span>Reject</span>
                     </button>
                     <button
                       className="text-blue-500 hover:underline flex items-center gap-2 disabled:opacity-50"
-                      onClick={() => acceptBooking(req.booking.bookingServiceId)}
+                      onClick={() =>
+                        acceptBooking(req.booking.bookingServiceId)
+                      }
                       disabled={actionLoading[req.booking.bookingServiceId]}
                     >
                       <img src={accept_icon} alt="" /> <span>Accept</span>
@@ -225,7 +263,6 @@ const Professional = () => {
               </div>
             );
           })
-
         ) : (
           <div>No booking requests found.</div>
         )}
