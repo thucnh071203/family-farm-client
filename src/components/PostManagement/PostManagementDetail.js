@@ -3,22 +3,29 @@ import { Link } from "react-router-dom";
 
 const PostManagementDetail = ({ post }) => {
   return (
-    <div>
-      <div className="text-left mb-5 font-semibold flex items-center gap-2 text-[#3E3F5E]/25">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M6.52734 13V8.5H9.52734V13H13.2773V7H15.5273L8.02734 0.25L0.527344 7H2.77734V13H6.52734Z"
-            fill="rgba(62,63,94,0.25)"
-          />
-        </svg>
-        <span>
-          <Link to="/Dashboard">HOME</Link> / Post Management / Post Detail
+
+    <div className="ml-20 mt-3 ">
+      <div className="flex">
+        <div className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6.52734 13V8.5H9.52734V13H13.2773V7H15.5273L8.02734 0.25L0.527344 7H2.77734V13H6.52734Z"
+              fill="rgba(62,63,94,0.25)"
+            />
+          </svg>
+          <Link to={"/Dashboard"}>HOME</Link>
+        </div>
+        <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
+          <Link to="/PostManagement">/Post Management</Link>
+        </span>
+        <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
+          / Post Detail
         </span>
       </div>
       <h1 className="text-2xl font-bold text-blue-500 mb-6 text-left">
@@ -82,16 +89,21 @@ const PostManagementDetail = ({ post }) => {
           <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
             Images
           </div>
-          <p className="pl-4 flex gap-2">
-            {post.postImages.map((img, index) => (
+
+          <p
+            className="pl-4 p-3  text-black w-full flex gap-2"
+            style={{ border: "0.5px solid #d1d5db" }}
+          >
+            {post.postImages.map((postImage, index) => (
+
               <img
                 key={index}
                 className="w-[100px] h-[100px] object-cover mr-4"
                 src={
-                  img.ImageUrl ||
+                  postImage.imageUrl ||
                   "https://th.bing.com/th/id/OIP.UOAPhQfUAJFR_ynpnMtWqgHaEJ?w=326&h=183&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"
                 }
-                alt=""
+                alt="post image"
               />
             ))}
           </p>
