@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './CreditCard.css?inline'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom';
 import credit_chip from "../../assets/icons/nam_creadit_chip.svg"
+import instance from "../../Axios/axiosConfig";
+import { toast } from 'react-toastify';
 
 const FormCreditCard = () => {
     const creditCardRef = useRef();
@@ -9,6 +11,44 @@ const FormCreditCard = () => {
     const [cardName, setCardName] = useState('');
     const [expMonth, setExpMonth] = useState('');
     const [expYear, setExpYear] = useState('');
+    const location = useLocation(); // 👈 Dùng để kiểm tra path hiện tại
+    const [hasCreditCard, setHasCreditCard] = useState(null); // hoặc false mặc định
+    const [expiryDate, setExpiryDate] = useState(""); // ISO string
+    const [creditNumber, setCreditNumber] = useState("");
+    const [creditName, setCreditName] = useState("");
+
+    const roleId = localStorage.getItem("roleId") || sessionStorage.getItem("roleId");
+
+    const fetchCreditCardInfo = async () => {
+        try {
+            const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+            const res = await instance.get("/api/account/own-profile", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (res.status === 200) {
+                const data = res.data.data;
+                setHasCreditCard(data.hasCreditCard);
+                console.log("check credit data", res.data.data);
+
+                if (data.hasCreditCard) {
+                    setCardName(data.creditName || '');
+                    const masked = data.creditNumber?.replace(/\d{12}(\d{4})/, "**** **** **** $1");
+                    setCardNumberText(masked || '');
+                    const date = new Date(data.expiryDate);
+                    setExpMonth((date.getMonth() + 1).toString().padStart(2, '0'));
+                    setExpYear(date.getFullYear().toString().slice(2));
+                }
+            }
+        } catch (error) {
+            console.error("Error loading credit card info:", error);
+            toast.error("Failed to load credit card information.");
+        }
+    };
+
+    useEffect(() => {
+        fetchCreditCardInfo();
+    }, []);
 
     useEffect(() => {
         if (!creditCardRef.current) return;
@@ -95,8 +135,132 @@ const FormCreditCard = () => {
         };
     }, []);
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+
+    //     // Validate month
+    //     const month = Number(expMonth);
+    //     if (!month || month < 1 || month > 12) {
+    //         toast.error("Invalid expiry month (must be 01 - 12)");
+    //         return;
+    //     }
+
+    //     // Validate year (must be >= current year)
+    //     const currentYear = new Date().getFullYear() % 100; // get YY
+    //     const year = Number(expYear);
+    //     if (!year || year < currentYear) {
+    //         toast.error("Invalid expiry year");
+    //         return;
+    //     }
+
+    //     // Convert year to 4 digits
+    //     const fullYear = 2000 + year;
+    //     const expiryDate = new Date(`${fullYear}-${expMonth}-01`).toISOString();
+
+    //     const rawCardNumber = cardNumberText.replace(/\s/g, '');
+
+    //     try {
+    //     const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+    //     const res = await instance.put("/api/account/update-credit-card", {
+    //         creditNumber: rawCardNumber,
+    //         creditName: cardName,
+    //         expiryDate,
+    //     }, {
+    //         headers: { Authorization: `Bearer ${token}` },
+    //     });
+
+    //     if (res.status === 200) {
+    //         toast.success("Credit card saved successfully!");
+    //         setHasCreditCard(true);
+    //     }
+    //     } catch (error) {
+    //     toast.error("Failed to save credit card!");
+    //     console.error("Error saving card:", error);
+    //     }
+    // };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const monthNum = Number(expMonth);
+        const yearNum = Number(expYear);
+        const currentYear = new Date().getFullYear() % 100; // lấy 2 số cuối của năm hiện tại
+
+        if (!creditCardRef.current.value || creditCardRef.current.value.replace(/\s/g, '').length < 16) {
+            toast.error("Card number must be 16 digits.");
+            return;
+        }
+
+        if (!cardName.trim()) {
+            toast.error("Card name is required.");
+            return;
+        }
+
+        if (!expMonth || !expYear) {
+            toast.error("Expiry date is required.");
+            return;
+        }
+
+        if (monthNum < 1 || monthNum > 12) {
+            toast.error("Month must be between 01 and 12.");
+            return;
+        }
+
+        if (expYear.length !== 2 || yearNum < currentYear) {
+            toast.error("Year is invalid or expired.");
+            return;
+        }
+
+        try {
+            const expiry = `20${expYear.padStart(2, "0")}-${expMonth.padStart(2, "0")}-01`;
+
+            const payload = {
+                creditNumber: creditCardRef.current.value.replace(/\s/g, ''),
+                creditName: cardName,
+                expiryDate: expiry,
+            };
+
+            const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+            await instance.put("/api/account/update-credit-card", payload, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            toast.success("Credit card saved successfully!");
+            fetchCreditCardInfo();
+        } catch (err) {
+            console.error("Error saving card:", err);
+            toast.error("Failed to save credit card.");
+        }
+    };
+
+
     return (
         <div className="FormCreditCard pt-36 pb-16">
+            <div className="select-btn-payment flex flex-row gap-4 px-6 mb-4">
+                {roleId === "68007b0387b41211f0af1d56" && (
+                    <Link
+                        to="/PaymentUserPage"
+                        className={`list-user-payment px-4 py-2 rounded-md cursor-pointer transition-colors duration-300 ${location.pathname === "/PaymentUserPage"
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-200 hover:bg-green-100 text-gray-700"
+                            }`}
+                    >
+                        List Payment
+                    </Link>
+                )}
+
+                {roleId === "68007b2a87b41211f0af1d57" && (
+                    <Link
+                        to="/CreditCardPage"
+                        className={`list-user-payment px-4 py-2 rounded-md cursor-pointer transition-colors duration-300 ${location.pathname === "/CreditCardPage"
+                                ? "bg-green-600 text-white"
+                                : "bg-gray-200 hover:bg-green-100 text-gray-700"
+                            }`}
+                    >
+                        Credit Card
+                    </Link>
+                )}
+            </div>
             <div className="site-credit" id='page-credit'>
                 <div className='container-credit'>
                     <div className='outer-credit'>
@@ -108,13 +272,12 @@ const FormCreditCard = () => {
                         </div>
                         <section className='payment-credit'>
                             <div className='left-credit'>
-                                <form>
-
+                                <form onSubmit={handleSubmit}>
                                     <div className='card-number'>
                                         <p>Card Number</p>
                                         <span>Enter the 16-digit card number on the card</span>
                                         <div className='card-number-box'>
-                                            <input type='text' id='credit-card' autoComplete='off' placeholder='xxxx - xxxx - xxxx - xxxx' ref={creditCardRef} />
+                                            <input type='text' id='credit-card' autoComplete='off' value={cardNumberText} placeholder='xxxx - xxxx - xxxx - xxxx' ref={creditCardRef} />
                                             <span className='cc-logo'></span>
                                         </div>
                                     </div>
@@ -125,7 +288,7 @@ const FormCreditCard = () => {
                                             <span>Enter name card holder on the card</span>
                                         </div>
                                         <div className='input-credit'>
-                                            <input type='text' id='card-name' autoComplete='off' required onChange={(e) => setCardName(e.target.value)} />
+                                            <input type='text' id='card-name' autoComplete='off' value={cardName} required onChange={(e) => setCardName(e.target.value)} />
                                         </div>
                                     </div>
 
@@ -135,9 +298,55 @@ const FormCreditCard = () => {
                                             <span>Enter the expiration date of the card</span>
                                         </div>
                                         <div className='input-credit'>
-                                            <input type='number' id='exp-month' placeholder='MM' data-maxlength="2" required onChange={(e) => setExpMonth(e.target.value.slice(0, 2))} />
+                                            {/* <input type='number' id='exp-month' placeholder='MM' data-maxlength="2" required value={expMonth} onChange={(e) => setExpMonth(e.target.value.slice(0, 2))} />
                                             <strong> / </strong>
-                                            <input type='number' id='exp-year' placeholder='YY' data-maxlength="2" required onChange={(e) => setExpYear(e.target.value.slice(0, 2))} />
+                                            <input type='number' id='exp-year' placeholder='YY' data-maxlength="2" required value={expYear} onChange={(e) => setExpYear(e.target.value.slice(0, 2))} /> */}
+                                            <div className='input-credit'>
+                                                {/* <input
+                                                type='text'
+                                                id='exp-month'
+                                                placeholder='MM'
+                                                maxLength={2}
+                                                required
+                                                value={expMonth}
+                                                onChange={(e) => {
+                                                const value = e.target.value.replace(/\D/g, ''); // chỉ cho phép số
+                                                if (value === '' || (Number(value) >= 1 && Number(value) <= 12)) {
+                                                    setExpMonth(value.padStart(2, '0')); // định dạng '01' thay vì '1'
+                                                }
+                                                }}
+                                            /> */}
+                                                <input
+                                                    type="text"
+                                                    id="exp-month"
+                                                    placeholder="MM"
+                                                    maxLength={2}
+                                                    required
+                                                    value={expMonth}
+                                                    onChange={(e) => {
+                                                        const raw = e.target.value.replace(/\D/g, ''); // Chỉ số
+                                                        if (raw.length <= 2) {
+                                                            setExpMonth(raw);
+                                                        }
+                                                    }}
+                                                />
+                                                <strong> / </strong>
+                                                <input
+                                                    type='text'
+                                                    id='exp-year'
+                                                    placeholder='YY'
+                                                    maxLength={2}
+                                                    required
+                                                    value={expYear}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value.replace(/\D/g, ''); // chỉ cho phép số
+                                                        if (value.length <= 2) {
+                                                            setExpYear(value);
+                                                        }
+                                                    }}
+                                                />
+                                            </div>
+
                                         </div>
                                     </div>
 

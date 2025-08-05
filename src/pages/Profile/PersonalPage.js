@@ -28,6 +28,8 @@ const PersonalPage = () => {
   const [accessToken, setAccessToken] = useState("");
   const [posts, setPosts] = useState([]);
   const [photos, setPhotos] = useState([]);
+  const [hasCreditCard, setHasCreditCard] = useState(null);
+
 
   const { accId } = useParams();
   const defaultBackground =
@@ -66,11 +68,12 @@ const PersonalPage = () => {
           });
           if (response.status === 200) {
             const data = response.data.data;
+            console.log("Du lieu profile", data);
             setFullName(data.fullName || data.firstName || "Unknown User");
             setAvatar(data.avatar || data.profileImage || "default-avatar-url");
             setBackground(data.background || data.coverImage || defaultBackground);
             setRoleId(data.roleId);
-
+            setHasCreditCard(data.hasCreditCard); // 👈 Thêm dòng này
 
             const basicInfoMapping = {
               gender: data.gender || "Updating",
@@ -415,18 +418,31 @@ const PersonalPage = () => {
             <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
 
             {/* UPDATE BANK CARD  */}
-              <div style={{background: "rgba(61, 179, 251, 0.15)"}} className="flex flex-col gap-3 p-4 rounded-md shadow-lg">
-                <div className="flex flex-row">
-                  <p className="text-start text-base flex flex-row gap-3 items-start">
-                    <img src={alertICon} alt=""/>
-                    It looks like you haven't added a bank card yet. Please update your information to continue performing professional functions.</p>
-                </div>
-                <div className="flex flex-row justify-end">
-                  <Link to="/AddCreditCardPage" style={{background: "rgba(61, 179, 251, 1)"}} className="p-2 font-bold text-base text-white shadow-md rounded-md">Update now!</Link>
-                </div>
-              </div>
+              {isOwner &&
+                roleId === "68007b2a87b41211f0af1d57" &&
+                !hasCreditCard && ( // ✅ đơn giản hơn: false, null, undefined đều thỏa
+                  <div
+                    style={{ background: "rgba(61, 179, 251, 0.15)" }}
+                    className="flex flex-col gap-3 p-4 rounded-md shadow-lg mt-4"
+                  >
+                    <div className="flex flex-row">
+                      <p className="text-start text-base flex flex-row gap-3 items-start">
+                        <img src={alertICon} alt="" />
+                        It looks like you haven't added a bank card yet. Please update your information to continue performing professional functions.
+                      </p>
+                    </div>
+                    <div className="flex flex-row justify-end">
+                      <Link
+                        to="/CreditCardPage"
+                        style={{ background: "rgba(61, 179, 251, 1)" }}
+                        className="p-2 font-bold text-base text-white shadow-md rounded-md"
+                      >
+                        Update now!
+                      </Link>
+                    </div>
+                  </div>
+              )}
 
-              
               {isOwner && (
                 <PostCreate
                   profileImage={avatar}

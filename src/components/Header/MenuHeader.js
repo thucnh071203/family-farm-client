@@ -72,14 +72,26 @@ const MenuHeader = ({ onToggle, isVisible }) => {
                             <img src={user_black_icon} alt="Profile" className="h-5" />
                             <p className="mt-2">My Profile</p>
                         </Link>
+                        {roleId === "68007b0387b41211f0af1d56" && (
                         <Link
-                            to="/payment"
+                            to="/PaymentUserPage"
                             className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
                             onClick={onToggle}
                         >
                             <img src={payment_icon} alt="Payment" className="h-5" />
                             <p className="mt-2">Payment</p>
                         </Link>
+                        )}
+                        {roleId === "68007b2a87b41211f0af1d57" && (
+                            <Link
+                                to="/CreditCardPage"
+                                className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                                onClick={onToggle}
+                            >
+                                <img src={payment_icon} alt="Payment" className="h-5" />
+                                <p className="mt-2">Payment</p>
+                            </Link>
+                        )}
                         {roleId === "68007b2a87b41211f0af1d57" && (
                             <Link
                                 to="/Professional"

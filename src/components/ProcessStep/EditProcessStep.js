@@ -30,6 +30,8 @@ const EditProcessStep = () => {
 
     const [deletedStepIds, setDeletedStepIds] = useState([]);
 
+    const [isLoading, setIsLoading] = useState(false); // Thêm state để theo dõi trạng thái loading
+
     const [errors, setErrors] = useState({
         processTitle: "",
         processDescription: "",
@@ -134,8 +136,8 @@ const EditProcessStep = () => {
 
         // ✅ Xóa lỗi toàn cục nếu đang có
         setErrors((prev) => ({
-        ...prev,
-        global: ""
+            ...prev,
+            global: ""
         }));
     };
 
@@ -176,14 +178,62 @@ const EditProcessStep = () => {
     };
 
     // Xử lý sự change của image
+    // const handleImageChange = (index, files) => {
+    //     const updatedSteps = [...steps];
+    //     const newFiles = Array.from(files).map(file => ({ file, isNew: true }));
+    //     updatedSteps[index].images = [...updatedSteps[index].images, ...newFiles];
+    //     setSteps(updatedSteps);
+    // };
+
     const handleImageChange = (index, files) => {
         const updatedSteps = [...steps];
-        const newFiles = Array.from(files).map(file => ({ file, isNew: true }));
-        updatedSteps[index].images = [...updatedSteps[index].images, ...newFiles];
-        setSteps(updatedSteps);
+        const newFiles = Array.from(files);
+
+        const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg+xml'];
+        const validFiles = [];
+        const invalidFiles = [];
+
+        // Kiểm tra loại file hình ảnh
+        newFiles.forEach((file) => {
+            if (!allowedImageTypes.includes(file.type)) {
+                invalidFiles.push(file);
+            } else {
+                validFiles.push(file);
+            }
+        });
+
+        // Hiển thị thông báo lỗi nếu có file không hợp lệ
+        if (invalidFiles.length > 0) {
+            toast.error("Only accept image files in .jpg, .jpeg, .png, or .svg format");
+        }
+
+        // Thêm những file hợp lệ vào state
+        if (validFiles.length > 0) {
+            const newFileObjects = validFiles.map(file => ({ file, isNew: true }));
+            updatedSteps[index].images = [...updatedSteps[index].images, ...newFileObjects];
+            setSteps(updatedSteps);
+        }
+
+        // Reset input để lần sau chọn lại vẫn trigger
+        if (fileInputRefs.current[index]) {
+            fileInputRefs.current[index].value = "";
+        }
     };
 
     // Xóa ảnh mỗi step
+    // const handleDeleteImage = (stepIndex, imageIndex) => {
+    //     const updatedSteps = [...steps];
+    //     const imageToDelete = updatedSteps[stepIndex].images[imageIndex];
+
+    //     // Nếu ảnh cũ (không phải ảnh mới), lưu id để gửi xóa backend
+    //     if (!imageToDelete.isNew && imageToDelete.id) {
+    //         setDeletedImageIds(prev => [...prev, imageToDelete.id]);
+    //     }
+
+    //     // Xóa khỏi giao diện
+    //     updatedSteps[stepIndex].images.splice(imageIndex, 1);
+    //     setSteps(updatedSteps);
+    // };
     const handleDeleteImage = (stepIndex, imageIndex) => {
         const updatedSteps = [...steps];
         const imageToDelete = updatedSteps[stepIndex].images[imageIndex];
@@ -197,6 +247,7 @@ const EditProcessStep = () => {
         updatedSteps[stepIndex].images.splice(imageIndex, 1);
         setSteps(updatedSteps);
     };
+
 
     // Lấy URL khi up từ file
     const uploadImagesAndGetUrls = async () => {
@@ -241,6 +292,49 @@ const EditProcessStep = () => {
     };
 
     // Sự kiện 'Save'
+    // const handleSave = async () => {
+    //     if (!serviceId) {
+    //         toast.error("Missing serviceId");
+    //         return;
+    //     }
+
+    //     if (!validate()) return;
+
+    //     try {
+    //         const imageUrlsByStep = await uploadImagesAndGetUrls();
+    //         const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+
+    //         const payload = {
+    //             serviceId: serviceId,
+    //             processTittle: processTitle,
+    //             description: processDescription,
+    //             numberOfSteps: steps.length,
+    //             processSteps: steps.map((step, i) => ({
+    //                 stepId: step.stepId, // null nếu là bước mới
+    //                 stepNumber: i + 1,
+    //                 stepTitle: step.title,
+    //                 stepDescription: step.description,
+    //                 imagesWithId: imageUrlsByStep[i] // đã phân biệt ảnh cũ/mới
+    //             })),
+    //             deletedStepIds: deletedStepIds, // ✅ gửi lên backend
+    //             deletedImageIds: deletedImageIds // ✅ thêm vào đây
+    //         };
+
+    //         console.log("📦 Payload gửi lên:", payload);
+
+    //         await instance.put(`/api/process/update/${processId}`, payload, {
+    //             headers: { Authorization: `Bearer ${token}` }
+    //         });
+
+    //         toast.success("PROCESS UPDATED SUCCESSFULLY!");
+    //         navigate("/ServiceManagement");
+    //     } catch (err) {
+    //         console.error("Update failed:", err);
+    //         console.error("❗ Response from server:", err.response?.data);
+    //         toast.error("Failed to update process");
+    //     }
+    // };
+
     const handleSave = async () => {
         if (!serviceId) {
             toast.error("Missing serviceId");
@@ -248,6 +342,8 @@ const EditProcessStep = () => {
         }
 
         if (!validate()) return;
+
+        setIsLoading(true); // Bật loading khi bắt đầu xử lý
 
         try {
             const imageUrlsByStep = await uploadImagesAndGetUrls();
@@ -281,18 +377,21 @@ const EditProcessStep = () => {
             console.error("Update failed:", err);
             console.error("❗ Response from server:", err.response?.data);
             toast.error("Failed to update process");
+        } finally {
+            setIsLoading(false); // Tắt loading sau khi xử lý xong
         }
     };
+
 
     if (loading) return <p>Loading service info...</p>;
     if (!service) return <p>Service not found.</p>;
     return (
         <div className="pt-16 progress-management">
             <div className="px-2 mx-auto div max-w-7xl">
-                <ProcessNav inPage="Service"/>
+                <ProcessNav inPage="Service" />
                 <div className="flex flex-col w-full gap-6 mt-6 progress-container lg:mt-14 lg:flex-row lg:justify-center">
                     <div className="progress-left w-full lg:w-[32%] xl:w-[344px] lg:max-w-[344px]">
-                        <RecommendService/>
+                        <RecommendService />
                     </div>
                     <div className="progress-right w-full lg:w-[66.5%] xl:w-[830px] lg:max-w-[830px]">
                         <div className="create-progress-container flex-1 p-6">
@@ -339,7 +438,7 @@ const EditProcessStep = () => {
                                     {errors.processDescription && <p className="text-start text-red-500 text-sm mt-1">{errors.processDescription}</p>}
                                 </div>
                             </div>
-                            
+
                             <div className="progress-list-section space-y-6 mt-7">
                                 {steps.map((step, index) => (
                                     <div key={index} className="progress-step-container flex flex-row gap-[50px]">
@@ -380,7 +479,6 @@ const EditProcessStep = () => {
 
                                             <div className="flex flex-col gap-4">
                                                 <div className="flex flex-col gap-2">
-                                                    {/* Upload button */}
                                                     <input
                                                         id={`file-upload-${index}`}
                                                         type="file"
@@ -403,7 +501,7 @@ const EditProcessStep = () => {
                                                         </span>
                                                     </div>
 
-                                                    {step.images.length > 0 && (
+                                                    {/* {step.images.length > 0 && (
                                                         <div className="flex flex-wrap gap-2 mt-2">
                                                             {step.images.map((img, i) => (
                                                                 <div key={i} className="relative w-24 h-24">
@@ -420,7 +518,27 @@ const EditProcessStep = () => {
                                                                 </div>
                                                             ))}
                                                         </div>
+                                                    )} */}
+                                                    {step.images.length > 0 && (
+                                                        <div className="flex flex-wrap gap-2 mt-2">
+                                                            {step.images.map((img, i) => (
+                                                                <div key={i} className="relative w-24 h-24">
+                                                                    <img
+                                                                        src={img.isNew ? URL.createObjectURL(img.file) : img.url} // Hiển thị URL tạm thời cho ảnh mới
+                                                                        className="w-24 h-24 object-cover rounded border"
+                                                                        alt={`Step ${index + 1} - Image ${i + 1}`}
+                                                                    />
+                                                                    <button
+                                                                        className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+                                                                        onClick={() => handleDeleteImage(index, i)}
+                                                                    >
+                                                                        ×
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+                                                        </div>
                                                     )}
+
                                                 </div>
                                             </div>
                                             <button
@@ -446,8 +564,26 @@ const EditProcessStep = () => {
 
                         </div>
                         <div className="w-full flex justify-end">
-                            <button className="w-auto bg-blue-500 hover:bg-blue-600 rounded-md px-8 py-3 text-white cursor-pointer mb-4" onClick={handleSave}>
-                                Save
+                            <button
+                                className={`w-auto rounded-md px-8 py-3 text-white cursor-pointer mb-4 ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
+                                onClick={handleSave}
+                                disabled={isLoading} // Disable nút khi đang loading
+                            >
+                                {isLoading ? (
+                                    <div className="flex items-center justify-center gap-2 text-white">
+                                        <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                            <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                            />
+                                        </svg>
+                                        <span>Saving...</span>
+                                    </div>
+                                ) : (
+                                    <span>Save</span>
+                                )}
                             </button>
                         </div>
                     </div>
