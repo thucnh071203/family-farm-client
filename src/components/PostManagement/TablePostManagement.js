@@ -77,10 +77,10 @@ const TablePostManagement = ({ listPost }) => {
           {
             title: "Status",
             render: (data, type, row) => {
-              if (row.post?.status === 0) {
-                return `<span style="color: green;">Pass</span>`;
+              if (row.post?.isDeleted === false) {
+                return `<span style="color: green;">Active</span>`;
               } else {
-                return `<span style="color: red;">Fail</span>`;
+                return `<span style="color: red;">Deleted</span>`;
               }
             },
           },
