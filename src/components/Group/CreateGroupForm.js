@@ -5,6 +5,7 @@ import instance from "../../Axios/axiosConfig";
 import "./createGroupStyle.css";
 import memberAvt from "../../assets/images/Ellipse 52.png";
 import defaultAvatar from "../../assets/images/default-avatar.png";
+import { handleFileSelect } from '../../utils/validateFile';
 
 export default function CreateGroupForm() {
   const navigate = useNavigate();
@@ -52,30 +53,53 @@ export default function CreateGroupForm() {
   });
 
   // Hàm up và thay đổi ảnh
+  // const handleBgChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setBgImage(URL.createObjectURL(file));
+  //     setBgFile(file);
+  //     validateImages(avatarFile, file);
+  //   } else {
+  //     setBgImage(null);
+  //     setBgFile(null);
+  //     validateImages(avatarFile, null);
+  //   }
+  // };
+
+  // Hàm up và thay đổi ảnh nền
   const handleBgChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setBgImage(URL.createObjectURL(file));
-      setBgFile(file);
-      validateImages(avatarFile, file);
-    } else {
-      setBgImage(null);
-      setBgFile(null);
-      validateImages(avatarFile, null);
-    }
+    handleFileSelect({
+      event: e,
+      setSelectedFile: (fileData) => {
+        setBgImage(fileData.url); // Hiển thị ảnh nền
+        setBgFile(fileData.file); // Lưu file ảnh nền
+        validateImages(avatarFile, fileData.file); // Validate ảnh nền và avatar
+      },
+    });
   };
 
+  // const handleAvatarChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     setAvatarImage(URL.createObjectURL(file));
+  //     setAvatarFile(file);
+  //     validateImages(file, bgFile);
+  //   } else {
+  //     setAvatarImage(null);
+  //     setAvatarFile(null);
+  //     validateImages(null, bgFile);
+  //   }
+  // };
+
   const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setAvatarImage(URL.createObjectURL(file));
-      setAvatarFile(file);
-      validateImages(file, bgFile);
-    } else {
-      setAvatarImage(null);
-      setAvatarFile(null);
-      validateImages(null, bgFile);
-    }
+    handleFileSelect({
+      event: e,
+      setSelectedFile: (fileData) => {
+        setAvatarImage(fileData.url); // Hiển thị ảnh avatar
+        setAvatarFile(fileData.file); // Lưu file avatar
+        validateImages(fileData.file, bgFile); // Validate avatar và ảnh nền
+      },
+    });
   };
 
   // Hàm xóa ảnh
@@ -130,81 +154,6 @@ export default function CreateGroupForm() {
       setErrors((prev) => ({ ...prev, groupName: "" }));
     }
   }, [groupName]);
-
-  // const handleCreateGroup = async (e) => {
-  //   e.preventDefault();
-  //   setSubmitted(true); // đánh dấu là đã nhấn submit
-
-  //   const isFormValid = validate();
-  //   const isImageValid = validateImages(avatarFile, bgFile);
-
-  //   if (!isFormValid || !isImageValid) return;
-
-  //   const token =
-  //     localStorage.getItem("accessToken") ||
-  //     sessionStorage.getItem("accessToken");
-  //   const formData = new FormData();
-  //   formData.append("GroupName", groupName);
-  //   formData.append("GroupAvatar", avatarFile);
-  //   formData.append("GroupBackground", bgFile);
-  //   formData.append("PrivacyType", privacyType);
-
-  //   try {
-  //     // 1. Gọi API tạo group
-  //     const createRes = await instance.post("/api/group/create", formData, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     });
-
-  //     toast.success("GROUP CREATED SUCCESSFULLY!");
-
-  //     // 2. Gọi API lấy group mới nhất
-  //     const latestGroupRes = await instance.get("/api/group/get-lastest", {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-
-  //     const groupId = latestGroupRes?.data?.data?.[0]?.groupId;
-
-  //     if (!groupId) {
-  //       // toast.error("Cannot find newly created group.");
-  //       console.error("Cannot find newly created group.");
-  //       return;
-  //     }
-
-  //     // 3. Gửi các selectedMembers vào nhóm
-  //     for (const member of selectedMembers) {
-  //       try {
-  //         await instance.post(
-  //           `/api/group-member/create/${groupId}/${member.accId}`,
-  //           null,
-  //           {
-  //             headers: {
-  //               Authorization: `Bearer ${token}`,
-  //             },
-  //           }
-  //         );
-  //       } catch (err) {
-  //         console.error("Failed to add member:", member, err);
-  //       }
-  //     }
-
-  //     console.log("All members added successfully!");
-  //     // TODO: Reset form hoặc redirect nếu cần
-
-  //     navigate("/Group", { state: { section: "all-group-user" } });
-  //   } catch (error) {
-  //     console.error("Group creation failed:", error);
-  //     if (error.response && error.response.data) {
-  //       toast.error(error.response.data || "Failed to create group!");
-  //     } else {
-  //       toast.error("Failed to create group!");
-  //     }
-  //   }
-  // };
 
   const handleCreateGroup = async (e) => {
     e.preventDefault();

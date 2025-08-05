@@ -7,6 +7,8 @@ import { saveAs } from "file-saver"; // ⚠️ nhớ cài
 export default function PaymentInvoiceCard({ paymentId }) {
     const [data, setData] = useState(null);
 
+    const roleId = localStorage.getItem("roleId") || sessionStorage.getItem("roleId");
+
     useEffect(() => {
         const fetchBill = async () => {
             try {
@@ -238,9 +240,21 @@ export default function PaymentInvoiceCard({ paymentId }) {
                 </div>
             </div>
             <div className="px-4 my-4">
-                <Link to="/PaymentManagement" className="text-blue-500 hover:underline font-medium text-sm">
+                {roleId === "67fd41dfba121b52bbc622c3" ? (
+                    <Link
+                    to="/PaymentManagement"
+                    className="text-blue-500 hover:underline font-medium text-sm"
+                    >
                     ← Return to payment management list
-                </Link>
+                    </Link>
+                ) : (
+                    <Link
+                    to="/PaymentUserPage"
+                    className="text-blue-500 hover:underline font-medium text-sm"
+                    >
+                    ← Return to your payment history
+                    </Link>
+                )}
             </div>
         </div>
     )

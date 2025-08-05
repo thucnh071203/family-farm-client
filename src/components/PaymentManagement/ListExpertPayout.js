@@ -44,23 +44,23 @@ const ListExpertPayout = ({ data }) => {
 
             $table.find("tbody").append(`
                 <tr>
-                    <td className="text-left">${payment.serviceName ?? "-"}</td>
-                    <td className="text-left">${payment.farmer ?? "-"}</td>
-                    <td className="text-left">${payment.expert ?? "-"}</td>
-                    <td className="font-bold text-left ${statusClass}">${payment.status}</td>
-                    <td className="text-right">${formattedPrice}</td>
-                    <td className="text-left">${formattedDate}</td>
-                    <td className="text-left">
+                    <td class="text-left">${payment.serviceName ?? "-"}</td>
+                    <td class="text-left">${payment.farmer ?? "-"}</td>
+                    <td class="text-left">${payment.expert ?? "-"}</td>
+                    <td class="font-bold text-left ${statusClass}">${payment.status}</td>
+                    <td class="text-right">${formattedPrice}</td>
+                    <td class="text-left">${formattedDate}</td>
+                    <td class="text-left">
                         ${payment.status === "Not yet"
                     ? `<button 
-                                        className="repayment-btn bg-[#3DB3FB]/25 text-[#3DB3FB] text-sm px-2 py-0.5 rounded font-semibold"
+                                        class="repayment-btn bg-[#3DB3FB]/25 text-[#3DB3FB] text-sm px-2 py-0.5 rounded font-semibold"
                                         data-booking-id="${payment.bookingId}" 
                                         data-subprocess-id="${payment.subProcessId ?? null}"
                                         data-amount="${payment.price ?? 0}"
                                     >
                                         Repayment
                                     </button>`
-                    : `<span className="text-[#EF3E36] font-semibold text-sm">Paid</span>`
+                    : `<span class="text-[#EF3E36] font-semibold text-sm">Paid</span>`
                 }
                     </td>
                 </tr>
