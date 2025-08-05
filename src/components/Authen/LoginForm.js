@@ -12,6 +12,7 @@ import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import useGoogleAuth from "../../hooks/useGoogleAuth";
 import { useUser } from "../../context/UserContext";
+import Swal from "sweetalert2";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -36,7 +37,7 @@ const LoginForm = () => {
   // Helper function để lưu tokens theo rememberMe choice
   const saveTokens = (loginData, remember) => {
     const storage = remember ? localStorage : sessionStorage;
-    
+
     // Clear tokens từ storage khác trước khi lưu
     const otherStorage = remember ? sessionStorage : localStorage;
     ["accessToken", "refreshToken", "username", "accId", "roleId", "tokenExpiry"].forEach(key => {
@@ -58,7 +59,7 @@ const LoginForm = () => {
   const saveProfileData = (profileData, remember) => {
     const storage = remember ? localStorage : sessionStorage;
     const otherStorage = remember ? sessionStorage : localStorage;
-    
+
     // Clear profile data từ storage khác
     ["fullName", "avatarUrl", "profileData"].forEach(key => {
       otherStorage.removeItem(key);
@@ -238,9 +239,49 @@ const LoginForm = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      
-      if (error.response && error.response.status === 401) {
-        toast.error("Login failed! Please check your username or password!");
+
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data?.message;
+
+        if (status === 401) {
+          toast.error("Login failed! Please check your username or password!");
+        } else if (status === 423) {
+          if (message === "Account is locked login.") {
+            const lockedUntil = error.response.data.lockedUntil;
+
+            if (lockedUntil) {
+              const lockedDate = new Date(lockedUntil);
+              const now = new Date();
+              const diffMs = lockedDate - now;
+              const minutes = Math.floor(diffMs / 60000);
+              const seconds = Math.floor((diffMs % 60000) / 1000);
+
+              Swal.fire({
+                icon: "error",
+                title: "Your account has been locked.",
+                html: `Please try again in <b>${minutes} minutes ${seconds} seconds</b>.`,
+                confirmButtonText: "OK",
+              });
+            } else {
+              Swal.fire({
+                icon: "error",
+                title: "Your account has been locked.",
+                text: "Please try again later.",
+                confirmButtonText: "OK",
+              });
+            }
+          } else if (message === "Your account has not been approved.") {
+            Swal.fire({
+              icon: "warning",
+              title: "Account not approved.",
+              text: "Please come back in a few days.",
+              confirmButtonText: "OK",
+            });
+          }
+        } else {
+          toast.error("An unknown error occurred");
+        }
       } else {
         toast.error("Server not responding");
       }
