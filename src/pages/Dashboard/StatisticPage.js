@@ -6,6 +6,7 @@ import MapChart from "../../components/Statistic/MapChart";
 import SystemRevenue from "../../components/Statistic/SystemRevenue";
 import TopEngagedPosts from "../../components/Statistic/TopEngagedPosts";
 import WeeklyGrowthChart from "../../components/Statistic/WeeklyGrowthChart";
+import * as signalR from "@microsoft/signalr";
 
 const StatisticPage = () => {
   const [counts, setCounts] = useState({
@@ -46,6 +47,48 @@ const StatisticPage = () => {
     };
 
     fetchRoleCounts();
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:7280/topEngagedPostHub")
+      .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("✅ SignalR connected");
+
+        connection.on("UpdateFarmerCount", (newFarmerCount) => {
+          console.log(" Farmer count update:", newFarmerCount);
+          setCounts((prev) => ({
+            ...prev,
+            Farmer: newFarmerCount,
+          }));
+        });
+
+        connection.on("ExpertCountUpdate", (newExpertCount) => {
+          console.log(" Expert count update:", newExpertCount);
+          setCounts((prev) => ({
+            ...prev,
+            Expert: newExpertCount,
+          }));
+        });
+
+        connection.on("NewPost", (newTotalPosts) => {
+          console.log(" NewTotalPosts count update:", newTotalPosts);
+          setPostCount(newTotalPosts);
+        });
+
+
+        
+      })
+      .catch((err) => {
+        console.error(" SignalR connection failed:", err);
+      });
+
+    return () => {
+      connection.stop();
+    };
   }, []);
 
   if (loading) {
