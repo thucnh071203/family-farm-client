@@ -19,15 +19,15 @@ export default function ProgressMenu({ inPage }) {
                             <>
                                 <Link to="/ProcessList" className="item-process highlight-item">
                                     <img className="img-2" src={avaiProcess} alt="" />
-                                    <div className="text-wrapper-8">List of available processes</div>
+                                    <div className="text-wrapper-8">Available Processes</div>
                                 </Link>
                                 <Link to="/UnpaidBooking" className="item-process">
                                     <img className="img-2" src={unpaidOrder} alt="" />
-                                    <div className="text-wrapper-8">List of unpaid booking</div>
+                                    <div className="text-wrapper-8">Extra Process Requests</div>
                                 </Link>
                                 <Link to="/WaitingOrderList" className="item-process">
                                     <img className="img-2" src={waitingOrder} alt="" />
-                                    <div className="text-wrapper-8">List of booking waiting</div>
+                                    <div className="text-wrapper-8">Waiting Bookings</div>
                                 </Link>
                             </>
                         )}
@@ -36,15 +36,15 @@ export default function ProgressMenu({ inPage }) {
                             <>
                                 <Link to="/ProcessList" className="item-process">
                                     <img className="img-2" src={avaiProcess} alt="" />
-                                    <div className="text-wrapper-8">List of available processes</div>
+                                    <div className="text-wrapper-8">Available Processes</div>
                                 </Link>
                                 <Link to="/UnpaidBooking" className="item-process highlight-item">
                                     <img className="img-2" src={unpaidOrder} alt="" />
-                                    <div className="text-wrapper-8">List of unpaid booking</div>
+                                    <div className="text-wrapper-8">Extra Process Requests</div>
                                 </Link>
                                 <Link to="/WaitingOrderList" className="item-process">
                                     <img className="img-2" src={waitingOrder} alt="" />
-                                    <div className="text-wrapper-8">List of booking waiting</div>
+                                    <div className="text-wrapper-8">Waiting Bookings</div>
                                 </Link>
                             </>
                         )}
@@ -53,15 +53,15 @@ export default function ProgressMenu({ inPage }) {
                             <>
                                 <Link to="/ProcessList" className="item-process">
                                     <img className="img-2" src={avaiProcess} alt="" />
-                                    <div className="text-wrapper-8">List of available processes</div>
+                                    <div className="text-wrapper-8">Available Processes</div>
                                 </Link>
                                 <Link to="/UnpaidBooking" className="item-process">
                                     <img className="img-2" src={unpaidOrder} alt="" />
-                                    <div className="text-wrapper-8">List of unpaid booking</div>
+                                    <div className="text-wrapper-8">Extra Process Requests</div>
                                 </Link>
                                 <Link to="/WaitingOrderList" className="item-process highlight-item">
                                     <img className="img-2" src={waitingOrder} alt="" />
-                                    <div className="text-wrapper-8">List of booking waiting</div>
+                                    <div className="text-wrapper-8">Waiting Bookings</div>
                                 </Link>
                             </>
                         )}

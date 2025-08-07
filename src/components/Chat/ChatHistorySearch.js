@@ -162,7 +162,7 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
             {/* Tab Content */}
             <div className="flex-1 overflow-y-auto p-3">
                 {loadingMessages || loadingProfile ? (
-                    <div className="text-gray-600 text-sm text-center py-4">Đang tải...</div>
+                    <div className="text-gray-600 text-sm text-center py-4">Loading...</div>
                 ) : errorMessages || errorProfile ? (
                     <div className="text-red-600 text-sm text-center py-4">
                         {errorMessages || errorProfile}
@@ -173,7 +173,7 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                             <div className="flex flex-col gap-4 text-left">
                                 <div className="flex border border-solid border-gray-300 items-center p-3 gap-3 rounded">
                                     <div className="w-10">
-                                        <i class="fa-solid fa-envelope p-2 fa-lg text-[#3DB3FB]"></i>
+                                        <i className="fa-solid fa-envelope p-2 fa-lg text-[#3DB3FB]"></i>
                                     </div>
                                     <div>
                                         <p className="text-sm font-bold text-gray-600">Email</p>
@@ -244,8 +244,8 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                                             value={fileSearch.sender}
                                             onChange={(e) => setFileSearch({ ...fileSearch, sender: e.target.value })}
                                         >
-                                            <option value="all">Tất cả</option>
-                                            <option value="me">Bạn</option>
+                                            <option value="all">All</option>
+                                            <option value="me">You</option>
                                             <option value="other">{selectedChat.senderName}</option>
                                         </select>
                                         <input
@@ -271,14 +271,14 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                                                 {file.fileName || "File"}
                                             </a>
                                             <span className="text-xs text-gray-500">
-                                                Gửi bởi {file.senderId === currentUserId ? "Bạn" : selectedChat.senderName} vào{" "}
+                                                Send by {file.senderId === currentUserId ? "You" : selectedChat.senderName} at{" "}
                                                 {formatTime(file.sendAt)}
                                             </span>
                                         </div>
                                     ))
                                 ) : (
                                     <div className="text-gray-600 text-sm text-center py-4">
-                                        Không tìm thấy file nào
+                                        No files found
                                     </div>
                                 )}
                             </div>
@@ -289,7 +289,7 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                                 <div className="flex flex-col gap-2">
                                     <input
                                         type="text"
-                                        placeholder="Tìm kiếm ảnh/video..."
+                                        placeholder="Search for photos/videos..."
                                         className="w-full p-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         value={mediaSearch.keyword}
                                         onChange={(e) => setMediaSearch({ ...mediaSearch, keyword: e.target.value })}
@@ -300,8 +300,8 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                                             value={mediaSearch.sender}
                                             onChange={(e) => setMediaSearch({ ...mediaSearch, sender: e.target.value })}
                                         >
-                                            <option value="all">Tất cả</option>
-                                            <option value="me">Bạn</option>
+                                            <option value="all">All</option>
+                                            <option value="me">You</option>
                                             <option value="other">{selectedChat.senderName}</option>
                                         </select>
                                         <input
@@ -342,7 +342,7 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                                                     </a>
                                                 )}
                                                 <span className="text-xs text-gray-500 mt-1">
-                                                    Gửi bởi {media.senderId === currentUserId ? "Bạn" : selectedChat.senderName} vào{" "}
+                                                    Send by {media.senderId === currentUserId ? "You" : selectedChat.senderName} at{" "}
                                                     {formatTime(media.sendAt)}
                                                 </span>
                                             </div>
@@ -350,7 +350,7 @@ const ChatHistorySearch = ({ selectedChat, formatTime, currentUserId }) => {
                                     </div>
                                 ) : (
                                     <div className="text-gray-600 text-sm text-center py-4">
-                                        Không tìm thấy ảnh/video nào
+                                        No photos/videos found
                                     </div>
                                 )}
                             </div>

@@ -22,6 +22,7 @@ export default function UnpaidList() {
     const { connection } = useSignalR();
     const [listBooking, setListBooking] = useState([]);
     const [accessToken, setAccessToken] = useState("");
+    const navigate = useNavigate();
 
     //lấy thông tin người dùng từ storage
     useEffect(() => {
@@ -32,13 +33,13 @@ export default function UnpaidList() {
         }
     }, []);
 
-    //LAY DS UNPAID BOOKING
+    //LAY DS request Extra process
     useEffect(() => {
         if (!accessToken) return;
 
         const fetchListBooking = async () => {
             try {
-                const response = await instance.get("/api/booking-service/expert/booking-unpaid",
+                const response = await instance.get("/api/booking-service/request-extra",
                     {},
                     {
                         headers: {
@@ -57,6 +58,12 @@ export default function UnpaidList() {
         fetchListBooking();
     }, [accessToken])
 
+    const handleNavigateCreate = (service, booking) => {
+        navigate('/CreateSubprocess', {
+            state: { service, booking, IsExtraProcess: true }
+        })
+    }
+
     return (
         <div className="pt-16 progress-management progress-managment">
             <div className="px-2 div">
@@ -69,7 +76,7 @@ export default function UnpaidList() {
                     <div className="progress-right w-full lg:w-[66.5%] xl:w-[830px] lg:max-w-[830px]">
                         <div className="flex flex-col w-full gap-5 header-waiting-container lg:flex-row lg:justify-between lg:gap-0">
                             <div className="frame-6 flex flex-row justify-center items-center gap-3 sm:gap-[40px]">
-                                <div className="text-wrapper-title">List of unpaid booking</div>
+                                <div className="text-wrapper-title">Extra Process Requests</div>
                             </div>
                             <div className="frame-10">
                                 <img className="img-2" src={searchIcon} alt="" />
@@ -79,23 +86,23 @@ export default function UnpaidList() {
 
                         <div className="w-full xl:w-[831px] max-w-[831px]">
 
-                            <div class="progress-list-container mt-[26px] flex flex-col gap-10">
+                            <div className="progress-list-container mt-[26px] flex flex-col gap-10">
                                 {Array.isArray(listBooking) && listBooking.length > 0 ? (
                                     listBooking.map((booking, index) => (
 
-                                        <div key={booking.booking.bookingServiceId || index} class="progress-card w-full">
-                                            <div class="header-progress-section flex flex-col sm:flex-row justify-between">
-                                                <div class="infor-progress-section">
-                                                    <div class="info-1">
-                                                        <div class="text-progress-info-1">ID Booking:</div>
-                                                        <div class="text-progress-id">{booking.booking.bookingServiceId}</div>
+                                        <div key={booking.booking.bookingServiceId || index} className="progress-card w-full">
+                                            <div className="header-progress-section flex flex-col sm:flex-row justify-between">
+                                                <div className="infor-progress-section">
+                                                    <div className="info-1">
+                                                        <div className="text-progress-info-1">ID Booking:</div>
+                                                        <div className="text-progress-id">{booking.booking.bookingServiceId}</div>
                                                     </div>
-                                                    <div class="info-1">
-                                                        <div class="text-progress-info-1">Farmer Name: </div>
-                                                        <div class="text-progress-p-1">{booking.account.fullName}</div>
+                                                    <div className="info-1">
+                                                        <div className="text-progress-info-1">Farmer Name: </div>
+                                                        <div className="text-progress-p-1">{booking.account.fullName}</div>
                                                     </div>
-                                                    <div class="date-info">
-                                                        <div class="text-progress-info-1">Booking at:</div>
+                                                    <div className="date-info">
+                                                        <div className="text-progress-info-1">Booking at:</div>
                                                         {(() => {
                                                             const d = new Date(booking.booking.bookingServiceAt);
                                                             const dateStr = d.toLocaleDateString("vi-VN");
@@ -107,23 +114,26 @@ export default function UnpaidList() {
                                                             );
                                                         })()}
                                                     </div>
-                                                    <div class="info-1">
-                                                        <div class="text-progress-info-1">Service name:</div>
-                                                        <div class="text-progress-p-1">{booking.service.serviceName}</div>
+                                                    <div className="info-1">
+                                                        <div className="text-progress-info-1">Service name:</div>
+                                                        <div className="text-progress-p-1">{booking.service.serviceName}</div>
                                                     </div>
                                                 </div>
 
                                                 <div className="status-info-uncompleted max-h-[30px] mt-4 sm:mt-0">
-                                                    <div className="text-uncompleted-a-need">Unpaid</div>
+                                                    <div className="text-uncompleted-a-need">Request Extra</div>
                                                 </div>
 
                                             </div>
 
-                                            <div class="footer-booking-card">
+                                            <div className="footer-booking-card">
                                                 <div className="footer-wrapper">
-
-                                                    <div class="footer-booking-price">
-                                                        <div class="total-price">
+                                                    <div className="footer-booking-button" onClick={() => handleNavigateCreate(booking.service, booking.booking)}>
+                                                        <div className="progress-button-text">Create Process</div>
+                                                    </div>
+                                                    
+                                                    <div className="footer-booking-price">
+                                                        <div className="total-price">
                                                             TOTAL: <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(booking.booking.price)}</span>
                                                         </div>
                                                     </div>

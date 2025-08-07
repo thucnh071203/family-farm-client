@@ -405,16 +405,37 @@
 .footer-booking-card {
   display: flex;
   flex-direction: row;
-  justify-content: end;
   align-items: center;
 }
+.footer-booking-card .left-footer-booking-card {
+  height: 100%;
+  width: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+.footer-booking-card .left-footer-booking-card .extra-process-btn {
+  padding: 0.5rem 2rem;
+  cursor: pointer;
+  color: #EF3E36;
+  background: rgba(239, 62, 54, 0.25);
+  font-size: 12px;
+  text-transform: uppercase;
+  transition: 0.2s;
+  font-weight: bold;
+}
+.footer-booking-card .left-footer-booking-card .extra-process-btn:hover{
+  background: rgba(239, 62, 54, 0.5);
+}
+
 .footer-booking-card .footer-wrapper {
+  flex: 1;
   padding: 1rem;
   display: flex;
   flex-direction: row;
   gap: 1rem;
   align-items: center;
-  justify-content: center;
+  justify-content: end;
 }
 .footer-booking-card .footer-wrapper .footer-booking-button{
   padding: 0.5rem 2rem;

@@ -8,7 +8,7 @@ const YourGroupDetailItem = ({ group }) => {
   const navigate = useNavigate();
 
   const handleViewGroup = () => {
-    navigate(`/group/${group.groupId}`);
+    navigate(`/GroupDetail/${group.groupId}`);
   };
   const [leaveGroups, setLeaveGroups] = useState([]);
   const [userAccId, setUserAccId] = useState(null);
@@ -49,7 +49,7 @@ const YourGroupDetailItem = ({ group }) => {
             transition: Bounce,
           });
           setLeaveGroups((prev) => [...prev, groupId]);
-          navigate("/group", { replace: true });
+          navigate("/GroupDetail", { replace: true });
         } else {
           toast.warning("You may have already left this group.");
         }
@@ -75,7 +75,7 @@ const YourGroupDetailItem = ({ group }) => {
               onClick={handleViewGroup}
               className="hover:bg-[rgba(61,179,251,0.14)] p-1 text-[#5596E6] rounded-lg text-sm"
             >
-              <i class="fa-solid fa-eye px-1"></i>View Group
+              <i className="fa-solid fa-eye px-1"></i>View Group
             </button>
           )}
         </div>
@@ -94,7 +94,7 @@ const YourGroupDetailItem = ({ group }) => {
               onClick={() => handleLeaveGroup(group.groupId)}
               className="hover:bg-[rgba(61,179,251,0.14)] p-1 text-[#E74C3C] rounded-lg text-sm"
             >
-              <i class="fa-solid fa-arrow-right-from-bracket px-1"></i>Leave
+              <i className="fa-solid fa-arrow-right-from-bracket px-1"></i>Leave
             </button>
           )}
         </div>

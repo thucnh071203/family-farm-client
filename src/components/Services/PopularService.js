@@ -84,7 +84,7 @@ const PopularService = () => {
               </div>
               <div className="flex flex-col w-full border rounded-md">
                 <img
-                  src={service.imageUrl}
+                  src={service.imageUrl || "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"}
                   alt={service.serviceName}
                   className="rounded-md"
                 />

@@ -6,7 +6,7 @@ export function MapChart() {
   const chartRef = useRef(null);
   const echartsInstance = useRef(null);
 
-  // Chuẩn hóa tên tỉnh (copy từ bạn)
+  // chuẩn hóa tên tỉnh
   const normalizeProvinceName = (name) => {
     const mapping = {
       "an giang": "An Giang",
@@ -74,7 +74,7 @@ export function MapChart() {
       "dong thap": "Đồng Tháp",
     };
 
-    // Hàm chuyển tiếng Việt có dấu thành không dấu
+    // chuyển tiếng Việt có dấu thành không dấu
     const removeVietnameseTones = (str) => {
       return str
         .normalize("NFD")
@@ -83,7 +83,7 @@ export function MapChart() {
         .replace(/Đ/g, "D");
     };
 
-    // Tiền xử lý: loại dấu, chuyển thường, loại bỏ khoảng trắng thừa
+    // loại dấu, chuyển thường, loại bỏ khoảng trắng thừa
     const processedName = removeVietnameseTones(name)
       .toLowerCase()
       .replace(/\s+/g, " ")
@@ -92,30 +92,24 @@ export function MapChart() {
     return mapping[processedName] || name;
   };
 
-  // Ví dụ
-  console.log(normalizeProvinceName("TP. Hồ Chí Minh")); // Hồ Chí Minh
-  console.log(normalizeProvinceName("Ho Chi Minh")); // Hồ Chí Minh
-  console.log(normalizeProvinceName("Can Tho")); // Cần Thơ
-  console.log(normalizeProvinceName("Thua Thien Hue")); // Thừa Thiên - Huế
-
   useEffect(() => {
     if (!chartRef.current) return;
 
-    // Khởi tạo biểu đồ ECharts
+    // tạo biểu đồ ECharts
     echartsInstance.current = echarts.init(chartRef.current);
 
     let connection = null;
 
     const loadMapAndConnect = async () => {
       try {
-        //bản đồ geojson
+        // bản đồ geojson
         const geoRes = await fetch(
           "https://raw.githubusercontent.com/uyenvuminh/mapChartUyen/refs/heads/main/mapVN"
         );
         const vietnamGeoJSON = await geoRes.json();
         echarts.registerMap("VN", vietnamGeoJSON);
 
-        //render biểu đồ từ dữ liệu
+        // render biểu đồ từ dữ liệu
         const renderChart = (rawData) => {
           const data = rawData.map((item) => ({
             name: normalizeProvinceName(item.province),
@@ -169,14 +163,14 @@ export function MapChart() {
           echartsInstance.current.setOption(option);
         };
 
-        //dữ liệu lần đầu
+        // dữ liệu lần đầu
         const response = await fetch(
           "https://localhost:7280/api/statistic/users-by-province"
         );
         const result = await response.json();
         renderChart(result.data);
 
-        //SignalR
+        // SignalR
         connection = new signalR.HubConnectionBuilder()
           .withUrl("https://localhost:7280/topEngagedPostHub")
           .withAutomaticReconnect()
@@ -184,7 +178,7 @@ export function MapChart() {
 
         connection.on("UsersByProvince", (newData) => {
           console.log("Realtime update:", newData);
-          renderChart(newData.data);
+          renderChart(newData);
         });
 
         await connection.start();
@@ -196,7 +190,6 @@ export function MapChart() {
 
     loadMapAndConnect();
 
-    // Cleanup khi unmount
     return () => {
       if (echartsInstance.current) {
         echartsInstance.current.dispose();
@@ -208,7 +201,7 @@ export function MapChart() {
   }, []);
 
   return (
-    <div className="p-10">
+    <div className="p-4">
       <div
         ref={chartRef}
         className="border rounded shadow w-full h-[700px]"

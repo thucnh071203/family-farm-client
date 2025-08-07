@@ -172,7 +172,7 @@ const CoverBackground = ({ backgroundImage: initialBackgroundImage, isOwner }) =
           className="absolute top-4 left-4 flex items-center bg-black/40 text-white px-3 py-1 rounded border border-white transition-all duration-300 ease-in-out opacity-90 group-hover:opacity-100"
         >
           <i className="fa-solid fa-camera text-[24px] h-6 text-white"></i>
-          <span className="ml-2 hidden group-hover:inline transition transition-opacity duration-300">
+          <span className="ml-2 hidden group-hover:inline transition-opacity duration-300">
             Change background
           </span>
         </button>
@@ -186,7 +186,7 @@ const CoverBackground = ({ backgroundImage: initialBackgroundImage, isOwner }) =
       />
       {showCoverPopup && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-10"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
           onClick={() => setShowCoverPopup(false)}
         >
           <div

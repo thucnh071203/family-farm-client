@@ -64,7 +64,7 @@ const TableListCateService = ({ displayList }) => {
       if (result.isConfirmed) {
         try {
           const token = localStorage.getItem("accessToken");
-  
+
           const res = await fetch(
             `https://localhost:7280/api/category-service/restore/${cateId}`,
             {
@@ -75,10 +75,14 @@ const TableListCateService = ({ displayList }) => {
               },
             }
           );
-  
+
           const data = await res.json();
           if (data.success === true) {
-            Swal.fire("Restored!", "The category has been restored.", "success");
+            Swal.fire(
+              "Restored!",
+              "The category has been restored.",
+              "success"
+            );
           }
         } catch (err) {
           Swal.fire("Error!", "Something went wrong.", "error");
@@ -140,7 +144,7 @@ const TableListCateService = ({ displayList }) => {
                 // Chưa xóa: hiện Detail + Edit + Delete
                 return `
                   <button class='btn-detail hover:underline pr-2 text-blue-400' data-id='${id}'>
-                    <i class="fa-solid fa-eye"></i>
+                    <i class="fa fa-eye" aria-hidden="true"></i>
                   </button>
                   <button class='btn-edit hover:underline pr-1 text-green-500' data-id='${id}'>
                     <i class="fa-solid fa-pencil"></i>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import PopupChangeImage from "./PopupChangeImage";
+import PopupInviteMember from "./PopupInviteMember";
 import { useSignalR } from "../../context/SignalRContext";
 import instance from "../../Axios/axiosConfig";
 
@@ -19,6 +20,7 @@ const GroupDetailHeader = ({
   countPosts
 }) => {
   const [showPopup, setShowPopup] = useState(false);
+  const [showPopupInvite, setShowPopupInvite] = useState(false);
 
   // Load ảnh theo thời gian thực
   function getCacheBustedUrl(url, updatedAt) {
@@ -61,17 +63,32 @@ const GroupDetailHeader = ({
           />
         </div>
         <div className="absolute right-8 z-10 bottom-6 flex flex-row gap-2">
+          <button
+              className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white"
+              onClick={() => setShowPopupInvite(true)}
+            >
+              <i className="fa-solid fa-user-plus text-[#3DB3FB] mr-2"></i>
+              Invite
+            </button>
           {userRole === "680ce8722b3eec497a30201e" && (
             <button
               className="bg-white hover:bg-[rgba(61,179,251,0.14)] p-2 md:p-3 text-black rounded-[20px] border border-gray-500 hover:text-white"
               onClick={() => setShowPopup(true)}
             >
-              <i className="fa-solid fa-pen px-1 text-[#3DB3FB]"></i>
+              <i className="fa-solid fa-pen px-1 text-[#3DB3FB] mr-2"></i>
               Change image
             </button>
           )}
         </div>
       </div>
+      {showPopupInvite && (
+        <PopupInviteMember
+          group={group}
+          userAccId={userAccId}
+          onClose={() => setShowPopupInvite(false)} 
+          reloadsignlR={reloadsignlR}
+          />
+      )}
       {showPopup && (
         <PopupChangeImage
           group={group}

@@ -6,6 +6,7 @@ import "datatables.net";
 import instance from "../../Axios/axiosConfig";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import formatTime from "../../utils/formatTime";
 
 const ListReaction = () => {
   const [reactions, setReactions] = useState([]);
@@ -42,7 +43,10 @@ const ListReaction = () => {
           setReactions(
             reactions.map((reaction) =>
               reaction.categoryReactionId === id
-                ? { ...reaction, isDeleted: true }
+                ? {
+                  ...reaction, isDeleted: true,
+                  lastModified: new Date().toISOString(),
+                }
                 : reaction
             )
           );
@@ -76,7 +80,10 @@ const ListReaction = () => {
           setReactions(
             reactions.map((reaction) =>
               reaction.categoryReactionId === id
-                ? { ...reaction, isDeleted: false }
+                ? {
+                  ...reaction, isDeleted: false,
+                  lastModified: new Date().toISOString(),
+                }
                 : reaction
             )
           );
@@ -122,7 +129,7 @@ const ListReaction = () => {
       </div>
 
       {loading ? (
-        <p className="text-gray-600 p-4">Đang tải dữ liệu...</p>
+        <p className="text-gray-600 p-4">Loading data...</p>
       ) : (
         <div className="bg-white p-4 rounded shadow">
           <table id="reactionTable" className="display w-full">
@@ -130,6 +137,7 @@ const ListReaction = () => {
               <tr className="bg-[#3DB3FB]/25">
                 <th>ID</th>
                 <th>Reaction Name</th>
+                <th>Last Modified</th>
                 <th>Image</th>
                 <th>Action</th>
               </tr>
@@ -142,6 +150,9 @@ const ListReaction = () => {
                   </td>
                   <td className="text-left truncate max-w-[150px]">
                     {reaction.reactionName}
+                  </td>
+                  <td className="text-left truncate max-w-[150px]">
+                    {formatTime(reaction.lastModified)}
                   </td>
                   <td className="text-left items-center">
                     <img

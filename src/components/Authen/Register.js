@@ -92,8 +92,10 @@ export const Register = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    const selectedDistrict = districts.find((d) => d.id === formData.district)?.name_en || "";
-    const selectedWard = wards.find((w) => w.id === formData.ward)?.name_en || "";
+    const selectedDistrict =
+      districts.find((d) => d.id === formData.district)?.name_en || "";
+    const selectedWard =
+      wards.find((w) => w.id === formData.ward)?.name_en || "";
 
     // Prepare data for submission
     const formDataToSend = new FormData();
@@ -182,10 +184,11 @@ export const Register = () => {
     <div className="overflow-x-hidden">
       <div className="flex items-center gap-3 py-6 mx-auto max-w-7xl">
         <Link to="/">
-          <img src={logo} alt="logo" />
+          <img src={logo} alt="logo" className="w-12 h-auto" />
         </Link>
         <h3 className="text-xl font-bold name-page">Family Farm</h3>
       </div>
+
       <div className="flex flex-col w-full h-full gap-10 mx-auto md:flex-row max-w-7xl">
         <div className="z-10 w-full p-8 text-left bg-white border border-gray-400 border-solid rounded-lg shadow-lg lg:w-2/3">
           <div className="flex items-center mb-6">

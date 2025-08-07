@@ -7,36 +7,70 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const storage = localStorage.getItem("accessToken") ? localStorage : sessionStorage;
+  const loadUser = async (forceReload = false) => {
+    try {
+      setIsLoading(true);
+      
+      const storage = localStorage.getItem("accessToken") ? localStorage : sessionStorage;
+      const token = storage.getItem("accessToken");
+      
+      if (!token) {
+        // Không có token, clear user data
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      // Nếu không force reload, thử load từ cache trước
+      if (!forceReload) {
         const storedData = storage.getItem("profileData");
         if (storedData) {
-          setUser(JSON.parse(storedData));
+          const cachedUser = JSON.parse(storedData);
+          setUser(cachedUser);
         }
+      }
 
-        const token = storage.getItem("accessToken");
-        if (token) {
-          const response = await instance.get("/api/account/own-profile", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (response.status === 200) {
-            const data = response.data.data;
-            setUser(data);
-            storage.setItem("profileData", JSON.stringify(data));
-            storage.setItem("avatarUrl", data.avatar);
-            storage.setItem("fullName", data.fullName);
-          }
-        }
-      } catch (error) {
-        console.error("Error loading user:", error);
-      } finally {
-        setIsLoading(false);
+      // Luôn fetch data mới từ API
+      const response = await instance.get("/api/account/own-profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      if (response.status === 200) {
+        const data = response.data.data;
+        setUser(data);
+        storage.setItem("profileData", JSON.stringify(data));
+        storage.setItem("avatarUrl", data.avatar);
+        storage.setItem("fullName", data.fullName);
+        // console.log("User data loaded:", data);
+      }
+    } catch (error) {
+      console.error("Error loading user:", error);
+      // Nếu API fail, clear user data
+      setUser(null);
+      const storage = localStorage.getItem("accessToken") ? localStorage : sessionStorage;
+      storage.removeItem("profileData");
+      storage.removeItem("avatarUrl");
+      storage.removeItem("fullName");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  // Listen for storage changes (khi user login/logout từ tab khác)
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === "accessToken" || e.key === "profileData") {
+        // console.log("Storage changed, reloading user data");
+        loadUser(true);
       }
     };
 
-    loadUser();
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   const updateUser = (newData) => {
@@ -50,8 +84,17 @@ export const UserProvider = ({ children }) => {
     });
   };
 
+  const reloadUser = () => {
+    loadUser(true);
+  };
+
   return (
-    <UserContext.Provider value={{ user, updateUser, isLoading }}>
+    <UserContext.Provider value={{ 
+      user, 
+      updateUser, 
+      isLoading, 
+      reloadUser 
+    }}>
       {isLoading ? <div>Loading...</div> : children}
     </UserContext.Provider>
   );

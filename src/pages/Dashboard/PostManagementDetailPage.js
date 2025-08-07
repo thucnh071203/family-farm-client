@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import SidebarDashboard from "../../components/Dashboard/SidebarDashboard";
 import { useParams } from "react-router-dom";
 import { OrbitProgress } from "react-loading-indicators";
-import PostAIDetail from "../../components/AIChecker/PostAIDetail";
 import PostManagementDetail from "../../components/PostManagement/PostManagementDetail";
 
 const PostManagementDetailPage = () => {
   const { id } = useParams(); // lấy postId từ URL
-
   const [post, setPost] = useState(null);
 
   const fetchPost = async () => {
@@ -31,23 +29,24 @@ const PostManagementDetailPage = () => {
       }
     } catch (err) {
       console.error("Error fetching list post:", err.message || err);
-    } finally {
     }
   };
 
   useEffect(() => {
     fetchPost();
   }, [id]);
+
   return (
     <div className="flex min-h-screen">
       {/* Sidebar bên trái */}
       <SidebarDashboard />
-
-      <div className="flex-1 bg-[rgba(61,179,251,0.05)]">
+      <div className="p-8 w-full bg-[#3DB3FB]/5">
         {post ? (
           <PostManagementDetail post={post} />
         ) : (
-          <OrbitProgress color="#32cd32" size="medium" text="" textColor="" />
+          <div className="flex justify-center items-center h-full">
+            <OrbitProgress color="#32cd32" size="medium" text="" textColor="" />
+          </div>
         )}
       </div>
     </div>

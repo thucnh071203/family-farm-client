@@ -20,7 +20,6 @@ const ListAccount = () => {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            // "Content-Type": "application/json",
           },
         }
       );
@@ -42,7 +41,6 @@ const ListAccount = () => {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            // "Content-Type": "application/json",
           },
         }
       );
@@ -64,7 +62,6 @@ const ListAccount = () => {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
-            // "Content-Type": "application/json",
           },
         }
       );
@@ -82,37 +79,38 @@ const ListAccount = () => {
   }, []);
 
   return (
-    <div className="ml-20 mt-3 ">
-      <div className="flex">
-        <div className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M6.52734 13V8.5H9.52734V13H13.2773V7H15.5273L8.02734 0.25L0.527344 7H2.77734V13H6.52734Z"
-              fill="rgba(62,63,94,0.25)"
-            />
-          </svg>
-          <Link to={"/Dashboard"}>HOME</Link>
-        </div>
-        <span className="font-semibold flex items-center gap-2 py-3 text-sm text-[rgba(62,63,94,0.25)]">
-          <Link to="/ListAccount">/Account Management</Link>
+    <div>
+      <div className="text-left mb-5 font-semibold flex items-center gap-2 text-[#3E3F5E]/25">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M6.52734 13V8.5H9.52734V13H13.2773V7H15.5273L8.02734 0.25L0.527344 7H2.77734V13H6.52734Z"
+            fill="rgba(62,63,94,0.25)"
+          />
+        </svg>
+        <span>
+          <Link to="/Dashboard">HOME</Link> / Account Management
         </span>
       </div>
-      <h1 className="text-[#3DB3FB] text-2xl font-bold text-left mb-5 mt-3">
+      <h1 className="text-2xl font-bold text-blue-500 mb-6 text-left">
         ACCOUNT MANAGEMENT
       </h1>
-      <div className="flex space-x-6 mt-2 text-sm text-black-500 font-bold text-center ">
+      <div className="flex border-b border-gray-300 mb-6">
         <button
           onClick={() => {
             setActiveTab("all");
             fetchAllAccounts();
           }}
-          className="w-[10%] hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB]"
+          className={`mr-6 pb-2 px-5 font-semibold ${
+            activeTab === "all"
+              ? "border-b-2 border-blue-400 text-blue-500"
+              : "text-gray-400"
+          }`}
         >
           All
         </button>
@@ -121,7 +119,11 @@ const ListAccount = () => {
             setActiveTab("farmer");
             fetchFarmerAccounts();
           }}
-          className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] w-[10%]"
+          className={`mr-6 pb-2 px-5 font-semibold ${
+            activeTab === "farmer"
+              ? "border-b-2 border-blue-400 text-blue-500"
+              : "text-gray-400"
+          }`}
         >
           Farmer
         </button>
@@ -130,12 +132,16 @@ const ListAccount = () => {
             setActiveTab("expert");
             fetchExpertAccounts();
           }}
-          className="hover:shadow-[0_2px_0_0_#3DB3FB] hover:text-[#3DB3FB] w-[10%] "
+          className={`mr-6 pb-2 px-5 font-semibold ${
+            activeTab === "expert"
+              ? "border-b-2 border-blue-400 text-blue-500"
+              : "text-gray-400"
+          }`}
         >
           Expert
         </button>
       </div>
-      <div style={{ width: "90%" }}>
+      <div>
         <TableListAccount
           displayList={
             activeTab === "all"
@@ -156,4 +162,5 @@ const ListAccount = () => {
     </div>
   );
 };
+
 export default ListAccount;

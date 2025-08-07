@@ -15,6 +15,8 @@ import instance from "../../Axios/axiosConfig";
 import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import alertICon from "../../assets/icons/nam_alert_icon.svg"
+import FriendSuggestButton from "../../components/Friend/FriendSuggestButton";
 
 const PersonalPage = () => {
   const { user } = useUser();
@@ -27,6 +29,8 @@ const PersonalPage = () => {
   const [accessToken, setAccessToken] = useState("");
   const [posts, setPosts] = useState([]);
   const [photos, setPhotos] = useState([]);
+  const [hasCreditCard, setHasCreditCard] = useState(null);
+  const [listCheckRelationShip, setlistCheckRelationShip] = useState([]);
 
   const { accId } = useParams();
   const defaultBackground =
@@ -65,11 +69,12 @@ const PersonalPage = () => {
           });
           if (response.status === 200) {
             const data = response.data.data;
+            console.log("Du lieu profile", data);
             setFullName(data.fullName || data.firstName || "Unknown User");
             setAvatar(data.avatar || data.profileImage || "default-avatar-url");
             setBackground(data.background || data.coverImage || defaultBackground);
             setRoleId(data.roleId);
-
+            setHasCreditCard(data.hasCreditCard); // 👈 Thêm dòng này
 
             const basicInfoMapping = {
               gender: data.gender || "Updating",
@@ -327,37 +332,27 @@ const PersonalPage = () => {
   const renderActionButton = () => {
     if (isOwner) return null;
     console.log("Rendering action button - friendshipStatus:", friendshipStatus, "isFriend:", isFriend);
-    if (isFriend) {
-      return (
-        <button
-          onClick={handleStartChat}
-          className="p-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-md w-32 transition flex items-center justify-center"
-        >
-          <i className="fa-solid fa-comment mr-2"></i>
-          Start Chat
-        </button>
-      );
-    }
 
     return (
-      <FriendActionButton
-        status={friendshipStatus}
-        roleId={roleId}
-        accId={accId}
-      />
-    )
+      <div className="flex items-center gap-2">
+        {/* Nút Start Chat */}
+        <button
+          onClick={handleStartChat}
+          className="p-1 px-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-md w- transition flex items-center justify-center"
+        >
+          <i className="fa-solid fa-comment mr-2"></i>
+          Send Message
+        </button>
+        {/* FriendActionButton */}
+        {/* <FriendSuggestButton
+          status={friendshipStatus}
+          roleId={roleId}
+          accId={accId}
+        /> */}
+      </div>
+    );
   };
-  console.log("accId:", accId);
-  console.log("isOwner:", isOwner);
-  console.log("friendshipStatus:", friendshipStatus);
-  console.log("isFriend:", isFriend);
-  console.log("listFriends:", listFriends);
 
-//   const matchedAccount =
-//     !isOwner &&
-//     Array.isArray(listCheckRelationShip) &&
-//     listCheckRelationShip.find((a) => a.accId === accId);
-  //get list photo
   const fetchPhotos = async () => {
     try {
       const token = localStorage.getItem("accessToken");
@@ -390,6 +385,49 @@ const PersonalPage = () => {
       fetchPhotos();
     }
   }, [accId, isOwner, accessToken]);
+
+  const fetchCheckRelationShip = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const res = await fetch(
+        `https://localhost:7280/api/friend/list-account-no-relation`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const jsonArray = await res.json();
+      console.log("API response (list-account-no-relation):", jsonArray);
+
+      // Gộp tất cả data từ các object có isSuccess === true
+      const combinedList = jsonArray
+        .filter((item) => item.isSuccess && Array.isArray(item.data))
+        .flatMap((item) => item.data); // dùng flatMap để nối tất cả mảng lại
+
+      if (combinedList.length > 0) {
+        setlistCheckRelationShip(combinedList);
+        console.log("Danh sách không có quan hệ:", combinedList);
+      } else {
+        setlistCheckRelationShip([]);
+      }
+    } catch (err) {
+      console.error("Error fetching friends:", err.message || err);
+      setlistCheckRelationShip([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchCheckRelationShip(); // chỉ gọi khi component load hoặc section thay đổi
+  }, []);
+  const matchedAccountButton =
+    !isOwner &&
+    Array.isArray(listCheckRelationShip) &&
+    listCheckRelationShip.find((a) => a.accId === accId);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -403,6 +441,15 @@ const PersonalPage = () => {
                 {renderActionButton()}
               </div>
             )}
+            {matchedAccountButton && (
+                <div className="absolute right-40 bottom-4">
+                  <FriendSuggestButton
+                    status={matchedAccountButton.friendStatus}
+                    roleId={matchedAccountButton.roleId}
+                    accId={matchedAccountButton.accId}
+                  />
+                </div>
+              )}
             <ProfileAvatar
               initialProfileImage={avatar}
               fullName={fullName}
@@ -418,9 +465,36 @@ const PersonalPage = () => {
                 isProfile={true}
                 accId={accId}
               />
-              <PhotoGallery photos={photos} isOwner={isOwner} accId={accId}/>
+              <PhotoGallery photos={photos} isOwner={isOwner} accId={accId} />
             </aside>
             <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
+
+            {/* UPDATE BANK CARD  */}
+              {isOwner &&
+                roleId === "68007b2a87b41211f0af1d57" &&
+                !hasCreditCard && ( // ✅ đơn giản hơn: false, null, undefined đều thỏa
+                  <div
+                    style={{ background: "rgba(61, 179, 251, 0.15)" }}
+                    className="flex flex-col gap-3 p-4 rounded-md shadow-lg mt-4"
+                  >
+                    <div className="flex flex-row">
+                      <p className="text-start text-base flex flex-row gap-3 items-start">
+                        <img src={alertICon} alt="" />
+                        It looks like you haven't added a bank card yet. Please update your information to continue performing professional functions.
+                      </p>
+                    </div>
+                    <div className="flex flex-row justify-end">
+                      <Link
+                        to="/CreditCardPage"
+                        style={{ background: "rgba(61, 179, 251, 1)" }}
+                        className="p-2 font-bold text-base text-white shadow-md rounded-md"
+                      >
+                        Update now!
+                      </Link>
+                    </div>
+                  </div>
+              )}
+
               {isOwner && (
                 <PostCreate
                   profileImage={avatar}
@@ -461,14 +535,14 @@ const PersonalPage = () => {
                         : [],
                       tagFriends: postMapper.postTags
                         ? postMapper.postTags.map((tag) => ({
-                            accId: tag.accId,
-                            fullname: tag.fullname || "Unknown",
-                          }))
+                          accId: tag.accId,
+                          fullname: tag.fullname || "Unknown",
+                        }))
                         : [],
                       categories: postMapper.postCategories
                         ? postMapper.postCategories.map(
-                            (cat) => cat.categoryName
-                          )
+                          (cat) => cat.categoryName
+                        )
                         : [],
                       likes: postMapper.reactionCount || 0,
                       comments: postMapper.commentCount || 0,

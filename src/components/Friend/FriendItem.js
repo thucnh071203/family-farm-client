@@ -1,5 +1,7 @@
 import React from "react";
 import FriendActionButton from "./FriendActionButton";
+import default_avatar from "../../assets/images/default-avatar.png";
+
 import { useNavigate } from "react-router-dom";
 import FriendSuggestButton from "./FriendSuggestButton";
 const FriendItem = ({ friend, isOwner, isProfile }) => {
@@ -12,7 +14,7 @@ const FriendItem = ({ friend, isOwner, isProfile }) => {
       <div className="flex items-center gap-2">
         <img
           onClick={() => handleClickToProfile(friend.accId)}
-          src={friend.avatar}
+          src={friend.avatar || default_avatar}
           alt={`Friend ${friend.username}`}
           className="w-9 h-9 rounded-full"
           style={{ cursor: "pointer" }}

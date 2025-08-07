@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import instance from "../../Axios/axiosConfig";
 import "./createGroupStyle.css";
@@ -118,7 +118,7 @@ export default function EditGroupForm({ userRole, userAccId }) {
       });
       toast.success("GROUP UPDATED SUCCESSFULLY!");
       // navigate("/Group", { state: { section: "all-group-user" } });
-      navigate(`/group/${groupId}`);
+      navigate(`/GroupDetail/${groupId}`);
     } catch (error) {
       console.error("Update failed:", error);
       toast.error("Failed to update group!");
@@ -153,22 +153,34 @@ export default function EditGroupForm({ userRole, userAccId }) {
 
   return (
     <div className="group-page-right w-full h-full flex flex-col pt-12 pr-4 pl-[8%] lg:pl-0">
+      <div>
+        <Link to={`/GroupDetail/${groupId}`} className="flex items-center gap-2 text-gray-400 hover:text-blue-600 transition-colors duration-200 ease-in-out">
+          <i className="fa-solid fa-arrow-left"></i>
+          <span>Back to your group</span>
+        </Link>
+      </div>
       <form
         onSubmit={handleSubmit}
-        className="create-group-container w-full max-w-[832px] h-screen"
+        className="create-group-container w-full max-w-[832px] h-screen mt-3"
       >
         <div className="create-h1-label">
-          <div className="create-group-h1">Edit group</div>
+          <h1 className="create-group-h1">Edit group</h1>
         </div>
 
-        <div className="user-admin-container mt-5 flex md:flex-row items-center gap-4">
+        <div className="user-admin-container mt-10 flex md:flex-row items-center gap-4">
           <div className="avatar-admin rounded-full w-[60px] h-[60px]">
-            <img src={avatarUrl} alt="" />
+            <img
+              src={avatarUrl}
+              alt="avatar"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="admin-info flex flex-col gap-2">
             <div className="admin-name">{fullName}</div>
-            <div className="admin-role bg-[#3DB3FB] px-[14px] py-[7px] bg-opacity-25 w-fit">
-              Admin
+            <div
+              className="admin-role bg-[#3DB3FB] px-[14px] py-[7px] bg-opacity-25 w-fit rounded-sm font-semibold text-[#3DB3FB]"
+            >
+              {ownerId === userAccId ? "Owner" : "Administrator"}
             </div>
           </div>
         </div>

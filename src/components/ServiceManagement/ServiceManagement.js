@@ -1,29 +1,43 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ProcessNav from "../ProcessNav/ProcessNav";
 import Header from "../Header/Header";
-import PopupDeleteService from "../Services/PopupDeleteService";
-import PopupToggleService from "../Services/PopupToggleService";
 import instance from "../../Axios/axiosConfig";
-import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import $ from "jquery";
+import "datatables.net-dt/css/dataTables.dataTables.css";
+import "datatables.net";
 
 export const ServiceManagement = () => {
-  const [isAllChecked, setIsAllChecked] = useState(false);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
-  // const [showDeletePopup, setDeleteShowPopup] = useState(false);
-  const [selectedServiceId, setSelectedServiceId] = useState(null);
-  const [showTogglePopup, setShowTogglePopup] = useState(false);
-  const [toggleServiceId, setToggleServiceId] = useState(null);
-  const [isDisabling, setIsDisabling] = useState(true);
   const navigate = useNavigate();
+  const [hasCreditCard, setHasCreditCard] = useState(null); // Store the credit card status
+  const tableRef = useRef(null); // Tham chiếu tới bảng DataTable
 
-  const handleSelectAll = (e) => {
-    setIsAllChecked(e.target.checked);
+  // Fetch credit card info to check if user has a credit card
+  const fetchCreditCardInfo = async () => {
+    try {
+      const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+      const res = await instance.get("/api/account/own-profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.status === 200) {
+        const data = res.data.data;
+        setHasCreditCard(data.hasCreditCard); // Update the state based on the API response
+      }
+    } catch (error) {
+      console.error("Error loading credit card info:", error);
+      toast.error("Failed to load credit card information.");
+    }
   };
+
+  useEffect(() => {
+    fetchCreditCardInfo(); // Fetch credit card info when the component mounts
+  }, []);
 
   // Lọc service theo trạng thái
   const filteredServices = services.filter((service) => {
@@ -32,13 +46,12 @@ export const ServiceManagement = () => {
     return true; // all
   });
 
-
+  // Fetch services and categories
   useEffect(() => {
     const fetchServicesAndCategories = async () => {
       try {
-        // Gọi API lấy tất cả dịch vụ theo provider
+        setLoading(true);
         const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-        // console.log("📌 Token:", token);
         const serviceRes = await instance.get("/api/service/all-by-provider", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -48,14 +61,10 @@ export const ServiceManagement = () => {
         const serviceWrappers = serviceRes.data.data || [];
         const servicesOnly = serviceWrappers.map((item) => item.service);
 
-        // console.log("✅ Danh sách dịch vụ gốc:", servicesOnly);
-
-        // Gọi API từng category name theo categoryServiceId
         const servicesWithCategory = await Promise.all(
           servicesOnly.map(async (s) => {
             try {
               const res = await instance.get(`/api/category-service/get-by-id/${s.categoryServiceId}`);
-              // console.log("📦 CategoryService Response:", res.data);
               return {
                 ...s,
                 categoryName: res.data.data?.[0]?.categoryService?.categoryName || "Unknown",
@@ -65,8 +74,6 @@ export const ServiceManagement = () => {
             }
           })
         );
-
-        // console.log("🔄 Dữ liệu sau khi merge với category name:", servicesWithCategory);
 
         setServices(servicesWithCategory);
       } catch (err) {
@@ -78,6 +85,45 @@ export const ServiceManagement = () => {
 
     fetchServicesAndCategories();
   }, []);
+
+  // Initialize DataTable after data is fetched
+  // useEffect(() => {
+  //   if (!loading && services.length > 0) {
+  //     const table = $("#serviceTable").DataTable({
+  //       ordering: false, // Vô hiệu hóa sắp xếp mặc định
+  //       pageLength: 10, // Số lượng hàng mỗi trang
+  //       responsive: true, // Hỗ trợ responsive
+  //     });
+
+  //     return () => {
+  //       table.destroy();
+  //     };
+  //   }
+  // }, [loading, services]);
+
+  // Initialize DataTable after data is fetched
+  useEffect(() => {
+    if (!loading && services.length > 0 && tableRef.current) {
+      const table = $(tableRef.current).DataTable({
+        ordering: false,
+        pageLength: 10,
+        responsive: true,
+      });
+
+      return () => {
+        table.destroy(); // Dọn dẹp khi component bị unmount
+      };
+    }
+  }, [loading, services]);
+
+  // Chuyển trang tạo dịch vụ nếu có thẻ tín dụng, nếu không hiển thị cảnh báo
+  const handleCreateServiceClick = () => {
+    if (hasCreditCard === false || hasCreditCard === null) {
+      toast.warning("You need to add a credit card before creating a service.");
+      return;
+    }
+    navigate("/CreateService"); // Nếu có thẻ tín dụng, chuyển đến trang tạo dịch vụ
+  };
 
   const handleDeleteClick = (serviceId) => {
     Swal.fire({
@@ -97,11 +143,9 @@ export const ServiceManagement = () => {
         try {
           await instance.delete(`/api/service/delete/${serviceId}`);
           setServices((prev) => prev.filter((s) => s.serviceId !== serviceId));
-          // Swal.fire("Deleted!", "The service has been deleted.", "success");
           toast.success("SERVICE DELETED SUCCESSFULLY!");
         } catch (error) {
           console.error(error);
-          // Swal.fire("Error", "Failed to delete service.", "error");
           toast.error("Delete service failed.");
         }
       }
@@ -111,7 +155,6 @@ export const ServiceManagement = () => {
   const handleToggleStatusClick = async (serviceId, currentStatus, haveProcess) => {
     const isDisabling = currentStatus === 1;
 
-    // ⚠️ Kiểm tra nếu chưa có quy trình
     if (!haveProcess) {
       await Swal.fire({
         title: "Missing Process",
@@ -122,10 +165,9 @@ export const ServiceManagement = () => {
           confirmButton: "bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded",
         },
       });
-      return; // ❌ Không cho đổi trạng thái
+      return;
     }
 
-    // ✅ Nếu có process → tiếp tục đổi trạng thái
     const result = await Swal.fire({
       title: isDisabling ? "Disable Service" : "Enable Service",
       text: `Are you sure you want to ${isDisabling ? "disable" : "enable"} this service?`,
@@ -144,7 +186,6 @@ export const ServiceManagement = () => {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-
         const res = await instance.put(
           `/api/service/change-status/${serviceId}`,
           {},
@@ -163,7 +204,6 @@ export const ServiceManagement = () => {
                 : s
             )
           );
-
           toast.success("Status changed successfully!");
         } else {
           Swal.fire("Error", "Failed to update service status!", "error");
@@ -175,16 +215,21 @@ export const ServiceManagement = () => {
     }
   };
 
-
   return (
     <div className="text-gray-800 bg-white">
       <Header />
       <div className="pt-16 mx-auto progress-management max-w-7xl">
-        <ProcessNav inPage="Service"/>
+        <ProcessNav inPage="Service" />
         <div className="flex items-center justify-between mt-6">
           <h2 className="text-xl font-semibold">Your Services</h2>
-          <button className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+          {/* <button className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
             <Link to="/CreateService">+ New Service</Link>
+          </button> */}
+          <button
+            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+            onClick={handleCreateServiceClick} // Sử dụng hàm handleCreateServiceClick khi bấm "New Service"
+          >
+            + New Service
           </button>
         </div>
         <div className="flex items-center justify-between mt-4 space-x-6">
@@ -208,25 +253,12 @@ export const ServiceManagement = () => {
               Unavailable
             </div>
           </div>
-
-          <button className="flex items-center gap-2 ml-auto text-red-600">
-            <i className="fa-solid fa-trash"></i>
-            Delete choose
-          </button>
         </div>
-        <div className="relative mt-4 overflow-x-visible">
-          <table className="min-w-full mt-3 text-left border rounded-lg">
+        <div className="relative mt-4 overflow-x-auto">
+          <table id="serviceTable" className="min-w-full mt-3 text-left border rounded-lg">
             <thead className="bg-gray-100">
               <tr className="font-bold text-left text-gray-600">
                 <th className="p-3"></th>
-                <th className="p-3">
-                  <input className="w-4 h-4"
-                    type="checkbox"
-                    checked={isAllChecked}
-                    onChange={handleSelectAll}
-                  />
-                </th>
-                {/* <th className="p-3">Service Id</th> */}
                 <th className="p-3">Service name</th>
                 <th className="hidden p-3 md:table-cell text-end">Price</th>
                 <th className="hidden p-3 md:table-cell">Status</th>
@@ -243,11 +275,6 @@ export const ServiceManagement = () => {
                 filteredServices.map((service, index) => (
                   <tr key={index} className="border-t">
                     <td className="p-3"></td>
-                    <td className="p-3">
-                      <input type="checkbox" className="w-4 h-4"
-                        checked={isAllChecked}
-                        onChange={() => setIsAllChecked(!isAllChecked)} />
-                    </td>
                     <td className="p-3">{service.serviceName}</td>
                     <td className="hidden p-3 md:table-cell text-end">{service.price.toLocaleString()} <span>VND</span></td>
                     <td className="hidden p-3 md:table-cell">
@@ -257,8 +284,12 @@ export const ServiceManagement = () => {
                     </td>
                     <td className="hidden p-3 md:table-cell">{service.categoryName}</td>
                     <td className="p-3 space-x-3">
-                      <button className="text-sm text-red-500" onClick={() => handleDeleteClick(service.serviceId)}><i className="fa-solid fa-trash"></i> Delete</button>
-                      <button className="text-sm text-blue-600" onClick={() => navigate(`/EditService/${service.serviceId}`)}><i className="fa-solid fa-pen"></i> Edit</button>
+                      <button className="text-sm text-red-500" onClick={() => handleDeleteClick(service.serviceId)}>
+                        <i className="fa-solid fa-trash"></i> Delete
+                      </button>
+                      <button className="text-sm text-blue-600" onClick={() => navigate(`/EditService/${service.serviceId}`)}>
+                        <i className="fa-solid fa-pen"></i> Edit
+                      </button>
                       {service.status === 1 ? (
                         <button
                           className="text-sm text-yellow-600"
@@ -274,8 +305,6 @@ export const ServiceManagement = () => {
                           <i className="fa-solid fa-rotate-right"></i> Enable
                         </button>
                       )}
-
-                      {/* 👉 Nút xử lý process */}
                       {service.haveProcess ? (
                         <button
                           className="text-sm text-purple-600"
@@ -302,4 +331,5 @@ export const ServiceManagement = () => {
     </div>
   );
 };
+
 export default ServiceManagement;

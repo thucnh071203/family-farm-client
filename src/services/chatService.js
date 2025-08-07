@@ -1,4 +1,3 @@
-// src/services/chatService.js
 import instance from "../Axios/axiosConfig";
 import { toast } from "react-toastify";
 
@@ -27,7 +26,7 @@ export const handleSend = async ({
       formData.append("FileName", selectedFile.name);
       formData.append(
         "FileType",
-        selectedFile.type.startsWith("image/") ? "image" : "file"
+        selectedFile.type === "image" ? "image" : "file"
       );
     }
 
@@ -48,7 +47,6 @@ export const handleSend = async ({
       toast.error(response.data.message || "Failed to send message!");
     }
   } catch (error) {
-    // toast.error("Failed to send message!");
     console.error("Send message error:", error.response?.data || error.message);
   }
 };
@@ -82,34 +80,6 @@ export const toggleFormat = ({ quillRef, format }) => {
     const isActive = editor.getFormat()[format];
     editor.format(format, !isActive);
   }
-};
-
-// Hàm chọn file
-export const handleFileSelect = ({ event, setSelectedFile }) => {
-  const file = event.target.files[0];
-  if (file) {
-    setSelectedFile({
-      file,
-      url: URL.createObjectURL(file),
-      type: file.type.startsWith("image/") ? "image" : "file",
-      name: file.name,
-    });
-  }
-};
-
-// Hàm xóa file đã chọn
-export const removeSelectedFile = ({
-  selectedFile,
-  setSelectedFile,
-  imageInputRef,
-  fileInputRef,
-}) => {
-  if (selectedFile?.url) {
-    URL.revokeObjectURL(selectedFile.url);
-  }
-  setSelectedFile(null);
-  if (imageInputRef.current) imageInputRef.current.value = "";
-  if (fileInputRef.current) fileInputRef.current.value = "";
 };
 
 // Hàm cuộn xuống cuối
@@ -198,7 +168,7 @@ export const fetchMessages = async ({
     receiverId,
     skip: currentSkip,
     take: TAKE,
-    setSkip: () => {}, // Không cần setSkip trong trường hợp này
+    setSkip: () => {},
     setHasMore,
     setLoadingMore,
     setMessages,

@@ -215,14 +215,15 @@ const PostAIDetail = ({ post }) => {
             className="pl-4 p-3  text-black w-full flex gap-2"
             style={{ border: "0.5px solid #d1d5db" }}
           >
-            {post.postImages.map((img, index) => (
+            {post.postImages.map((postImage, index) => (
               <img
-                className=" w-[100px] h-[100px] object-cover mr-4"
+                key={index}
+                className="w-[100px] h-[100px] object-cover mr-4"
                 src={
-                  img.ImageUrl ||
+                  postImage.imageUrl ||
                   "https://th.bing.com/th/id/OIP.UOAPhQfUAJFR_ynpnMtWqgHaEJ?w=326&h=183&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3"
                 }
-                alt=""
+                alt="post image"
               />
             ))}
           </p>

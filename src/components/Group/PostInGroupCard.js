@@ -18,7 +18,7 @@ const PostInGroupCard = ({
   onDeletePost,
   post,
   onCommentCountChange,
-  groupData
+  groupData,
 }) => {
   const navigate = useNavigate();
   const accIdStorage =
@@ -177,7 +177,7 @@ const PostInGroupCard = ({
     navigate(`/PersonalPage/${accId}`);
   };
   const handleClickToGroupName = (groupId) => {
-    navigate(`/group/${groupId}`);
+    navigate(`/GroupDetail/${groupId}`);
   };
 
   const handleToggleComments = () => {
