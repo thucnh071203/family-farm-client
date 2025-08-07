@@ -52,7 +52,7 @@ const AccountSencorDetail = ({ account }) => {
       );
       const data = await res.json();
       if (data === true) {
-        navigate("/Dashboard");
+        navigate("/ListCensor");
       }
     } catch (err) {
       console.error("Error fetching account censor:", err.message || err);
@@ -75,7 +75,11 @@ const AccountSencorDetail = ({ account }) => {
           />
         </svg>
         <span>
-          <Link to="/Dashboard">HOME</Link> / Account Censor
+          <Link to="/Dashboard">HOME</Link>{" "}
+          <span>
+            <Link to="/ListCensor">/ Account Censor</Link>
+          </span>
+          / Detail
         </span>
       </div>
       <h1 className="text-2xl font-bold text-blue-500 mb-6 text-left">
@@ -84,23 +88,25 @@ const AccountSencorDetail = ({ account }) => {
       <div className="text-left mb-6 bg-[rgba(61,179,251,0.1)] w-full rounded-xl">
         <div className="p-4">
           <p className="text-left">
-            A user has just created an account with the expert role. Please check
-            this user's information and allow creation or not!
+            A user has just created an account with the expert role. Please
+            check this user's information and allow creation or not!
           </p>
-          <div className="mt-8 flex gap-6 text-white">
-            <button
-              onClick={() => updateCensor(1)}
-              className="px-7 pt-2 pb-2 bg-[#EF3E36] rounded-lg"
-            >
-              Refuse
-            </button>
-            <button
-              onClick={() => updateCensor(0)}
-              className="px-7 pt-2 pb-2 bg-[#3DB3FB] rounded-lg"
-            >
-              Allow
-            </button>
-          </div>
+          {account.status === 2 && (
+            <div className="mt-8 flex gap-6 text-white">
+              <button
+                onClick={() => updateCensor(1)}
+                className="px-7 pt-2 pb-2 bg-[#EF3E36] rounded-lg"
+              >
+                Refuse
+              </button>
+              <button
+                onClick={() => updateCensor(0)}
+                className="px-7 pt-2 pb-2 bg-[#3DB3FB] rounded-lg"
+              >
+                Allow
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div className="flex gap-2 w-full align-middle items-center mt-10 font-bold">
@@ -126,39 +132,27 @@ const AccountSencorDetail = ({ account }) => {
           <p className="pl-4">{account.fullName}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-            Username
-          </div>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Username</div>
           <p className="pl-4">{account.username}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-            Address
-          </div>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Address</div>
           <p className="pl-4">{account.address}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-            Phone
-          </div>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Phone</div>
           <p className="pl-4">{account.phoneNumber}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-            Email
-          </div>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Email</div>
           <p className="pl-4">{account.email}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-            Work at
-          </div>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Work at</div>
           <p className="pl-4">{account.workAt || "Fpt"}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-            Study at
-          </div>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Study at</div>
           <p className="pl-4">{account.studyAt || "Fpt"}</p>
         </div>
         <div className="flex text-left items-center">
