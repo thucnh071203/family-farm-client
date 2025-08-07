@@ -7,6 +7,7 @@ import SystemRevenue from "../../components/Statistic/SystemRevenue";
 import TopEngagedPosts from "../../components/Statistic/TopEngagedPosts";
 import WeeklyGrowthChart from "../../components/Statistic/WeeklyGrowthChart";
 import * as signalR from "@microsoft/signalr";
+import CountUp from "react-countup";
 
 const StatisticPage = () => {
   const [counts, setCounts] = useState({
@@ -78,9 +79,6 @@ const StatisticPage = () => {
           console.log(" NewTotalPosts count update:", newTotalPosts);
           setPostCount(newTotalPosts);
         });
-
-
-        
       })
       .catch((err) => {
         console.error(" SignalR connection failed:", err);
@@ -117,8 +115,9 @@ const StatisticPage = () => {
         <div className="bg-white rounded-xl shadow p-6 h-28 flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500">Total Farmer</p>
+
             <h2 className="text-xl font-bold text-blue-700">
-              {counts.Farmer.toLocaleString()}
+              <CountUp end={counts.Farmer} duration={1} separator="," />
             </h2>
           </div>
           <div className="text-3xl text-blue-500">👤</div>
@@ -126,8 +125,9 @@ const StatisticPage = () => {
         <div className="bg-white rounded-xl shadow p-6 h-28 flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500">Total Expert</p>
+
             <h2 className="text-xl font-bold text-blue-700">
-              {counts.Expert.toLocaleString()}
+              <CountUp end={counts.Expert} duration={1} separator="," />
             </h2>
           </div>
           <div className="text-3xl text-green-500">📅</div>
@@ -135,7 +135,10 @@ const StatisticPage = () => {
         <div className="bg-white rounded-xl shadow p-6 h-28 flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-500">Total Posts</p>
-            <h2 className="text-xl font-bold text-blue-700">{totalPosts}</h2>
+
+            <h2 className="text-xl font-bold text-blue-700">
+              <CountUp end={totalPosts} duration={1} separator="," />
+            </h2>
           </div>
           <div className="text-3xl text-purple-500">📝</div>
         </div>
