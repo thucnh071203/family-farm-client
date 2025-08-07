@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import alertICon from "../../assets/icons/nam_alert_icon.svg"
+import FriendSuggestButton from "../../components/Friend/FriendSuggestButton";
 
 const PersonalPage = () => {
   const { user } = useUser();
@@ -29,7 +30,7 @@ const PersonalPage = () => {
   const [posts, setPosts] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [hasCreditCard, setHasCreditCard] = useState(null);
-
+  const [listCheckRelationShip, setlistCheckRelationShip] = useState([]);
 
   const { accId } = useParams();
   const defaultBackground =
@@ -343,11 +344,11 @@ const PersonalPage = () => {
           Send Message
         </button>
         {/* FriendActionButton */}
-        <FriendActionButton
+        {/* <FriendSuggestButton
           status={friendshipStatus}
           roleId={roleId}
           accId={accId}
-        />
+        /> */}
       </div>
     );
   };
@@ -385,6 +386,48 @@ const PersonalPage = () => {
     }
   }, [accId, isOwner, accessToken]);
 
+  const fetchCheckRelationShip = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const res = await fetch(
+        `https://localhost:7280/api/friend/list-account-no-relation`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const jsonArray = await res.json();
+      console.log("API response (list-account-no-relation):", jsonArray);
+
+      // Gộp tất cả data từ các object có isSuccess === true
+      const combinedList = jsonArray
+        .filter((item) => item.isSuccess && Array.isArray(item.data))
+        .flatMap((item) => item.data); // dùng flatMap để nối tất cả mảng lại
+
+      if (combinedList.length > 0) {
+        setlistCheckRelationShip(combinedList);
+        console.log("Danh sách không có quan hệ:", combinedList);
+      } else {
+        setlistCheckRelationShip([]);
+      }
+    } catch (err) {
+      console.error("Error fetching friends:", err.message || err);
+      setlistCheckRelationShip([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchCheckRelationShip(); // chỉ gọi khi component load hoặc section thay đổi
+  }, []);
+  const matchedAccountButton =
+    !isOwner &&
+    Array.isArray(listCheckRelationShip) &&
+    listCheckRelationShip.find((a) => a.accId === accId);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -398,6 +441,15 @@ const PersonalPage = () => {
                 {renderActionButton()}
               </div>
             )}
+            {matchedAccountButton && (
+                <div className="absolute right-40 bottom-4">
+                  <FriendSuggestButton
+                    status={matchedAccountButton.friendStatus}
+                    roleId={matchedAccountButton.roleId}
+                    accId={matchedAccountButton.accId}
+                  />
+                </div>
+              )}
             <ProfileAvatar
               initialProfileImage={avatar}
               fullName={fullName}

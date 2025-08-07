@@ -8,6 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
 import instance from "../../Axios/axiosConfig";
+import FriendSuggestButton from "../../components/Friend/FriendSuggestButton";
 
 const UserFriendOfOther = () => {
   const friends = [
@@ -252,7 +253,7 @@ const UserFriendOfOther = () => {
               <CoverBackground backgroundImage={background} isOwner={isOwner} />
               {matchedAccount && (
                 <div className="absolute right-4 bottom-4">
-                  <FriendActionButton
+                  <FriendSuggestButton
                     status={matchedAccount.friendStatus}
                     roleId={matchedAccount.roleId}
                     accId={matchedAccount.accId}

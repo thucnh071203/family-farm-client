@@ -752,7 +752,7 @@ const GroupDetailPage = () => {
           )}
 
           {selectedTab === "posts" && groupDetail && (
-            <div className="w-full">
+            <div className="md:w-[770px] w-full">
               <PostCreate
                 profileImage={avatarUrl}
                 onPostCreate={handlePostCreate}
