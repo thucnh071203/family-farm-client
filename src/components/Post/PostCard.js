@@ -13,7 +13,7 @@ import instance from "../../Axios/axiosConfig";
 import default_avatar from "../../assets/images/default-avatar.png"
 import SharePostPopup from "./SharePostPopup";
 
-const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCommentCountChange }) => {
+const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCommentCountChange, onUnsavedPost }) => {
   const navigate = useNavigate();
   const accIdStorage = localStorage.getItem("accId") || sessionStorage.getItem("accId");
   const isOwner = (post.accId !== accIdStorage) ? false : true;
@@ -139,7 +139,7 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
   }, [post?.postId]);
 
   return (
-    <div className="p-4 text-left bg-white border border-gray-200 border-solid rounded-lg shadow-md">
+    <div className="w-full p-4 text-left bg-white border border-gray-200 border-solid rounded-lg shadow-md">
       <div className="flex justify-between">
         <div className="flex items-center gap-3 mb-3">
           <img src={postData.avatar} alt="Avatar" className="w-10 h-10 rounded-full" style={{ cursor: "pointer" }}
@@ -154,6 +154,7 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
             isSavedPost={isSavedPost}
             setIsSavedPost={setIsSavedPost}
             onRestore={onRestore}
+            onUnsavedPost={onUnsavedPost}
             onHardDelete={onHardDelete}
             isDeleted={isDeleted}
             onDeletePost={onDeletePost}

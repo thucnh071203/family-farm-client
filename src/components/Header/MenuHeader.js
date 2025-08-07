@@ -10,6 +10,7 @@ import recycle_bin_icon from "../../assets/icons/recycle-bin-svgrepo-com.svg";
 import password_icon_black from "../../assets/icons/password_icon_black.svg";
 import { getOwnProfile } from "../../services/accountService";
 import instance from '../../Axios/axiosConfig';
+import savedPostIcon from "../../assets/icons/nam_savedPost_icon.svg"
 
 const MenuHeader = ({ onToggle, isVisible }) => {
     const navigate = useNavigate();
@@ -119,6 +120,14 @@ const MenuHeader = ({ onToggle, isVisible }) => {
                         >
                             <img src={recycle_bin_icon} alt="Service" className="h-5" />
                             <p className="mt-2">Recycle Bin</p>
+                        </Link>
+                        <Link
+                            to="/SavedPost"
+                            className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                            onClick={onToggle}
+                        >
+                            <img src={savedPostIcon} alt="Saved Post" className="h-5" />
+                            <p className="mt-2">Saved Posts</p>
                         </Link>
                         <Link
                             to={profileData.otp === -1 ? "/SetPassword" : "/ChangePassword"}
