@@ -14,7 +14,7 @@ import default_avatar from "../../assets/images/default-avatar.png";
 import PostDetailModal from "./PostDetailModal";
 import SharePostPopup from "./SharePostPopup";
 
-const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCommentCountChange }) => {
+const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCommentCountChange, onUnsavedPost }) => {
   const navigate = useNavigate();
   const accIdStorage = localStorage.getItem("accId") || sessionStorage.getItem("accId");
   const isOwner = (post.accId !== accIdStorage) ? false : true;
@@ -168,6 +168,7 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
               isSavedPost={isSavedPost}
               setIsSavedPost={setIsSavedPost}
               onRestore={onRestore}
+              onUnsavedPost={onUnsavedPost}
               onHardDelete={onHardDelete}
               isDeleted={isDeleted}
               onDeletePost={onDeletePost}

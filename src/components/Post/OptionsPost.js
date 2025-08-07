@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import ReportModal from "./ReportModal";
 
-const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isDeleted, onDeletePost, postIdParam, isOwnerParam }) => {
+const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isDeleted, onDeletePost, postIdParam, isOwnerParam, onUnsavedPost }) => {
   const navigate = useNavigate();
   const [accessToken, setAccessToken] = useState("");
   const [showPopup, setShowPopup] = useState(false);
@@ -94,6 +94,7 @@ const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isD
       if (response.status === 200) {
         setIsSavedPost(false);
         toast.success("Removed post from favorites successfully!");
+        onUnsavedPost(postId);
         setShowPopup(false); // Đóng popup sau khi bỏ lưu
       }
     } catch (error) {
