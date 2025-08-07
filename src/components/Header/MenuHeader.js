@@ -14,32 +14,57 @@ import instance from '../../Axios/axiosConfig';
 const MenuHeader = ({ onToggle, isVisible }) => {
     const navigate = useNavigate();
     const [profileData, setProfileData] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    // Lấy profile data
     useEffect(() => {
+        let isMounted = true;
+
         const fetchProfile = async () => {
-            const data = await getOwnProfile();
-            setProfileData(data.data);
+            setLoading(true);
+            setError(null);
+
+            try {
+                const data = await getOwnProfile();
+                if (isMounted) {
+                    if (data.error) {
+                        setError(data.error); // Xử lý trường hợp lỗi từ getOwnProfile
+                    } else {
+                        setProfileData(data.data); // Chỉ truy cập data.data nếu không có lỗi
+                    }
+                    setLoading(false);
+                }
+            } catch (error) {
+                if (isMounted) {
+                    setError("Đã xảy ra lỗi khi lấy thông tin hồ sơ.");
+                    setLoading(false);
+                }
+            }
         };
+
         fetchProfile();
+
+        return () => {
+            isMounted = false; // Cleanup để tránh setState trên component đã unmount
+        };
     }, []);
 
     const handleLogout = async () => {
-    try {
-        await instance.post('/api/authen/logout');
-        sessionStorage.clear();
-        localStorage.clear();
-        
-        // Force reload toàn bộ app
-        window.location.reload();
-        navigate('/Login');
-    } catch (error) {
-        console.error('Logout failed:', error);
-        sessionStorage.clear();
-        localStorage.clear();
-        window.location.reload();
-    }
-};
+        try {
+            await instance.post('/api/authen/logout');
+            sessionStorage.clear();
+            localStorage.clear();
+
+            // Force reload toàn bộ app
+            window.location.reload();
+            navigate('/Login');
+        } catch (error) {
+            console.error('Logout failed:', error);
+            sessionStorage.clear();
+            localStorage.clear();
+            window.location.reload();
+        }
+    };
 
     const roleId = localStorage.getItem("roleId") || sessionStorage.getItem("roleId");
 
@@ -73,14 +98,14 @@ const MenuHeader = ({ onToggle, isVisible }) => {
                             <p className="mt-2">My Profile</p>
                         </Link>
                         {roleId === "68007b0387b41211f0af1d56" && (
-                        <Link
-                            to="/PaymentUserPage"
-                            className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
-                            onClick={onToggle}
-                        >
-                            <img src={payment_icon} alt="Payment" className="h-5" />
-                            <p className="mt-2">Payment</p>
-                        </Link>
+                            <Link
+                                to="/PaymentUserPage"
+                                className="flex flex-col items-center p-4 text-sm text-gray-700 rounded-lg hover:bg-gray-100"
+                                onClick={onToggle}
+                            >
+                                <img src={payment_icon} alt="Payment" className="h-5" />
+                                <p className="mt-2">Payment</p>
+                            </Link>
                         )}
                         {roleId === "68007b2a87b41211f0af1d57" && (
                             <Link
