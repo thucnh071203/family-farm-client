@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
 import instance from "../../Axios/axiosConfig";
 import PhotoItem from "../../components/Profile/PhotoItem";
+import FriendSuggestButton from "../../components/Friend/FriendSuggestButton";
 
 const ListPhotoOther = () => {
   const { user } = useUser();
@@ -183,7 +184,7 @@ const ListPhotoOther = () => {
               <CoverBackground backgroundImage={background} isOwner={isOwner} />
               {matchedAccount && (
                 <div className="absolute right-4 bottom-4">
-                  <FriendActionButton
+                  <FriendSuggestButton
                     status={matchedAccount.friendStatus}
                     roleId={matchedAccount.roleId}
                     accId={matchedAccount.accId}

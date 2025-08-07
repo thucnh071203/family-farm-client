@@ -1,8 +1,8 @@
 import logo from "../../assets/images/logo_img.png";
 import default_avatar from "../../assets/images/default-avatar.png";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
 const SidebarDashboard = () => {
   const [openSections, setOpenSections] = useState({
     censor: true,
@@ -12,6 +12,23 @@ const SidebarDashboard = () => {
 
   const toggleSection = (section) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await instance.post("/api/authen/logout");
+      sessionStorage.clear();
+      localStorage.clear();
+
+      // Force reload toàn bộ app
+      window.location.reload();
+      navigate("/Login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      sessionStorage.clear();
+      localStorage.clear();
+      window.location.reload();
+    }
   };
 
   return (
@@ -58,14 +75,16 @@ const SidebarDashboard = () => {
             <span>Censor</span>
             <span className="ml-auto">
               <i
-                className={`fa-solid ${openSections.censor ? "fa-angle-down" : "fa-angle-right"
-                  }`}
+                className={`fa-solid ${
+                  openSections.censor ? "fa-angle-down" : "fa-angle-right"
+                }`}
               ></i>
             </span>
           </div>
           <ul
-            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.censor ? "" : "hidden"
-              }`}
+            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${
+              openSections.censor ? "" : "hidden"
+            }`}
           >
             <li>
               <Link to="/ListPostCheckedAI">AI Checker</Link>
@@ -93,14 +112,16 @@ const SidebarDashboard = () => {
             <span>Management</span>
             <span className="ml-auto">
               <i
-                className={`fa-solid ${openSections.management ? "fa-angle-down" : "fa-angle-right"
-                  }`}
+                className={`fa-solid ${
+                  openSections.management ? "fa-angle-down" : "fa-angle-right"
+                }`}
               ></i>
             </span>
           </div>
           <ul
-            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.management ? "" : "hidden"
-              }`}
+            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${
+              openSections.management ? "" : "hidden"
+            }`}
           >
             <li>
               <Link to="/ListAccount">Account Management</Link>
@@ -134,16 +155,17 @@ const SidebarDashboard = () => {
             <span>System Management</span>
             <span className="ml-auto">
               <i
-                className={`fa-solid ${openSections.system ? "fa-angle-down" : "fa-angle-right"
-                  }`}
+                className={`fa-solid ${
+                  openSections.system ? "fa-angle-down" : "fa-angle-right"
+                }`}
               ></i>
             </span>
           </div>
           <ul
-            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${openSections.system ? "" : "hidden"
-              }`}
+            className={`ml-6 space-y-3 text-[#3E3F5E]/25 font-semibold cursor-pointer ${
+              openSections.system ? "" : "hidden"
+            }`}
           >
-            <li>Chatbot</li>
             <li>
               <Link to="/CateService">Category Service</Link>
             </li>
@@ -165,7 +187,10 @@ const SidebarDashboard = () => {
           ></img>
           <span className="font-bold">Profile Setting</span>
         </div>
-        <button className="bg-red-100 text-[#EF3E36] py-4 rounded hover:bg-red-200 text-md w-full">
+        <button
+          onClick={handleLogout}
+          className="bg-red-100 text-[#EF3E36] py-4 rounded hover:bg-red-200 text-md w-full"
+        >
           <span className="font-semibold">Log out </span>
           <i className="fa-solid fa-arrow-right-from-bracket"></i>
         </button>

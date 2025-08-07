@@ -28,7 +28,17 @@ const LoginForm = () => {
 
   // Helper function để clear tất cả tokens
   const clearAllTokens = () => {
-    ["accessToken", "refreshToken", "username", "accId", "roleId", "tokenExpiry", "fullName", "avatarUrl", "profileData"].forEach(key => {
+    [
+      "accessToken",
+      "refreshToken",
+      "username",
+      "accId",
+      "roleId",
+      "tokenExpiry",
+      "fullName",
+      "avatarUrl",
+      "profileData",
+    ].forEach((key) => {
       localStorage.removeItem(key);
       sessionStorage.removeItem(key);
     });
@@ -40,7 +50,14 @@ const LoginForm = () => {
 
     // Clear tokens từ storage khác trước khi lưu
     const otherStorage = remember ? sessionStorage : localStorage;
-    ["accessToken", "refreshToken", "username", "accId", "roleId", "tokenExpiry"].forEach(key => {
+    [
+      "accessToken",
+      "refreshToken",
+      "username",
+      "accId",
+      "roleId",
+      "tokenExpiry",
+    ].forEach((key) => {
       otherStorage.removeItem(key);
     });
 
@@ -61,12 +78,15 @@ const LoginForm = () => {
     const otherStorage = remember ? sessionStorage : localStorage;
 
     // Clear profile data từ storage khác
-    ["fullName", "avatarUrl", "profileData"].forEach(key => {
+    ["fullName", "avatarUrl", "profileData"].forEach((key) => {
       otherStorage.removeItem(key);
     });
 
     // Lưu profile data
-    storage.setItem("fullName", profileData.data.fullName || storage.getItem("username"));
+    storage.setItem(
+      "fullName",
+      profileData.data.fullName || storage.getItem("username")
+    );
     storage.setItem("avatarUrl", profileData.data.avatar || "");
     storage.setItem("profileData", JSON.stringify(profileData.data || {}));
   };
@@ -121,9 +141,13 @@ const LoginForm = () => {
               };
 
               try {
-                const loginResponse = await instance.post("api/authen/login-facebook", payload, {
-                  skipInterceptor: true
-                });
+                const loginResponse = await instance.post(
+                  "api/authen/login-facebook",
+                  payload,
+                  {
+                    skipInterceptor: true,
+                  }
+                );
 
                 const loginData = loginResponse.data;
 
@@ -205,12 +229,16 @@ const LoginForm = () => {
       // Clear any existing tokens before new login
       clearAllTokens();
 
-      const loginResponse = await instance.post('/api/authen/login', {
-        Identifier: username,
-        Password: password,
-      }, {
-        skipInterceptor: true
-      });
+      const loginResponse = await instance.post(
+        "/api/authen/login",
+        {
+          Identifier: username,
+          Password: password,
+        },
+        {
+          skipInterceptor: true,
+        }
+      );
 
       const loginData = loginResponse.data;
 
@@ -239,6 +267,7 @@ const LoginForm = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
+
 
       if (error.response) {
         const status = error.response.status;
@@ -282,6 +311,7 @@ const LoginForm = () => {
         } else {
           toast.error("An unknown error occurred");
         }
+
       } else {
         toast.error("Server not responding");
       }
@@ -292,7 +322,7 @@ const LoginForm = () => {
     <div className="overlap w-full md:w-1/2 mt-6 md:mt-0 md:ml-[5%] bg-gray-200 bg-opacity-25">
       <div className="form-container w-full max-w-[466px] flex flex-col gap-7 mx-auto">
         <div className="flex items-center justify-center mx-auto logo gap-x-4">
-          <img className="image" src={logo} alt="Logo" />
+          <img className="w-12 h-auto" src={logo} alt="Logo" />
           <div className="family-farm">Family Farm</div>
         </div>
 
@@ -324,7 +354,9 @@ const LoginForm = () => {
             </div>
           </div>
           {errors.username && (
-            <span className="text-sm italic text-red-600">{errors.username}</span>
+            <span className="text-sm italic text-red-600">
+              {errors.username}
+            </span>
           )}
         </div>
 
@@ -371,7 +403,9 @@ const LoginForm = () => {
             </div>
           </div>
           {errors.password && (
-            <span className="text-sm italic text-red-600">{errors.password}</span>
+            <span className="text-sm italic text-red-600">
+              {errors.password}
+            </span>
           )}
         </div>
 
@@ -391,7 +425,8 @@ const LoginForm = () => {
         </div>
 
         <div className="w-full frame-2">
-          <div className="div-wrapper"
+          <div
+            className="div-wrapper"
             onClick={(e) => {
               e.preventDefault();
               handleLogin();
@@ -414,16 +449,25 @@ const LoginForm = () => {
           <div className="flex flex-col items-center justify-center frame-9 lg:flex-row">
             <div className="frame-10 w-full lg:w-[223px]">
               <div
-                className={`frame-10 w-full lg:w-[223px] cursor-pointer flex items-center justify-center border border-gray-300 rounded-md py-2 ${loading ? 'opacity-50 pointer-events-none' : ''}`}
+                className={`frame-10 w-full lg:w-[223px] cursor-pointer flex items-center justify-center border border-gray-300 rounded-md py-2 ${
+                  loading ? "opacity-50 pointer-events-none" : ""
+                }`}
                 onClick={handleGoogleLogin}
               >
-                <img className="img w-6 h-6 mr-2" src={googleIcon} alt="Google Icon" />
+                <img
+                  className="img w-6 h-6 mr-2"
+                  src={googleIcon}
+                  alt="Google Icon"
+                />
                 <div className="text-wrapper-13">
-                  {loading ? 'Logging in...' : 'Continue with Google'}
+                  {loading ? "Logging in..." : "Continue with Google"}
                 </div>
               </div>
             </div>
-            <div className="frame-11 w-full lg:w-[223px]" onClick={handleFacebookLogin}>
+            <div
+              className="frame-11 w-full lg:w-[223px]"
+              onClick={handleFacebookLogin}
+            >
               <img className="img" src={fbIcon} alt="Facebook Icon" />
               <div className="text-wrapper-14">Continue with Facebook</div>
             </div>

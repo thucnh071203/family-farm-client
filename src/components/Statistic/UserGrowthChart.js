@@ -37,9 +37,15 @@ export const UserGrowthChart = () => {
     if (fromDate && toDate) {
       url += `?fromDate=${fromDate}&toDate=${toDate}`;
     }
-
+ const token = localStorage.getItem("accessToken");
     try {
-      const response = await fetch(url);
+        const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Thêm Authorization header
+      },
+    });
       if (!response.ok) throw new Error("Không thể lấy dữ liệu");
 
       const result = await response.json();
