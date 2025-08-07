@@ -38,7 +38,6 @@ export const Statistic1 = () => {
             }
           });
 
-        // Fetch initial posts
         fetch("https://localhost:7280/api/statistic/top-engaged")
           .then((res) => res.json())
           .then((data) => setPosts(data))

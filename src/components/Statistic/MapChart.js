@@ -178,7 +178,7 @@ export function MapChart() {
 
         connection.on("UsersByProvince", (newData) => {
           console.log("Realtime update:", newData);
-          renderChart(newData.data);
+          renderChart(newData);
         });
 
         await connection.start();
@@ -190,7 +190,6 @@ export function MapChart() {
 
     loadMapAndConnect();
 
-    // Cleanup khi unmount
     return () => {
       if (echartsInstance.current) {
         echartsInstance.current.dispose();
