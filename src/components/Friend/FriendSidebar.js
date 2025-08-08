@@ -4,6 +4,25 @@ import { Link, useLocation } from "react-router-dom";
 const FriendSidebar = ({ roleId }) => {
   const location = useLocation();
   const isActive = (path) => location.pathname === path;
+
+  const isYourFriendsActive = () => {
+    const path = location.pathname;
+
+    // Active nếu:
+    // 1. Đúng chính xác /friend
+    // 2. Hoặc không khớp với bất kỳ mục phụ nào
+    return (
+      path === "/friend" ||
+      ![
+        "/friend/requests-receive",
+        "/friend/requests-sent",
+        "/friend/list-follower",
+        "/friend/list-following",
+        "/friend/suggestion-friend" 
+      ].includes(path)
+    );
+  };
+
   return (
     <div
       className="w-[289px] h-screen bg-[#E5E4E9] font-roboto rounded-r-[10px] hidden md:block
@@ -87,7 +106,7 @@ const FriendSidebar = ({ roleId }) => {
           {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"> */}
           <button
             className={`flex w-full h-10 rounded-[10px] ${
-              isActive("/friend")
+              isYourFriendsActive()
                 ? "bg-[#3DB3FB] text-white"
                 : "hover:bg-[#999999]"
             }`}
