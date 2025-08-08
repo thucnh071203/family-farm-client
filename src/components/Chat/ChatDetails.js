@@ -428,15 +428,15 @@ const ChatDetails = ({
                                                     )}
                                                     {group.senderId === currentUserId && menuMessageId === detail.chatDetailId && (
                                                         <div
-                                                            className={`absolute top-[calc(50%+1.5rem)] ${group.senderId === currentUserId ? "left-[-30px]" : "right-10"
+                                                            className={`absolute item-center top-[calc(50%+1.5rem)] ${group.senderId === currentUserId ? "left-[-30px]" : "right-10"
                                                                 } bg-white border border-gray-300 rounded shadow-lg z-10`}
                                                         >
                                                             <button
                                                                 onClick={() => handleRecallMessage(detail.chatDetailId)}
-                                                                className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left border border-solid border-gray-400 rounded-md"
+                                                                className="px-4 flex py-2 gap-1 text-sm text-red-600 hover:bg-gray-100 w-full text-left border border-solid border-gray-400 rounded-md item-center"
                                                                 aria-label="Recall message"
                                                             >
-                                                                <i className="fa fa-undo" aria-hidden="true"></i> Recall
+                                                                <i className="fa fa-undo text-base" aria-hidden="true"></i> Recall
                                                             </button>
                                                         </div>
                                                     )}
@@ -496,7 +496,7 @@ const ChatDetails = ({
                     <input
                         type="file"
                         id="imageInput"
-                        accept=".jpg,.jpeg,.png,.svg" // Giới hạn định dạng ảnh
+                        accept="image/*" // Giới hạn định dạng ảnh
                         className="hidden"
                         ref={imageInputRef}
                         onChange={(e) => handleFileSelect({ event: e, setSelectedFile })}

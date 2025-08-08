@@ -159,19 +159,13 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
           onCommentCountChange(commentCount - 1);
           setMenuOpenCommentId(null);
 
-          Swal.fire({
-            icon: "success",
-            title: "Deleted!",
-            text: "Your comment has been deleted.",
-            timer: 1500,
-            showConfirmButton: false,
-          });
+          toast.success("Your comment has been deleted.")
         } else {
           throw new Error(response.data.message || "Cannot delete comment");
         }
       } catch (error) {
         console.error("Failed to delete comment:", error);
-        Swal.fire("Error", error.message || "Cannot delete comment", "error");
+        toast.error(error.message || "Cannot delete comment")
       }
     }
   };
@@ -185,7 +179,7 @@ const CommentSection = ({ postId, commentCount, onCommentCountChange }) => {
   );
 
   return (
-    <div className="mt-4 border-t border-gray-200 pt-4">
+    <div className="border-t border-gray-200">
       <div className="flex flex-col gap-4 max-h-[300px] overflow-y-auto">
         {sortedComments.length > 0 ? (
           sortedComments.map((comment) => (

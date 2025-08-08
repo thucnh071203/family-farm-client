@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CreatePostCate = () => {
   const [categoryName, setCategoryName] = useState("");
@@ -25,6 +26,7 @@ const CreatePostCate = () => {
           },
         }
       );
+      toast.success("Create category post successfully!")
       setMessage("✅ Created successfully!");
       setCategoryName("");
       setCategoryDescription("");

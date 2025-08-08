@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const UpdatePostCate = () => {
   const { id } = useParams(); // lấy categoryId từ URL
@@ -49,12 +50,11 @@ const UpdatePostCate = () => {
           },
         }
       );
-      setTimeout(() => {
-        navigate("/PostCatePage");
-      }, 1000);
+      toast.success("Update category post successfully!") 
+      navigate("/PostCatePage");
     } catch (err) {
       console.error("Cập nhật thất bại:", err);
-      alert("Update failed!");
+      toast.error("Update failed!");
     }
   };
 

@@ -151,7 +151,7 @@ const SharePostCard = ({ post }) => {
           </div>
         </div>
         <div>
-          <OptionsPost />
+          {/* <OptionsPost /> */}
         </div>
       </div>
       
