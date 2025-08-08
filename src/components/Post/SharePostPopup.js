@@ -179,7 +179,7 @@ const SharePostPopup = ({ post, onClose, onSharedPost }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-[1002] flex items-center justify-center overflow-auto bg-black bg-opacity-50">
       <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-lg shadow-lg">
         <div className="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">

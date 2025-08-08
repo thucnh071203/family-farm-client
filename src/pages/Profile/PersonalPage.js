@@ -423,6 +423,7 @@ const PersonalPage = () => {
   useEffect(() => {
     fetchCheckRelationShip(); // chỉ gọi khi component load hoặc section thay đổi
   }, []);
+
   const matchedAccountButton =
     !isOwner &&
     Array.isArray(listCheckRelationShip) &&
@@ -503,9 +504,10 @@ const PersonalPage = () => {
               )}
 
               <PostFilters />
+              
               {!posts || posts.length <= 0 ? (
                 <p className="font-normal text-gray-300 text-lg">
-                  You have no posts in the trash!
+                  You have no any posts!
                 </p>
               ) : (
                 posts.map((postMapper, index) => (

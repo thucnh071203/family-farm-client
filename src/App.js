@@ -106,6 +106,7 @@ import CreateExtraProcess from "./pages/Subprocess/CreateExtraProcess";
 import Chatbot from "./components/Chat/ChatBot";
 import AddCreditCardPage from "./pages/Profile/CreditCardPage";
 import PaymentUserPage from "./pages/PaymentPage/PaymentUserPage";
+// import PostDetail from "./pages/Post/PostDetailPage";
 
 const AppContent = () => {
   const navigate = useNavigate();
@@ -182,7 +183,7 @@ const AppContent = () => {
             <Route path="/GroupPage" element={<GroupPage />} />
             <Route path="/JoinRequestsListPage" element={<JoinRequestsListPage />} />
             <Route path="/PermissionGroupPage" element={<PermissionGroupPage />} />
-            <Route path="/SavedPostPage" element={<SavedPostPage />} />
+            <Route path="/SavedPost" element={<SavedPostPage />} />
             <Route path="/CreateService" element={<CreateServicePage />} />
             <Route path="/EditService/:id" element={<EditServicePage />} />
             <Route path="/ServiceDetail/:id" element={<ServiceDetailPage />} />
@@ -240,6 +241,7 @@ const AppContent = () => {
             <Route path="/RequestExtra" element={<CreateExtraProcess />} />
             <Route path="/CreditCardPage" element={<AddCreditCardPage />} />
             <Route path="/PaymentUserPage" element={<PaymentUserPage />} />
+            {/* <Route path="/PostDetail/:postId" element={<PostDetail />} /> */}
           </>
         ) : (
           <Route path="*" element={<LoginPage />} /> // Chuyển hướng tất cả các route không hợp lệ về Login
