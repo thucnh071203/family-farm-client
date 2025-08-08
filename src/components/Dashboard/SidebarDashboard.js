@@ -35,7 +35,7 @@ const SidebarDashboard = () => {
     <div className="w-[25%] h-screen bg-white shadow-md p-4 px-6 flex flex-col text-left">
       <div>
         <div className="font-bold mb-6 flex items-center gap-4">
-          <img src={logo} alt="logo" className="h-16 w-16"></img>
+          <img src={logo} alt="logo" className="w-[50px]"></img>
           <span className="text-lg text-[#3DB3FB]">Dashboard</span>
         </div>
         <nav className="text-sm">
