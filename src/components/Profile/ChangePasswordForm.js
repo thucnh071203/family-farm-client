@@ -48,7 +48,7 @@ const ChangePasswordForm = () => {
     return (
         <div className="text-left border-solid border-0 border-t-[5px] border-t-[#3DB3FB] border-b-[5px] border-b-[#2BB673] max-w-4xl w-full px-32 bg-white max-h-min">
             <div className="flex items-center gap-4 py-6">
-                <img src={logo} alt="" />
+                <img src={logo} alt="" className="h-16 w-16"/>
                 <h2 className="text-2xl font-bold">Change your password</h2>
             </div>
             <p className="font-semibold">Hi,</p>

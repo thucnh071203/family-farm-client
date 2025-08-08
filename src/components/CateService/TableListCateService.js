@@ -5,6 +5,7 @@ import "datatables.net";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import React, { useEffect, useRef } from "react";
+import { toast } from "react-toastify";
 
 const TableListCateService = ({ displayList }) => {
   const tableRef = useRef(null);
@@ -38,11 +39,12 @@ const TableListCateService = ({ displayList }) => {
 
           const data = await res.json();
           if (data.success === true) {
-            Swal.fire(
-              "Deleted!",
-              "The category service has been deleted.",
-              "success"
-            );
+            // Swal.fire(
+            //   "Deleted!",
+            //   "The category service has been deleted.",
+            //   "success"
+            // );
+            toast.success("The category service has been deleted")
           }
         } catch (err) {
           // console.error("Error fetching account censor:", err.message || err);
