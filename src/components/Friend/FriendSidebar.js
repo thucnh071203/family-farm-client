@@ -1,7 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const FriendSidebar = ({ roleId }) => {
+  const location = useLocation();
+  const isActive = (path) => location.pathname === path;
   return (
     <div
       className="w-[289px] h-screen bg-[#E5E4E9] font-roboto rounded-r-[10px] hidden md:block
@@ -13,7 +15,14 @@ const FriendSidebar = ({ roleId }) => {
 
       <div className="mx-8 mt-11 w-[225px] h-auto flex flex-col gap-4">
         <Link to="/friend/requests-receive">
-          <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"> */}
+          <button
+            className={`flex w-full h-10 rounded-[10px] ${
+              isActive("/friend/requests-receive")
+                ? "bg-[#3DB3FB] text-white"
+                : "hover:bg-[#999999]"
+            }`}
+          >
             <div className="mx-4 flex items-center">
               <i className="fa-solid fa-user-group"></i>
             </div>
@@ -22,7 +31,14 @@ const FriendSidebar = ({ roleId }) => {
         </Link>
 
         <Link to="/friend/requests-sent">
-          <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"> */}
+          <button
+            className={`flex w-full h-10 rounded-[10px] ${
+              isActive("/friend/requests-sent")
+                ? "bg-[#3DB3FB] text-white"
+                : "hover:bg-[#999999]"
+            }`}
+          >
             <div className="mx-4 flex items-center">
               <i className="fa-solid fa-user-group"></i>
             </div>
@@ -32,7 +48,14 @@ const FriendSidebar = ({ roleId }) => {
 
         {roleId === "68007b2a87b41211f0af1d57" && ( // Expert
           <Link to="/friend/list-follower">
-            <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+            {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"> */}
+            <button
+              className={`flex w-full h-10 rounded-[10px] ${
+                isActive("/friend/list-follower")
+                  ? "bg-[#3DB3FB] text-white"
+                  : "hover:bg-[#999999]"
+              }`}
+            >
               <div className="mx-4 flex items-center">
                 <i className="fa-solid fa-user-group"></i>
               </div>
@@ -43,7 +66,14 @@ const FriendSidebar = ({ roleId }) => {
 
         {roleId === "68007b0387b41211f0af1d56" && ( // Farmer
           <Link to="/friend/list-following">
-            <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+            {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"> */}
+            <button
+              className={`flex w-full h-10 rounded-[10px] ${
+                isActive("/friend/list-following")
+                  ? "bg-[#3DB3FB] text-white"
+                  : "hover:bg-[#999999]"
+              }`}
+            >
               <div className="mx-4 flex items-center">
                 <i className="fa-solid fa-user-plus"></i>
               </div>
@@ -54,7 +84,14 @@ const FriendSidebar = ({ roleId }) => {
 
         {/* Shared by both roles */}
         <Link to="/friend">
-          <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"> */}
+          <button
+            className={`flex w-full h-10 rounded-[10px] ${
+              isActive("/friend")
+                ? "bg-[#3DB3FB] text-white"
+                : "hover:bg-[#999999]"
+            }`}
+          >
             <div className="mx-4 flex items-center">
               <i className="fa-solid fa-user-plus"></i>
             </div>
@@ -63,7 +100,14 @@ const FriendSidebar = ({ roleId }) => {
         </Link>
 
         <Link to="/friend/suggestion-friend">
-          <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]">
+          {/* <button className="hover:bg-[#999999] flex w-full h-10 rounded-[10px]"> */}
+          <button
+            className={`flex w-full h-10 rounded-[10px] ${
+              isActive("/friend/suggestion-friend")
+                ? "bg-[#3DB3FB] text-white"
+                : "hover:bg-[#999999]"
+            }`}
+          >
             <div className="mx-4 flex items-center">
               <i className="fa-solid fa-user-plus"></i>
             </div>
