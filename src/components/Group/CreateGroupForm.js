@@ -304,7 +304,7 @@ export default function CreateGroupForm() {
             <img
               src={avatarUrl}
               alt="avatar"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-full"
             />
           </div>
           <div className="admin-info flex flex-col gap-2">
@@ -465,7 +465,7 @@ export default function CreateGroupForm() {
                 <div className="member-info flex flex-row items-center gap-2">
                   <div className="member-avatar rounded-full w-[32px] h-[32px] overflow-hidden">
                     <img
-                      src={member.avatar || "/default-avatar.png"}
+                      src={member.avatar || defaultAvatar}
                       alt={member.fullName}
                     />
                   </div>
