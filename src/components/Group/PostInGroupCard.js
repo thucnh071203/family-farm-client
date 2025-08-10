@@ -18,7 +18,7 @@ const PostInGroupCard = ({
   onDeletePost,
   post,
   onCommentCountChange,
-  groupData
+  groupData,
 }) => {
   const navigate = useNavigate();
   const accIdStorage =

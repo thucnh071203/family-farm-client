@@ -36,7 +36,6 @@ const HomePage = () => {
     const storedAvatarUrl =
       localStorage.getItem("avatarUrl") || sessionStorage.getItem("avatarUrl");
 
-
     if (storedAccId) {
       setAccountId(storedAccId);
       setAvatarUrl(storedAvatarUrl || defaultAvatar);
@@ -44,7 +43,7 @@ const HomePage = () => {
   }, []);
 
   const fetchPosts = async ({ lastPostId, lastSharePostId, reset = false }) => {
-    if (!hasMore && !reset) return; // Không gọi API nếu không còn dữ liệu và không phải reset
+    if (!hasMore && !reset) return;
 
     setLoading(true);
     if (lastPostId || lastSharePostId) setLoadingMore(true);
@@ -58,8 +57,6 @@ const HomePage = () => {
           pageSize: PAGE_SIZE,
         },
       });
-
-      // console.log("API posts response:", response.data.data);
 
       if (response.data.success) {
         const newPosts = response.data.data || [];
@@ -76,11 +73,11 @@ const HomePage = () => {
           );
         }
       } else {
-        setError(response.data.message || "Failed to load posts!");
-        toast.error(response.data.message || "Failed to load posts!");
+        setError(response.data.message || "Cannot load list post!");
+        toast.error(response.data.message || "Cannot load list post!");
       }
     } catch (error) {
-      setError("Failed to load posts!");
+      setError("Cannot load list post!");
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -166,7 +163,7 @@ const HomePage = () => {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        console.error("No access token found.");
+        console.error("Không tìm thấy access token.");
         return;
       }
       const res = await fetch(
@@ -179,10 +176,6 @@ const HomePage = () => {
         }
       );
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
       const data = await res.json();
 
       if (data.success === true) {
@@ -192,7 +185,7 @@ const HomePage = () => {
         setGroupData([]);
       }
     } catch (err) {
-      console.error("Error fetching groups:", err.message || err);
+      console.error("Fail to load list group:", err.message || err);
     }
   };
 

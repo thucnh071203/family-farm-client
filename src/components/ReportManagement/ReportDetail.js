@@ -213,7 +213,7 @@ const ReportDetail = () => {
 
                     <div className="flex items-start">
                         <div className="font-semibold text-left min-w-80">Images:</div>
-                        <div className="flex gap-4">
+                        <div className="flex flex-wrap gap-4">
                             {postImages.length > 0 ? (
                                 postImages.map((image, index) => (
                                     <div

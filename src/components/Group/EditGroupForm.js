@@ -172,7 +172,7 @@ export default function EditGroupForm({ userRole, userAccId }) {
             <img
               src={avatarUrl}
               alt="avatar"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-full"
             />
           </div>
           <div className="admin-info flex flex-col gap-2">

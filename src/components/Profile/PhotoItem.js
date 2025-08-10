@@ -9,7 +9,7 @@ const PhotoItem = ({ photo }) => {
 
     return (
         <img
-            src={'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg'}
+            src={photo ||'https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg'}
             alt={photo}
             className="w-full h-20 object-cover rounded-md"
         />

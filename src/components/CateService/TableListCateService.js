@@ -5,6 +5,7 @@ import "datatables.net";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import React, { useEffect, useRef } from "react";
+import { toast } from "react-toastify";
 
 const TableListCateService = ({ displayList }) => {
   const tableRef = useRef(null);
@@ -38,11 +39,12 @@ const TableListCateService = ({ displayList }) => {
 
           const data = await res.json();
           if (data.success === true) {
-            Swal.fire(
-              "Deleted!",
-              "The category service has been deleted.",
-              "success"
-            );
+            // Swal.fire(
+            //   "Deleted!",
+            //   "The category service has been deleted.",
+            //   "success"
+            // );
+            toast.success("The category service has been deleted")
           }
         } catch (err) {
           // console.error("Error fetching account censor:", err.message || err);
@@ -64,7 +66,7 @@ const TableListCateService = ({ displayList }) => {
       if (result.isConfirmed) {
         try {
           const token = localStorage.getItem("accessToken");
-  
+
           const res = await fetch(
             `https://localhost:7280/api/category-service/restore/${cateId}`,
             {
@@ -75,10 +77,14 @@ const TableListCateService = ({ displayList }) => {
               },
             }
           );
-  
+
           const data = await res.json();
           if (data.success === true) {
-            Swal.fire("Restored!", "The category has been restored.", "success");
+            Swal.fire(
+              "Restored!",
+              "The category has been restored.",
+              "success"
+            );
           }
         } catch (err) {
           Swal.fire("Error!", "Something went wrong.", "error");
@@ -132,21 +138,21 @@ const TableListCateService = ({ displayList }) => {
               if (isDeleted) {
                 // Đã bị xóa: hiện View + Restore
                 return `
-                  <button className='btn-restore hover:underline text-yellow-500' data-id='${id}'>
-                    <i className="fa-solid fa-rotate-left"></i>
+                  <button class='btn-restore hover:underline text-yellow-500' data-id='${id}'>
+                    <i class="fa-solid fa-rotate-left"></i>
                   </button>
                 `;
               } else {
                 // Chưa xóa: hiện Detail + Edit + Delete
                 return `
-                  <button className='btn-detail hover:underline pr-2 text-blue-400' data-id='${id}'>
-                    <i className="fa-solid fa-eye"></i>
+                  <button class='btn-detail hover:underline pr-2 text-blue-400' data-id='${id}'>
+                    <i class="fa fa-eye" aria-hidden="true"></i>
                   </button>
-                  <button className='btn-edit hover:underline pr-1 text-green-500' data-id='${id}'>
-                    <i className="fa-solid fa-pencil"></i>
+                  <button class='btn-edit hover:underline pr-1 text-green-500' data-id='${id}'>
+                    <i class="fa-solid fa-pencil"></i>
                   </button>
-                  <button className='btn-delete hover:underline text-red-400' data-id='${id}'>
-                    <i className="fa-solid fa-trash"></i>
+                  <button class='btn-delete hover:underline text-red-400' data-id='${id}'>
+                    <i class="fa-solid fa-trash"></i>
                   </button>
                 `;
               }

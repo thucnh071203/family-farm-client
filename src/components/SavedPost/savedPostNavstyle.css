@@ -25,7 +25,7 @@
 }
 
 .home-container {
-  transition: background-color 0.2s ease;
+  /* transition: background-color 0.2s ease; */
 }
 
 .home-container:hover {
@@ -33,7 +33,7 @@
 }
 
 .video-container {
-  transition: background-color 0.2s ease;
+  /* transition: background-color 0.2s ease; */
 }
 
 .video-container:hover {
@@ -41,9 +41,21 @@
 }
 
 .image-container {
-  transition: background-color 0.2s ease;
+  /* transition: background-color 0.2s ease; */
 }
 
 .image-container:hover {
   background-color: rgba(153, 153, 153, 0.25);
+}
+/* .menu-saved-item-active{
+  background-color: rgba(153, 153, 153, 0.25);
+} */
+
+.menu-saved-item-active {
+  background-color: rgba(61, 179, 251, 1); /* blue */
+  color: white;
+}
+
+.menu-saved-item-active img {
+  filter: brightness(0) invert(1); /* đổi icon sang trắng nếu cần */
 }

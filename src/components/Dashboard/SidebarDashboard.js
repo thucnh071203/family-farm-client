@@ -1,8 +1,8 @@
 import logo from "../../assets/images/logo_img.png";
 import default_avatar from "../../assets/images/default-avatar.png";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import instance from "../../Axios/axiosConfig";
 const SidebarDashboard = () => {
   const [openSections, setOpenSections] = useState({
     censor: true,
@@ -13,12 +13,29 @@ const SidebarDashboard = () => {
   const toggleSection = (section) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await instance.post("/api/authen/logout");
+      sessionStorage.clear();
+      localStorage.clear();
+
+      // Force reload toàn bộ app
+      window.location.reload();
+      navigate("/Login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      sessionStorage.clear();
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
 
   return (
     <div className="w-[25%] h-screen bg-white shadow-md p-4 px-6 flex flex-col text-left">
       <div>
         <div className="font-bold mb-6 flex items-center gap-4">
-          <img src={logo} alt="logo" className="w-8 h-auto" />
+          <img src={logo} alt="logo" className="w-[50px]"></img>
           <span className="text-lg text-[#3DB3FB]">Dashboard</span>
         </div>
 
@@ -150,7 +167,6 @@ const SidebarDashboard = () => {
               openSections.system ? "" : "hidden"
             }`}
           >
-            <li>Chatbot</li>
             <li>
               <Link to="/CateService">Category Service</Link>
             </li>
@@ -172,7 +188,10 @@ const SidebarDashboard = () => {
           ></img>
           <span className="font-bold">Profile Setting</span>
         </div>
-        <button className="bg-red-100 text-[#EF3E36] py-4 rounded hover:bg-red-200 text-md w-full">
+        <button
+          onClick={handleLogout}
+          className="bg-red-100 text-[#EF3E36] py-4 rounded hover:bg-red-200 text-md w-full"
+        >
           <span className="font-semibold">Log out </span>
           <i className="fa-solid fa-arrow-right-from-bracket"></i>
         </button>

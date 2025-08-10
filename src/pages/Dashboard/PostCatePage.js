@@ -6,8 +6,9 @@ import "datatables.net";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import SidebarDashboard from "../../components/Dashboard/SidebarDashboard";
+import { toast } from "react-toastify";
 
-const TableListCatePost = ({ displayList }) => {
+const TableListCatePost = ({ displayList, fetchAllPosts  }) => {
   const tableRef = useRef(null);
   const navigate = useNavigate();
 
@@ -36,13 +37,9 @@ const TableListCatePost = ({ displayList }) => {
           );
           const data = await res.json();
           if (data.success === true) {
-            Swal.fire(
-              "Deleted!",
-              "The category post has been deleted.",
-              "success"
-            );
-            // Optionally, refresh the list
-            window.location.reload(); // Simple refresh, or call fetchAllPosts from parent
+            toast.success("The category post has been deleted.");
+            // ✅ Gọi lại API để cập nhật danh sách
+            fetchAllPosts(); // Cập nhật lại list mà không reload
           }
         } catch (err) {
           Swal.fire("Error!", "Something went wrong.", "error");
@@ -127,19 +124,19 @@ const TableListCatePost = ({ displayList }) => {
               if (isDeleted) {
                 return `
                   <button class='btn-restore hover:underline text-yellow-500' data-id='${id}'>
-                    <i className="fa-solid fa-rotate-left"></i>
+                    <i class="fa-solid fa-rotate-left"></i>
                   </button>
                 `;
               } else {
                 return `
                   <button class='btn-detail hover:underline pr-2 text-blue-400' data-id='${id}'>
-                    <i className="fa-solid fa-eye"></i>
+                    <i class="fa-solid fa-eye"></i>
                   </button>
                   <button class='btn-edit hover:underline pr-1 text-green-500' data-id='${id}'>
-                    <i className="fa-solid fa-pencil"></i>
+                    <i class="fa-solid fa-pencil"></i>
                   </button>
                   <button class='btn-delete hover:underline text-red-400' data-id='${id}'>
-                    <i className="fa-solid fa-trash"></i>
+                    <i class="fa-solid fa-trash"></i>
                   </button>
                 `;
               }
@@ -260,7 +257,7 @@ const PostCatePage = () => {
             </Link>
           </div>
           <div>
-            <TableListCatePost displayList={allList} />
+            <TableListCatePost displayList={allList} fetchAllPosts={fetchAllPosts}  />
           </div>
         </div>
       </div>

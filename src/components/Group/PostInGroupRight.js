@@ -165,7 +165,7 @@ const PostInGroupRight = () => {
             ) : null
           )
         ) : (
-          <div className="text-center py-4">No data to display</div>
+          <div className="text-center py-4">You have no posts to display</div>
         )}
         {loadingMore && (
           <div className="flex flex-col gap-5 py-4">

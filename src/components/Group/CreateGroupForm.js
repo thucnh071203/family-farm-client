@@ -294,7 +294,7 @@ export default function CreateGroupForm() {
     <div className="group-page-right w-full h-full flex flex-col pt-12 lg:mt-[120px] md:ml-[30%] mt-[63px] pr-4 pl-[8%] lg:pl-0">
       <form
         onSubmit={handleCreateGroup}
-        className="create-group-container w-full max-w-[832px] h-screen"
+        className="create-group-container w-full max-w-[832px] h-screen mb-[120px]"
       >
         <div className="create-h1-label">
           <h1 className="create-group-h1">Create new group</h1>
@@ -304,7 +304,7 @@ export default function CreateGroupForm() {
             <img
               src={avatarUrl}
               alt="avatar"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-full"
             />
           </div>
           <div className="admin-info flex flex-col gap-2">
@@ -465,7 +465,7 @@ export default function CreateGroupForm() {
                 <div className="member-info flex flex-row items-center gap-2">
                   <div className="member-avatar rounded-full w-[32px] h-[32px] overflow-hidden">
                     <img
-                      src={member.avatar || "/default-avatar.png"}
+                      src={member.avatar || defaultAvatar}
                       alt={member.fullName}
                     />
                   </div>
