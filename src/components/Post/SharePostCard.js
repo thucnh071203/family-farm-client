@@ -1,14 +1,19 @@
 import React from "react";
-import OptionsPost from "./OptionsPost";
+import OptionsSharePost from "./OptionsSharePost"; // Import component mới
 import PostCard from "./PostCard";
 import formatTime from "../../utils/formatTime";
 import { useNavigate } from "react-router-dom";
 import default_avatar from "../../assets/images/default-avatar.png";
 
-const SharePostCard = ({ post }) => {
+const SharePostCard = ({ 
+  post, 
+  isDeleted = false, 
+  onRestore, 
+  onHardDelete, 
+  onDeletePost 
+}) => {
   const navigate = useNavigate();
-  
-  //console.log("SharePostCard - Full post data:", post); // Debug log
+  const accIdStorage = localStorage.getItem("accId") || sessionStorage.getItem("accId");
   
   // Xử lý dữ liệu SharePost từ API
   const sharePostData = post.sharePostData || {};
@@ -16,12 +21,13 @@ const SharePostCard = ({ post }) => {
   const ownerSharePost = sharePostData.ownerSharePost || {};
   const originalPost = sharePostData.originalPost || {};
   
-  // console.log("SharePostCard - sharePostData:", sharePostData); // Debug log
-  // console.log("SharePostCard - ownerSharePost:", ownerSharePost); // Debug log
+  // Kiểm tra xem user hiện tại có phải là owner của SharePost không
+  const isOwner = ownerSharePost.accId === accIdStorage;
 
   // Map dữ liệu SharePost theo cấu trúc API
   const postData = {
     accId: ownerSharePost.accId || "",
+    sharePostId: sharePost.sharePostId || "", // Thêm sharePostId
     fullName: ownerSharePost.fullName || "Unknown User",
     avatar: ownerSharePost.avatar || default_avatar,
     createAt: sharePost.createdAt || sharePost.updatedAt || "Unknown",
@@ -33,8 +39,6 @@ const SharePostCard = ({ post }) => {
     shares: sharePostData.shareCount || 0,
     sharedPost: originalPost
   };
-
-  // console.log("SharePostCard - Final postData:", postData); // Debug log
 
   const originalPostForCard = originalPost.post ? {
     accId: originalPost.ownerPost?.accId || "",
@@ -151,7 +155,15 @@ const SharePostCard = ({ post }) => {
           </div>
         </div>
         <div>
-          {/* <OptionsPost /> */}
+          {/* Sử dụng OptionsSharePost thay vì OptionsPost */}
+          <OptionsSharePost
+            onRestore={onRestore}
+            onHardDelete={onHardDelete}
+            isDeleted={isDeleted}
+            onDeletePost={onDeletePost}
+            sharePostIdParam={postData.sharePostId}
+            isOwnerParam={isOwner}
+          />
         </div>
       </div>
       

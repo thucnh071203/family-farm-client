@@ -5,6 +5,7 @@ import BasicInfo from "../../components/Profile/BasicInfo";
 import FriendList from "../../components/Friend/FriendItemsList";
 import PhotoGallery from "../../components/Profile/PhotoGallery";
 import PostCard from "../../components/Post/PostCard";
+import SharePostCard from "../../components/Post/SharePostCard"; // Import SharePostCard
 import PostCreate from "../../components/Post/PostCreate";
 import PostFilters from "../../components/Post/PostFilters";
 import NavbarHeader from "../../components/Header/NavbarHeader";
@@ -69,12 +70,12 @@ const PersonalPage = () => {
           });
           if (response.status === 200) {
             const data = response.data.data;
-            console.log("Du lieu profile", data);
+            // console.log("Du lieu profile", data);
             setFullName(data.fullName || data.firstName || "Unknown User");
             setAvatar(data.avatar || data.profileImage || "default-avatar-url");
             setBackground(data.background || data.coverImage || defaultBackground);
             setRoleId(data.roleId);
-            setHasCreditCard(data.hasCreditCard); // 👈 Thêm dòng này
+            setHasCreditCard(data.hasCreditCard);
 
             const basicInfoMapping = {
               gender: data.gender || "Updating",
@@ -143,17 +144,19 @@ const PersonalPage = () => {
     }
   }, [user?.fullName, isOwner]);
 
-  // Gọi api lấy list post trong trang cá nhân
+  // Gọi api lấy list post trong trang cá nhân (CẬP NHẬT: sử dụng API mới với SharePost)
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         let response;
         if (isOwner) {
-          response = await instance.get("/api/post/self-view", {
+          // Sử dụng API mới với SharePost
+          response = await instance.get("/api/post/self-view-with-share", {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
         } else {
-          response = await instance.get(`/api/post/another-view/${accId}`, {
+          // Sử dụng API mới với SharePost
+          response = await instance.get(`/api/post/another-view-with-share/${accId}`, {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
         }
@@ -161,6 +164,7 @@ const PersonalPage = () => {
           setPosts(response.data.data);
         }
       } catch (error) {
+        console.error("Cannot load posts:", error);
         // toast.error("Cannot load list post!");
       }
     };
@@ -170,33 +174,88 @@ const PersonalPage = () => {
     }
   }, [isOwner, accId, accessToken]);
 
-  // Các method liên quan khác
+  // handleCommentCountChange để xử lý cả Post và SharePost
   const handleCommentCountChange = (postId, newCount) => {
     setPosts((prevPosts) =>
-      prevPosts.map((postMapper) =>
-        postMapper.post && postMapper.post.postId === postId
-          ? { ...postMapper, post: { ...postMapper.post, comments: newCount } }
-          : postMapper
-      )
+      prevPosts.map((postMapper) => {
+        // Xử lý Post thường
+        if (postMapper.itemType === "Post" && postMapper.post && postMapper.post.postId === postId) {
+          return {
+            ...postMapper,
+            commentCount: newCount,
+            post: { ...postMapper.post, comments: newCount }
+          };
+        }
+        // Xử lý SharePost
+        else if (postMapper.itemType === "SharePost" && postMapper.sharePostData?.sharePost?.sharePostId === postId) {
+          return {
+            ...postMapper,
+            sharePostData: {
+              ...postMapper.sharePostData,
+              commentCount: newCount
+            },
+          };
+        }
+        return postMapper;
+      })
     );
   };
 
-  const handleDeletePost = (postId) => {
+  // handleDeletePost để xử lý cả Post và SharePost
+  const handleDeletePost = async (postId) => {
     setPosts((prevPosts) =>
-      prevPosts.filter((post) => post.post.postId !== postId)
+      prevPosts.filter((postMapper) => {
+        // Lọc bỏ Post thường
+        if (postMapper.itemType === "Post" && postMapper.post?.postId === postId) {
+          return false;
+        }
+        // Lọc bỏ SharePost - sử dụng sharePostId
+        if (postMapper.itemType === "SharePost" && postMapper.sharePostData?.sharePost?.sharePostId === postId) {
+          return false;
+        }
+        return true;
+      })
     );
+
+    await fetchPhotos();
   };
 
-  const handleRestorePost = (postId) => {
+  // handleRestorePost để xử lý cả Post và SharePost
+  const handleRestorePost = async (postId) => {
     setPosts((prevPosts) =>
-      prevPosts.filter((post) => post.post.postId !== postId)
+      prevPosts.filter((postMapper) => {
+        // Lọc bỏ Post thường đã restore
+        if (postMapper.itemType === "Post" && postMapper.post?.postId === postId) {
+          return false;
+        }
+        // Lọc bỏ SharePost đã restore - sử dụng sharePostId
+        if (postMapper.itemType === "SharePost" && postMapper.sharePostData?.sharePost?.sharePostId === postId) {
+          return false;
+        }
+        return true;
+      })
     );
+
+    await fetchPhotos();
   };
 
-  const handleHardDeletePost = (postId) => {
+  // handleHardDeletePost để xử lý cả Post và SharePost
+  const handleHardDeletePost = async (postId) => {
     setPosts((prevPosts) =>
-      prevPosts.filter((post) => post.post.postId !== postId)
+      prevPosts.filter((postMapper) => {
+        // Lọc bỏ Post thường đã hard delete
+        if (postMapper.itemType === "Post" && postMapper.post?.postId === postId) {
+          return false;
+        }
+        // Lọc bỏ SharePost đã hard delete - sử dụng sharePostId
+        if (postMapper.itemType === "SharePost" && postMapper.sharePostData?.sharePost?.sharePostId === postId) {
+          return false;
+        }
+        return true;
+      })
     );
+
+    await fetchPhotos();
   };
 
   const handlePostCreate = (newPostData) => {
@@ -207,6 +266,7 @@ const PersonalPage = () => {
       setPosts((prevPosts) => [newPostData, ...prevPosts]);
     }
   };
+
   // Get list friend
   const fetchFriends = async () => {
     try {
@@ -343,12 +403,6 @@ const PersonalPage = () => {
           <i className="fa-solid fa-comment mr-2"></i>
           Send Message
         </button>
-        {/* FriendActionButton */}
-        {/* <FriendSuggestButton
-          status={friendshipStatus}
-          roleId={roleId}
-          accId={accId}
-        /> */}
       </div>
     );
   };
@@ -401,7 +455,7 @@ const PersonalPage = () => {
         }
       );
       const jsonArray = await res.json();
-      console.log("API response (list-account-no-relation):", jsonArray);
+      // console.log("API response (list-account-no-relation):", jsonArray);
 
       // Gộp tất cả data từ các object có isSuccess === true
       const combinedList = jsonArray
@@ -410,7 +464,7 @@ const PersonalPage = () => {
 
       if (combinedList.length > 0) {
         setlistCheckRelationShip(combinedList);
-        console.log("Danh sách không có quan hệ:", combinedList);
+        // console.log("Danh sách không có quan hệ:", combinedList);
       } else {
         setlistCheckRelationShip([]);
       }
@@ -433,7 +487,7 @@ const PersonalPage = () => {
     <div className="flex flex-col min-h-screen">
       <Header />
       <NavbarHeader />
-      <div className="flex-grow">
+      <div className="flex-grow bg-gray-100">
         <div className="container mx-auto max-w-7xl">
           <div className="relative">
             <CoverBackground backgroundImage={background} isOwner={isOwner} />
@@ -443,14 +497,14 @@ const PersonalPage = () => {
               </div>
             )}
             {matchedAccountButton && (
-                <div className="absolute right-40 bottom-4">
-                  <FriendSuggestButton
-                    status={matchedAccountButton.friendStatus}
-                    roleId={matchedAccountButton.roleId}
-                    accId={matchedAccountButton.accId}
-                  />
-                </div>
-              )}
+              <div className="absolute right-40 bottom-4">
+                <FriendSuggestButton
+                  status={matchedAccountButton.friendStatus}
+                  roleId={matchedAccountButton.roleId}
+                  accId={matchedAccountButton.accId}
+                />
+              </div>
+            )}
             <ProfileAvatar
               initialProfileImage={avatar}
               fullName={fullName}
@@ -470,10 +524,10 @@ const PersonalPage = () => {
             </aside>
             <section className="flex flex-col w-full h-full gap-5 lg:w-2/3">
 
-            {/* UPDATE BANK CARD  */}
+              {/* UPDATE BANK CARD  */}
               {isOwner &&
                 roleId === "68007b2a87b41211f0af1d57" &&
-                !hasCreditCard && ( // ✅ đơn giản hơn: false, null, undefined đều thỏa
+                !hasCreditCard && (
                   <div
                     style={{ background: "rgba(61, 179, 251, 0.15)" }}
                     className="flex flex-col gap-3 p-4 rounded-md shadow-lg mt-4"
@@ -494,7 +548,7 @@ const PersonalPage = () => {
                       </Link>
                     </div>
                   </div>
-              )}
+                )}
 
               {isOwner && (
                 <PostCreate
@@ -504,57 +558,77 @@ const PersonalPage = () => {
               )}
 
               <PostFilters />
-              
+
+              {/* Render logic cho cả Post và SharePost */}
               {!posts || posts.length <= 0 ? (
                 <p className="font-normal text-gray-300 text-lg">
                   You have no any posts!
                 </p>
               ) : (
-                posts.map((postMapper, index) => (
-                  <PostCard
-                    isDeleted={postMapper.post.isDeleted || false}
-                    onRestore={handleRestorePost}
-                    onHardDelete={handleHardDeletePost}
-                    onDeletePost={handleDeletePost}
-                    key={`${postMapper.post.postId}-${index}`}
-                    post={{
-                      accId: postMapper.ownerPost.accId,
-                      postId: postMapper.post.postId,
-                      fullName: postMapper.ownerPost
-                        ? postMapper.ownerPost.fullName || postMapper.post.accId
-                        : "Unknown User",
-                      avatar:
-                        isOwner && user?.avatar
-                          ? user.avatar
-                          : postMapper.ownerPost?.avatar,
-                      createAt: postMapper.post.createdAt,
-                      content: postMapper.post.postContent,
-                      images: postMapper.postImages
-                        ? postMapper.postImages.map((img) => img.imageUrl)
-                        : [],
-                      hashtags: postMapper.hashTags
-                        ? postMapper.hashTags.map((tag) => tag.hashTagContent)
-                        : [],
-                      tagFriends: postMapper.postTags
-                        ? postMapper.postTags.map((tag) => ({
-                          accId: tag.accId,
-                          fullname: tag.fullname || "Unknown",
-                        }))
-                        : [],
-                      categories: postMapper.postCategories
-                        ? postMapper.postCategories.map(
-                          (cat) => cat.categoryName
-                        )
-                        : [],
-                      likes: postMapper.reactionCount || 0,
-                      comments: postMapper.commentCount || 0,
-                      shares: postMapper.shareCount || 0,
-                    }}
-                    onCommentCountChange={(newCount) =>
-                      handleCommentCountChange(postMapper.post.postId, newCount)
-                    }
-                  />
-                ))
+                posts.map((postMapper, index) => {
+                  // Render PostCard cho Post thường
+                  if (postMapper.itemType === "Post" && postMapper.post && postMapper.ownerPost) {
+                    return (
+                      <PostCard
+                        isDeleted={postMapper.post.isDeleted || false}
+                        onRestore={handleRestorePost}
+                        onHardDelete={handleHardDeletePost}
+                        onDeletePost={handleDeletePost}
+                        key={`${postMapper.post.postId}-${index}`}
+                        post={{
+                          accId: postMapper.ownerPost.accId,
+                          postId: postMapper.post.postId,
+                          fullName: postMapper.ownerPost
+                            ? postMapper.ownerPost.fullName || postMapper.post.accId
+                            : "Unknown User",
+                          avatar:
+                            isOwner && user?.avatar
+                              ? user.avatar
+                              : postMapper.ownerPost?.avatar,
+                          createAt: postMapper.post.createdAt,
+                          content: postMapper.post.postContent,
+                          images: postMapper.postImages
+                            ? postMapper.postImages.map((img) => img.imageUrl)
+                            : [],
+                          hashtags: postMapper.hashTags
+                            ? postMapper.hashTags.map((tag) => tag.hashTagContent)
+                            : [],
+                          tagFriends: postMapper.postTags
+                            ? postMapper.postTags.map((tag) => ({
+                              accId: tag.accId,
+                              fullname: tag.fullname || "Unknown",
+                            }))
+                            : [],
+                          categories: postMapper.postCategories
+                            ? postMapper.postCategories.map(
+                              (cat) => cat.categoryName
+                            )
+                            : [],
+                          likes: postMapper.reactionCount || 0,
+                          comments: postMapper.commentCount || 0,
+                          shares: postMapper.shareCount || 0,
+                        }}
+                        onCommentCountChange={(newCount) =>
+                          handleCommentCountChange(postMapper.post.postId, newCount)
+                        }
+                      />
+                    );
+                  }
+                  // Render SharePostCard cho SharePost
+                  else if (postMapper.itemType === "SharePost" && postMapper.sharePostData) {
+                    return (
+                      <SharePostCard
+                        key={`${postMapper.sharePostData.sharePost.sharePostId}-${index}`}
+                        post={postMapper}
+                        isDeleted={postMapper.sharePostData?.sharePost?.isDeleted || false}
+                        onRestore={handleRestorePost}
+                        onHardDelete={handleHardDeletePost}
+                        onDeletePost={handleDeletePost}
+                      />
+                    );
+                  }
+                  return null;
+                })
               )}
             </section>
           </div>
