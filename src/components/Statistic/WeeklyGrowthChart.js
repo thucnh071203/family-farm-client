@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 import {
   ComposedChart,
   Bar,
@@ -34,12 +35,40 @@ const WeeklyGrowthChart = () => {
     };
 
     fetchWeeklyGrowth();
+    const connection = new HubConnectionBuilder()
+      .withUrl("https://localhost:7280/topengagedposthub") // URL phải chính xác!
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("Kết nối tới SignalR Hub để nhận weekly growth updates");
+
+        connection.on("ReceiveWeeklyGrowthUpdate", (weeklyData) => {
+          console.log("Weekly growth updated:", weeklyData);
+          const formattedData = Object.entries(weeklyData).map(
+            ([week, count]) => ({
+              week,
+              count,
+            })
+          );
+          setData(formattedData);
+        });
+      })
+      .catch((err) => {
+        console.error("Lỗi kết nối SignalR:", err);
+      });
+
+    return () => {
+      connection.stop();
+    };
   }, []);
 
   return (
     <div className="w-full h-[400px]">
-      <h2 className="text-lg font-semibold text-blue-700 mb-2">
-        📈 Tăng trưởng lịch hẹn theo tuần
+      <h2 className="text-lg font-semibold text-blue-700 mb-5">
+        📈 Weekly appointment growth
       </h2>
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={data}>

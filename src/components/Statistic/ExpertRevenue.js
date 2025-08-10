@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { HubConnectionBuilder } from "@microsoft/signalr";
 export default function ExpertRevenue() {
   const [data, setData] = useState(null);
   const [fromDate, setFromDate] = useState("");
@@ -7,12 +7,8 @@ export default function ExpertRevenue() {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem("accessToken"); // hoặc nơi bạn lưu token
-      const formatDate = (date) => {
-        const d = new Date(date);
-        return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
-      };
 
-      const query = `?from=${formatDate(fromDate)}&to=${formatDate(toDate)}`;
+      const query = `?from=${fromDate}&to=${toDate}`;
 
       const res = await fetch(
         `https://localhost:7280/api/statistic/expertRevenue${query}`,
@@ -52,6 +48,31 @@ export default function ExpertRevenue() {
       fetchData();
     }
   }, [fromDate, toDate]);
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    const connection = new HubConnectionBuilder()
+      .withUrl("https://localhost:7280/topengagedposthub", {
+        accessTokenFactory: () => token,
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("✅ SignalR connected");
+        connection.on("ReceiveExpertRevenueUpdate", (updatedData) => {
+          console.log("🔁 Nhận dữ liệu cập nhật revenue real-time");
+          setData(updatedData);
+        });
+      })
+      .catch((err) => console.error("❌ SignalR connection error:", err));
+
+    return () => {
+      connection.stop();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-5 font-sans border-4 border-black">

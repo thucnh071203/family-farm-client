@@ -38,6 +38,7 @@ const SidebarDashboard = () => {
           <img src={logo} alt="logo" className="w-[50px]"></img>
           <span className="text-lg text-[#3DB3FB]">Dashboard</span>
         </div>
+
         <nav className="text-sm">
           <div className="font-semibold flex items-center gap-2 py-3">
             <svg

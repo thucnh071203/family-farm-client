@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { HubConnectionBuilder } from "@microsoft/signalr";
 import {
   LineChart,
   Line,
@@ -12,6 +13,7 @@ import {
 
 const SystemRevenue = () => {
   const [revenueData, setRevenueData] = useState([]);
+  const [rawRevenue, setRawRevenue] = useState({}); // lưu dữ liệu gốc
   const [summary, setSummary] = useState({
     totalRevenue: 0,
     totalCommission: 0,
@@ -20,6 +22,51 @@ const SystemRevenue = () => {
 
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [viewMode, setViewMode] = useState("day"); // day | month | year
+
+  const processRevenueData = (data) => {
+    const grouped = {};
+    Object.keys(data).forEach((dateStr) => {
+      let dateObj;
+
+      if (dateStr.includes("/")) {
+        const [day, month, year] = dateStr.split("/");
+        dateObj = new Date(`${year}-${month}-${day}`);
+      } else if (dateStr.includes("-")) {
+        dateObj = new Date(dateStr);
+      } else {
+        return;
+      }
+
+      if (isNaN(dateObj)) return; // bỏ qua ngày lỗi
+
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, "0");
+      const d = String(dateObj.getDate()).padStart(2, "0");
+
+      let key;
+      if (viewMode === "day") {
+        key = `${y}-${m}-${d}`;
+      } else if (viewMode === "month") {
+        key = `${y}-${m}`;
+      } else if (viewMode === "year") {
+        key = `${y}`;
+      }
+
+      if (!grouped[key]) grouped[key] = 0;
+      grouped[key] += data[dateStr];
+    });
+
+    return Object.keys(grouped).map((key) => ({
+      month: key,
+      Revenue: grouped[key],
+    }));
+  };
+
+  const updateChart = (data) => {
+    const processed = processRevenueData(data);
+    setRevenueData(processed);
+  };
 
   const fetchRevenue = async () => {
     try {
@@ -33,12 +80,9 @@ const SystemRevenue = () => {
       const res = await axios.get(url);
       const data = res.data;
 
-      const chartData = Object.keys(data.revenueByMonth).map((month) => ({
-        month,
-        Revenue: data.revenueByMonth[month],
-      }));
+      setRawRevenue(data.revenueByMonth); // lưu dữ liệu gốc
+      updateChart(data.revenueByMonth);
 
-      setRevenueData(chartData);
       setSummary({
         totalRevenue: data.totalRevenue,
         totalCommission: data.totalCommission,
@@ -50,8 +94,46 @@ const SystemRevenue = () => {
   };
 
   useEffect(() => {
-    fetchRevenue(); // load lần đầu
+    fetchRevenue();
+
+    // kết nối SignalR
+    const connection = new HubConnectionBuilder()
+      .withUrl("https://localhost:7280/topEngagedPostHub")
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("Connected to SignalR hub (topEngagedPostHub)");
+
+        connection.on("ReceiveRevenueUpdate", (newRevenue) => {
+          console.log("Revenue updated:", newRevenue);
+
+          setRawRevenue(newRevenue.revenueByMonth);
+          updateChart(newRevenue.revenueByMonth);
+
+          setSummary({
+            totalRevenue: newRevenue.totalRevenue,
+            totalCommission: newRevenue.totalCommission,
+            totalBookings: newRevenue.totalBookings,
+          });
+        });
+      })
+      .catch((err) => {
+        console.error("Error connecting to SignalR hub:", err);
+      });
+
+    return () => {
+      connection.stop();
+    };
   }, []);
+
+  useEffect(() => {
+    if (Object.keys(rawRevenue).length > 0) {
+      updateChart(rawRevenue);
+    }
+  }, [viewMode]);
 
   return (
     <div className="bg-white rounded-xl shadow p-6">
@@ -79,6 +161,20 @@ const SystemRevenue = () => {
             value={toDate}
             onChange={(e) => setToDate(e.target.value)}
           />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-600">
+            View by
+          </label>
+          <select
+            value={viewMode}
+            onChange={(e) => setViewMode(e.target.value)}
+            className="border rounded p-2"
+          >
+            <option value="day">Day</option>
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+          </select>
         </div>
         <button
           onClick={fetchRevenue}
