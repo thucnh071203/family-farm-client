@@ -16,6 +16,8 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 export const UserGrowthChart = () => {
   const [chartData, setChartData] = useState(null);
   const [chartOptions, setChartOptions] = useState({});
+  const [viewMode, setViewMode] = useState("day"); // day | month | year
+  const [rawData, setRawData] = useState({});
 
   const getDefaultDates = () => {
     const today = new Date();
@@ -32,61 +34,82 @@ export const UserGrowthChart = () => {
   const [fromDate, setFromDate] = useState(start);
   const [toDate, setToDate] = useState(end);
 
+  const processData = (data) => {
+    const grouped = {};
+    Object.entries(data).forEach(([dateStr, value]) => {
+      const [day, month, year] = dateStr.split("/");
+
+      let key;
+      if (viewMode === "day") {
+        key = `${year}-${month}-${day}`;
+      } else if (viewMode === "month") {
+        key = `${year}-${month}`;
+      } else if (viewMode === "year") {
+        key = year;
+      }
+
+      if (!grouped[key]) grouped[key] = 0;
+      grouped[key] += value;
+    });
+    return grouped;
+  };
+
+  const updateChart = (data) => {
+    const processed = processData(data);
+    const labels = Object.keys(processed);
+    const values = Object.values(processed);
+
+    setChartData({
+      labels,
+      datasets: [
+        {
+          label: "Number of users",
+          data: values,
+          backgroundColor: "rgba(54, 162, 235, 0.7)",
+        },
+      ],
+    });
+
+    setChartOptions({
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Number of users",
+          },
+        },
+        x: {
+          title: {
+            display: true,
+            text: viewMode.charAt(0).toUpperCase() + viewMode.slice(1), // Viết hoa chữ đầu
+          },
+        },
+      },
+    });
+  };
+
   const fetchData = async () => {
     let url = "https://localhost:7280/api/statistic/user-growth";
     if (fromDate && toDate) {
       url += `?fromDate=${fromDate}&toDate=${toDate}`;
     }
- const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
     try {
-        const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Thêm Authorization header
-      },
-    });
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!response.ok) throw new Error("Không thể lấy dữ liệu");
 
       const result = await response.json();
-      const data = result.data;
-
-      const labels = Object.keys(data).map((dateStr) => {
-        const [day, month, year] = dateStr.split("/");
-        return `${year}-${month}-${day}`; // Chuyển về yyyy-MM-dd
-      });
-      const values = Object.values(data);
-
-      setChartData({
-        labels,
-        datasets: [
-          {
-            label: "Number of users",
-            data: values,
-            backgroundColor: "rgba(54, 162, 235, 0.7)",
-          },
-        ],
-      });
-
-      setChartOptions({
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: "Number of users",
-            },
-          },
-          x: {
-            title: {
-              display: true,
-              text: "Day",
-            },
-          },
-        },
-      });
+      setRawData(result.data); // lưu dữ liệu gốc
+      updateChart(result.data);
     } catch (error) {
       console.error("Lỗi khi load dữ liệu:", error);
       toast.error(
@@ -119,6 +142,12 @@ export const UserGrowthChart = () => {
     startSignalR();
   }, []);
 
+  useEffect(() => {
+    if (Object.keys(rawData).length > 0) {
+      updateChart(rawData);
+    }
+  }, [viewMode]);
+
   return (
     <div className="space-y-1">
       <h1 className="text-2xl font-bold text-blue-500">User Growth</h1>
@@ -149,6 +178,18 @@ export const UserGrowthChart = () => {
             onChange={(e) => setToDate(e.target.value)}
             className="border p-2 rounded"
           />
+        </div>
+        <div className="space-y-1">
+          <label className="block mb-1">View by</label>
+          <select
+            value={viewMode}
+            onChange={(e) => setViewMode(e.target.value)}
+            className="border p-2 rounded"
+          >
+            <option value="day">Day</option>
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+          </select>
         </div>
         <button
           className="px-4 py-2 mt-6 text-white transition rounded md:mt-0 hover:bg-blue-600 bg-blue-500"

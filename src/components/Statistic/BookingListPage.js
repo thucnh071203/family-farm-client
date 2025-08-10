@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import * as signalR from "@microsoft/signalr";
 import BookingDetailPage from "./BookingDetailPage";
 
-const statuses = ["Pending", "Paid", "Rejected", "Completed"];
+const statuses = ["Pending", "Accepted", "Paid", "On Process", "Completed"];
 
 const BookingListPage = () => {
   const [selectedStatus, setSelectedStatus] = useState("Paid");
@@ -29,6 +30,64 @@ const BookingListPage = () => {
     }
   };
 
+  // Kết nối SignalR khi mount
+  useEffect(() => {
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:7280/topengagedposthub", {
+        accessTokenFactory: () => localStorage.getItem("accessToken"),
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("Connected");
+        const expertId = localStorage.getItem("accId");
+        connection.invoke("JoinGroup", expertId);
+      })
+      .catch((err) => console.error("SignalR error:", err));
+
+    connection.on("BookingCreated", (booking) => {
+      console.log("Booking created:", booking);
+      setBookings((prev) => [booking, ...prev]);
+    });
+
+    connection.on("BookingCancelled", (booking) => {
+      console.log("Booking cancelled:", booking);
+      setBookings((prev) =>
+        prev.filter((b) => b.bookingServiceId !== booking.bookingServiceId)
+      );
+    });
+
+    connection.on("BookingAccepted", (booking) => {
+      console.log("Booking accepted:", booking);
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.bookingServiceId === booking.bookingServiceId ? booking : b
+        )
+      );
+    });
+
+    connection.on("BookingRejected", (booking) => {
+      console.log("Booking rejected:", booking);
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.bookingServiceId === booking.bookingServiceId ? booking : b
+        )
+      );
+    });
+    connection.on("BookingPaid", (booking) => {
+      console.log("Booking rejected:", booking);
+      setBookings((prev) =>
+        prev.map((b) =>
+          b.bookingServiceId === booking.bookingServiceId ? booking : b
+        )
+      );
+    });
+    return () => connection.stop();
+  }, [selectedStatus]);
+
   const openBookingDetail = (booking) => {
     setSelectedBookingId(booking.bookingServiceId);
     setSelectedBookingData(booking);
@@ -40,22 +99,8 @@ const BookingListPage = () => {
   };
 
   return (
-    <div className="mt-6 bg-gray-100 p-6 relative text-gray-800 h-[300px] overflow-y-auto border border-gray-300 rounded-xl">
-      <h2 className="text-2xl font-bold mb-4 text-center text-blue-700 flex items-center justify-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-blue-700"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M3 4a1 1 0 011-1h16a1 1 0 01.8 1.6l-6 8V19l-4 2v-9.4l-6-8A1 1 0 013 4z"
-          />
-        </svg>
+    <div className="mt-6 bg-gray-100 p-6 relative text-gray-800 border border-gray-300 rounded-xl">
+      <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">
         Filter booking by status
       </h2>
 
