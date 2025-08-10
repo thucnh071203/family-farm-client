@@ -19,7 +19,7 @@ const CoverBackground = ({ backgroundImage: initialBackgroundImage, isOwner }) =
 
   // Cập nhật backgroundImage khi initialBackgroundImage hoặc user.background thay đổi
   useEffect(() => {
-    console.log("Background props:", { initialBackgroundImage, userBackground: user?.background, isOwner });
+    // console.log("Background props:", { initialBackgroundImage, userBackground: user?.background, isOwner });
 
     if (isOwner) {
       // Cho owner: ưu tiên user.background từ context, sau đó mới đến initialBackgroundImage

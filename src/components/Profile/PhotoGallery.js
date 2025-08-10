@@ -3,51 +3,7 @@ import PhotoItem from "./PhotoItem";
 import { Link } from "react-router-dom";
 
 const PhotoGallery = ({ photos, isOwner, accId }) => {
-  const defaultPhotos = [
-    { src: "https://gameroom.ee/83571/minecraft.jpg", alt: "Photo 11" },
-    { src: "https://gameroom.ee/83571/minecraft.jpg", alt: "Photo 12" },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 1",
-    },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 2",
-    },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 3",
-    },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 4",
-    },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 5",
-    },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 6",
-    },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 7",
-    },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 8",
-    },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 9",
-    },
-    {
-      src: "https://static0.gamerantimages.com/wordpress/wp-content/uploads/2025/02/minecraft-key-art-feature.jpg",
-      alt: "Photo 10",
-    },
-  ];
-  const photoList = photos || defaultPhotos;
+  const photoList = photos || [];
 
   return (
     <div className="bg-white p-5 rounded-lg shadow-md">
