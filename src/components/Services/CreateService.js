@@ -2,6 +2,7 @@ import React from "react";
 import ProcessNav from "../ProcessNav/ProcessNav";
 import CreateServiceForm from "./CreateServiceForm";
 import RecentServiceList from "./RecentServiceList";
+import PopularService from "./PopularService";
 
 export default function CreateService() {
   return (
@@ -9,7 +10,8 @@ export default function CreateService() {
       <div className="max-w-7xl mx-auto">
         <ProcessNav />
         <div className="mt-10 w-full space-x-6 grid grid-cols-[2fr_5fr]">
-            <RecentServiceList />
+            {/* <RecentServiceList /> */}
+            <PopularService/>
             <CreateServiceForm />
         </div>
       </div>

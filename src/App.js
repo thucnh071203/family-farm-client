@@ -255,7 +255,8 @@ const ChatBotContent = () => {
   const { user, isLoading } = useUser();
   if (isLoading) return null; 
   if (!user) return null;
-
+  if (user.roleId === "67fd41dfba121b52bbc622c3") return null; // Ẩn với admin
+  
   return <Chatbot />;
 }
 

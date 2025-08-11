@@ -382,11 +382,11 @@ export default function ServicesList() {
                     className="service-box w-[42%] md:w-[44.55%] lg:w-[315px] pb-3"
                   >
                     <img
-                      className="service-background"
+                      className="service-background object-cover"
                       src={
                         service.imageUrl && service.imageUrl.trim() !== ""
                           ? service.imageUrl
-                          : serviceBg
+                          : "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
                       }
                       alt="service background"
                     />
