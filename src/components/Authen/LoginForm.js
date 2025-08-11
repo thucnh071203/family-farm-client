@@ -230,10 +230,11 @@ const LoginForm = () => {
     if (!password.trim()) {
     newErrors.password = "Password is required";
     hasError = true;
-  } else if (password.length < 8) {
-    newErrors.password = "Password must be at least 8 characters";
-    hasError = true;
-  }
+  } 
+  // else if (password.length < 8) {
+  //   newErrors.password = "Password must be at least 8 characters";
+  //   hasError = true;
+  // }
 
   if (hasError) {
     setErrors(newErrors);
