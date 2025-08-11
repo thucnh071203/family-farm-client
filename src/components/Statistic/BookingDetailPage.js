@@ -44,29 +44,33 @@ const BookingDetailPage = ({ bookingId, bookingProp, onClose }) => {
         ) : (
           <>
             <h2 className="text-2xl font-bold mb-6 text-blue-700 text-center">
-              {booking.serviceName}
+              {booking?.serviceName || "N/A"}
             </h2>
 
             <div className="space-y-4 text-base text-gray-700">
               <div>
                 <span className="font-semibold">💰 Price:</span>{" "}
-                {booking.price.toLocaleString()} VNĐ
+                {Number(booking?.price || 0).toLocaleString()} VNĐ
               </div>
               <div>
                 <span className="font-semibold">📋 Description:</span>{" "}
-                {booking.description}
+                {booking?.description || "No description"}
               </div>
               <div>
                 <span className="font-semibold">📌 Status:</span>{" "}
-                {booking.bookingServiceStatus}
+                {booking?.bookingServiceStatus || "Unknown"}
               </div>
               <div>
                 <span className="font-semibold">📅 Date Booking:</span>{" "}
-                {new Date(booking.bookingServiceAt).toLocaleString()}
+                {booking?.bookingServiceAt
+                  ? new Date(booking.bookingServiceAt).toLocaleString()
+                  : "N/A"}
               </div>
               <div>
                 <span className="font-semibold">💳 Date Payment:</span>{" "}
-                {new Date(booking.paymentDueDate).toLocaleString()}
+                {booking?.paymentDueDate
+                  ? new Date(booking.paymentDueDate).toLocaleString()
+                  : "N/A"}
               </div>
             </div>
           </>
