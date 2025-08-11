@@ -47,7 +47,9 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
     const formData = new FormData();
 
     //Gán dữ liệu vào form data
-    formData.append("PostContent", content);
+    // Loại bỏ hashtag (từ bắt đầu bằng #, theo regex)
+    const contentWithoutHashtags = content.replace(/#\w+\s*/g, "").trim();
+    formData.append("PostContent", contentWithoutHashtags);
 
     // Xử lý hashtags - trích xuất từ content
     const hashtags = content.match(/#\w+/g) || [];
@@ -212,10 +214,27 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
   //     e.target.value = ""; // Reset input file
   // };
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files);
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg+xml'];
+
+    // Lọc file ảnh hợp lệ
+    const files = Array.from(e.target.files).filter(file =>
+      validTypes.includes(file.type)
+    );
+
+    if (files.length === 0) {
+      toast.error("Only accept image files in .jpg, .jpeg, .png, or .svg format");
+      return;
+    }
+
     setImagesFile((prev) => [...prev, ...files]);
+
     const fileUrls = files.map((file) => URL.createObjectURL(file));
     setImages((prev) => [...prev, ...fileUrls]);
+
+    // const files = Array.from(e.target.files);
+    // setImagesFile((prev) => [...prev, ...files]);
+    // const fileUrls = files.map((file) => URL.createObjectURL(file));
+    // setImages((prev) => [...prev, ...fileUrls]);
   };
 
   const filteredFriends = (listFriends || []).filter((friend) =>
@@ -499,11 +518,10 @@ const PostCreatePopup = ({ onCreatedPost, onClose, groupId }) => {
           </div>
           <button
             type="submit"
-            className={`w-full py-3 text-white rounded-lg transition-colors duration-200 ${
-              isLoading 
-                ? 'bg-gray-400 cursor-not-allowed' 
+            className={`w-full py-3 text-white rounded-lg transition-colors duration-200 ${isLoading
+                ? 'bg-gray-400 cursor-not-allowed'
                 : 'bg-blue-500 hover:bg-blue-600'
-            }`}
+              }`}
             disabled={isLoading}
           >
             {isLoading ? (
