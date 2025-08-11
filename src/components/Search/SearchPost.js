@@ -134,7 +134,7 @@ const SearchPost = () => {
 
   return (
     <div className="w-full flex flex-col items-center pt-12 lg:mt-[120px] mt-[63px]">
-      <div className="w-full max-w-5xl flex flex-col gap-4">
+      <div className="w-full max-w-6xl flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <div className="text-left">
             <span className="font-bold">KEYWORD: </span>
@@ -217,6 +217,7 @@ const SearchPost = () => {
                     accId: post.post.accId,
                     fullName: post.ownerPost?.fullName,
                     avatar: post.ownerPost?.avatar,
+                    roleId: post.ownerPost.roleId,
                     createAt: post.post.createdAt,
                     content: post.post.postContent,
                     images: post.postImages?.map((img) => img.imageUrl),
