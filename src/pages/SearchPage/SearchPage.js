@@ -6,6 +6,7 @@ import PostInGroupRight from "../../components/Group/PostInGroupRight";
 import SearchSidebar from "../../components/Search/SearchSidebar";
 import SearchPost from "../../components/Search/SearchPost";
 import SearchUser from "../../components/Search/SearchUer";
+import SearchGroup from "../../components/Search/SearchGroup";
 
 const SearchPage = () => {
   const location = useLocation();
@@ -32,7 +33,7 @@ const SearchPage = () => {
         <SearchSidebar setSection={setSection} />
         {section === "search-post" && <SearchPost keyword={keyword} />}
         {section === "search-user" && <SearchUser />}
-        {section === "search-group" && <PostInGroupRight />}
+        {section === "search-group" && <SearchGroup />}
       </div>
     </div>
   );

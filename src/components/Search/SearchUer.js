@@ -117,7 +117,7 @@ const SearchUser = () => {
 
     return (
         <div className="w-full flex flex-col items-center pt-12 lg:mt-[120px] mt-[63px]">
-            <div className="w-full max-w-5xl flex flex-col gap-4 px-4">
+            <div className="w-full max-w-6xl flex flex-col gap-4 px-4">
                 <div className="flex justify-between items-center">
                     <div className="text-left">
                         <span className="font-bold">KEYWORD: </span>

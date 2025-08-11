@@ -243,7 +243,6 @@ const HomePage = () => {
                       key={`${postMapper.post.postId}-${index}`}
                       post={{
                         accId: postMapper.ownerPost.accId || "Unknown",
-                        roleId: postMapper.ownerPost.roleId || "Unknown",
                         postId: postMapper.post.postId,
                         fullName: postMapper.ownerPost.fullName || "Unknown User",
                         avatar: postMapper.ownerPost.avatar,
