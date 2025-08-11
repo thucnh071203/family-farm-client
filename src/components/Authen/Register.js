@@ -75,8 +75,8 @@ export const Register = () => {
       newErrors.identify = "ID Number is required.";
     if (!formData.username.trim()) newErrors.username = "Username is required.";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
-    else if (formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters.";
+    else if (formData.password.length < 8)
+      newErrors.password = "Password must be at least 8 characters.";
     if (formData.passwordConfirm !== formData.password)
       newErrors.passwordConfirm = "Passwords do not match.";
 
