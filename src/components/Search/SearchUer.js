@@ -12,7 +12,6 @@ const SearchUser = () => {
     const [count, setCount] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [isFilterPopupOpen, setIsFilterPopupOpen] = useState(false);
     const popupRef = useRef(null);
     const lastFetchedKeyword = useRef("");
 
@@ -93,28 +92,6 @@ const SearchUser = () => {
         };
     }, [searchKeyword]);
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (popupRef.current && !popupRef.current.contains(event.target)) {
-                setIsFilterPopupOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    const handleSearch = () => {
-        fetchUsers();
-        setIsFilterPopupOpen(false);
-    };
-
-    const toggleFilterPopup = () => {
-        setIsFilterPopupOpen(!isFilterPopupOpen);
-    };
-
     return (
         <div className="w-full flex flex-col items-center pt-12 lg:mt-[120px] mt-[63px]">
             <div className="w-full max-w-6xl flex flex-col gap-4 px-4">
@@ -123,44 +100,7 @@ const SearchUser = () => {
                         <span className="font-bold">KEYWORD: </span>
                         <span>{searchKeyword || "None"}</span>
                     </div>
-                    <button onClick={toggleFilterPopup}>
-                        <i className="fas fa-sliders-h text-sky-400 text-xl"></i>
-                    </button>
                 </div>
-
-                {isFilterPopupOpen && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div
-                            ref={popupRef}
-                            className="bg-white p-4 rounded-lg max-h-[80vh] overflow-y-auto w-11/12 max-w-md"
-                        >
-                            <h3 className="font-bold mb-2">Filter Users</h3>
-                            <div className="flex flex-col gap-2">
-                                <input
-                                    type="text"
-                                    placeholder="Enter new keyword..."
-                                    className="search-input p-2 border rounded w-full"
-                                    value={searchKeyword}
-                                    onChange={(e) => setSearchKeyword(e.target.value)}
-                                />
-                            </div>
-                            <div className="mt-4 flex gap-2">
-                                <button
-                                    className="px-3 py-2 bg-blue-500 text-white flex-1"
-                                    onClick={handleSearch}
-                                >
-                                    Search
-                                </button>
-                                <button
-                                    className="px-3 py-1 bg-gray-200 text-gray-800 flex-1"
-                                    onClick={toggleFilterPopup}
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
                 {isLoading ? (
                     <div>Loading...</div>
