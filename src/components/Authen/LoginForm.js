@@ -202,6 +202,9 @@ const LoginForm = () => {
   };
 
   const handleLogin = async (e) => {
+    let hasError = false;
+    let newErrors = {};
+
     if (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -209,15 +212,34 @@ const LoginForm = () => {
 
     setIsSubmitted(true);
 
-    const newErrors = {};
+    // const newErrors = {};
+
+    // if (!username.trim()) {
+    //   newErrors.username = "Username is required";
+    // }
 
     if (!username.trim()) {
       newErrors.username = "Username is required";
+      hasError = true;
     }
 
-    if (!password) {
-      newErrors.password = "Password is required";
-    }
+    // if (!password) {
+    //   newErrors.password = "Password is required";
+    // }
+
+    if (!password.trim()) {
+    newErrors.password = "Password is required";
+    hasError = true;
+  } else if (password.length < 8) {
+    newErrors.password = "Password must be at least 8 characters";
+    hasError = true;
+  }
+
+  if (hasError) {
+    setErrors(newErrors);
+    setIsSubmitted(true);
+    return; // Không gọi API nếu có lỗi
+  }
 
     setErrors(newErrors);
 
