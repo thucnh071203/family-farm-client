@@ -65,8 +65,9 @@ const Header = () => {
         if (storedUsername) {
             setUsername(storedUsername);
             setFullName(storedFullName || storedUsername);
-            setAvatarUrl(storedAvatarUrl || defaultAvatar);
         }
+        setAvatarUrl(storedAvatarUrl || "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault-avatar.png?alt=media&token=69ee68ad-2b1b-4f74-8497-2fd68f25d283");
+        console.log(avatarUrl)
     }, []);
 
     useEffect(() => {
