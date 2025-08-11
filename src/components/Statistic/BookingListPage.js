@@ -123,25 +123,25 @@ const BookingListPage = () => {
       <div className="border rounded-xl shadow-inner bg-white p-4">
         <div className="max-h-[500px] overflow-y-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bookings.length === 0 ? (
+            {(bookings || []).length === 0 ? (
               <p className="text-center text-gray-500 col-span-full">
                 No booking
               </p>
             ) : (
-              bookings.map((booking) => (
+                  (bookings || []).map((booking) => (
                 <div
                   key={booking.bookingServiceId}
                   onClick={() => openBookingDetail(booking)}
                   className="p-4 bg-white rounded-xl shadow hover:shadow-md hover:bg-gray-50 cursor-pointer transition-all"
                 >
                   <h3 className="font-bold text-lg text-blue-800">
-                    {booking.serviceName}
+                              {booking?.serviceName || "N/A"}
                   </h3>
-                  <p className="text-gray-700">Price: {booking.price} VNĐ</p>
+                  <p className="text-gray-700">        Price: {booking?.price?.toLocaleString?.() || 0} VNĐ</p>
                   <p className="text-sm text-gray-500 mt-1">
                     Status:{" "}
                     <span className="font-semibold text-indigo-600">
-                      {booking.bookingServiceStatus}
+                           {booking?.bookingServiceStatus || "Unknown"}
                     </span>
                   </p>
                 </div>

@@ -27,7 +27,7 @@ const SearchSidebar = ({ setSection }) => {
                 <button
                     onClick={() => handleSectionChange("search-post")}
                     className={`hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3 ${
-                        state?.section === "search-post" ? "bg-[#999999]" : ""
+                        state?.section === "search-post" ? "bg-[#3DB3FB] text-white" : ""
                     }`}
                 >
                     <div className="flex items-center mx-2">
@@ -39,7 +39,7 @@ const SearchSidebar = ({ setSection }) => {
                 <button
                     onClick={() => handleSectionChange("search-user")}
                     className={`hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3 ${
-                        state?.section === "search-user" ? "bg-[#999999]" : ""
+                        state?.section === "search-user" ? "bg-[#3DB3FB] text-white" : ""
                     }`}
                 >
                     <div className="flex items-center mx-2">
@@ -51,7 +51,7 @@ const SearchSidebar = ({ setSection }) => {
                 <button
                     onClick={() => handleSectionChange("search-group")}
                     className={`hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3 ${
-                        state?.section === "search-group" ? "bg-[#999999]" : ""
+                        state?.section === "search-group" ? "bg-[#3DB3FB] text-white" : ""
                     }`}
                 >
                     <div className="flex items-center mx-2">

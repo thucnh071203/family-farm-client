@@ -122,6 +122,9 @@ const OptionsPost = ({ isSavedPost, setIsSavedPost, onRestore, onHardDelete, isD
             Authorization: `Bearer ${accessToken}`,
           },
         });
+
+        console.log(response.data)
+        
         if (response.status === 200) {
           toast.success("Deleted successfully!");
           onDeletePost(postId);

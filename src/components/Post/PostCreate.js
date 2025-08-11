@@ -5,7 +5,7 @@ import default_avatar from "../../assets/images/default-avatar.png";
 
 const PostCreate = ({ onPostCreate, profileImage, groupId }) => {
   const [showPopup, setShowPopup] = useState(false);
-const { user } = useUser();
+  const { user } = useUser();
 
   const handlePostCreated = (newPost) => {
     onPostCreate(newPost);
@@ -22,7 +22,7 @@ const { user } = useUser();
       </button>
       <div className="flex items-center gap-3">
         <img
-            src={user?.avatar || default_avatar}
+          src={user?.avatar || default_avatar}
           alt="Avatar"
           className="w-10 h-10 rounded-full"
         />
@@ -32,7 +32,7 @@ const { user } = useUser();
           className="flex-grow p-2 border border-gray-300 rounded-full"
         />
       </div>
-      {showPopup && <PostCreatePopup onCreatedPost={handlePostCreated}  onClose={() => setShowPopup(false)} groupId={groupId}/>}
+      {showPopup && <PostCreatePopup onCreatedPost={handlePostCreated} onClose={() => setShowPopup(false)} groupId={groupId} />}
     </div>
   );
 };

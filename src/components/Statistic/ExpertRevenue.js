@@ -129,14 +129,14 @@ export default function ExpertRevenue() {
           <div className="bg-white rounded-xl shadow p-6 border-l-8 border-blue-600">
             <h2 className="text-lg font-semibold mb-2">Total revenue</h2>
             <p className="text-3xl font-bold text-blue-700">
-              {data.totalRevenue.toLocaleString()} đ
+              {(data?.totalRevenue || 0).toLocaleString()} đ
             </p>
           </div>
 
           <div className="bg-white rounded-xl shadow p-6 border-l-8 border-green-600">
             <h2 className="text-lg font-semibold mb-2">Total commission</h2>
             <p className="text-3xl font-bold text-green-700">
-              {data.commissionRevenue.toLocaleString()} đ
+              {(data?.commissionRevenue || 0).toLocaleString()} đ
             </p>
           </div>
 
@@ -145,14 +145,14 @@ export default function ExpertRevenue() {
               Number of services provided
             </h2>
             <p className="text-3xl font-bold text-yellow-600">
-              {data.totalServicesProvided}
+              {data?.totalServicesProvided || 0}
             </p>
           </div>
 
           <div className="bg-white rounded-xl shadow p-6 border-l-8 border-purple-500">
             <h2 className="text-lg font-semibold mb-4">Hot Services</h2>
             <ul className="list-disc ml-6 space-y-1">
-              {data.topServiceNames.map((name, idx) => (
+              {(data?.topServiceNames || []).map((name, idx) => (
                 <li key={idx} className="text-base text-purple-700 font-medium">
                   {name}
                 </li>
@@ -172,14 +172,20 @@ export default function ExpertRevenue() {
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.keys(data.dailyRevenue).map((date) => (
+                  {Object.keys(data?.dailyRevenue || {}).map((date) => (
                     <tr key={date} className="hover:bg-gray-100">
                       <td className="py-2 px-4 border-b">{date}</td>
                       <td className="py-2 px-4 border-b">
-                        {Number(data.dailyRevenue[date]).toLocaleString()} đ
+                        {Number(
+                          data?.dailyRevenue?.[date] || 0
+                        ).toLocaleString()}{" "}
+                        đ
                       </td>
                       <td className="py-2 px-4 border-b">
-                        {Number(data.dailyCommission[date]).toLocaleString()} đ
+                        {Number(
+                          data?.dailyCommission?.[date] || 0
+                        ).toLocaleString()}{" "}
+                        đ
                       </td>
                     </tr>
                   ))}

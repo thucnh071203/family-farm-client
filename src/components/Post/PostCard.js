@@ -64,7 +64,18 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
   } = useReactions({ entityType: "Post", entityId: postData.postId });
 
   const renderTagFriends = () => {
-    const fullNameElement = <span style={{ cursor: "pointer" }} onClick={() => handleClickToProfile(postData.accId)} className="text-[#088DD0]">{postData.fullName}</span>;
+    const isVerified = postData.roleId === "68007b2a87b41211f0af1d57";
+    const fullNameElement = (
+      <span style={{ cursor: "pointer" }} onClick={() => handleClickToProfile(postData.accId)} className="text-[#088DD0]">
+        {postData.fullName}
+        {isVerified && (
+          <>
+            {" "}
+            <i className="fa-solid fa-circle-check text-[#3db3fb]"></i>
+          </>
+        )}
+      </span>
+    );
 
     if (!tagFriends.length) return fullNameElement;
 
@@ -74,7 +85,9 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
           {fullNameElement}
           <span className="text-black">
             <span className="text-gray-400 font-normal"> with </span>
-            <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{ cursor: "pointer" }}>{tagFriends[0].fullname}</span>
+            <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{ cursor: "pointer" }}>
+              {tagFriends[0].fullname}
+            </span>
           </span>
         </>
       );
@@ -86,8 +99,13 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
           {fullNameElement}
           <span className="text-black">
             <span className="text-gray-400 font-normal"> with </span>
-            <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{ cursor: "pointer" }}>{tagFriends[0].fullname}</span> and
-            <span onClick={() => handleClickToProfile(tagFriends[1].accId)} style={{ cursor: "pointer" }}>{tagFriends[1].fullname}</span>
+            <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{ cursor: "pointer" }}>
+              {tagFriends[0].fullname}
+            </span>{" "}
+            and
+            <span onClick={() => handleClickToProfile(tagFriends[1].accId)} style={{ cursor: "pointer" }}>
+              {tagFriends[1].fullname}
+            </span>
           </span>
         </>
       );
@@ -98,7 +116,10 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
         {fullNameElement}
         <span className="text-black">
           <span className="text-gray-400 font-normal"> with </span>
-          <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{ cursor: "pointer" }}>{tagFriends[0].fullname}</span> and {tagFriends.length - 1} more
+          <span onClick={() => handleClickToProfile(tagFriends[0].accId)} style={{ cursor: "pointer" }}>
+            {tagFriends[0].fullname}
+          </span>{" "}
+          and {tagFriends.length - 1} more
         </span>
       </>
     );
