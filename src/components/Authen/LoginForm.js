@@ -261,7 +261,12 @@ const LoginForm = () => {
 
         await reloadUser();
         toast.success("LOGIN SUCCESSFULLY!");
-        navigate("/");
+        if (loginData.roleId === "67fd41dfba121b52bbc622c3") {
+          navigate("/Dashboard");
+        }
+        else {
+          navigate("/");
+        }
       } else {
         toast.error("Login failed! Please check your username or password!");
       }
@@ -449,9 +454,8 @@ const LoginForm = () => {
           <div className="flex flex-col items-center justify-center frame-9 lg:flex-row">
             <div className="frame-10 w-full lg:w-[223px]">
               <div
-                className={`frame-10 w-full lg:w-[223px] cursor-pointer flex items-center justify-center border border-gray-300 rounded-md py-2 ${
-                  loading ? "opacity-50 pointer-events-none" : ""
-                }`}
+                className={`frame-10 w-full lg:w-[223px] cursor-pointer flex items-center justify-center border border-gray-300 rounded-md py-2 ${loading ? "opacity-50 pointer-events-none" : ""
+                  }`}
                 onClick={handleGoogleLogin}
               >
                 <img
