@@ -18,6 +18,8 @@ const Chatbot = () => {
     ]);
     const [inputMessage, setInputMessage] = useState('');
     const messagesEndRef = useRef(null);
+    const [isBotTyping, setIsBotTyping] = useState(false);
+
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -74,10 +76,10 @@ const Chatbot = () => {
         setMessages(prev => [...prev, userMessage]);
         setInputMessage('');
 
-        try {
-            // Gửi đến API backend của bạn
-            const response = await instance.post('/api/chat/bot', messageText);
+        setIsBotTyping(true);
 
+        try {
+            const response = await instance.post('/api/chat/bot', messageText);
             const botReply = response.data?.reply || "No response received.";
 
             const botMessage = {
@@ -90,17 +92,18 @@ const Chatbot = () => {
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
             console.error("Error sending message:", error);
-            
             const errorMessage = {
                 id: messages.length + 2,
                 text: "⚠️ Error: Could not connect to chatbot server.",
                 isBot: true,
                 timestamp: new Date()
             };
-
             setMessages(prev => [...prev, errorMessage]);
+        } finally {
+            setIsBotTyping(false);
         }
     };
+
 
     const handleQuestionClick = (question) => {
         handleSendMessage(question);
@@ -217,6 +220,18 @@ const Chatbot = () => {
 
                         <div ref={messagesEndRef} />
                     </div>
+
+                    
+                    {isBotTyping && (
+                        <div className="flex items-start mb-4" style={{ animation: 'fadeIn 0.3s ease-in' }}>
+                            <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center mr-2 border border-gray-300">
+                                <img src={chatbot_icon} className='w-5 h-5 p-0.5' alt='chatbot_icon' />
+                            </div>
+                            <div className="bg-white text-gray-800 shadow-sm px-3 py-2 rounded-lg text-sm">
+                                <span className="typing-dots"></span>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="p-4 border-t border-gray-200 bg-white">
                         <div className="flex items-center space-x-2">
