@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 
 const SearchBox = () => {
@@ -8,8 +8,12 @@ const SearchBox = () => {
   const [searchHistory, setSearchHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
   const navigate = useNavigate();
+  const { state } = useLocation(); // Lấy state từ useLocation
   const popupRef = useRef(null);
-  const isDeleting = useRef(false); // Thêm flag để track việc xóa
+  const isDeleting = useRef(false);
+
+  // Lấy section hiện tại từ state, mặc định là "search-post" nếu không có
+  const currentSection = state?.section || "search-post";
 
   const fetchSearchHistory = async () => {
     try {
@@ -26,10 +30,9 @@ const SearchBox = () => {
 
   const deleteSearchHistory = async (searchKey) => {
     try {
-      isDeleting.current = true; // Đánh dấu đang xóa
+      isDeleting.current = true;
       const response = await instance.delete(`/api/search-history/delete-by-search-key/${searchKey}`);
       if (response.data === true) {
-        // Xóa mục khỏi danh sách lịch sử
         setSearchHistory((prev) => prev.filter((item) => item.searchKey !== searchKey));
       } else {
         console.error("Failed to delete search history");
@@ -37,7 +40,6 @@ const SearchBox = () => {
     } catch (err) {
       console.error("Error deleting search history:", err);
     } finally {
-      // Reset flag sau khi hoàn thành
       setTimeout(() => {
         isDeleting.current = false;
       }, 100);
@@ -46,8 +48,14 @@ const SearchBox = () => {
 
   const handleSearch = () => {
     if (keyword.trim()) {
-      console.log("Navigating with keyword:", keyword);
-      navigate("/Search", { state: { section: "search-post", keyword, categoryIds: [] } });
+      console.log("Navigating with keyword:", keyword, "section:", currentSection);
+      navigate("/Search", {
+        state: {
+          section: currentSection, // Sử dụng section hiện tại
+          keyword,
+          categoryIds: state?.categoryIds || [],
+        },
+      });
       setShowHistory(false);
     }
   };
@@ -58,6 +66,18 @@ const SearchBox = () => {
     }
   };
 
+  const handleHistoryClick = (searchKey) => {
+    setKeyword(searchKey);
+    setShowHistory(false);
+    navigate("/Search", {
+      state: {
+        section: currentSection, // Sử dụng section hiện tại
+        keyword: searchKey,
+        categoryIds: state?.categoryIds || [],
+      },
+    });
+  };
+
   const handleFocus = () => {
     setIsFocused(true);
     setShowHistory(true);
@@ -66,7 +86,6 @@ const SearchBox = () => {
 
   const handleBlur = () => {
     setIsFocused(false);
-    // Chỉ đóng popup nếu không đang trong quá trình xóa
     setTimeout(() => {
       if (!isDeleting.current) {
         setShowHistory(false);
@@ -74,17 +93,10 @@ const SearchBox = () => {
     }, 200);
   };
 
-  const handleHistoryClick = (searchKey) => {
-    setKeyword(searchKey);
-    setShowHistory(false);
-    navigate("/Search", { state: { section: "search-post", keyword: searchKey, categoryIds: [] } });
-  };
-
   // Xử lý click bên ngoài
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
-        // Chỉ đóng nếu không đang xóa
         if (!isDeleting.current) {
           setShowHistory(false);
         }
@@ -134,7 +146,7 @@ const SearchBox = () => {
               </span>
               <button
                 onClick={(e) => {
-                  e.stopPropagation(); // Ngăn event bubbling
+                  e.stopPropagation();
                   deleteSearchHistory(history.searchKey);
                 }}
                 className="text-gray-500 hover:text-gray-700"
