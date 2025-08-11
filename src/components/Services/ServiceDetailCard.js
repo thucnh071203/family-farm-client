@@ -105,7 +105,7 @@ const ServiceDetailCard = ({ data, summary }) => {
                             </div>
                         </div>
                         <div>
-                            <FriendActionButton status={expert.status} roleId={expert.roleId} />
+                            {/* <FriendActionButton status={expert.status} roleId={expert.roleId} /> */}
                         </div>
                     </div>
 

@@ -59,7 +59,11 @@ const SuggestedGroups = ({ groups }) => {
               <div
                 className="w-full h-24 rounded-md bg-no-repeat bg-center bg-cover"
                 style={{
-                  backgroundImage: `url(${group.group.groupBackground})`,
+                  backgroundImage: `url(${
+                    group.group.groupBackground && group.group.groupBackground.trim() !== ""
+                      ? group.group.groupBackground
+                      : "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fgroup-background-default.jpg?alt=media&token=00da8dac-2787-41bc-8477-6bff1b468612"
+                  })`,
                 }}
               ></div>
               <p className="absolute text-sm text-gray-500 right-0 top-16 p-1 px-3 text-white font-bold bg-blue-400 rounded-l-full">
@@ -67,7 +71,7 @@ const SuggestedGroups = ({ groups }) => {
               </p>
               <div className="absolute top-16 flex items-end gap-3 m-4">
                 <img
-                  src={group.group.groupAvatar}
+                  src={group.group.groupAvatar?.trim() ? group.group.groupAvatar : "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fgroup-avatar-default-final.jpg?alt=media&token=633213e3-9495-42f8-b220-185b27d5fec9"}
                   alt={`${group.group.groupName} avatar`}
                   className="w-10 h-10 rounded-full"
                 />

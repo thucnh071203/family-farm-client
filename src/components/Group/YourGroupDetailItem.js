@@ -49,7 +49,7 @@ const YourGroupDetailItem = ({ group }) => {
             transition: Bounce,
           });
           setLeaveGroups((prev) => [...prev, groupId]);
-          navigate("/GroupDetail", { replace: true });
+          navigate("/Group", { replace: true });
         } else {
           toast.warning("You may have already left this group.");
         }
@@ -64,7 +64,11 @@ const YourGroupDetailItem = ({ group }) => {
     <div className="flex justify-between items-center text-left">
       <div className="flex items-center gap-2">
         <img
-          src={group.avatar || "https://gameroom.ee/83571/minecraft.jpg"}
+          src={
+              group.groupAvatar?.trim()
+                ? group.groupAvatar
+                : "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fgroup-avatar-default-final.jpg?alt=media&token=633213e3-9495-42f8-b220-185b27d5fec9"
+            }
           alt={group.avatar}
           className="w-9 h-9 rounded-full"
         />

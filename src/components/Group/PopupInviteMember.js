@@ -46,10 +46,10 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
                     if (res.status === 404) {
                         validFriends.push(friend);
                     } else if (!res.ok && res.status !== 200) {
-                        console.warn(`Check failed for ${friend.username}: status ${res.status}`);
+                        console.warn(`Check failed for ${friend.fullName}: status ${res.status}`);
                     }
                 } else {
-                    console.warn(`Fetch failed for ${result.reason?.friend?.username}: ${result.reason}`);
+                    console.warn(`Fetch failed for ${result.reason?.friend?.fullName}: ${result.reason}`);
                 }
             }
 
@@ -68,7 +68,7 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
     }, []);
 
     const filteredFriends = (friendsData || []).filter((friend) =>
-        friend.username.toLowerCase().includes(searchKeyword.toLowerCase())
+        friend.fullName.toLowerCase().includes(searchKeyword.toLowerCase())
     );
 
     const toggleSelectFriend = (friend) => {
@@ -122,7 +122,7 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
 
     return (
         <div className="invite-group-member fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="invite-container bg-[#1c1e21] text-white rounded-lg w-[700px] h-[600px] flex flex-col">
+            <div className="invite-container bg-[#fff] text-black rounded-lg w-[700px] h-[600px] flex flex-col">
                 {/* Header */}
                 <div className="invite-header flex justify-between items-center px-4 py-3 border-b border-gray-600">
                     <h2 className="text-lg font-bold">Invite friends to join this group</h2>
@@ -139,7 +139,7 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
                     {/* Left: Danh sách bạn bè */}
                     <div className="w-[60%] p-0 flex flex-col">
                         {/* Ô tìm kiếm cố định */}
-                        <div className="search-friend sticky top-0 bg-[#1c1e21] z-10 p-4">
+                        <div className="search-friend sticky top-0 bg-[#fff] z-10 p-4">
                             <input
                                 type="text"
                                 placeholder="Find friends by name"
@@ -147,7 +147,7 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
                                 value={searchKeyword}
                                 onChange={(e) => setSearchKeyword(e.target.value)}
                             />
-                            <div className="text-sm text-gray-400 mt-3">Suggest</div>
+                            <div className="text-sm text-gray-400 mt-5 text-start">Suggest</div>
                         </div>
 
                         {/* Danh sách bạn bè scroll riêng */}
@@ -160,7 +160,7 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
                                         <li
                                             key={friend.accId}
                                             onClick={() => toggleSelectFriend(friend)}
-                                            className={`flex items-center justify-between px-2 py-1 rounded cursor-pointer hover:bg-gray-700 ${isSelected(friend.accId) ? "bg-gray-700" : ""
+                                            className={`flex items-center justify-between px-2 py-1 rounded cursor-pointer hover:bg-gray-300 ${isSelected(friend.accId) ? "bg-gray-500" : ""
                                                 }`}
                                         >
                                             <div className="flex items-center space-x-3">
@@ -171,9 +171,9 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
                                                         : defaultAvatar
                                                     }
                                                     className="w-8 h-8 rounded-full"
-                                                    alt={friend.username}
+                                                    alt={friend.fullName}
                                                 />
-                                                <span className="text-sm font-medium">{friend.username}</span>
+                                                <span className="text-sm font-medium">{friend.fullName}</span>
                                             </div>
                                             <input
                                                 type="checkbox"
@@ -200,13 +200,13 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
                                         <img
                                             src={friend.avatar}
                                             className="w-6 h-6 rounded-full"
-                                            alt={friend.username}
+                                            alt={friend.fullName}
                                         />
-                                        <span className="text-sm">{friend.username}</span>
+                                        <span className="text-sm">{friend.fullName}</span>
                                     </div>
                                     <button
                                         onClick={() => removeFriend(friend.accId)}
-                                        className="text-gray-400 hover:text-white"
+                                        className="text-gray-400 hover:text-gray-700"
                                     >
                                         <i className="fa-solid fa-xmark"></i>
                                     </button>
