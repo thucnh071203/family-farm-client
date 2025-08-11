@@ -145,6 +145,11 @@ const CreateServiceForm = () => {
         formData.append("RateCount", 0);
         if (image) formData.append("ImageUrl", image);
 
+        console.log("=== FormData preview ===");
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
+
         const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
 
         try {
@@ -160,7 +165,14 @@ const CreateServiceForm = () => {
 
             const serviceId = res.data?.data?.[0]?.service?.serviceId;
 
-            navigate(`/CreateStepPage/${serviceId}`);
+            const createdService = res.data?.data?.[0]?.service;
+            // const serviceId = createdService?.serviceId;
+            const status = createdService?.status; // 0/1
+
+            // navigate(`/CreateStepPage/${serviceId}`);
+            navigate(`/CreateStepPage/${serviceId}`, {
+                state: { status } // 👈 truyền kèm status sang trang kế
+            });
 
             // Reset form
             setServiceName("");
@@ -179,7 +191,8 @@ const CreateServiceForm = () => {
     };
 
     return (
-        <div className="p-6 bg-white shadow-xl rounded-lg text-left border border-solid border-gray-200">
+        // <div className="p-6 bg-white shadow-xl rounded-lg text-left border border-solid border-gray-200">
+        <div className="self-start p-6 bg-white shadow-xl rounded-lg text-left border border-solid border-gray-200 h-auto">
             <h2 className="text-xl font-semibold mb-2 text-[#3DB3FB]">Create New Service</h2>
             <hr />
             <form onSubmit={handleSubmit} className="space-y-4 mt-10">

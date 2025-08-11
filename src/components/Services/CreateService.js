@@ -9,7 +9,7 @@ export default function CreateService() {
     <div className="progress-management pt-16 h-full">
       <div className="max-w-7xl mx-auto">
         <ProcessNav />
-        <div className="mt-10 w-full space-x-6 grid grid-cols-[2fr_5fr]">
+        <div className="mt-10 w-full grid grid-cols-[2fr_5fr] gap-6 items-start">
             {/* <RecentServiceList /> */}
             <PopularService/>
             <CreateServiceForm />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import instance from "../../Axios/axiosConfig";
 import { handleFileSelect } from '../../utils/validateFile';
 import MenuProcessStep from "./MenuProcessStep";
@@ -30,6 +30,9 @@ const CreateProcessStep = () => {
   const [processDescription, setProcessDescription] = useState("");
 
   const [preview, setPreview] = useState(null); // Khai báo state preview để hiển thị ảnh preview
+
+  const location = useLocation();
+  const passedStatus = location.state?.status; // 0/1 nếu có
 
   const [errors, setErrors] = useState({
     processTitle: "",
@@ -295,6 +298,8 @@ const CreateProcessStep = () => {
     setIsLoading(true); // Bật loading khi bắt đầu xử lý
 
     try {
+      const effectiveStatus = passedStatus ?? service?.status ?? 0;
+
       const imageUrlsByStep = await uploadImagesAndGetUrls();
 
       const requestBody = {
@@ -308,6 +313,7 @@ const CreateProcessStep = () => {
           stepDescription: step.description,
           images: imageUrlsByStep[i],
         })),
+        status: effectiveStatus, // 👈 thêm vào payload
       };
 
       const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
