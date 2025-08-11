@@ -85,7 +85,7 @@ const BookingStatisticPage = () => {
       {loading && <p className="text-blue-500">Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      {Object.keys(data).length > 0 && (
+      {Object.keys(data || {}).length > 0 && (
         <div className="mt-6 border rounded shadow max-h-[400px] overflow-y-auto">
           <table className="w-full table-auto border-collapse">
             <thead className="sticky top-0 bg-gray-100 z-10">
@@ -95,10 +95,10 @@ const BookingStatisticPage = () => {
               </tr>
             </thead>
             <tbody>
-              {Object.entries(data).map(([key, value]) => (
+              {Object.entries(data || {}).map(([key, value]) => (
                 <tr key={key}>
-                  <td className="border px-4 py-2">{key}</td>
-                  <td className="border px-4 py-2">{value}</td>
+                  <td className="border px-4 py-2">{key || "N/A"}</td>
+                  <td className="border px-4 py-2">{value || 0}</td>
                 </tr>
               ))}
             </tbody>
