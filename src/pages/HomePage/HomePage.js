@@ -247,6 +247,7 @@ const HomePage = () => {
                         postId: postMapper.post.postId,
                         fullName: postMapper.ownerPost.fullName || "Unknown User",
                         avatar: postMapper.ownerPost.avatar,
+                        roleId: postMapper.ownerPost.roleId,
                         createAt: postMapper.post.createdAt,
                         content: postMapper.post.postContent,
                         images: postMapper.postImages?.map((img) => img.imageUrl) || [],

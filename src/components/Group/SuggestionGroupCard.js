@@ -63,7 +63,7 @@ const SuggestionGroupCard = ({ group, member }) => {
           </p>
         </div>
         <div className="absolute z-10 md:top-[58%] top-[48%]">
-          <p className="font-bold text-sm md:text-base text-[#393A4F] text-left pl-5 pt-9">
+          <p className="font-bold text-sm md:text-base text-[#393A4F] text-left pl-5 pt-9 truncate max-w-[250px]">
             {group.groupName}
           </p>
         </div>

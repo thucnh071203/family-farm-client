@@ -49,6 +49,7 @@ const PostCard = ({ onRestore, onHardDelete, isDeleted, onDeletePost, post, onCo
   const categories = postData.categories || [];
   const tagFriends = postData.tagFriends || [];
 
+  console.log(postData)
   const [showComments, setShowComments] = useState(false);
   const [commentCount, setCommentCount] = useState(postData.comments);
   const [isLikeHovered, setIsLikeHovered] = useState(false);

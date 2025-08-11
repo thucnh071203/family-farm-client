@@ -176,9 +176,6 @@ const Professional = () => {
           Go to your Profile
         </Link>
 
-        <Link to="/payment" className="mt-5 text-blue-500 hover:underline">
-          Go to Payment page
-        </Link>
         {!showStatistic ? (
           <button
             onClick={() => setShowStatistic(true)}

@@ -75,7 +75,7 @@ const SuggestedGroups = ({ groups }) => {
                   alt={`${group.group.groupName} avatar`}
                   className="w-10 h-10 rounded-full"
                 />
-                <p className="font-bold">{group.group.groupName}</p>
+                <p className="font-bold truncate max-w-[200px]">{group.group.groupName}</p>
               </div>
 
               {joinedGroups.includes(group.group.groupId) ? (

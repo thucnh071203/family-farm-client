@@ -73,7 +73,7 @@ const YourGroupDetailItem = ({ group }) => {
           className="w-9 h-9 rounded-full"
         />
         <div className="flex flex-col gap-1 items-start">
-          <span className="ml-2">{group.groupName}</span>
+          <span className="ml-2 truncate max-w-[100px]">{group.groupName}</span>
           {!leaveGroups.includes(group.groupId) && (
             <button
               onClick={handleViewGroup}
