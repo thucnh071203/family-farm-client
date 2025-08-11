@@ -5,6 +5,7 @@ import NavbarHeader from "../../components/Header/NavbarHeader";
 import PostInGroupRight from "../../components/Group/PostInGroupRight";
 import SearchSidebar from "../../components/Search/SearchSidebar";
 import SearchPost from "../../components/Search/SearchPost";
+import SearchUser from "../../components/Search/SearchUer";
 
 const SearchPage = () => {
   const location = useLocation();
@@ -30,9 +31,8 @@ const SearchPage = () => {
       <div className="flex h-screen">
         <SearchSidebar setSection={setSection} />
         {section === "search-post" && <SearchPost keyword={keyword} />}
-        {section === "search-user" && <PostInGroupRight />}
+        {section === "search-user" && <SearchUser />}
         {section === "search-group" && <PostInGroupRight />}
-        {section === "search-service" && <PostInGroupRight />}
       </div>
     </div>
   );

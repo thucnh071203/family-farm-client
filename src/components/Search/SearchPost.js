@@ -54,7 +54,7 @@ const SearchPost = () => {
         isAndLogic,
       };
 
-      console.log("Fetch params:", params);
+      // console.log("Fetch params:", params);
 
       const response = await instance.get("/api/post/search", {
         params,
@@ -65,7 +65,7 @@ const SearchPost = () => {
 
       if (response.data.success) {
         setPosts(response.data.data || []);
-        console.log("List search:", response.data.data);
+        // console.log("List search:", response.data.data);
       } else {
         setError(response.data.message || "No posts found");
         setPosts([]);
@@ -134,7 +134,7 @@ const SearchPost = () => {
 
   return (
     <div className="w-full flex flex-col items-center pt-12 lg:mt-[120px] mt-[63px]">
-      <div className="w-full max-w-3xl flex flex-col gap-4">
+      <div className="w-full max-w-5xl flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <div className="text-left">
             <span className="font-bold">KEYWORD: </span>
@@ -209,30 +209,33 @@ const SearchPost = () => {
           <div className="text-red-500">{error}</div>
         ) : posts.length > 0 ? (
           posts.map((post) => (
-            <PostCard
-              key={post.post.postId}
-              post={{
-                postId: post.post.postId,
-                accId: post.post.accId,
-                fullName: post.ownerPost?.fullName,
-                avatar: post.ownerPost?.avatar,
-                createAt: post.post.createdAt,
-                content: post.post.postContent,
-                images: post.postImages?.map((img) => img.imageUrl),
-                hashtags: post.hashTags?.map((tag) => tag.hashTagContent),
-                categories: post.postCategories?.map((cat) => cat.categoryName),
-                tagFriends: post.postTags?.map((tag) => ({
-                  accId: tag.accId,
-                  fullname: tag.fullname || tag.username,
-                })),
-                likes: post.reactionCount,
-                comments: post.commentCount,
-                shares: post.shareCount,
-              }}
-              onCommentCountChange={(newCount) =>
-                console.log("Comment count updated:", newCount)
-              }
-            />
+            <div key={post.post.postId} className="flex justify-center w-full">
+              <div className="w-full max-w-3xl">
+                <PostCard
+                  post={{
+                    postId: post.post.postId,
+                    accId: post.post.accId,
+                    fullName: post.ownerPost?.fullName,
+                    avatar: post.ownerPost?.avatar,
+                    createAt: post.post.createdAt,
+                    content: post.post.postContent,
+                    images: post.postImages?.map((img) => img.imageUrl),
+                    hashtags: post.hashTags?.map((tag) => tag.hashTagContent),
+                    categories: post.postCategories?.map((cat) => cat.categoryName),
+                    tagFriends: post.postTags?.map((tag) => ({
+                      accId: tag.accId,
+                      fullname: tag.fullname || tag.username,
+                    })),
+                    likes: post.reactionCount,
+                    comments: post.commentCount,
+                    shares: post.shareCount,
+                  }}
+                  onCommentCountChange={(newCount) =>
+                    console.log("Comment count updated:", newCount)
+                  }
+                />
+              </div>
+            </div>
           ))
         ) : (
           <div>
