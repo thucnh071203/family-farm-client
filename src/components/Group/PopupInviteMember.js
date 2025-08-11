@@ -46,10 +46,10 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
                     if (res.status === 404) {
                         validFriends.push(friend);
                     } else if (!res.ok && res.status !== 200) {
-                        console.warn(`Check failed for ${friend.username}: status ${res.status}`);
+                        console.warn(`Check failed for ${friend.fullName}: status ${res.status}`);
                     }
                 } else {
-                    console.warn(`Fetch failed for ${result.reason?.friend?.username}: ${result.reason}`);
+                    console.warn(`Fetch failed for ${result.reason?.friend?.fullName}: ${result.reason}`);
                 }
             }
 
@@ -68,7 +68,7 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
     }, []);
 
     const filteredFriends = (friendsData || []).filter((friend) =>
-        friend.username.toLowerCase().includes(searchKeyword.toLowerCase())
+        friend.fullName.toLowerCase().includes(searchKeyword.toLowerCase())
     );
 
     const toggleSelectFriend = (friend) => {
@@ -171,9 +171,9 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
                                                         : defaultAvatar
                                                     }
                                                     className="w-8 h-8 rounded-full"
-                                                    alt={friend.username}
+                                                    alt={friend.fullName}
                                                 />
-                                                <span className="text-sm font-medium">{friend.username}</span>
+                                                <span className="text-sm font-medium">{friend.fullName}</span>
                                             </div>
                                             <input
                                                 type="checkbox"
@@ -200,9 +200,9 @@ export default function PopupInviteMember({ onClose, group, reloadsignlR }) {
                                         <img
                                             src={friend.avatar}
                                             className="w-6 h-6 rounded-full"
-                                            alt={friend.username}
+                                            alt={friend.fullName}
                                         />
-                                        <span className="text-sm">{friend.username}</span>
+                                        <span className="text-sm">{friend.fullName}</span>
                                     </div>
                                     <button
                                         onClick={() => removeFriend(friend.accId)}
