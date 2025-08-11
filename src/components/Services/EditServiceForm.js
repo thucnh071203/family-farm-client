@@ -164,7 +164,8 @@ const EditServiceForm = () => {
     };
 
     return (
-        <div className="p-6 bg-white shadow-xl rounded-lg text-left border border-solid border-gray-200">
+        // <div className="p-6 bg-white shadow-xl rounded-lg text-left border border-solid border-gray-200 h-auto">
+        <div className="self-start p-6 bg-white shadow-xl rounded-lg text-left border border-solid border-gray-200 h-auto">
             <h2 className="text-xl font-semibold mb-2 text-[#3DB3FB]">Edit Service</h2>
             <hr />
             <form onSubmit={handleSubmit} className="space-y-4 mt-10">
