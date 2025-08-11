@@ -64,7 +64,7 @@ const YourGroupCard = ({ group, member }) => {
     <div className="group w-60 md:w-[267px] h-72 md:h-[24rem] shadow-md relative rounded-md overflow-hidden">
       <img
         alt="background"
-        src={group.groupBackground || "https://gameroom.ee/83571/minecraft.jpg"}
+        src={group.groupBackground?.trim() ? group.groupBackground : "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fgroup-background-default.jpg?alt=media&token=00da8dac-2787-41bc-8477-6bff1b468612"}
         className="h-[50%] md:h-[58%] object-cover hover:absolute hover:inset-0 w-full hover:h-full hover:object-cover hover:z-0 transition-transform duration-1000 ease-in-out hover:scale-125 hover:opacity-20"
       />
 
@@ -72,7 +72,11 @@ const YourGroupCard = ({ group, member }) => {
         <div className="absolute top-[43%] md:top-[50%] left-4 z-10">
           <img
             className="rounded-full w-10 h-10 md:w-[60px] md:h-[60px] object-fill "
-            src={group.groupAvatar || "https://gameroom.ee/83571/minecraft.jpg"}
+            src={
+              group.groupAvatar?.trim()
+                ? group.groupAvatar
+                : "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fgroup-avatar-default-final.jpg?alt=media&token=633213e3-9495-42f8-b220-185b27d5fec9"
+            }
             alt="avatar"
           />
         </div>
