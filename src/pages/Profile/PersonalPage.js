@@ -32,7 +32,7 @@ const PersonalPage = () => {
   const [photos, setPhotos] = useState([]);
   const [hasCreditCard, setHasCreditCard] = useState(null);
   const [listCheckRelationShip, setlistCheckRelationShip] = useState([]);
-
+  const [isStartingChat, setIsStartingChat] = useState(false);
   const { accId } = useParams();
   const defaultBackground =
     "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c";
@@ -336,9 +336,11 @@ const PersonalPage = () => {
 
   // Hàm xử lý bắt đầu chat
   const handleStartChat = async () => {
+    if (isStartingChat) return; // Prevent multiple clicks
+    setIsStartingChat(true);
     try {
       const token = localStorage.getItem("accessToken");
-      // Kiểm tra xem đã có cuộc trò chuyện chưa
+      // Check existing chats
       const response = await instance.get("/api/chat/get-by-user", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -353,7 +355,7 @@ const PersonalPage = () => {
         }
       }
 
-      // Nếu chưa có cuộc trò chuyện, gọi API tạo mới
+      // Create new chat if none exists
       if (!chatId) {
         const startChatResponse = await instance.post(
           `/api/chat/start-chat/${accId}`,
@@ -362,18 +364,34 @@ const PersonalPage = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        if (startChatResponse.data.success) {
+        console.log("Start chat response:", startChatResponse.data);
+        if (startChatResponse.data.success && startChatResponse.data.data?.chatId) {
           chatId = startChatResponse.data.data.chatId;
         } else {
-          throw new Error("Failed to start chat.");
+          // Recheck chats in case of async database update
+          const recheckResponse = await instance.get("/api/chat/get-by-user", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const recheckedChat = recheckResponse.data.chats?.find(
+            (chat) => chat.receiver && chat.receiver.accId === accId
+          );
+          if (recheckedChat) {
+            chatId = recheckedChat.chatId;
+          } else {
+            throw new Error(
+              "Failed to start chat: " + (startChatResponse.data.message || "Unknown error")
+            );
+          }
         }
       }
 
-      // Điều hướng đến trang Chats với chatId
+      // Navigate to chat page
       navigate(`/Chats`, { state: { chatId, receiverId: accId } });
     } catch (error) {
       console.error("Error starting chat:", error);
       toast.error("Cannot start chat. Please try again.");
+    } finally {
+      setIsStartingChat(false);
     }
   };
 
@@ -398,6 +416,7 @@ const PersonalPage = () => {
         {/* Nút Start Chat */}
         <button
           onClick={handleStartChat}
+          disabled={isStartingChat}
           className="p-1 px-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-md w- transition flex items-center justify-center"
         >
           <i className="fa-solid fa-comment mr-2"></i>
