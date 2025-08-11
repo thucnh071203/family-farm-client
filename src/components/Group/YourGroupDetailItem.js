@@ -49,7 +49,7 @@ const YourGroupDetailItem = ({ group }) => {
             transition: Bounce,
           });
           setLeaveGroups((prev) => [...prev, groupId]);
-          navigate("/GroupDetail", { replace: true });
+          navigate("/Group", { replace: true });
         } else {
           toast.warning("You may have already left this group.");
         }

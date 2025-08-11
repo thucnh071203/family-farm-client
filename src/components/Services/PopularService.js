@@ -4,7 +4,7 @@ import instance from "../../Axios/axiosConfig";
 
 const PopularService = () => {
   const [services, setServices] = useState([]);
-  
+
   //get list service
   useEffect(() => {
     const fetchServices = async () => {
@@ -24,7 +24,6 @@ const PopularService = () => {
                   `api/account/profile-another/${service.providerId}`
                 );
                 const provider = providerRes.data?.data;
-
 
                 return {
                   ...service,
@@ -65,7 +64,7 @@ const PopularService = () => {
   }, []);
 
   return (
-    <div className="bg-white p-5 rounded-lg shadow-md border border-solid border-gray-300">
+    <div className="bg-white p-5 max-h-fit rounded-lg shadow-md border border-solid border-gray-300">
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold mb-3">Popular Service</h2>
         <Link className="text-blue-800" to="/Service">
@@ -83,11 +82,20 @@ const PopularService = () => {
                 <p className="font-bold text-sm text-white">{service.price}</p>
               </div>
               <div className="flex flex-col w-full border rounded-md">
-                <img
-                  src={service.imageUrl || "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"}
-                  alt={service.serviceName}
-                  className="rounded-md"
-                />
+                <Link
+                  className="text-blue-800"
+                  to={`/ServiceDetail/${service.serviceId}`}
+                >
+                  <img
+                    src={
+                      service.imageUrl ||
+                      "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
+                    }
+                    alt={service.serviceName}
+                    className="rounded-md"
+                  />
+                </Link>
+
                 <p className="p-2 font-bold text-left">{service.serviceName}</p>
               </div>
             </div>

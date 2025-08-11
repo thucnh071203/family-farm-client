@@ -13,9 +13,9 @@ const SuggestedFriends = ({ friends, onLoadList }) => {
   const friendList = friends || defaultFriends;
 
   const defaultFriend = {
-    name: "Mai Xuan",
+    name: "User",
     avatar:
-      "https://static-00.iconduck.com/assets.00/avatar-default-icon-2048x2048-h6w375ur.png",
+      "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault-avatar.png?alt=media&token=3857a1ec-ace4-4329-8f36-4f3a40c3fc67",
     status: null,
   };
 

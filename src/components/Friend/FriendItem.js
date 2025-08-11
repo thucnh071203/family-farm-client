@@ -15,12 +15,12 @@ const FriendItem = ({ friend, isOwner, isProfile }) => {
         <img
           onClick={() => handleClickToProfile(friend.accId)}
           src={friend.avatar || default_avatar}
-          alt={`Friend ${friend.username}`}
+          alt={`Friend ${friend.fullName}`}
           className="w-9 h-9 rounded-full"
           style={{ cursor: "pointer" }}
         />
         <div className="flex flex-col gap-1">
-          <span>{friend.username}</span>
+          <span>{friend.fullName}</span>
           <span className="text-[10px] text-gray-600">{friend.city}</span>
         </div>
       </div>
