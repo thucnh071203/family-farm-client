@@ -92,7 +92,7 @@ const LoginForm = () => {
   };
 
   const handleGoogleLogin = () => {
-    initiateGoogleLogin(rememberMe, navigate);
+    initiateGoogleLogin(rememberMe, navigate, reloadUser);
   };
 
   useEffect(() => {
