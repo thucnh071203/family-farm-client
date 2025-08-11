@@ -8,7 +8,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
 import SidebarDashboard from "../../components/Dashboard/SidebarDashboard";
 import { toast } from "react-toastify";
 
-const TableListCatePost = ({ displayList, fetchAllPosts  }) => {
+const TableListCatePost = ({ displayList, fetchAllPosts }) => {
   const tableRef = useRef(null);
   const navigate = useNavigate();
 
@@ -72,7 +72,11 @@ const TableListCatePost = ({ displayList, fetchAllPosts  }) => {
           );
           const data = await res.json();
           if (data.success === true) {
-            Swal.fire("Restored!", "The category has been restored.", "success");
+            Swal.fire(
+              "Restored!",
+              "The category has been restored.",
+              "success"
+            );
             window.location.reload();
           }
         } catch (err) {
@@ -93,13 +97,11 @@ const TableListCatePost = ({ displayList, fetchAllPosts  }) => {
           { data: null, title: "ID" },
           {
             title: "Category Name",
-            render: (data, type, row) =>
-              row.categoryName || "No content",
+            render: (data, type, row) => row.categoryName || "No content",
           },
           {
             title: "Description",
-            render: (data, type, row) =>
-              row.categoryDescription || "Unknown",
+            render: (data, type, row) => row.categoryDescription || "Unknown",
           },
           {
             title: "Status",
@@ -149,6 +151,10 @@ const TableListCatePost = ({ displayList, fetchAllPosts  }) => {
             render: (data, type, row, meta) => meta.row + 1,
             className: "text-left",
             width: "1.25rem",
+          },
+          {
+            targets: 2,
+            width: "550px",
           },
           {
             targets: "_all",
@@ -201,12 +207,9 @@ const PostCatePage = () => {
   const fetchAllPosts = async () => {
     try {
       const token = localStorage.getItem("accessToken");
-      const res = await fetch(
-        "https://localhost:7280/api/category-post/list",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await fetch("https://localhost:7280/api/category-post/list", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (!res.ok) {
         throw new Error(`HTTP error! Status: ${res.status}`);
       }
@@ -257,7 +260,10 @@ const PostCatePage = () => {
             </Link>
           </div>
           <div>
-            <TableListCatePost displayList={allList} fetchAllPosts={fetchAllPosts}  />
+            <TableListCatePost
+              displayList={allList}
+              fetchAllPosts={fetchAllPosts}
+            />
           </div>
         </div>
       </div>

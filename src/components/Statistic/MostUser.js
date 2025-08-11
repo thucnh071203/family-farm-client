@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, Bounce } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const StatisticPage = () => {
+  const navigate = useNavigate();
   const getDefaultDates = () => {
     const today = new Date();
     const threeMonthsAgo = new Date();
@@ -49,7 +51,7 @@ const StatisticPage = () => {
       setData(res.data);
       setError("");
     } catch (err) {
-      console.error("❌ Lỗi gọi API:", err);
+      console.error(" Lỗi gọi API:", err);
       setError(
         "Không thể lấy dữ liệu. Vui lòng kiểm tra API hoặc định dạng ngày."
       );
@@ -73,7 +75,12 @@ const StatisticPage = () => {
           </thead>
           <tbody>
             {data.map((item) => (
-              <tr key={item.accId}>
+              <tr
+  key={item.accId}
+  onClick={() => navigate(`/AccountDetail/${item.accId}`, { state: { fromStatistic: true } })} 
+  className="cursor-pointer hover:bg-gray-100"
+>
+
                 <td className="border p-2">{item.accountName}</td>
                 <td
                   className={`border font-bold p-2 ${
