@@ -295,7 +295,6 @@ const LoginForm = () => {
     } catch (error) {
       console.error("Login error:", error);
 
-
       if (error.response) {
         const status = error.response.status;
         const message = error.response.data?.message;
@@ -334,6 +333,8 @@ const LoginForm = () => {
               text: "Please come back in a few days.",
               confirmButtonText: "OK",
             });
+          } else if (message === "Account does not exist or has been deleted.") {
+            toast.error(message);
           }
         } else {
           toast.error("An unknown error occurred");
