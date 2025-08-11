@@ -14,20 +14,18 @@ export const ServiceManagement = () => {
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
   const navigate = useNavigate();
-  const [hasCreditCard, setHasCreditCard] = useState(null); // Store the credit card status
-  const tableRef = useRef(null); // Tham chiếu tới bảng DataTable
+  const [hasCreditCard, setHasCreditCard] = useState(null);
+  const tableRef = useRef(null);
 
-  // Fetch credit card info to check if user has a credit card
+  // Fetch credit card info
   const fetchCreditCardInfo = async () => {
     try {
       const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
       const res = await instance.get("/api/account/own-profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       if (res.status === 200) {
-        const data = res.data.data;
-        setHasCreditCard(data.hasCreditCard); // Update the state based on the API response
+        setHasCreditCard(res.data.data.hasCreditCard);
       }
     } catch (error) {
       console.error("Error loading credit card info:", error);
@@ -36,14 +34,14 @@ export const ServiceManagement = () => {
   };
 
   useEffect(() => {
-    fetchCreditCardInfo(); // Fetch credit card info when the component mounts
+    fetchCreditCardInfo();
   }, []);
 
   // Lọc service theo trạng thái
   const filteredServices = services.filter((service) => {
     if (filterStatus === "available") return service.status === 1;
     if (filterStatus === "unavailable") return service.status !== 1;
-    return true; // all
+    return true;
   });
 
   // Fetch services and categories
@@ -53,9 +51,7 @@ export const ServiceManagement = () => {
         setLoading(true);
         const token = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
         const serviceRes = await instance.get("/api/service/all-by-provider", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const serviceWrappers = serviceRes.data.data || [];
@@ -86,46 +82,104 @@ export const ServiceManagement = () => {
     fetchServicesAndCategories();
   }, []);
 
-  // Initialize DataTable after data is fetched
-  // useEffect(() => {
-  //   if (!loading && services.length > 0) {
-  //     const table = $("#serviceTable").DataTable({
-  //       ordering: false, // Vô hiệu hóa sắp xếp mặc định
-  //       pageLength: 10, // Số lượng hàng mỗi trang
-  //       responsive: true, // Hỗ trợ responsive
-  //     });
-
-  //     return () => {
-  //       table.destroy();
-  //     };
-  //   }
-  // }, [loading, services]);
-
-  // Initialize DataTable after data is fetched
+  // Initialize DataTable
   useEffect(() => {
-    if (!loading && services.length > 0 && tableRef.current) {
+    if (!loading && tableRef.current) {
       const table = $(tableRef.current).DataTable({
-        ordering: false,
-        pageLength: 10,
-        responsive: true,
+        data: filteredServices, // Sử dụng filteredServices để hiển thị dữ liệu
+        columns: [
+          { data: null, defaultContent: "" }, // Cột trống
+          { data: "serviceName" },
+          {
+            data: "price",
+            render: (data) => `${data.toLocaleString()} <span>VND</span>`,
+            className: "text-end",
+          },
+          {
+            data: "status",
+            render: (data) =>
+              `<span class="px-2 py-1 text-sm text-white rounded ${
+                data === 1 ? "bg-green-500" : "bg-red-500"
+              }">${data === 1 ? "Available" : "Unavailable"}</span>`,
+          },
+          { data: "categoryName" },
+          {
+            data: null,
+            render: (data, type, row) => `
+              <button class="text-sm text-red-500 delete-btn" data-id="${row.serviceId}">
+                <i class="fa-solid fa-trash"></i> Delete
+              </button>
+              <button class="text-sm text-blue-600 edit-btn" data-id="${row.serviceId}">
+                <i class="fa-solid fa-pen"></i> Edit
+              </button>
+              <button class="text-sm ${
+                row.status === 1 ? "text-yellow-600 disable-btn" : "text-green-700 enable-btn"
+              }" data-id="${row.serviceId}" data-have-process="${row.haveProcess}">
+                <i class="fa-solid ${row.status === 1 ? "fa-ban" : "fa-rotate-right"}"></i> ${
+              row.status === 1 ? "Disable" : "Enable"
+            }
+              </button>
+              ${
+                row.haveProcess
+                  ? `<button class="text-sm text-purple-600 edit-process-btn" data-id="${row.serviceId}">
+                      <i class="fa-solid fa-gear"></i> Edit process
+                    </button>`
+                  : `<button class="text-sm text-green-600 add-process-btn" data-id="${row.serviceId}">
+                      <i class="fa-solid fa-plus"></i> Add process
+                    </button>`
+              }
+            `,
+          },
+        ],
+        ordering: true, // Bật sắp xếp
+        pageLength: 10, // Số hàng mỗi trang
+        responsive: true, // Hỗ trợ responsive
+        destroy: true, // Cho phép hủy và khởi tạo lại DataTable
+      });
+
+      // Xử lý sự kiện click cho các nút
+      $(tableRef.current).on("click", ".delete-btn", function () {
+        const serviceId = $(this).data("id");
+        handleDeleteClick(serviceId);
+      });
+
+      $(tableRef.current).on("click", ".edit-btn", function () {
+        const serviceId = $(this).data("id");
+        navigate(`/EditService/${serviceId}`);
+      });
+
+      $(tableRef.current).on("click", ".disable-btn, .enable-btn", function () {
+        const serviceId = $(this).data("id");
+        const haveProcess = $(this).data("have-process");
+        const status = filteredServices.find((s) => s.serviceId === serviceId).status;
+        handleToggleStatusClick(serviceId, status, haveProcess);
+      });
+
+      $(tableRef.current).on("click", ".edit-process-btn", function () {
+        const serviceId = $(this).data("id");
+        navigate(`/EditStepPage/${serviceId}`);
+      });
+
+      $(tableRef.current).on("click", ".add-process-btn", function () {
+        const serviceId = $(this).data("id");
+        navigate(`/CreateStepPage/${serviceId}`);
       });
 
       return () => {
-        table.destroy(); // Dọn dẹp khi component bị unmount
+        table.destroy(); // Hủy DataTable khi component unmount
       };
     }
-  }, [loading, services]);
+  }, [loading, filteredServices]); // Thêm filteredServices vào dependency để cập nhật khi lọc thay đổi
 
-  // Chuyển trang tạo dịch vụ nếu có thẻ tín dụng, nếu không hiển thị cảnh báo
   const handleCreateServiceClick = () => {
     if (hasCreditCard === false || hasCreditCard === null) {
       toast.warning("You need to add a credit card before creating a service.");
       return;
     }
-    navigate("/CreateService"); // Nếu có thẻ tín dụng, chuyển đến trang tạo dịch vụ
+    navigate("/CreateService");
   };
 
-  const handleDeleteClick = (serviceId) => {
+  const handleDeleteClick = async (serviceId) => {
     Swal.fire({
       title: "Are you sure?",
       text: "This service will be permanently deleted!",
@@ -133,11 +187,7 @@ export const ServiceManagement = () => {
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      customClass: {
-        confirmButton: 'bg-red-300 hover:bg-red-600 text-white px-4 py-2 rounded mx-3',
-        cancelButton: 'bg-blue-300 hover:bg-blue-600 text-white px-4 py-2 rounded',
-      },
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -161,9 +211,6 @@ export const ServiceManagement = () => {
         text: "You need to add a process for this service before enabling it.",
         icon: "warning",
         confirmButtonText: "OK",
-        customClass: {
-          confirmButton: "bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded",
-        },
       });
       return;
     }
@@ -174,13 +221,6 @@ export const ServiceManagement = () => {
       icon: "question",
       showCancelButton: true,
       confirmButtonText: isDisabling ? "Yes, Disable" : "Yes, Enable",
-      buttonsStyling: false,
-      customClass: {
-        confirmButton: isDisabling
-          ? "bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded mx-3"
-          : "bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded mx-3",
-        cancelButton: "bg-gray-400 hover:bg-gray-500 text-white font-semibold px-4 py-2 rounded",
-      },
     });
 
     if (result.isConfirmed) {
@@ -190,18 +230,14 @@ export const ServiceManagement = () => {
           `/api/service/change-status/${serviceId}`,
           {},
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
         if (res.status === 200) {
           setServices((prev) =>
             prev.map((s) =>
-              s.serviceId === serviceId
-                ? { ...s, status: s.status === 1 ? 0 : 1 }
-                : s
+              s.serviceId === serviceId ? { ...s, status: s.status === 1 ? 0 : 1 } : s
             )
           );
           toast.success("Status changed successfully!");
@@ -222,12 +258,9 @@ export const ServiceManagement = () => {
         <ProcessNav inPage="Service" />
         <div className="flex items-center justify-between mt-6">
           <h2 className="text-xl font-semibold">Your Services</h2>
-          {/* <button className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-            <Link to="/CreateService">+ New Service</Link>
-          </button> */}
           <button
             className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-            onClick={handleCreateServiceClick} // Sử dụng hàm handleCreateServiceClick khi bấm "New Service"
+            onClick={handleCreateServiceClick}
           >
             + New Service
           </button>
@@ -235,19 +268,31 @@ export const ServiceManagement = () => {
         <div className="flex items-center justify-between mt-4 space-x-6">
           <div className="flex gap-4 lg:gap-8">
             <div
-              className={`cursor-pointer ${filterStatus === "all" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+              className={`cursor-pointer ${
+                filterStatus === "all"
+                  ? "font-semibold text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-400"
+              }`}
               onClick={() => setFilterStatus("all")}
             >
               All
             </div>
             <div
-              className={`cursor-pointer ${filterStatus === "available" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+              className={`cursor-pointer ${
+                filterStatus === "available"
+                  ? "font-semibold text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-400"
+              }`}
               onClick={() => setFilterStatus("available")}
             >
               Available
             </div>
             <div
-              className={`cursor-pointer ${filterStatus === "unavailable" ? "font-semibold text-blue-600 border-b-2 border-blue-600" : "text-gray-400"}`}
+              className={`cursor-pointer ${
+                filterStatus === "unavailable"
+                  ? "font-semibold text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-400"
+              }`}
               onClick={() => setFilterStatus("unavailable")}
             >
               Unavailable
@@ -255,7 +300,11 @@ export const ServiceManagement = () => {
           </div>
         </div>
         <div className="relative mt-4 overflow-x-auto">
-          <table id="serviceTable" className="min-w-full mt-3 text-left border rounded-lg">
+          <table
+            ref={tableRef} // Thêm ref vào đây
+            id="serviceTable"
+            className="min-w-full mt-3 text-left border rounded-lg"
+          >
             <thead className="bg-gray-100">
               <tr className="font-bold text-left text-gray-600">
                 <th className="p-3"></th>
@@ -268,62 +317,18 @@ export const ServiceManagement = () => {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={7} className="p-3 text-center">Loading services...</td></tr>
+                <tr>
+                  <td colSpan={7} className="p-3 text-center">
+                    Loading services...
+                  </td>
+                </tr>
               ) : filteredServices.length === 0 ? (
-                <tr><td colSpan={7} className="p-3 text-center">No services found for this expert.</td></tr>
-              ) : (
-                filteredServices.map((service, index) => (
-                  <tr key={index} className="border-t">
-                    <td className="p-3"></td>
-                    <td className="p-3">{service.serviceName}</td>
-                    <td className="hidden p-3 md:table-cell text-end">{service.price.toLocaleString()} <span>VND</span></td>
-                    <td className="hidden p-3 md:table-cell">
-                      <span className={`px-2 py-1 text-sm text-white rounded ${service.status === 1 ? 'bg-green-500' : 'bg-red-500'}`}>
-                        {service.status === 1 ? "Available" : "Unavailable"}
-                      </span>
-                    </td>
-                    <td className="hidden p-3 md:table-cell">{service.categoryName}</td>
-                    <td className="p-3 space-x-3">
-                      <button className="text-sm text-red-500" onClick={() => handleDeleteClick(service.serviceId)}>
-                        <i className="fa-solid fa-trash"></i> Delete
-                      </button>
-                      <button className="text-sm text-blue-600" onClick={() => navigate(`/EditService/${service.serviceId}`)}>
-                        <i className="fa-solid fa-pen"></i> Edit
-                      </button>
-                      {service.status === 1 ? (
-                        <button
-                          className="text-sm text-yellow-600"
-                          onClick={() => handleToggleStatusClick(service.serviceId, service.status, service.haveProcess)}
-                        >
-                          <i className="fa-solid fa-ban"></i> Disable
-                        </button>
-                      ) : (
-                        <button
-                          className="text-sm text-green-700"
-                          onClick={() => handleToggleStatusClick(service.serviceId, service.status, service.haveProcess)}
-                        >
-                          <i className="fa-solid fa-rotate-right"></i> Enable
-                        </button>
-                      )}
-                      {service.haveProcess ? (
-                        <button
-                          className="text-sm text-purple-600"
-                          onClick={() => navigate(`/EditStepPage/${service.serviceId}`)}
-                        >
-                          <i className="fa-solid fa-gear"></i> Edit process
-                        </button>
-                      ) : (
-                        <button
-                          className="text-sm text-green-600"
-                          onClick={() => navigate(`/CreateStepPage/${service.serviceId}`)}
-                        >
-                          <i className="fa-solid fa-plus"></i> Add process
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
+                <tr>
+                  <td colSpan={7} className="p-3 text-center">
+                    No services found for this expert.
+                  </td>
+                </tr>
+              ) : null}
             </tbody>
           </table>
         </div>
