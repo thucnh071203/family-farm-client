@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import SidebarDashboard from "../../components/Dashboard/SidebarDashboard";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { OrbitProgress } from "react-loading-indicators";
 import AccountDetail from "../../components/AccountManage/AccountDetail";
 
 const AccountDetailPage = () => {
   const { accId } = useParams(); // lấy accId từ URL
+  const location = useLocation(); //  Lấy state khi navigate
+  const navigate = useNavigate();
   const [account, setAccount] = useState(null);
   const [listPost, setListPost] = useState([]);
   const [listService, setListService] = useState([]);
@@ -103,6 +105,14 @@ const AccountDetailPage = () => {
           <div className="flex justify-center items-center h-full">
             <OrbitProgress color="#32cd32" size="medium" text="" textColor="" />
           </div>
+        )}
+        {location.state?.fromStatistic && (
+          <button
+            onClick={() => navigate(-1)}
+            className="mb-4 bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+          >
+            ← Statistic
+          </button>
         )}
       </div>
     </div>
