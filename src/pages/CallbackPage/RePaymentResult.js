@@ -35,6 +35,11 @@ const RePaymentResult = () => {
   // }, [navigate]);
 
   useEffect(() => {
+    // const calledRef = useRef(false);
+
+    // if (calledRef.current) return;
+    // calledRef.current = true;
+
     const fetchPaymentResult = async () => {
       try {
         const query = window.location.search;
