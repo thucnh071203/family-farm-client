@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast, Bounce } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import default_avatar from "../../assets/images/default-avatar.png";
+
 const YourFriendCard = ({ friend, isListFollower, isOwner, isProfile }) => {
   const navigate = useNavigate();
   const [status, setStatus] = useState(friend.friendStatus);
@@ -110,15 +112,14 @@ const YourFriendCard = ({ friend, isListFollower, isOwner, isProfile }) => {
             onClick={() => handleClickToProfile(friend.accId)}
             className="rounded-full w-[60px] h-[60px] object-fill"
             src={
-              friend.avatar ||
-              "https://i.pinimg.com/originals/d0/28/68/d0286806706a508645e8763c6b3f8cea.jpg"
+              friend.avatar || default_avatar
             }
             alt="avatar"
             style={{ cursor: "pointer" }}
           />
         </div>
         <div className="flex items-center flex-col gap-1">
-          <p className="text-base font-bold">{friend.fullName || "Mai Xuan"}</p>
+          <p className="text-base font-bold">{friend.fullName || "Unknown"}</p>
           <p className="text-base font-normal text-[#999999]">
             {friend.city || "From Can Tho"}
           </p>
