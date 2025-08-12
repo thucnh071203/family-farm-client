@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef  } from "react";
 import logo from "../../assets/images/logo_img.png";
 import { useFormValidation } from "../../utils/validate";
 import { TextInput } from "./InputField";
@@ -10,6 +10,7 @@ const ConfirmOtpForm = () => {
     const location = useLocation();
     const { email, accountId } = location.state || {};
     const navigate = useNavigate();
+    const firstCallRef = useRef(false);
 
     const [secondsLeft, setSecondsLeft] = useState(60);
     const { values, errors, handleChange, handleSubmit, setErrors } = useFormValidation({
@@ -18,9 +19,13 @@ const ConfirmOtpForm = () => {
 
     useEffect(() => {
         console.log("AccID confirm OTP", accountId)
-        if (accountId && email) {
-            generateAndSendOTP();
-        }
+        // if (accountId && email) {
+        //     generateAndSendOTP();
+        // }
+            if (!firstCallRef.current && accountId && email) {
+                firstCallRef.current = true;
+                generateAndSendOTP();
+            }
     }, [accountId, email]);
 
     const generateAndSendOTP = async () => {
