@@ -104,26 +104,14 @@ const SearchGroup = () => {
     }, [searchKeyword]);
 
     return (
-        <div className="w-full">
+        <div className="w-full md:ml-[289px]">
             <div className="mt-36">
                 <div className="flex items-start mt-8 mx-10 md:mx-20">
                     <span className="font-bold text-lg">KEYWORD: </span>
-                    <span className="font-bold text-lg">{searchKeyword || "None"}</span>
+                    <span className="text-lg ml-1">{" "} {searchKeyword || "None"}</span>
                 </div>
 
                 <div className="flex gap-6 items-center mt-6 mb-10 mx-10 md:mx-20">
-                    <div className="flex justify-center items-center">
-                        <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1] border-solid border">
-                            <i className="fa-solid fa-magnifying-glass flex h-full justify-center items-center shrink-0 px-2 text-[#999999]"></i>
-                            <input
-                                type="text"
-                                placeholder="Search"
-                                value={searchKeyword}
-                                onChange={(e) => setSearchKeyword(e.target.value)}
-                                className="flex-1 outline-none border-none h-full"
-                            />
-                        </div>
-                    </div>
                     <div className="flex gap-1">
                         <p className="font-bold">{count}</p>
                         <p className="text-[#999999] font-bold">GROUPS FOUND</p>
