@@ -132,7 +132,7 @@ const SearchPost = () => {
   return (
     <div className="w-full">
       <div className="mt-36">
-        <div className="flex items-start justify-between mt-8 mx-10 md:mx-20">
+        <div className="flex items-start justify-between mt-8 mx-10 md:mx-20 w-full max-w-3xl">
           <div className="flex items-start">
             <span className="font-bold text-lg">KEYWORD: </span>
             <span className="font-bold text-lg">{searchKeyword || "None"}</span>
@@ -226,7 +226,7 @@ const SearchPost = () => {
         ) : posts.length > 0 ? (
           <div className="mx-10 md:mx-20">
             {posts.map((post) => (
-              <div key={post.post.postId} className="flex justify-center w-full mb-6">
+              <div key={post.post.postId} className="w-full mb-6">
                 <div className="w-full max-w-3xl">
                   <PostCard
                     post={{
