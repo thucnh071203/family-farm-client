@@ -24,7 +24,7 @@ const SearchSidebar = ({ setSection }) => {
     return (
         <div
             className="w-[289px] h-screen bg-[#E5E4E9] font-roboto rounded-r-[10px] hidden md:block
-        md:mt-[120px]"
+        md:mt-[120px] fixed"
         >
             <div className="ml-8 pt-6 flex items-start">
                 <p className="text-lg font-bold">SEARCH PAGE</p>
