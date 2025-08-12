@@ -86,13 +86,21 @@ const PopularService = () => {
                   className="text-blue-800"
                   to={`/ServiceDetail/${service.serviceId}`}
                 >
-                  <img
+                  {/* <img
                     src={
                       service.imageUrl ||
                       "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
                     }
                     alt={service.serviceName}
                     className="rounded-md"
+                  /> */}
+                  <img
+                    src={
+                      service.imageUrl ||
+                      "https://firebasestorage.googleapis.com/v0/b/prn221-69738.appspot.com/o/image%2Fdefault_background.jpg?alt=media&token=0b68b316-68d0-47b4-9ba5-f64b9dd1ea2c"
+                    }
+                    alt={service.serviceName}
+                    className="w-full h-40 object-cover rounded-md"
                   />
                 </Link>
 
