@@ -15,7 +15,7 @@ const SearchPost = () => {
   const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState(keyword || "");
   const popupRef = useRef(null);
-  const lastFetchedKeyword = useRef(""); // Thêm ref để theo dõi từ khóa đã gọi
+  const lastFetchedKeyword = useRef("");
 
   const fetchCategories = async () => {
     try {
@@ -54,8 +54,6 @@ const SearchPost = () => {
         isAndLogic,
       };
 
-      // console.log("Fetch params:", params);
-
       const response = await instance.get("/api/post/search", {
         params,
         paramsSerializer: {
@@ -65,7 +63,6 @@ const SearchPost = () => {
 
       if (response.data.success) {
         setPosts(response.data.data || []);
-        // console.log("List search:", response.data.data);
       } else {
         setError(response.data.message || "No posts found");
         setPosts([]);
@@ -83,7 +80,7 @@ const SearchPost = () => {
   useEffect(() => {
     fetchCategories();
     if (keyword && keyword !== searchKeyword) {
-      setSearchKeyword(keyword); // Đồng bộ searchKeyword với keyword
+      setSearchKeyword(keyword);
     }
   }, [keyword]);
 
@@ -133,16 +130,35 @@ const SearchPost = () => {
     .join(", ");
 
   return (
-    <div className="w-full flex flex-col items-center pt-12 lg:mt-[120px] mt-[63px]">
-      <div className="w-full max-w-6xl flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <div className="text-left">
-            <span className="font-bold">KEYWORD: </span>
-            <span>{searchKeyword || "None"}</span>
+    <div className="w-full">
+      <div className="mt-36">
+        <div className="flex items-start justify-between mt-8 mx-10 md:mx-20">
+          <div className="flex items-start">
+            <span className="font-bold text-lg">KEYWORD: </span>
+            <span className="font-bold text-lg">{searchKeyword || "None"}</span>
           </div>
-          <button onClick={toggleCategoryPopup}>
+          <button onClick={toggleCategoryPopup} className="mt-1">
             <i className="fas fa-sliders-h text-sky-400 text-xl"></i>
           </button>
+        </div>
+
+        <div className="flex gap-6 items-center mt-6 mb-10 mx-10 md:mx-20">
+          <div className="flex justify-center items-center">
+            <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1] border-solid border">
+              <i className="fa-solid fa-magnifying-glass flex h-full justify-center items-center shrink-0 px-2 text-[#999999]"></i>
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                className="flex-1 outline-none border-none h-full"
+              />
+            </div>
+          </div>
+          <div className="flex gap-1">
+            <p className="font-bold">{posts.length}</p>
+            <p className="text-[#999999] font-bold">POSTS FOUND</p>
+          </div>
         </div>
 
         {isCategoryPopupOpen && (
@@ -204,42 +220,44 @@ const SearchPost = () => {
         )}
 
         {loading ? (
-          <div>Loading...</div>
+          <div className="mx-10 md:mx-20">Loading...</div>
         ) : error ? (
-          <div className="text-red-500">{error}</div>
+          <div className="text-red-500 mx-10 md:mx-20">{error}</div>
         ) : posts.length > 0 ? (
-          posts.map((post) => (
-            <div key={post.post.postId} className="flex justify-center w-full">
-              <div className="w-full max-w-3xl">
-                <PostCard
-                  post={{
-                    postId: post.post.postId,
-                    accId: post.post.accId,
-                    fullName: post.ownerPost?.fullName,
-                    avatar: post.ownerPost?.avatar,
-                    roleId: post.ownerPost.roleId,
-                    createAt: post.post.createdAt,
-                    content: post.post.postContent,
-                    images: post.postImages?.map((img) => img.imageUrl),
-                    hashtags: post.hashTags?.map((tag) => tag.hashTagContent),
-                    categories: post.postCategories?.map((cat) => cat.categoryName),
-                    tagFriends: post.postTags?.map((tag) => ({
-                      accId: tag.accId,
-                      fullname: tag.fullname || tag.username,
-                    })),
-                    likes: post.reactionCount,
-                    comments: post.commentCount,
-                    shares: post.shareCount,
-                  }}
-                  onCommentCountChange={(newCount) =>
-                    console.log("Comment count updated:", newCount)
-                  }
-                />
+          <div className="mx-10 md:mx-20">
+            {posts.map((post) => (
+              <div key={post.post.postId} className="flex justify-center w-full mb-6">
+                <div className="w-full max-w-3xl">
+                  <PostCard
+                    post={{
+                      postId: post.post.postId,
+                      accId: post.post.accId,
+                      fullName: post.ownerPost?.fullName,
+                      avatar: post.ownerPost?.avatar,
+                      roleId: post.ownerPost.roleId,
+                      createAt: post.post.createdAt,
+                      content: post.post.postContent,
+                      images: post.postImages?.map((img) => img.imageUrl),
+                      hashtags: post.hashTags?.map((tag) => tag.hashTagContent),
+                      categories: post.postCategories?.map((cat) => cat.categoryName),
+                      tagFriends: post.postTags?.map((tag) => ({
+                        accId: tag.accId,
+                        fullname: tag.fullname || tag.username,
+                      })),
+                      likes: post.reactionCount,
+                      comments: post.commentCount,
+                      shares: post.shareCount,
+                    }}
+                    onCommentCountChange={(newCount) =>
+                      console.log("Comment count updated:", newCount)
+                    }
+                  />
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         ) : (
-          <div>
+          <div className="mx-10 md:mx-20">
             No posts found for "{searchKeyword}"
             {selectedCategoryNames && (
               <>

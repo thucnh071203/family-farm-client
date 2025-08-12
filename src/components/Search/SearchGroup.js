@@ -34,20 +34,19 @@ const SearchGroup = () => {
             }
 
             const res = await instance.get(`/api/group/search`, {
-                params: { q: trimmedKeyword }, // Updated to use 'q' as the query parameter
+                params: { q: trimmedKeyword },
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
 
             if (res.data.success && res.data.count > 0) {
-                // Map the response data to match the expected format for SuggestionGroupCard
                 const formattedGroups = res.data.data.map((item) => ({
                     groupId: item.group.groupId,
                     groupName: item.group.groupName,
                     groupAvatar: item.group.groupAvatar,
                     groupBackground: item.group.groupBackground,
-                    memberCount: item.numberInGroup, // Map numberInGroup to memberCount
+                    memberCount: item.numberInGroup,
                 }));
                 setGroupsData(formattedGroups);
                 setCount(res.data.count);
@@ -105,39 +104,48 @@ const SearchGroup = () => {
     }, [searchKeyword]);
 
     return (
-        <div className="w-full flex flex-col items-center pt-12 lg:mt-[120px] mt-[63px]">
-            <div className="w-full max-w-6xl flex flex-col gap-4 px-4">
-                <div className="flex justify-between items-center">
-                    <div className="text-left">
-                        <span className="font-bold">KEYWORD: </span>
-                        <span>{searchKeyword || "None"}</span>
+        <div className="w-full">
+            <div className="mt-36">
+                <div className="flex items-start mt-8 mx-10 md:mx-20">
+                    <span className="font-bold text-lg">KEYWORD: </span>
+                    <span className="font-bold text-lg">{searchKeyword || "None"}</span>
+                </div>
+
+                <div className="flex gap-6 items-center mt-6 mb-10 mx-10 md:mx-20">
+                    <div className="flex justify-center items-center">
+                        <div className="h-10 flex overflow-hidden rounded-[30px] bg-[#fff] border-[#D1D1D1] border-solid border">
+                            <i className="fa-solid fa-magnifying-glass flex h-full justify-center items-center shrink-0 px-2 text-[#999999]"></i>
+                            <input
+                                type="text"
+                                placeholder="Search"
+                                value={searchKeyword}
+                                onChange={(e) => setSearchKeyword(e.target.value)}
+                                className="flex-1 outline-none border-none h-full"
+                            />
+                        </div>
+                    </div>
+                    <div className="flex gap-1">
+                        <p className="font-bold">{count}</p>
+                        <p className="text-[#999999] font-bold">GROUPS FOUND</p>
                     </div>
                 </div>
 
                 {isLoading ? (
-                    <div>Loading...</div>
+                    <div className="mx-10 md:mx-20">Loading...</div>
                 ) : error ? (
-                    <div className="text-red-500">{error}</div>
+                    <div className="text-red-500 mx-10 md:mx-20">{error}</div>
                 ) : groupsData.length > 0 ? (
-                    <div>
-                        <div className="flex gap-6 items-center mt-6 mb-10">
-                            <div className="flex gap-1">
-                                <p className="font-bold">{count}</p>
-                                <p className="text-[#999999] font-bold">GROUPS FOUND</p>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center min-w-0">
-                            {groupsData.map((group) => (
-                                <SuggestionGroupCard
-                                    key={group.groupId}
-                                    group={group}
-                                    member={group.memberCount}
-                                />
-                            ))}
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-y-6 gap-x-6 place-items-center md:mx-20">
+                        {groupsData.map((group) => (
+                            <SuggestionGroupCard
+                                key={group.groupId}
+                                group={group}
+                                member={group.memberCount}
+                            />
+                        ))}
                     </div>
                 ) : (
-                    <div>No groups found for "{searchKeyword}"</div>
+                    <div className="mx-10 md:mx-20">No groups found for "{searchKeyword}"</div>
                 )}
             </div>
         </div>

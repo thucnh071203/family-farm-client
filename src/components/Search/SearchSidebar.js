@@ -5,6 +5,9 @@ const SearchSidebar = ({ setSection }) => {
     const navigate = useNavigate();
     const { state } = useLocation();
     const currentKeyword = state?.keyword || "";
+    const location = useLocation();
+
+    const isActive = (section) => state?.section === section;
 
     const handleSectionChange = (section) => {
         setSection(section);
@@ -19,45 +22,55 @@ const SearchSidebar = ({ setSection }) => {
     };
 
     return (
-        <div className="w-[289px] bg-[#E5E4E9] font-roboto rounded-r-[10px] hidden md:block lg:mt-[120px] mt-[63px] fixed h-full">
-            <div className="flex items-start pt-6 ml-8">
-                <p className="text-lg font-bold ">GROUP PAGE</p>
+        <div
+            className="w-[289px] h-screen bg-[#E5E4E9] font-roboto rounded-r-[10px] hidden md:block
+        md:mt-[120px]"
+        >
+            <div className="ml-8 pt-6 flex items-start">
+                <p className="text-lg font-bold">SEARCH PAGE</p>
             </div>
-            <div className="mx-8 mt-11 w-[225px] h-[155px] flex flex-col gap-4">
+
+            <div className="mx-8 mt-11 w-[225px] h-auto flex flex-col gap-4">
                 <button
                     onClick={() => handleSectionChange("search-post")}
-                    className={`hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3 ${
-                        state?.section === "search-post" ? "bg-[#3DB3FB] text-white" : ""
+                    className={`flex w-full h-10 rounded-[10px] ${
+                        isActive("search-post")
+                            ? "bg-[#3DB3FB] text-white"
+                            : "hover:bg-[#999999]"
                     }`}
                 >
-                    <div className="flex items-center mx-2">
+                    <div className="mx-4 flex items-center">
                         <i className="fa-solid fa-file-invoice"></i>
                     </div>
-                    <div className="flex items-center font-bold">Post</div>
+                    <div className="font-bold flex items-center">Post</div>
                 </button>
 
                 <button
                     onClick={() => handleSectionChange("search-user")}
-                    className={`hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3 ${
-                        state?.section === "search-user" ? "bg-[#3DB3FB] text-white" : ""
+                    className={`flex w-full h-10 rounded-[10px] ${
+                        isActive("search-user")
+                            ? "bg-[#3DB3FB] text-white"
+                            : "hover:bg-[#999999]"
                     }`}
                 >
-                    <div className="flex items-center mx-2">
+                    <div className="mx-4 flex items-center">
                         <i className="fa-solid fa-user"></i>
                     </div>
-                    <div className="flex items-center font-bold">User</div>
+                    <div className="font-bold flex items-center">User</div>
                 </button>
 
                 <button
                     onClick={() => handleSectionChange("search-group")}
-                    className={`hover:bg-[#999999] flex w-full h-10 rounded-[10px] p-3 ${
-                        state?.section === "search-group" ? "bg-[#3DB3FB] text-white" : ""
+                    className={`flex w-full h-10 rounded-[10px] ${
+                        isActive("search-group")
+                            ? "bg-[#3DB3FB] text-white"
+                            : "hover:bg-[#999999]"
                     }`}
                 >
-                    <div className="flex items-center mx-2">
+                    <div className="mx-4 flex items-center">
                         <i className="fa-solid fa-users"></i>
                     </div>
-                    <div className="flex items-center font-bold">Group</div>
+                    <div className="font-bold flex items-center">Group</div>
                 </button>
             </div>
         </div>
