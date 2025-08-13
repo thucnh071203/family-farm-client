@@ -92,7 +92,7 @@ const RePaymentResult = () => {
     fetchPaymentResult();
   }, [navigate]);
 
-  return <p>Đang xác minh thanh toán...</p>;
+  return <p>Verifying payment...</p>;
 };
 
 export default RePaymentResult;
