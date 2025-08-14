@@ -6,7 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { ToastContainer, Bounce } from "react-toastify";
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { SignalRProvider } from "./context/SignalRContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import useAuth from "./hooks/useAuth";
@@ -112,6 +112,22 @@ const AppContent = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, isLoading } = useAuth(navigate, location);
+
+  // Logic chuyển hướng admin khi ứng dụng khởi động
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      const currentPath = location.pathname;
+      const roleId = sessionStorage.getItem("roleId") || localStorage.getItem("roleId") ;
+      // Nếu là admin và đang ở trang chủ, chuyển đến Dashboard
+      if (roleId === "67fd41dfba121b52bbc622c3" && currentPath === "/") {
+        navigate("/Dashboard", { replace: true });
+      }
+      // Nếu không phải admin và đang ở Dashboard, chuyển về trang chủ  
+      else if (roleId !== "67fd41dfba121b52bbc622c3" && currentPath === "/Dashboard") {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [isAuthenticated, isLoading, location.pathname, navigate]);
 
   // đang kiểm tra token
   if (isLoading) {
