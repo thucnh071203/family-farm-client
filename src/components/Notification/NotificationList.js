@@ -54,20 +54,51 @@ const NotificationList = ({ onToggle, isVisible }) => {
         }
     }, [notifications]);
 
+    // const handleRespondToInvite = async (groupMemberId, status) => {
+    //     try {
+    //         const res = await instance.put(
+    //             `/api/group-member/response-to-invite-group/${groupMemberId}?status=${status}`
+    //         );
+    //         if (res.status === 200) {
+    //             toast.success(`You have ${status.toLowerCase()}ed the invite.`);
+    //             fetchNotifications();
+    //         } else {
+    //             toast.error("Failed to respond to invite");
+    //         }
+    //     } catch (err) {
+    //         console.error("Error responding to invite:", err);
+    //         toast.error("Something went wrong");
+    //     }
+    // };
+
     const handleRespondToInvite = async (groupMemberId, status) => {
         try {
             const res = await instance.put(
                 `/api/group-member/response-to-invite-group/${groupMemberId}?status=${status}`
             );
+
             if (res.status === 200) {
-                toast.success(`You have ${status.toLowerCase()}ed the invite.`);
+                toast.success(res.data.message || `You have ${status.toLowerCase()}ed the invite.`);
                 fetchNotifications();
             } else {
-                toast.error("Failed to respond to invite");
+                toast.error(res.data.message || "Failed to respond to invite");
             }
         } catch (err) {
             console.error("Error responding to invite:", err);
-            toast.error("Something went wrong");
+
+            if (err.response) {
+                // Lấy message từ BE
+                const message = err.response.data?.message;
+                if (message) {
+                    toast.error(message);
+                } else {
+                    toast.error("Something went wrong");
+                }
+            } else {
+                toast.error("Something went wrong");
+            }
+
+            fetchNotifications();
         }
     };
 
