@@ -22,7 +22,8 @@ const AccountDetail = ({ account, listPost, listService }) => {
           />
         </svg>
         <span>
-          <Link to="/Dashboard">HOME</Link> / Account Management / Account Detail
+          <Link to="/Dashboard">HOME</Link> / Account Management / Account
+          Detail
         </span>
       </div>
       <h1 className="text-2xl font-bold text-blue-500 mb-6 text-left">
@@ -76,48 +77,44 @@ const AccountDetail = ({ account, listPost, listService }) => {
         </p>
       </div>
       {activeTab === "basic" && (
-        <div className="w-full mt-7 bg-white rounded-xl">
+        <div className="w-[80%] mt-7 bg-white rounded-xl">
           <div className="flex text-left items-center border-b border-gray-200">
             <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-              Full Name
+              Full Name:
             </div>
-            <p className="pl-4">{account.fullName}</p>
+            <p className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>
+              {account.fullName}
+            </p>
           </div>
           <div className="flex text-left items-center border-b border-gray-200">
             <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-              Username
+              Username:
             </div>
-            <p className="pl-4">{account.username}</p>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.username}</p>
           </div>
           <div className="flex text-left items-center border-b border-gray-200">
             <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-              Address
+              Address:
             </div>
-            <p className="pl-4">{account.address}</p>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.address}</p>
           </div>
           <div className="flex text-left items-center border-b border-gray-200">
-            <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-              Phone
-            </div>
-            <p className="pl-4">{account.phoneNumber}</p>
+            <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Phone:</div>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.phoneNumber}</p>
           </div>
           <div className="flex text-left items-center border-b border-gray-200">
-            <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-              Email
-            </div>
-            <p className="pl-4">{account.email}</p>
+            <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Email:</div>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.email}</p>
           </div>
           <div className="flex text-left items-center border-b border-gray-200">
-            <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-              Gender
-            </div>
-            <p className="pl-4">{account.gender}</p>
+            <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Gender:</div>
+            <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.gender}</p>
           </div>
           <div className="flex text-left items-center">
             <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-              Birthday
+              Birthday:
             </div>
-            <p className="pl-4">
+            <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>
               {new Date(account.birthday).toLocaleDateString("vi-VN")}
             </p>
           </div>

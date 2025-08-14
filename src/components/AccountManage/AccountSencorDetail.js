@@ -124,50 +124,55 @@ const AccountSencorDetail = ({ account }) => {
           {account.roleId === "68007b2a87b41211f0af1d57" ? "Expert" : "Farmer"}
         </p>
       </div>
-      <div className="w-full mt-7 bg-white rounded-xl">
+      <div className="w-[80%] mt-7 bg-white rounded-xl">
         <div className="flex text-left items-center border-b border-gray-200">
           <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-            Full Name
+            Full Name:
           </div>
-          <p className="pl-4">{account.fullName}</p>
+          <p className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>
+              {account.fullName}
+            </p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Username</div>
-          <p className="pl-4">{account.username}</p>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Username:</div>
+          <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.username}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Address</div>
-          <p className="pl-4">{account.address}</p>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Address:</div>
+          <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.address}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Phone</div>
-          <p className="pl-4">{account.phoneNumber}</p>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Phone:</div>
+          <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.phoneNumber}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Email</div>
-          <p className="pl-4">{account.email}</p>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Email:</div>
+          <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.email}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Work at</div>
-          <p className="pl-4">{account.workAt || "Fpt"}</p>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Work at:</div>
+          <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.workAt || "Fpt"}</p>
         </div>
         <div className="flex text-left items-center border-b border-gray-200">
-          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Study at</div>
-          <p className="pl-4">{account.studyAt || "Fpt"}</p>
+          <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">Study at:</div>
+          <p  className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>{account.studyAt || "Fpt"}</p>
         </div>
         <div className="flex text-left items-center">
           <div className="pt-4 pb-4 w-[180px] pl-4 font-semibold">
-            Certificate
+            Certificate:
           </div>
           {account.certificate ? (
+            <p className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>
             <button
               onClick={openCertificate}
-              className="pl-4 text-blue-600 underline"
+              className=" text-blue-600 underline "  
             >
               View certificate
             </button>
+            </p>
+           
           ) : (
-            <p className="pl-4">None</p>
+            <p className="pl-4 p-3  text-black w-full rounded-sm" style={{ border: "0.5px solid #d1d5db" }}>None</p>
           )}
         </div>
       </div>
